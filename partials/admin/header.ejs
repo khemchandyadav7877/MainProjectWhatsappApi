@@ -1,0 +1,139 @@
+<header class="top-header">
+
+    <!-- LEFT -->
+    <div class="header-left">
+        <i class="fa-solid fa-bars"></i>
+    </div>
+
+    <!-- RIGHT -->
+    <div class="header-right">
+        <span class="credit-text">
+            Credit available Whatsapp Api <strong>[7]</strong>
+        </span>
+
+        <div class="icon-btn">
+            <i class="fa-solid fa-moon"></i>
+        </div>
+
+        <div class="profile-box">
+            <!-- ✅ FIXED IMAGE -->
+            <img src="/default.avif" class="profile-img" id="profileToggle">
+
+            <div class="profile-dropdown" id="profileMenu">
+                <a href="/profile">
+                    <i class="fa-solid fa-user"></i> Profile & Account
+                </a>
+                <a href="/logout">
+                    <i class="fa-solid fa-arrow-right-from-bracket"></i> Logout
+                </a>
+            </div>
+        </div>
+    </div>
+
+<style>
+.top-header{
+    position:fixed;
+    top:0;
+    left:220px;
+    right:0;
+    height:55px;
+    background:#eef3f8;
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    padding:0 20px;
+    z-index:1000;
+}
+
+.header-left i{
+    font-size:22px;
+    color:#6c7a89;
+    cursor:pointer;
+}
+
+.header-right{
+    display:flex;
+    align-items:center;
+    gap:18px;
+}
+
+.credit-text{
+    font-size:15px;
+    color:#6c7a89;
+}
+
+.icon-btn{
+    width:36px;
+    height:36px;
+    border-radius:50%;
+    background:#e4ebf5;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+}
+
+.profile-box{
+    position:relative;
+}
+
+.profile-img{
+    width:36px;
+    height:36px;
+    border-radius:50%;
+    cursor:pointer;
+    object-fit:cover;
+}
+
+.profile-dropdown{
+    position:absolute;
+    top:45px;
+    right:0;
+    width:180px;
+    background:#fff;
+    border-radius:8px;
+    box-shadow:0 8px 20px rgba(0,0,0,.12);
+    display:none;
+    opacity:0;
+    transform:translateY(10px);
+    transition:.25s ease;
+}
+
+.profile-dropdown a{
+    display:flex;
+    gap:10px;
+    padding:10px 14px;
+    text-decoration:none;
+    color:#444;
+}
+
+.profile-dropdown a:hover{
+    background:#eef3f8;
+}
+
+.profile-dropdown.show{
+    display:block;
+    opacity:1;
+    transform:translateY(0);
+}
+
+@media(max-width:768px){
+    .top-header{
+        left:0;
+    }
+}
+</style>
+</header>
+
+<script>
+    const profileToggle = document.getElementById("profileToggle");
+    const profileMenu = document.getElementById("profileMenu");
+
+    profileToggle.addEventListener("click", function (e) {
+        e.stopPropagation();
+        profileMenu.classList.toggle("show");
+    });
+
+    document.addEventListener("click", function () {
+        profileMenu.classList.remove("show");
+    });
+</script>

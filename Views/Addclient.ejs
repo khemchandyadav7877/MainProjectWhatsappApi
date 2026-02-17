@@ -1,0 +1,205 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard</title>
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <style>
+        /* ===== LAYOUT FIXES ===== */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            overflow-x: hidden;
+            background: #f3f4f6;
+        }
+
+        /* Header fixed */
+        .header-wrapper {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            z-index: 1030;
+        }
+
+        /* Main layout */
+        .main-wrapper {
+            margin-top: 70px;
+            display: flex;
+            width: 100%;
+            min-height: calc(100vh - 70px);
+        }
+
+        /* Sidebar wrapper */
+        .sidebar-wrapper {
+            width: 280px;
+            flex-shrink: 0;
+            position: fixed;
+            left: 0;
+            top: 70px;
+            bottom: 0;
+            z-index: 1020;
+            transition: width 0.3s ease;
+        }
+
+        /* Sidebar collapsed */
+        .sidebar-wrapper.collapsed {
+            width: 80px;
+        }
+
+        /* Content wrapper - auto adjust */
+        .content-wrapper {
+            flex: 1;
+            margin-left: 280px;
+            padding: 20px;
+            transition: margin-left 0.3s ease;
+            background: #f3f4f6;
+            min-height: calc(100vh - 70px);
+        }
+
+        /* Content when sidebar collapsed */
+        .sidebar-wrapper.collapsed + .content-wrapper {
+            margin-left: 80px;
+        }
+
+        /* Mobile responsive */
+        @media (max-width: 768px) {
+            .sidebar-wrapper {
+                transform: translateX(-100%);
+                width: 280px !important;
+            }
+            
+            .sidebar-wrapper.mobile-open {
+                transform: translateX(0);
+            }
+            
+            .content-wrapper {
+                margin-left: 0 !important;
+            }
+        }
+
+        /* Bootstrap fixes */
+        .container-fluid {
+            padding-left: 0;
+            padding-right: 0;
+        }
+
+        .row {
+            margin-left: 0;
+            margin-right: 0;
+        }
+
+        /* Main content card */
+        .main-content {
+            background: white;
+            border-radius: 12px;
+            padding: 24px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+            min-height: 500px;
+        }
+
+        /* Dashboard title */
+        .dashboard-title {
+            font-size: 28px;
+            font-weight: 600;
+            color: #1f2937;
+            margin-bottom: 20px;
+        }
+    </style>
+</head>
+<body>
+    <!-- HEADER -->
+    <div class="header-wrapper">
+        <%- include('../partials/ram/header') %>
+    </div>
+
+    <!-- MAIN LAYOUT -->
+    <div class="main-wrapper">
+        <!-- SIDEBAR -->
+        <div class="sidebar-wrapper" id="sidebarWrapper">
+            <%- include('../partials/ram/sidebaar') %>
+        </div>
+
+        <!-- CONTENT - Auto Adjust -->
+        <div class="content-wrapper" id="contentWrapper">
+            <div class="container-fluid">
+                <div class="main-content">
+                    <h1 class="dashboard-title">Add Client</h1>
+                    <!-- Aapka content yahan aayega -->
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- SCRIPT - Sirf layout sync ke liye -->
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // Original functions intercept
+            const originalToggleCollapse = window.toggleCollapse;
+            
+            window.toggleCollapse = function() {
+                if (originalToggleCollapse) originalToggleCollapse();
+                
+                setTimeout(() => {
+                    const sidebar = document.getElementById('mainSidebar');
+                    const sidebarWrapper = document.getElementById('sidebarWrapper');
+                    
+                    if (sidebar && sidebarWrapper) {
+                        if (sidebar.classList.contains('collapsed')) {
+                            sidebarWrapper.classList.add('collapsed');
+                        } else {
+                            sidebarWrapper.classList.remove('collapsed');
+                        }
+                    }
+                }, 10);
+            };
+            
+            // Initial state
+            const sidebar = document.getElementById('mainSidebar');
+            const sidebarWrapper = document.getElementById('sidebarWrapper');
+            
+            if (sidebar && sidebarWrapper && sidebar.classList.contains('collapsed')) {
+                sidebarWrapper.classList.add('collapsed');
+            }
+            
+            // Mobile functions
+            const originalToggleMobile = window.toggleMobileSidebar;
+            
+            window.toggleMobileSidebar = function() {
+                if (originalToggleMobile) originalToggleMobile();
+                
+                const sidebar = document.getElementById('mainSidebar');
+                const sidebarWrapper = document.getElementById('sidebarWrapper');
+                
+                if (sidebar && sidebarWrapper) {
+                    if (sidebar.classList.contains('open')) {
+                        sidebarWrapper.classList.add('mobile-open');
+                    } else {
+                        sidebarWrapper.classList.remove('mobile-open');
+                    }
+                }
+            };
+            
+            const originalCloseMobile = window.closeMobileSidebar;
+            
+            window.closeMobileSidebar = function() {
+                if (originalCloseMobile) originalCloseMobile();
+                
+                const sidebarWrapper = document.getElementById('sidebarWrapper');
+                if (sidebarWrapper) {
+                    sidebarWrapper.classList.remove('mobile-open');
+                }
+            };
+        });
+    </script>
+</body>
+</html>

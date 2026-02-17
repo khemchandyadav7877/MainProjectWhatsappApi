@@ -1,0 +1,975 @@
+<!-- <!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Add New Feature - SuperAdmin Only</title>
+    
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/npm/toastify-js/src/toastify.min.css">
+    
+    <style>
+        .add-feature-container {
+            min-height: 100vh;
+            background-color: #f8f9fa;
+            padding: 20px;
+        }
+        
+        .main-content {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+        
+        .feature-form-card {
+            border-radius: 12px;
+            box-shadow: 0 5px 20px rgba(0, 0, 0, 0.1);
+            border: none;
+        }
+        
+        .form-icon {
+            width: 50px;
+            height: 50px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            font-size: 1.5rem;
+        }
+        
+        .feature-preview-card {
+            background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+            border: none;
+            border-radius: 12px;
+        }
+        
+        .preview-icon {
+            width: 60px;
+            height: 60px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 12px;
+            background: white;
+            color: #667eea;
+            font-size: 1.8rem;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+        }
+        
+        .required-field::after {
+            content: " *";
+            color: #dc3545;
+        }
+        
+        .form-control:focus, .form-select:focus {
+            border-color: #667eea;
+            box-shadow: 0 0 0 0.25rem rgba(102, 126, 234, 0.25);
+        }
+        
+        .submit-btn {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            border: none;
+            padding: 12px 30px;
+            font-weight: 600;
+            transition: all 0.3s ease;
+        }
+        
+        .submit-btn:hover:not(:disabled) {
+            transform: translateY(-2px);
+            box-shadow: 0 7px 15px rgba(102, 126, 234, 0.3);
+        }
+        
+        .submit-btn:disabled {
+            opacity: 0.7;
+            cursor: not-allowed;
+        }
+        
+        .back-btn {
+            background: linear-gradient(135deg, #6c757d 0%, #495057 100%);
+            border: none;
+            padding: 12px 30px;
+            font-weight: 600;
+            transition: all 0.3s ease;
+        }
+        
+        .back-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 7px 15px rgba(108, 117, 125, 0.3);
+        }
+        
+        .section-icon {
+            width: 40px;
+            height: 40px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 50%;
+            background-color: #e9ecef;
+            color: #6c757d;
+        }
+        
+        .feature-count-badge {
+            font-size: 0.75rem;
+            padding: 0.25rem 0.5rem;
+        }
+        
+        .loading-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(255, 255, 255, 0.9);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 9999;
+            display: none;
+        }
+        
+        .spinner-border {
+            width: 3rem;
+            height: 3rem;
+        }
+        
+        /* Section icons styling */
+        .icon-display {
+            display: inline-block;
+            margin-right: 10px;
+            color: #667eea;
+        }
+        
+        /* Responsive adjustments */
+        @media (max-width: 768px) {
+            .add-feature-container {
+                padding: 15px;
+            }
+            
+            .form-icon {
+                width: 40px;
+                height: 40px;
+                font-size: 1.2rem;
+            }
+            
+            .preview-icon {
+                width: 50px;
+                height: 50px;
+                font-size: 1.5rem;
+            }
+            
+            .submit-btn, .back-btn {
+                padding: 10px 20px;
+                font-size: 0.9rem;
+            }
+        }
+        
+        @media (max-width: 576px) {
+            .add-feature-container {
+                padding: 10px;
+            }
+            
+            .card-body {
+                padding: 1.25rem !important;
+            }
+            
+            .feature-preview-card {
+                margin-top: 1.5rem;
+            }
+        }
+        
+        /* Animation for form */
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+        
+        .fade-in {
+            animation: fadeIn 0.5s ease-out;
+        }
+        
+        /* Tooltip styling */
+        [data-bs-toggle="tooltip"] {
+            cursor: pointer;
+        }
+        
+        /* Feature label suggestion styling */
+        .suggestion-item {
+            padding: 8px 12px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            border-radius: 6px;
+        }
+        
+        .suggestion-item:hover {
+            background-color: #f0f0f0;
+        }
+        
+        .suggestion-item.active {
+            background-color: #e3f2fd;
+            color: #1976d2;
+            font-weight: 500;
+        }
+        
+        /* SuperAdmin specific styles */
+        .superadmin-badge {
+            background: linear-gradient(135deg, #dc3545 0%, #c82333 100%);
+            color: white;
+            font-weight: 600;
+        }
+        
+        .superadmin-header {
+            background: linear-gradient(135deg, #dc3545 0%, #c82333 100%);
+            color: white;
+            border-radius: 8px;
+            padding: 5px 15px;
+            font-size: 0.9rem;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+        }
+    </style>
+</head>
+<body>
+    <div class="add-feature-container">
+        <div class="loading-overlay" id="loadingOverlay">
+            <div class="text-center">
+                <div class="spinner-border text-primary" role="status">
+                    <span class="visually-hidden">Loading...</span>
+                </div>
+                <p class="mt-3 text-muted">Processing...</p>
+            </div>
+        </div>
+
+        <div class="main-content">
+            <div class="row mb-4">
+                <div class="col-12">
+                    <div class="d-flex align-items-center justify-content-between">
+                        <div class="d-flex align-items-center gap-3">
+                            <div class="form-icon">
+                                <i class="fas fa-user-shield"></i>
+                            </div>
+                            <div>
+                                <h1 class="fw-bold text-dark mb-1">Add New Feature</h1>
+                                <p class="text-muted mb-0">Add new sidebar navigation features for SuperAdmin only</p>
+                                <div class="superadmin-header mt-1">
+                                    <i class="fas fa-lock"></i>
+                                    SuperAdmin Only Access
+                                </div>
+                            </div>
+                        </div>
+                        <a 
+                            href="/dashboard"
+                            class="btn btn-primary d-flex align-items-center gap-2"
+                        >
+                            <i class="fas fa-home"></i> Dashboard
+                        </a>
+                    </div>
+                </div>
+            </div>
+
+            <div class="row fade-in">
+                <div class="col-lg-8">
+                    <div class="card feature-form-card">
+                        <div class="card-body p-4">
+                            <form id="addFeatureForm">
+                                <div class="mb-4">
+                                    <label for="sectionSelect" class="form-label fw-semibold required-field">Section</label>
+                                    <select class="form-select form-select-lg" id="sectionSelect" required>
+                                        <option value="" selected disabled>Select a section</option>
+                                        <option value="*** Dashboard">Dashboard</option>
+                                        <option value="*** Administration">Administration</option>
+                                        <option value="*** Users Management">Users Management</option>
+                                        <option value="*** AI Tools">AI Tools</option>
+                                        <option value="*** Courses">Courses</option>
+                                        <option value="*** Popular Courses">Popular Courses</option>
+                                        <option value="*** Latest Courses">Latest Courses</option>
+                                        <option value="*** Testimonials">Testimonials</option>
+                                        <option value="*** Image Slider">Image Slider</option>
+                                        <option value="*** Live Classes">Live Classes</option>
+                                        <option value="*** Payments">Payments</option>
+                                        <option value="*** Blog">Blog</option>
+                                        <option value="*** Communication">Communication</option>
+                                        <option value="*** FAQ">FAQ</option>
+                                        <option value="*** Settings">Settings</option>
+                                        <option value="*** Poll Management">Poll Management</option>
+                                    </select>
+                                    <div class="form-text">Select the section where this feature will appear</div>
+                                </div>
+
+                                <div class="mb-4">
+                                    <label for="featureLabel" class="form-label fw-semibold required-field">Feature Label</label>
+                                    <input 
+                                        type="text" 
+                                        class="form-control form-control-lg" 
+                                        id="featureLabel" 
+                                        placeholder="e.g., 1. Dashboard, 2. Notifications, etc."
+                                        required
+                                    >
+                                    <div class="form-text">
+                                        Use numbering format (e.g., 1., 2., 3.) or descriptive label
+                                    </div>
+                                    <div class="mt-2" id="featureSuggestions" style="display: none;">
+                                        <div class="card border-0 shadow-sm">
+                                            <div class="card-body p-2">
+                                                <small class="text-muted d-block mb-2">Suggested labels for this section:</small>
+                                                <div id="suggestionList"></div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="mb-4">
+                                    <label for="roleSelect" class="form-label fw-semibold required-field">Role</label>
+                                    <div class="input-group">
+                                        <select class="form-select form-select-lg" id="roleSelect" required disabled>
+                                            <option value="SuperAdmin" selected>SuperAdmin</option>
+                                        </select>
+                                        <span class="input-group-text superadmin-badge">
+                                            <i class="fas fa-lock"></i>
+                                        </span>
+                                    </div>
+                                    <div class="form-text text-danger fw-semibold">
+                                        <i class="fas fa-info-circle me-1"></i> 
+                                        Only SuperAdmin role is available
+                                    </div>
+                                </div>
+
+                                <div class="mb-4">
+                                    <label for="orderNumber" class="form-label fw-semibold required-field">Order Number</label>
+                                    <input 
+                                        type="number" 
+                                        class="form-control form-control-lg" 
+                                        id="orderNumber" 
+                                        min="1" 
+                                        value="1"
+                                        required
+                                    >
+                                    <div class="form-text">Determines the display order within the section</div>
+                                </div>
+
+                                <div class="mb-4">
+                                    <label class="form-label fw-semibold">Icon</label>
+                                    <div class="d-flex align-items-center gap-3">
+                                        <div class="section-icon" id="selectedIcon">
+                                            <i class="fas fa-cog"></i>
+                                        </div>
+                                        <select class="form-select" id="iconSelect">
+                                            <option value="fas fa-cog">Default (Cog)</option>
+                                            <option value="fas fa-chart-line">Chart Line</option>
+                                            <option value="fas fa-users">Users</option>
+                                            <option value="fas fa-robot">Robot</option>
+                                            <option value="fas fa-book-open">Book Open</option>
+                                            <option value="fas fa-star">Star</option>
+                                            <option value="fas fa-fire">Fire</option>
+                                            <option value="fas fa-comment-dots">Comment</option>
+                                            <option value="fas fa-images">Images</option>
+                                            <option value="fas fa-video">Video</option>
+                                            <option value="fas fa-credit-card">Credit Card</option>
+                                            <option value="fas fa-blog">Blog</option>
+                                            <option value="fas fa-question-circle">Question</option>
+                                            <option value="fas fa-bell">Bell</option>
+                                            <option value="fas fa-user-shield">User Shield</option>
+                                            <option value="fas fa-user-tie">User Tie</option>
+                                            <option value="fas fa-graduation-cap">Graduation Cap</option>
+                                            <option value="fas fa-chalkboard-teacher">Chalkboard Teacher</option>
+                                            <option value="fas fa-home">Home</option>
+                                            <option value="fas fa-plus">Plus</option>
+                                            <option value="fas fa-eye">Eye</option>
+                                            <option value="fas fa-edit">Edit</option>
+                                            <option value="fas fa-trash">Trash</option>
+                                            <option value="fas fa-save">Save</option>
+                                            <option value="fas fa-times">Times</option>
+                                        </select>
+                                    </div>
+                                    <div class="form-text">Select an icon for the feature (optional)</div>
+                                </div>
+
+                                <div class="mb-4">
+                                    <div class="form-check form-switch">
+                                        <input class="form-check-input" type="checkbox" id="featureStatus" checked>
+                                        <label class="form-check-label fw-semibold" for="featureStatus">
+                                            Active
+                                        </label>
+                                    </div>
+                                    <div class="form-text">Toggle to enable/disable this feature</div>
+                                </div>
+
+                                <div class="d-flex gap-3 mt-5">
+                                    <button type="button" class="btn back-btn text-white flex-fill d-flex align-items-center justify-content-center gap-2" id="backBtn">
+                                        <i class="fas fa-arrow-left"></i> Back
+                                    </button>
+                                    <button type="submit" class="btn submit-btn text-white flex-fill d-flex align-items-center justify-content-center gap-2" id="submitBtn">
+                                        <i class="fas fa-plus"></i> Add Feature
+                                    </button>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-lg-4 mt-4 mt-lg-0">
+                    <div class="card feature-preview-card h-100">
+                        <div class="card-body p-4">
+                            <h5 class="fw-bold mb-4">
+                                <i class="fas fa-eye me-2"></i>Feature Preview
+                            </h5>
+                            
+                            <div class="text-center mb-4">
+                                <div class="preview-icon mx-auto mb-3" id="previewIcon">
+                                    <i class="fas fa-cog"></i>
+                                </div>
+                                <h6 class="fw-bold mb-1" id="previewSection">Section</h6>
+                                <p class="text-muted small" id="previewRole">SuperAdmin</p>
+                            </div>
+                            
+                            <div class="card bg-white border-0 shadow-sm mb-3">
+                                <div class="card-body">
+                                    <div class="d-flex align-items-center">
+                                        <div class="me-3">
+                                            <div class="section-icon">
+                                                <i class="fas fa-cog" id="previewFeatureIcon"></i>
+                                            </div>
+                                        </div>
+                                        <div class="flex-grow-1">
+                                            <h6 class="fw-bold mb-0" id="previewLabel">Feature Label</h6>
+                                            <div class="d-flex align-items-center gap-2">
+                                                <span class="badge superadmin-badge badge-sm">SuperAdmin</span>
+                                                <span class="badge bg-primary badge-sm" id="previewStatus">Active</span>
+                                                <span class="text-muted small">Order: <span id="previewOrder">1</span></span>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <div class="alert alert-info border-0 mt-4">
+                                <div class="d-flex align-items-center">
+                                    <i class="fas fa-info-circle me-2"></i>
+                                    <div class="small">
+                                        <strong>Note:</strong> All features are created for SuperAdmin access only.
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <div class="mt-4">
+                                <h6 class="fw-bold mb-3">Quick Stats</h6>
+                                <div class="row g-2">
+                                    <div class="col-6">
+                                        <div class="bg-white rounded p-3 text-center">
+                                            <h5 class="fw-bold mb-1" id="totalFeatures">0</h5>
+                                            <small class="text-muted">SuperAdmin Features</small>
+                                        </div>
+                                    </div>
+                                    <div class="col-6">
+                                        <div class="bg-white rounded p-3 text-center">
+                                            <h5 class="fw-bold mb-1" id="sectionFeatures">0</h5>
+                                            <small class="text-muted">In Section</small>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="row mt-5 fade-in">
+                <div class="col-12">
+                    <div class="card border-0 shadow-sm">
+                        <div class="card-header bg-white border-0 py-3">
+                            <div class="d-flex align-items-center justify-content-between">
+                                <h5 class="fw-bold mb-0">
+                                    <i class="fas fa-list me-2 text-primary"></i>
+                                    SuperAdmin Features by Section
+                                </h5>
+                                <span class="badge superadmin-badge">
+                                    <i class="fas fa-user-shield me-1"></i> SuperAdmin Only
+                                </span>
+                            </div>
+                        </div>
+                        <div class="card-body">
+                            <div class="row" id="existingFeaturesGrid">
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="text-center text-muted mt-5 small pt-3 border-top">
+                © 2025 eClassify - SuperAdmin Feature Management System
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/toastify-js"></script>
+    
+    <script>
+        const state = {
+            roles: ['SuperAdmin'], 
+            sectionOptions: [
+                '*** Dashboard',
+                '*** Administration',
+                '*** Users Management',
+                '*** AI Tools',
+                '*** Courses',
+                '*** Popular Courses',
+                '*** Latest Courses',
+                '*** Testimonials',
+                '*** Image Slider',
+                '*** Live Classes',
+                '*** Payments',
+                '*** Blog',
+                '*** Communication',
+                '*** Poll Management',
+                '*** FAQ',
+                '*** Settings'
+            ],
+            allFeatureLabels: {
+                '*** Dashboard': ['1. Dashboard', '2. Notifications'],
+                '*** Administration': ['1. Role Permissions', '2. Add New Feature'],
+                '*** Users Management': ['1. All Users', '2. Active Users', '3. Inactive Users', '4. Pending Approval'],
+                '*** AI Tools': ['1. AI Writer', '2. Lesson Planner', '3. Quiz Maker', '4. Assignment Checker', '5. Video Generator', '6. Transcription', '7. Code Generator', '8. AI Analytics', '9. AI Assistant'],
+                '*** Courses': ['1. All Courses', '2. Add Course', '3. Web Development', '4. AddUxCourse','5. UxCourseTable', '6. App Development', '7. Achievements', '8. Add Achievement'],
+                '*** Popular Courses': ['1. View Popular Courses', '2. Add Popular Courses'],
+                '*** Latest Courses': ['1. View Latest Courses', '2. Add Latest Courses'],
+                '*** Testimonials': ['1. View Testimonials', '2. Add Testimonial'],
+                '*** Image Slider': ['1. View Slider Images', '2. Add Slider'],
+                '*** Live Classes': ['1. View Live Classes', '2. Add Live Class'],
+                '*** Payments': ['1. Earnings', '2. Transaction History', '3. Withdraw', '4. Payment Settings'],
+                '*** Blog': ['1. View Blog', '2. Add Blog Post'],
+                '*** Communication': ['1. User Queries'],
+                '*** FAQ': ['1. View FAQ', '2. Add FAQ'],
+                '*** Settings': ['1. My Profile', '2. General Settings', '3. Reset Password'],
+                '*** Poll Management': ['1. Create Poll', '2. All Polls', '3. Active Polls', '4. Closed Polls', '5. Poll Results', '6. Poll Analytics', '7. Poll Settings']
+            },
+            features: [],
+            isLoading: false
+        };
+
+        const sectionIcons = {
+            '*** Dashboard': 'fas fa-chart-line',
+            '*** Administration': 'fas fa-user-shield',
+            '*** Users Management': 'fas fa-users',
+            '*** AI Tools': 'fas fa-robot',
+            '*** Courses': 'fas fa-book-open',
+            '*** Popular Courses': 'fas fa-star',
+            '*** Latest Courses': 'fas fa-fire',
+            '*** Testimonials': 'fas fa-comment-dots',
+            '*** Image Slider': 'fas fa-images',
+            '*** Live Classes': 'fas fa-video',
+            '*** Payments': 'fas fa-credit-card',
+            '*** Blog': 'fas fa-blog',
+            '*** Communication': 'fas fa-comments',
+            '*** FAQ': 'fas fa-question-circle',
+            '*** Settings': 'fas fa-cog',
+            '*** Poll Management': 'fas fa-poll'
+        };
+
+        const elements = {
+            loadingOverlay: document.getElementById('loadingOverlay'),
+            addFeatureForm: document.getElementById('addFeatureForm'),
+            sectionSelect: document.getElementById('sectionSelect'),
+            featureLabel: document.getElementById('featureLabel'),
+            featureSuggestions: document.getElementById('featureSuggestions'),
+            suggestionList: document.getElementById('suggestionList'),
+            roleSelect: document.getElementById('roleSelect'),
+            orderNumber: document.getElementById('orderNumber'),
+            iconSelect: document.getElementById('iconSelect'),
+            selectedIcon: document.getElementById('selectedIcon'),
+            featureStatus: document.getElementById('featureStatus'),
+            backBtn: document.getElementById('backBtn'),
+            submitBtn: document.getElementById('submitBtn'),
+            
+            previewIcon: document.getElementById('previewIcon'),
+            previewSection: document.getElementById('previewSection'),
+            previewRole: document.getElementById('previewRole'),
+            previewFeatureIcon: document.getElementById('previewFeatureIcon'),
+            previewLabel: document.getElementById('previewLabel'),
+            previewStatus: document.getElementById('previewStatus'),
+            previewOrder: document.getElementById('previewOrder'),
+            
+            totalFeatures: document.getElementById('totalFeatures'),
+            sectionFeatures: document.getElementById('sectionFeatures'),
+            
+            existingFeaturesGrid: document.getElementById('existingFeaturesGrid')
+        };
+
+        document.addEventListener('DOMContentLoaded', () => {
+            elements.roleSelect.value = 'SuperAdmin';
+            elements.previewRole.textContent = 'SuperAdmin';
+            
+            loadExistingFeatures();
+            setupEventListeners();
+            updatePreview();
+            updateStats();
+            renderExistingFeatures();
+        });
+
+        function loadExistingFeatures() {
+            try {
+                const savedFeatures = localStorage.getItem('sidebarFeatures');
+                if (savedFeatures) {
+                    state.features = JSON.parse(savedFeatures);
+                    state.features = state.features.filter(feature => feature.role === 'SuperAdmin');
+                } else {
+                    const defaultFeatures = [];
+                    let idCounter = 1;
+                    
+                    Object.keys(state.allFeatureLabels).forEach(section => {
+                        state.allFeatureLabels[section].forEach((label, index) => {
+                            defaultFeatures.push({
+                                id: idCounter++,
+                                role: 'SuperAdmin', 
+                                section: section,
+                                label: label,
+                                isActive: true,
+                                order: index + 1,
+                                createdAt: new Date().toISOString()
+                            });
+                        });
+                    });
+                    
+                    state.features = defaultFeatures;
+                    localStorage.setItem('sidebarFeatures', JSON.stringify(defaultFeatures));
+                }
+            } catch (error) {
+                console.error('Error loading features:', error);
+                showToast('Failed to load existing features', 'error');
+            }
+        }
+
+        function saveFeatures(updatedFeatures) {
+            try {
+                const superAdminFeatures = updatedFeatures.map(feature => ({
+                    ...feature,
+                    role: 'SuperAdmin' 
+                }));
+                
+                localStorage.setItem('sidebarFeatures', JSON.stringify(superAdminFeatures));
+                state.features = superAdminFeatures;
+                
+                window.dispatchEvent(new Event('featuresUpdated'));
+                return true;
+            } catch (error) {
+                console.error('Error saving features:', error);
+                return false;
+            }
+        }
+
+        function showLoading(show) {
+            elements.loadingOverlay.style.display = show ? 'flex' : 'none';
+        }
+
+        function showToast(message, type = 'info') {
+            const backgroundColor = {
+                success: '#198754',
+                error: '#dc3545',
+                warning: '#ffc107',
+                info: '#0dcaf0'
+            }[type];
+
+            Toastify({
+                text: message,
+                duration: 3000,
+                gravity: "top",
+                position: "right",
+                backgroundColor: backgroundColor,
+                stopOnFocus: true
+            }).showToast();
+        }
+
+        function setupEventListeners() {
+            elements.addFeatureForm.addEventListener('submit', handleSubmit);
+            
+            elements.backBtn.addEventListener('click', () => {
+                window.history.back();
+            });
+            
+            elements.sectionSelect.addEventListener('change', (e) => {
+                updatePreview();
+                showFeatureSuggestions(e.target.value);
+                updateSectionStats();
+            });
+            
+            elements.featureLabel.addEventListener('input', updatePreview);
+            
+            elements.roleSelect.addEventListener('change', (e) => {
+                e.target.value = 'SuperAdmin';
+                updatePreview();
+            });
+            
+            elements.orderNumber.addEventListener('input', updatePreview);
+            
+            elements.iconSelect.addEventListener('change', (e) => {
+                const iconClass = e.target.value;
+                elements.selectedIcon.innerHTML = `<i class="${iconClass}"></i>`;
+                elements.previewFeatureIcon.className = iconClass;
+                elements.previewIcon.innerHTML = `<i class="${iconClass}"></i>`;
+            });
+            
+            elements.featureStatus.addEventListener('change', updatePreview);
+        }
+
+        function handleSubmit(e) {
+            e.preventDefault();
+            
+            if (!validateForm()) {
+                return;
+            }
+            
+            if (confirm('Add this SuperAdmin feature?')) {
+                addNewFeature();
+            }
+        }
+
+        function validateForm() {
+            if (!elements.sectionSelect.value) {
+                showToast('Please select a section', 'error');
+                elements.sectionSelect.focus();
+                return false;
+            }
+            
+            if (!elements.featureLabel.value.trim()) {
+                showToast('Please enter a feature label', 'error');
+                elements.featureLabel.focus();
+                return false;
+            }
+            
+            if (!elements.orderNumber.value || elements.orderNumber.value < 1) {
+                showToast('Please enter a valid order number (minimum 1)', 'error');
+                elements.orderNumber.focus();
+                return false;
+            }
+            
+            return true;
+        }
+
+        function addNewFeature() {
+            showLoading(true);
+            
+            const newFeature = {
+                id: generateId(),
+                role: 'SuperAdmin', 
+                section: elements.sectionSelect.value,
+                label: elements.featureLabel.value.trim(),
+                isActive: elements.featureStatus.checked,
+                order: parseInt(elements.orderNumber.value),
+                icon: elements.iconSelect.value || 'fas fa-cog',
+                createdAt: new Date().toISOString()
+            };
+            
+            const updatedFeatures = [...state.features, newFeature];
+            
+            updatedFeatures.sort((a, b) => {
+                if (a.section === b.section) {
+                    return a.order - b.order;
+                }
+                return a.section.localeCompare(b.section);
+            });
+            
+            const success = saveFeatures(updatedFeatures);
+            
+            showLoading(false);
+            
+            if (success) {
+                showToast('SuperAdmin feature added successfully!', 'success');
+                resetForm();
+                updateStats();
+                renderExistingFeatures();
+            } else {
+                showToast('Failed to add feature', 'error');
+            }
+        }
+
+        function generateId() {
+            return Date.now() + Math.floor(Math.random() * 1000);
+        }
+
+        function resetForm() {
+            elements.addFeatureForm.reset();
+            elements.sectionSelect.value = '';
+            elements.roleSelect.value = 'SuperAdmin'; // Reset to SuperAdmin
+            elements.orderNumber.value = '1';
+            elements.iconSelect.value = 'fas fa-cog';
+            elements.featureStatus.checked = true;
+            
+            elements.selectedIcon.innerHTML = '<i class="fas fa-cog"></i>';
+            elements.previewFeatureIcon.className = 'fas fa-cog';
+            elements.previewIcon.innerHTML = '<i class="fas fa-cog"></i>';
+            
+            elements.featureSuggestions.style.display = 'none';
+            
+            updatePreview();
+        }
+
+        function updatePreview() {
+            const section = elements.sectionSelect.value;
+            if (section) {
+                elements.previewSection.textContent = section.replace('*** ', '');
+                const sectionIcon = sectionIcons[section] || 'fas fa-cog';
+                elements.previewIcon.innerHTML = `<i class="${sectionIcon}"></i>`;
+            } else {
+                elements.previewSection.textContent = 'Section';
+                elements.previewIcon.innerHTML = '<i class="fas fa-cog"></i>';
+            }
+            
+            elements.previewRole.textContent = 'SuperAdmin';
+            
+            const label = elements.featureLabel.value.trim();
+            elements.previewLabel.textContent = label || 'Feature Label';
+            
+            const isActive = elements.featureStatus.checked;
+            elements.previewStatus.textContent = isActive ? 'Active' : 'Inactive';
+            elements.previewStatus.className = `badge ${isActive ? 'bg-primary' : 'bg-secondary'} badge-sm`;
+            
+            elements.previewOrder.textContent = elements.orderNumber.value || '1';
+        }
+
+        function showFeatureSuggestions(section) {
+            const suggestions = state.allFeatureLabels[section];
+            
+            if (suggestions && suggestions.length > 0) {
+                elements.suggestionList.innerHTML = '';
+                
+                suggestions.forEach(suggestion => {
+                    const suggestionItem = document.createElement('div');
+                    suggestionItem.className = 'suggestion-item';
+                    suggestionItem.textContent = suggestion;
+                    
+                    suggestionItem.addEventListener('click', () => {
+                        elements.featureLabel.value = suggestion;
+                        updatePreview();
+                        
+                        document.querySelectorAll('.suggestion-item').forEach(item => {
+                            item.classList.remove('active');
+                        });
+                        
+                        suggestionItem.classList.add('active');
+                    });
+                    
+                    elements.suggestionList.appendChild(suggestionItem);
+                });
+                
+                elements.featureSuggestions.style.display = 'block';
+            } else {
+                elements.featureSuggestions.style.display = 'none';
+            }
+        }
+
+        function updateStats() {
+            elements.totalFeatures.textContent = state.features.length;
+            
+            const selectedSection = elements.sectionSelect.value;
+            if (selectedSection) {
+                const sectionCount = state.features.filter(f => f.section === selectedSection).length;
+                elements.sectionFeatures.textContent = sectionCount;
+            } else {
+                elements.sectionFeatures.textContent = '0';
+            }
+        }
+
+        function updateSectionStats() {
+            updateStats();
+        }
+
+        function renderExistingFeatures() {
+            elements.existingFeaturesGrid.innerHTML = '';
+            
+            const featuresBySection = {};
+            state.features.forEach(feature => {
+                if (!featuresBySection[feature.section]) {
+                    featuresBySection[feature.section] = [];
+                }
+                featuresBySection[feature.section].push(feature);
+            });
+            
+            Object.keys(featuresBySection).forEach(section => {
+                const sectionFeatures = featuresBySection[section];
+                const sectionName = section.replace('*** ', '');
+                const sectionIcon = sectionIcons[section] || 'fas fa-cog';
+                
+                const sectionCard = document.createElement('div');
+                sectionCard.className = 'col-md-6 col-lg-4 mb-4';
+                
+                sectionCard.innerHTML = `
+                    <div class="card h-100 border-0 shadow-sm">
+                        <div class="card-body">
+                            <div class="d-flex align-items-center mb-3">
+                                <div class="me-3">
+                                    <div class="section-icon">
+                                        <i class="${sectionIcon}"></i>
+                                    </div>
+                                </div>
+                                <div>
+                                    <h6 class="fw-bold mb-0">${sectionName}</h6>
+                                    <small class="text-muted">
+                                        ${sectionFeatures.length} SuperAdmin feature(s)
+                                    </small>
+                                </div>
+                            </div>
+                            
+                            <div class="feature-list" style="max-height: 200px; overflow-y: auto;">
+                                ${sectionFeatures
+                                    .sort((a, b) => a.order - b.order)
+                                    .map(feature => `
+                                        <div class="d-flex align-items-center justify-content-between mb-2 p-2 bg-light rounded">
+                                            <div class="d-flex align-items-center">
+                                                <div class="me-2">
+                                                    <i class="${feature.icon || 'fas fa-cog'} text-primary"></i>
+                                                </div>
+                                                <div>
+                                                    <small class="fw-semibold">${feature.label}</small>
+                                                    <div class="d-flex align-items-center gap-1">
+                                                        <span class="badge superadmin-badge badge-sm">
+                                                            SuperAdmin
+                                                        </span>
+                                                        <span class="badge ${feature.isActive ? 'bg-success' : 'bg-secondary'} badge-sm">
+                                                            ${feature.isActive ? 'Active' : 'Inactive'}
+                                                        </span>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <small class="text-muted">#${feature.order}</small>
+                                        </div>
+                                    `).join('')}
+                            </div>
+                        </div>
+                    </div>
+                `;
+                
+                elements.existingFeaturesGrid.appendChild(sectionCard);
+            });
+            
+            if (Object.keys(featuresBySection).length === 0) {
+                elements.existingFeaturesGrid.innerHTML = `
+                    <div class="col-12">
+                        <div class="text-center py-5">
+                            <i class="fas fa-user-shield fs-1 text-muted mb-3"></i>
+                            <h5 class="text-muted">No SuperAdmin features added yet</h5>
+                            <p class="text-muted small">Add your first SuperAdmin feature using the form above</p>
+                        </div>
+                    </div>
+                `;
+            }
+        }
+
+        function initTooltips() {
+            const tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'));
+            tooltipTriggerList.map(function (tooltipTriggerEl) {
+                return new bootstrap.Tooltip(tooltipTriggerEl);
+            });
+        }
+
+        setTimeout(initTooltips, 500);
+    </script>
+</body>
+</html>

@@ -1,0 +1,1085 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Email Templates</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://cdn.jsdelivr.net/npm/quill@2.0.2/dist/quill.snow.css" rel="stylesheet">
+    <style>
+        .template-card {
+            transition: all 0.3s ease;
+            border: 1px solid #e5e7eb;
+            border-radius: 12px;
+            overflow: hidden;
+        }
+        .template-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 15px 30px rgba(0,0,0,0.1);
+        }
+        .template-preview {
+            height: 200px;
+            overflow: hidden;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            position: relative;
+        }
+        .template-preview::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 20px;
+            background: rgba(255,255,255,0.2);
+        }
+        .category-badge {
+            font-size: 11px;
+            padding: 2px 8px;
+            border-radius: 12px;
+        }
+        .editor-container {
+            height: 500px;
+        }
+        .variable-tag {
+            background: #dbeafe;
+            color: #1e40af;
+            padding: 2px 8px;
+            border-radius: 4px;
+            font-size: 12px;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+        .variable-tag:hover {
+            background: #bfdbfe;
+        }
+        .template-thumbnail {
+            width: 100%;
+            height: 150px;
+            background: #f8fafc;
+            border: 1px solid #e2e8f0;
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            overflow: hidden;
+        }
+        .template-modal {
+            max-height: 90vh;
+            overflow-y: auto;
+        }
+        .tab-button {
+            padding: 10px 20px;
+            border-bottom: 3px solid transparent;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        .tab-button.active {
+            border-bottom-color: #3b82f6;
+            color: #3b82f6;
+            font-weight: 600;
+        }
+        .drag-handle {
+            cursor: move;
+            opacity: 0.5;
+            transition: opacity 0.2s;
+        }
+        .drag-handle:hover {
+            opacity: 1;
+        }
+        .sortable-ghost {
+            opacity: 0.4;
+            background: #c7d2fe;
+        }
+        .template-stats {
+            font-size: 12px;
+            color: #6b7280;
+        }
+    </style>
+</head>
+<body class="bg-gray-50">
+    
+ <%- include('../../partials/admin/left') %>
+
+<!-- HEADER -->
+<%- include('../../partials/admin/header') %>
+
+    <!-- Main Content -->
+    <div class="ml-64 p-6">
+        <!-- Header -->
+        <div class="flex justify-between items-center mb-8">
+            <div>
+                <h1 class="text-3xl font-bold text-gray-800">Email Templates</h1>
+                <p class="text-gray-600">Create and manage email templates for campaigns</p>
+            </div>
+            <button onclick="openCreateTemplate()" 
+                   class="bg-blue-600 hover:bg-blue-700 text-white px-5 py-3 rounded-lg flex items-center gap-2">
+                <i class="fas fa-plus-circle"></i>
+                Create Template
+            </button>
+        </div>
+
+        <!-- Tabs -->
+        <div class="mb-6 border-b">
+            <div class="flex space-x-8">
+                <div class="tab-button active" onclick="switchTab('all')">All Templates</div>
+                <div class="tab-button" onclick="switchTab('system')">System Templates</div>
+                <div class="tab-button" onclick="switchTab('marketing')">Marketing</div>
+                <div class="tab-button" onclick="switchTab('transactional')">Transactional</div>
+                <div class="tab-button" onclick="switchTab('archived')">Archived</div>
+            </div>
+        </div>
+
+        <!-- Search and Filter -->
+        <div class="bg-white rounded-xl shadow p-6 mb-8">
+            <div class="grid grid-cols-1 md:grid-cols-4 gap-6">
+                <div>
+                    <label class="block text-sm font-medium mb-2">Search</label>
+                    <input type="text" placeholder="Search templates..." 
+                           class="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500">
+                </div>
+                <div>
+                    <label class="block text-sm font-medium mb-2">Category</label>
+                    <select class="w-full px-4 py-2 border rounded-lg">
+                        <option value="">All Categories</option>
+                        <option value="welcome">Welcome Series</option>
+                        <option value="newsletter">Newsletter</option>
+                        <option value="promotional">Promotional</option>
+                        <option value="transactional">Transactional</option>
+                        <option value="notification">Notification</option>
+                    </select>
+                </div>
+                <div>
+                    <label class="block text-sm font-medium mb-2">Status</label>
+                    <select class="w-full px-4 py-2 border rounded-lg">
+                        <option value="">All Status</option>
+                        <option value="active">Active</option>
+                        <option value="draft">Draft</option>
+                        <option value="archived">Archived</option>
+                    </select>
+                </div>
+                <div>
+                    <label class="block text-sm font-medium mb-2">Sort By</label>
+                    <select class="w-full px-4 py-2 border rounded-lg">
+                        <option value="newest">Newest First</option>
+                        <option value="oldest">Oldest First</option>
+                        <option value="name">Name A-Z</option>
+                        <option value="most_used">Most Used</option>
+                    </select>
+                </div>
+            </div>
+            <div class="mt-6 flex justify-end">
+                <button class="px-6 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700">
+                    Apply Filters
+                </button>
+            </div>
+        </div>
+
+        <!-- Templates Grid -->
+        <div id="allTab" class="tab-content">
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+                
+                <!-- Template 1: Welcome Email -->
+                <div class="template-card bg-white">
+                    <div class="template-preview flex items-center justify-center">
+                        <div class="text-white text-center">
+                            <i class="fas fa-hand-wave text-4xl mb-2"></i>
+                            <p class="font-bold">Welcome Series</p>
+                        </div>
+                    </div>
+                    <div class="p-5">
+                        <div class="flex justify-between items-start mb-3">
+                            <div>
+                                <h3 class="font-bold text-lg mb-1">Welcome Email</h3>
+                                <span class="category-badge bg-blue-100 text-blue-800">Welcome Series</span>
+                            </div>
+                            <div class="dropdown relative">
+                                <button class="w-8 h-8 rounded-lg hover:bg-gray-100">
+                                    <i class="fas fa-ellipsis-v"></i>
+                                </button>
+                                <div class="dropdown-menu absolute right-0 mt-2 w-48 bg-white rounded-lg shadow-lg border hidden">
+                                    <a href="#" class="block px-4 py-2 hover:bg-gray-100" onclick="editTemplate(1)">Edit</a>
+                                    <a href="#" class="block px-4 py-2 hover:bg-gray-100" onclick="duplicateTemplate(1)">Duplicate</a>
+                                    <a href="#" class="block px-4 py-2 hover:bg-gray-100" onclick="previewTemplate(1)">Preview</a>
+                                    <div class="border-t"></div>
+                                    <a href="#" class="block px-4 py-2 hover:bg-gray-100 text-red-600" onclick="archiveTemplate(1)">Archive</a>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <p class="text-gray-600 text-sm mb-4">Welcome new users to your platform with this friendly email template.</p>
+                        
+                        <div class="template-stats flex justify-between mb-4">
+                            <div class="text-center">
+                                <p class="font-bold">24.8%</p>
+                                <p class="text-xs">Open Rate</p>
+                            </div>
+                            <div class="text-center">
+                                <p class="font-bold">845</p>
+                                <p class="text-xs">Uses</p>
+                            </div>
+                            <div class="text-center">
+                                <p class="font-bold">2 days</p>
+                                <p class="text-xs">Last Used</p>
+                            </div>
+                        </div>
+                        
+                        <div class="flex gap-2 mb-4">
+                            <span class="variable-tag" onclick="insertVariable('first_name')">{first_name}</span>
+                            <span class="variable-tag" onclick="insertVariable('company')">{company}</span>
+                            <span class="variable-tag" onclick="insertVariable('signup_date')">{signup_date}</span>
+                        </div>
+                        
+                        <div class="flex justify-between">
+                            <span class="text-sm text-gray-500">
+                                <i class="fas fa-calendar mr-1"></i>
+                                Updated: 2 days ago
+                            </span>
+                            <button onclick="useTemplate(1)" class="px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 text-sm">
+                                Use Template
+                            </button>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Template 2: Newsletter -->
+                <div class="template-card bg-white">
+                    <div class="template-preview" style="background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);">
+                        <div class="text-white text-center p-4">
+                            <i class="fas fa-newspaper text-4xl mb-2"></i>
+                            <p class="font-bold">Weekly Digest</p>
+                        </div>
+                    </div>
+                    <div class="p-5">
+                        <div class="flex justify-between items-start mb-3">
+                            <div>
+                                <h3 class="font-bold text-lg mb-1">Weekly Newsletter</h3>
+                                <span class="category-badge bg-purple-100 text-purple-800">Newsletter</span>
+                            </div>
+                            <div class="dropdown relative">
+                                <button class="w-8 h-8 rounded-lg hover:bg-gray-100">
+                                    <i class="fas fa-ellipsis-v"></i>
+                                </button>
+                            </div>
+                        </div>
+                        
+                        <p class="text-gray-600 text-sm mb-4">Weekly updates and industry insights for your subscribers.</p>
+                        
+                        <div class="template-stats flex justify-between mb-4">
+                            <div class="text-center">
+                                <p class="font-bold">28.5%</p>
+                                <p class="text-xs">Open Rate</p>
+                            </div>
+                            <div class="text-center">
+                                <p class="font-bold">1,245</p>
+                                <p class="text-xs">Uses</p>
+                            </div>
+                            <div class="text-center">
+                                <p class="font-bold">5 days</p>
+                                <p class="text-xs">Last Used</p>
+                            </div>
+                        </div>
+                        
+                        <div class="flex gap-2 mb-4 flex-wrap">
+                            <span class="variable-tag" onclick="insertVariable('week_number')">{week_number}</span>
+                            <span class="variable-tag" onclick="insertVariable('featured_content')">{featured_content}</span>
+                            <span class="variable-tag" onclick="insertVariable('unsubscribe_link')">{unsubscribe_link}</span>
+                        </div>
+                        
+                        <div class="flex justify-between">
+                            <span class="text-sm text-gray-500">
+                                <i class="fas fa-calendar mr-1"></i>
+                                Updated: 1 week ago
+                            </span>
+                            <button onclick="useTemplate(2)" class="px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 text-sm">
+                                Use Template
+                            </button>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Template 3: Promotional -->
+                <div class="template-card bg-white">
+                    <div class="template-preview" style="background: linear-gradient(135deg, #f6d365 0%, #fda085 100%);">
+                        <div class="text-white text-center p-4">
+                            <i class="fas fa-tag text-4xl mb-2"></i>
+                            <p class="font-bold">Sale Announcement</p>
+                        </div>
+                    </div>
+                    <div class="p-5">
+                        <div class="flex justify-between items-start mb-3">
+                            <div>
+                                <h3 class="font-bold text-lg mb-1">Black Friday Sale</h3>
+                                <span class="category-badge bg-orange-100 text-orange-800">Promotional</span>
+                            </div>
+                            <div class="dropdown relative">
+                                <button class="w-8 h-8 rounded-lg hover:bg-gray-100">
+                                    <i class="fas fa-ellipsis-v"></i>
+                                </button>
+                            </div>
+                        </div>
+                        
+                        <p class="text-gray-600 text-sm mb-4">Announce sales and special offers to your customers.</p>
+                        
+                        <div class="template-stats flex justify-between mb-4">
+                            <div class="text-center">
+                                <p class="font-bold">32.4%</p>
+                                <p class="text-xs">Open Rate</p>
+                            </div>
+                            <div class="text-center">
+                                <p class="font-bold">542</p>
+                                <p class="text-xs">Uses</p>
+                            </div>
+                            <div class="text-center">
+                                <p class="font-bold">3 weeks</p>
+                                <p class="text-xs">Last Used</p>
+                            </div>
+                        </div>
+                        
+                        <div class="flex gap-2 mb-4 flex-wrap">
+                            <span class="variable-tag" onclick="insertVariable('discount_percent')">{discount_percent}</span>
+                            <span class="variable-tag" onclick="insertVariable('sale_end_date')">{sale_end_date}</span>
+                            <span class="variable-tag" onclick="insertVariable('product_list')">{product_list}</span>
+                        </div>
+                        
+                        <div class="flex justify-between">
+                            <span class="text-sm text-gray-500">
+                                <i class="fas fa-calendar mr-1"></i>
+                                Updated: 3 weeks ago
+                            </span>
+                            <button onclick="useTemplate(3)" class="px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 text-sm">
+                                Use Template
+                            </button>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Template 4: Password Reset -->
+                <div class="template-card bg-white">
+                    <div class="template-preview" style="background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);">
+                        <div class="text-white text-center p-4">
+                            <i class="fas fa-key text-4xl mb-2"></i>
+                            <p class="font-bold">Security Alert</p>
+                        </div>
+                    </div>
+                    <div class="p-5">
+                        <div class="flex justify-between items-start mb-3">
+                            <div>
+                                <h3 class="font-bold text-lg mb-1">Password Reset</h3>
+                                <span class="category-badge bg-green-100 text-green-800">Transactional</span>
+                            </div>
+                            <div class="dropdown relative">
+                                <button class="w-8 h-8 rounded-lg hover:bg-gray-100">
+                                    <i class="fas fa-ellipsis-v"></i>
+                                </button>
+                            </div>
+                        </div>
+                        
+                        <p class="text-gray-600 text-sm mb-4">Help users reset their passwords with this secure template.</p>
+                        
+                        <div class="template-stats flex justify-between mb-4">
+                            <div class="text-center">
+                                <p class="font-bold">45.2%</p>
+                                <p class="text-xs">Open Rate</p>
+                            </div>
+                            <div class="text-center">
+                                <p class="font-bold">3,245</p>
+                                <p class="text-xs">Uses</p>
+                            </div>
+                            <div class="text-center">
+                                <p class="font-bold">1 day</p>
+                                <p class="text-xs">Last Used</p>
+                            </div>
+                        </div>
+                        
+                        <div class="flex gap-2 mb-4 flex-wrap">
+                            <span class="variable-tag" onclick="insertVariable('reset_link')">{reset_link}</span>
+                            <span class="variable-tag" onclick="insertVariable('expiry_time')">{expiry_time}</span>
+                            <span class="variable-tag" onclick="insertVariable('ip_address')">{ip_address}</span>
+                        </div>
+                        
+                        <div class="flex justify-between">
+                            <span class="text-sm text-gray-500">
+                                <i class="fas fa-calendar mr-1"></i>
+                                Updated: 2 days ago
+                            </span>
+                            <button onclick="useTemplate(4)" class="px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 text-sm">
+                                Use Template
+                            </button>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Template 5: Order Confirmation -->
+                <div class="template-card bg-white">
+                    <div class="template-preview" style="background: linear-gradient(135deg, #43e97b 0%, #38f9d7 100%);">
+                        <div class="text-white text-center p-4">
+                            <i class="fas fa-shopping-cart text-4xl mb-2"></i>
+                            <p class="font-bold">Order Receipt</p>
+                        </div>
+                    </div>
+                    <div class="p-5">
+                        <div class="flex justify-between items-start mb-3">
+                            <div>
+                                <h3 class="font-bold text-lg mb-1">Order Confirmation</h3>
+                                <span class="category-badge bg-indigo-100 text-indigo-800">Transactional</span>
+                            </div>
+                            <div class="dropdown relative">
+                                <button class="w-8 h-8 rounded-lg hover:bg-gray-100">
+                                    <i class="fas fa-ellipsis-v"></i>
+                                </button>
+                            </div>
+                        </div>
+                        
+                        <p class="text-gray-600 text-sm mb-4">Confirm orders and provide receipt details to customers.</p>
+                        
+                        <div class="template-stats flex justify-between mb-4">
+                            <div class="text-center">
+                                <p class="font-bold">52.8%</p>
+                                <p class="text-xs">Open Rate</p>
+                            </div>
+                            <div class="text-center">
+                                <p class="font-bold">4,892</p>
+                                <p class="text-xs">Uses</p>
+                            </div>
+                            <div class="text-center">
+                                <p class="font-bold">Today</p>
+                                <p class="text-xs">Last Used</p>
+                            </div>
+                        </div>
+                        
+                        <div class="flex gap-2 mb-4 flex-wrap">
+                            <span class="variable-tag" onclick="insertVariable('order_number')">{order_number}</span>
+                            <span class="variable-tag" onclick="insertVariable('order_items')">{order_items}</span>
+                            <span class="variable-tag" onclick="insertVariable('total_amount')">{total_amount}</span>
+                            <span class="variable-tag" onclick="insertVariable('tracking_link')">{tracking_link}</span>
+                        </div>
+                        
+                        <div class="flex justify-between">
+                            <span class="text-sm text-gray-500">
+                                <i class="fas fa-calendar mr-1"></i>
+                                Updated: 5 days ago
+                            </span>
+                            <button onclick="useTemplate(5)" class="px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 text-sm">
+                                Use Template
+                            </button>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Template 6: Abandoned Cart -->
+                <div class="template-card bg-white">
+                    <div class="template-preview" style="background: linear-gradient(135deg, #fa709a 0%, #fee140 100%);">
+                        <div class="text-white text-center p-4">
+                            <i class="fas fa-cart-arrow-down text-4xl mb-2"></i>
+                            <p class="font-bold">Cart Recovery</p>
+                        </div>
+                    </div>
+                    <div class="p-5">
+                        <div class="flex justify-between items-start mb-3">
+                            <div>
+                                <h3 class="font-bold text-lg mb-1">Abandoned Cart</h3>
+                                <span class="category-badge bg-pink-100 text-pink-800">Marketing</span>
+                            </div>
+                            <div class="dropdown relative">
+                                <button class="w-8 h-8 rounded-lg hover:bg-gray-100">
+                                    <i class="fas fa-ellipsis-v"></i>
+                                </button>
+                            </div>
+                        </div>
+                        
+                        <p class="text-gray-600 text-sm mb-4">Recover lost sales by reminding customers about abandoned carts.</p>
+                        
+                        <div class="template-stats flex justify-between mb-4">
+                            <div class="text-center">
+                                <p class="font-bold">18.5%</p>
+                                <p class="text-xs">Open Rate</p>
+                            </div>
+                            <div class="text-center">
+                                <p class="font-bold">892</p>
+                                <p class="text-xs">Uses</p>
+                            </div>
+                            <div class="text-center">
+                                <p class="font-bold">4 days</p>
+                                <p class="text-xs">Last Used</p>
+                            </div>
+                        </div>
+                        
+                        <div class="flex gap-2 mb-4 flex-wrap">
+                            <span class="variable-tag" onclick="insertVariable('cart_items')">{cart_items}</span>
+                            <span class="variable-tag" onclick="insertVariable('cart_total')">{cart_total}</span>
+                            <span class="variable-tag" onclick="insertVariable('recovery_discount')">{recovery_discount}</span>
+                        </div>
+                        
+                        <div class="flex justify-between">
+                            <span class="text-sm text-gray-500">
+                                <i class="fas fa-calendar mr-1"></i>
+                                Updated: 1 week ago
+                            </span>
+                            <button onclick="useTemplate(6)" class="px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 text-sm">
+                                Use Template
+                            </button>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Template 7: Invoice -->
+                <div class="template-card bg-white">
+                    <div class="template-preview" style="background: linear-gradient(135deg, #30cfd0 0%, #330867 100%);">
+                        <div class="text-white text-center p-4">
+                            <i class="fas fa-file-invoice-dollar text-4xl mb-2"></i>
+                            <p class="font-bold">Billing</p>
+                        </div>
+                    </div>
+                    <div class="p-5">
+                        <div class="flex justify-between items-start mb-3">
+                            <div>
+                                <h3 class="font-bold text-lg mb-1">Invoice Template</h3>
+                                <span class="category-badge bg-gray-100 text-gray-800">Transactional</span>
+                            </div>
+                            <div class="dropdown relative">
+                                <button class="w-8 h-8 rounded-lg hover:bg-gray-100">
+                                    <i class="fas fa-ellipsis-v"></i>
+                                </button>
+                            </div>
+                        </div>
+                        
+                        <p class="text-gray-600 text-sm mb-4">Send professional invoices to your customers.</p>
+                        
+                        <div class="template-stats flex justify-between mb-4">
+                            <div class="text-center">
+                                <p class="font-bold">62.3%</p>
+                                <p class="text-xs">Open Rate</p>
+                            </div>
+                            <div class="text-center">
+                                <p class="font-bold">2,345</p>
+                                <p class="text-xs">Uses</p>
+                            </div>
+                            <div class="text-center">
+                                <p class="font-bold">Yesterday</p>
+                                <p class="text-xs">Last Used</p>
+                            </div>
+                        </div>
+                        
+                        <div class="flex gap-2 mb-4 flex-wrap">
+                            <span class="variable-tag" onclick="insertVariable('invoice_number')">{invoice_number}</span>
+                            <span class="variable-tag" onclick="insertVariable('due_date')">{due_date}</span>
+                            <span class="variable-tag" onclick="insertVariable('payment_link')">{payment_link}</span>
+                        </div>
+                        
+                        <div class="flex justify-between">
+                            <span class="text-sm text-gray-500">
+                                <i class="fas fa-calendar mr-1"></i>
+                                Updated: 3 days ago
+                            </span>
+                            <button onclick="useTemplate(7)" class="px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 text-sm">
+                                Use Template
+                            </button>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Create New Template Card -->
+                <div class="template-card bg-gradient-to-br from-blue-50 to-indigo-50 border-2 border-dashed border-blue-300 flex flex-col items-center justify-center p-8">
+                    <div class="w-20 h-20 bg-blue-100 rounded-full flex items-center justify-center mb-4">
+                        <i class="fas fa-plus text-blue-600 text-3xl"></i>
+                    </div>
+                    <h3 class="font-bold text-lg mb-2">Create New Template</h3>
+                    <p class="text-gray-600 text-center text-sm mb-6">Design a custom email template from scratch</p>
+                    <button onclick="openCreateTemplate()" 
+                           class="bg-blue-600 hover:bg-blue-700 text-white px-6 py-3 rounded-lg font-medium">
+                        Create Template
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Pagination -->
+        <div class="mt-8 flex justify-between items-center">
+            <p class="text-gray-600">Showing 8 templates</p>
+            <div class="flex gap-2">
+                <button class="w-10 h-10 rounded-lg border flex items-center justify-center hover:bg-gray-50">
+                    <i class="fas fa-chevron-left"></i>
+                </button>
+                <button class="w-10 h-10 rounded-lg bg-blue-600 text-white">1</button>
+                <button class="w-10 h-10 rounded-lg border hover:bg-gray-50">2</button>
+                <button class="w-10 h-10 rounded-lg border flex items-center justify-center hover:bg-gray-50">
+                    <i class="fas fa-chevron-right"></i>
+                </button>
+            </div>
+        </div>
+
+        <!-- Variables Sidebar -->
+        <div class="mt-12 bg-white rounded-xl shadow p-6">
+            <h3 class="font-bold mb-4">Available Variables</h3>
+            <p class="text-gray-600 text-sm mb-6">Click any variable to insert it into your template</p>
+            
+            <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
+                <div class="p-4 border rounded-lg hover:bg-gray-50">
+                    <h4 class="font-bold mb-2">User Variables</h4>
+                    <div class="space-y-2">
+                        <span class="variable-tag block" onclick="insertVariable('first_name')">{first_name}</span>
+                        <span class="variable-tag block" onclick="insertVariable('last_name')">{last_name}</span>
+                        <span class="variable-tag block" onclick="insertVariable('email')">{email}</span>
+                        <span class="variable-tag block" onclick="insertVariable('company')">{company}</span>
+                    </div>
+                </div>
+                
+                <div class="p-4 border rounded-lg hover:bg-gray-50">
+                    <h4 class="font-bold mb-2">System Variables</h4>
+                    <div class="space-y-2">
+                        <span class="variable-tag block" onclick="insertVariable('current_date')">{current_date}</span>
+                        <span class="variable-tag block" onclick="insertVariable('current_year')">{current_year}</span>
+                        <span class="variable-tag block" onclick="insertVariable('unsubscribe_link')">{unsubscribe_link}</span>
+                        <span class="variable-tag block" onclick="insertVariable('web_version')">{web_version}</span>
+                    </div>
+                </div>
+                
+                <div class="p-4 border rounded-lg hover:bg-gray-50">
+                    <h4 class="font-bold mb-2">Marketing Variables</h4>
+                    <div class="space-y-2">
+                        <span class="variable-tag block" onclick="insertVariable('discount_code')">{discount_code}</span>
+                        <span class="variable-tag block" onclick="insertVariable('promo_link')">{promo_link}</span>
+                        <span class="variable-tag block" onclick="insertVariable('campaign_name')">{campaign_name}</span>
+                        <span class="variable-tag block" onclick="insertVariable('product_name')">{product_name}</span>
+                    </div>
+                </div>
+                
+                <div class="p-4 border rounded-lg hover:bg-gray-50">
+                    <h4 class="font-bold mb-2">Transactional Variables</h4>
+                    <div class="space-y-2">
+                        <span class="variable-tag block" onclick="insertVariable('order_number')">{order_number}</span>
+                        <span class="variable-tag block" onclick="insertVariable('invoice_link')">{invoice_link}</span>
+                        <span class="variable-tag block" onclick="insertVariable('reset_link')">{reset_link}</span>
+                        <span class="variable-tag block" onclick="insertVariable('support_email')">{support_email}</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Create/Edit Template Modal -->
+    <div id="templateModal" class="fixed inset-0 bg-black bg-opacity-50 hidden z-50 flex items-center justify-center p-4">
+        <div class="bg-white rounded-xl shadow-lg w-full max-w-6xl max-h-[90vh] overflow-hidden template-modal">
+            <div class="flex justify-between items-center p-6 border-b">
+                <h3 class="text-xl font-bold" id="modalTitle">Create New Template</h3>
+                <button onclick="closeTemplateModal()" class="w-10 h-10 rounded-lg hover:bg-gray-100">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+            
+            <div class="p-6">
+                <!-- Template Form -->
+                <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+                    <!-- Left Column: Form -->
+                    <div class="lg:col-span-2">
+                        <div class="mb-6">
+                            <label class="block text-sm font-medium mb-2">Template Name *</label>
+                            <input type="text" id="templateName" class="w-full px-4 py-3 border rounded-lg" 
+                                   placeholder="e.g., Welcome Email Series">
+                        </div>
+                        
+                        <div class="mb-6">
+                            <label class="block text-sm font-medium mb-2">Subject Line *</label>
+                            <input type="text" id="templateSubject" class="w-full px-4 py-3 border rounded-lg" 
+                                   placeholder="e.g., Welcome to Our Platform!">
+                            <p class="text-sm text-gray-500 mt-1">Use variables like {first_name} to personalize</p>
+                        </div>
+                        
+                        <div class="mb-6">
+                            <label class="block text-sm font-medium mb-2">From Name</label>
+                            <input type="text" id="fromName" class="w-full px-4 py-3 border rounded-lg" 
+                                   placeholder="e.g., Your Company Name">
+                        </div>
+                        
+                        <div class="mb-6">
+                            <label class="block text-sm font-medium mb-2">Email Editor</label>
+                            <div id="editor" class="editor-container border rounded-lg">
+                                <!-- Quill editor will be initialized here -->
+                            </div>
+                        </div>
+                        
+                        <div class="mb-6">
+                            <label class="block text-sm font-medium mb-2">Plain Text Version</label>
+                            <textarea id="plainText" rows="4" class="w-full px-4 py-3 border rounded-lg" 
+                                      placeholder="Plain text version for email clients that don't support HTML"></textarea>
+                        </div>
+                    </div>
+                    
+                    <!-- Right Column: Settings -->
+                    <div>
+                        <div class="bg-gray-50 rounded-lg p-6">
+                            <h4 class="font-bold mb-4">Template Settings</h4>
+                            
+                            <div class="mb-6">
+                                <label class="block text-sm font-medium mb-2">Category</label>
+                                <select id="templateCategory" class="w-full px-4 py-2 border rounded-lg">
+                                    <option value="welcome">Welcome Series</option>
+                                    <option value="newsletter">Newsletter</option>
+                                    <option value="promotional">Promotional</option>
+                                    <option value="transactional">Transactional</option>
+                                    <option value="notification">Notification</option>
+                                </select>
+                            </div>
+                            
+                            <div class="mb-6">
+                                <label class="block text-sm font-medium mb-2">Status</label>
+                                <select id="templateStatus" class="w-full px-4 py-2 border rounded-lg">
+                                    <option value="draft">Draft</option>
+                                    <option value="active">Active</option>
+                                    <option value="archived">Archived</option>
+                                </select>
+                            </div>
+                            
+                            <div class="mb-6">
+                                <label class="block text-sm font-medium mb-2">Tags</label>
+                                <div class="flex flex-wrap gap-2 mb-2" id="tagsContainer">
+                                    <span class="px-3 py-1 bg-blue-100 text-blue-800 rounded-full text-sm">welcome</span>
+                                    <span class="px-3 py-1 bg-green-100 text-green-800 rounded-full text-sm">onboarding</span>
+                                </div>
+                                <input type="text" id="tagInput" class="w-full px-4 py-2 border rounded-lg" 
+                                       placeholder="Add tags (press Enter)">
+                            </div>
+                            
+                            <div class="mb-6">
+                                <label class="block text-sm font-medium mb-2">Preview Image</label>
+                                <div class="template-thumbnail mb-3">
+                                    <i class="fas fa-image text-gray-400 text-3xl"></i>
+                                </div>
+                                <input type="file" class="w-full text-sm" accept="image/*">
+                            </div>
+                            
+                            <div class="mb-6">
+                                <h4 class="font-bold mb-2">Template Variables</h4>
+                                <div class="space-y-2 max-h-40 overflow-y-auto p-2">
+                                    <div class="flex justify-between">
+                                        <span class="variable-tag" onclick="insertToEditor('first_name')">{first_name}</span>
+                                        <span class="text-xs text-gray-500">User's first name</span>
+                                    </div>
+                                    <div class="flex justify-between">
+                                        <span class="variable-tag" onclick="insertToEditor('company')">{company}</span>
+                                        <span class="text-xs text-gray-500">Company name</span>
+                                    </div>
+                                    <div class="flex justify-between">
+                                        <span class="variable-tag" onclick="insertToEditor('signup_date')">{signup_date}</span>
+                                        <span class="text-xs text-gray-500">Signup date</span>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <div class="space-y-4">
+                                <label class="flex items-center">
+                                    <input type="checkbox" class="mr-3 rounded" checked>
+                                    <span class="text-sm">Enable tracking</span>
+                                </label>
+                                <label class="flex items-center">
+                                    <input type="checkbox" class="mr-3 rounded" checked>
+                                    <span class="text-sm">Include unsubscribe link</span>
+                                </label>
+                                <label class="flex items-center">
+                                    <input type="checkbox" class="mr-3 rounded">
+                                    <span class="text-sm">Make template public</span>
+                                </label>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="p-6 border-t flex justify-between">
+                <div>
+                    <button onclick="previewTemplateModal()" class="px-6 py-2 border rounded-lg hover:bg-gray-50 mr-3">
+                        <i class="fas fa-eye mr-2"></i>Preview
+                    </button>
+                    <button onclick="saveAsDraft()" class="px-6 py-2 border rounded-lg hover:bg-gray-50">
+                        Save as Draft
+                    </button>
+                </div>
+                <div class="flex gap-3">
+                    <button onclick="closeTemplateModal()" class="px-6 py-2 border rounded-lg hover:bg-gray-50">
+                        Cancel
+                    </button>
+                    <button onclick="saveTemplate()" class="px-6 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700">
+                        Save Template
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Preview Modal -->
+    <div id="previewModal" class="fixed inset-0 bg-black bg-opacity-50 hidden z-50 flex items-center justify-center p-4">
+        <div class="bg-white rounded-xl shadow-lg w-full max-w-4xl max-h-[90vh] overflow-hidden">
+            <div class="flex justify-between items-center p-6 border-b">
+                <h3 class="text-xl font-bold">Template Preview</h3>
+                <button onclick="closePreview()" class="w-10 h-10 rounded-lg hover:bg-gray-100">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+            <div class="p-6 overflow-y-auto">
+                <div class="email-preview border rounded-lg p-8">
+                    <!-- Preview content will be inserted here -->
+                </div>
+            </div>
+            <div class="p-6 border-t flex justify-end gap-3">
+                <button onclick="closePreview()" class="px-6 py-2 border rounded-lg hover:bg-gray-50">
+                    Close
+                </button>
+                <button onclick="sendTestEmail()" class="px-6 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700">
+                    Send Test Email
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/quill@2.0.2/dist/quill.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/sortablejs@1.15.0/Sortable.min.js"></script>
+    <script>
+        // Quill editor instance
+        let quill;
+        
+        // Initialize Quill editor
+        function initEditor() {
+            quill = new Quill('#editor', {
+                theme: 'snow',
+                modules: {
+                    toolbar: [
+                        [{ 'header': [1, 2, 3, false] }],
+                        ['bold', 'italic', 'underline', 'strike'],
+                        [{ 'color': [] }, { 'background': [] }],
+                        [{ 'list': 'ordered'}, { 'list': 'bullet' }],
+                        ['link', 'image'],
+                        ['clean']
+                    ]
+                }
+            });
+            
+            // Set default content
+            quill.setContents([
+                { insert: 'Welcome to Our Platform!\n', attributes: { header: 1 } },
+                { insert: '\nDear {first_name},\n\n' },
+                { insert: 'Thank you for joining {company}! We\'re excited to have you on board.\n\n' },
+                { insert: 'Best regards,\n', attributes: { bold: true } },
+                { insert: 'The {company} Team' }
+            ]);
+        }
+        
+        // Tab switching
+        function switchTab(tabName) {
+            // Update tab buttons
+            document.querySelectorAll('.tab-button').forEach(button => {
+                button.classList.remove('active');
+                if(button.textContent.toLowerCase().includes(tabName)) {
+                    button.classList.add('active');
+                }
+            });
+            
+            // In real implementation, this would filter templates
+            alert(`Showing ${tabName} templates`);
+        }
+        
+        // Template actions
+        function editTemplate(id) {
+            document.getElementById('modalTitle').textContent = 'Edit Template';
+            document.getElementById('templateName').value = 'Welcome Email';
+            document.getElementById('templateSubject').value = 'Welcome to Our Platform!';
+            document.getElementById('fromName').value = 'Your Company';
+            
+            openTemplateModal();
+        }
+        
+        function duplicateTemplate(id) {
+            if(confirm('Duplicate this template?')) {
+                alert('Template duplicated successfully!');
+            }
+        }
+        
+        function previewTemplate(id) {
+            const previewContent = `
+                <h1 style="color: #333; font-family: Arial, sans-serif;">Welcome to Our Platform!</h1>
+                <p style="color: #666; font-family: Arial, sans-serif;">Dear {first_name},</p>
+                <p style="color: #666; font-family: Arial, sans-serif;">Thank you for joining {company}! We're excited to have you on board.</p>
+                <div style="background: #f3f4f6; padding: 20px; border-radius: 8px; margin: 20px 0;">
+                    <h3 style="color: #3b82f6;">Getting Started</h3>
+                    <ul>
+                        <li>Complete your profile</li>
+                        <li>Explore our features</li>
+                        <li>Connect with others</li>
+                    </ul>
+                </div>
+                <p style="color: #666; font-family: Arial, sans-serif;">Best regards,</p>
+                <p style="color: #666; font-family: Arial, sans-serif;"><strong>The {company} Team</strong></p>
+            `;
+            
+            document.querySelector('.email-preview').innerHTML = previewContent;
+            document.getElementById('previewModal').classList.remove('hidden');
+            document.body.style.overflow = 'hidden';
+        }
+        
+        function archiveTemplate(id) {
+            if(confirm('Archive this template?')) {
+                const template = event.target.closest('.template-card');
+                template.style.opacity = '0.5';
+                setTimeout(() => {
+                    template.remove();
+                    alert('Template archived!');
+                }, 300);
+            }
+        }
+        
+        function useTemplate(id) {
+            window.location.href = `/email/create-campaign?template=${id}`;
+        }
+        
+        // Template modal functions
+        function openCreateTemplate() {
+            document.getElementById('modalTitle').textContent = 'Create New Template';
+            resetForm();
+            openTemplateModal();
+        }
+        
+        function openTemplateModal() {
+            document.getElementById('templateModal').classList.remove('hidden');
+            document.body.style.overflow = 'hidden';
+            
+            // Initialize editor if not already initialized
+            if (!quill) {
+                setTimeout(() => initEditor(), 100);
+            }
+        }
+        
+        function closeTemplateModal() {
+            document.getElementById('templateModal').classList.add('hidden');
+            document.body.style.overflow = 'auto';
+        }
+        
+        function closePreview() {
+            document.getElementById('previewModal').classList.add('hidden');
+            document.body.style.overflow = 'auto';
+        }
+        
+        function resetForm() {
+            document.getElementById('templateName').value = '';
+            document.getElementById('templateSubject').value = '';
+            document.getElementById('fromName').value = '';
+            document.getElementById('plainText').value = '';
+            document.getElementById('templateCategory').selectedIndex = 0;
+            document.getElementById('templateStatus').selectedIndex = 0;
+            
+            if (quill) {
+                quill.setText('');
+            }
+        }
+        
+        // Variable insertion
+        function insertVariable(variable) {
+            alert(`Variable {${variable}} copied to clipboard!`);
+            // In real implementation, this would insert into editor
+        }
+        
+        function insertToEditor(variable) {
+            if (quill) {
+                const cursorPosition = quill.getSelection()?.index || quill.getLength();
+                quill.insertText(cursorPosition, `{${variable}}`);
+            }
+        }
+        
+        // Save functions
+        function saveTemplate() {
+            const name = document.getElementById('templateName').value;
+            if (!name) {
+                alert('Please enter template name');
+                return;
+            }
+            
+            // Show loading
+            const btn = event.target;
+            const originalHTML = btn.innerHTML;
+            btn.innerHTML = '<i class="fas fa-spinner fa-spin mr-2"></i> Saving...';
+            btn.disabled = true;
+            
+            // Simulate save
+            setTimeout(() => {
+                btn.innerHTML = originalHTML;
+                btn.disabled = false;
+                alert('Template saved successfully!');
+                closeTemplateModal();
+            }, 1500);
+        }
+        
+        function saveAsDraft() {
+            alert('Template saved as draft!');
+            closeTemplateModal();
+        }
+        
+        function previewTemplateModal() {
+            const htmlContent = quill ? quill.root.innerHTML : '';
+            document.querySelector('.email-preview').innerHTML = htmlContent;
+            closeTemplateModal();
+            document.getElementById('previewModal').classList.remove('hidden');
+        }
+        
+        function sendTestEmail() {
+            const email = prompt('Enter test email address:');
+            if (email) {
+                alert(`Test email sent to ${email}`);
+                closePreview();
+            }
+        }
+        
+        // Tag management
+        document.getElementById('tagInput').addEventListener('keypress', function(e) {
+            if (e.key === 'Enter') {
+                e.preventDefault();
+                const tag = this.value.trim();
+                if (tag) {
+                    const colors = ['blue', 'green', 'purple', 'orange', 'red', 'indigo'];
+                    const color = colors[Math.floor(Math.random() * colors.length)];
+                    
+                    const tagElement = document.createElement('span');
+                    tagElement.className = `px-3 py-1 bg-${color}-100 text-${color}-800 rounded-full text-sm`;
+                    tagElement.textContent = tag;
+                    
+                    document.getElementById('tagsContainer').appendChild(tagElement);
+                    this.value = '';
+                }
+            }
+        });
+        
+        // Dropdown menus
+        document.addEventListener('click', function(event) {
+            // Close all dropdowns
+            document.querySelectorAll('.dropdown-menu').forEach(menu => {
+                if(!menu.contains(event.target)) {
+                    menu.classList.add('hidden');
+                }
+            });
+            
+            // Toggle clicked dropdown
+            if(event.target.closest('.dropdown button')) {
+                const dropdown = event.target.closest('.dropdown');
+                const menu = dropdown.querySelector('.dropdown-menu');
+                menu.classList.toggle('hidden');
+            }
+        });
+        
+        // Initialize
+        document.addEventListener('DOMContentLoaded', function() {
+            switchTab('all');
+            
+            // Make templates sortable
+            const templatesGrid = document.querySelector('.grid');
+            if (templatesGrid) {
+                new Sortable(templatesGrid, {
+                    animation: 150,
+                    ghostClass: 'sortable-ghost',
+                    handle: '.drag-handle',
+                    onEnd: function() {
+                        console.log('Templates reordered');
+                    }
+                });
+            }
+        });
+    </script>
+</body>
+</html>

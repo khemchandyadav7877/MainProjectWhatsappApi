@@ -1,0 +1,1082 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>WhatsApp Scan - Channels / Devices</title>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+<link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" rel="stylesheet">
+
+<style>
+:root {
+    --primary: #3b82f6;
+    --bg: #f3f6fb;
+    --card: #ffffff;
+    --text: #475569;
+}
+
+body {
+    margin: 0;
+    background: #eef3f8;
+    font-family: system-ui, -apple-system, BlinkMacSystemFont;
+}
+
+/* MAIN CONTENT */
+.main-content {
+    margin-left: 260px;
+    margin-top: 60px;
+    padding: 25px;
+    min-height: calc(100vh - 60px);
+}
+
+@media (max-width: 768px) {
+    .main-content {
+        margin-left: 0;
+        padding: 15px;
+    }
+}
+
+.card {
+    border-radius: 12px;
+    border: none;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+    background: var(--card);
+}
+
+/* BADGES */
+.badge-connected {
+    background: linear-gradient(135deg, #28a745 0%, #20c997 100%);
+    color: white;
+}
+
+.badge-pending {
+    background: linear-gradient(135deg, #ffc107 0%, #fd7e14 100%);
+    color: black;
+}
+
+.badge-offline {
+    background: linear-gradient(135deg, #6c757d 0%, #495057 100%);
+    color: white;
+}
+
+/* TABLE STYLES (EXACTLY LIKE SCREENSHOT) */
+.table th {
+    font-size: 14px;
+    color: #6c757d;
+    white-space: nowrap;
+    font-weight: 600;
+    padding: 15px;
+    background: #f8f9fa;
+    border-bottom: 2px solid #e9ecef;
+}
+
+.table td {
+    vertical-align: middle;
+    font-size: 14px;
+    padding: 15px;
+    border-bottom: 1px solid #f1f5f9;
+}
+
+.token-text {
+    max-width: 200px;
+    word-break: break-all;
+    font-size: 13px;
+    font-family: 'Courier New', monospace;
+    background: #f8f9fa;
+    padding: 5px 10px;
+    border-radius: 5px;
+    border: 1px solid #e9ecef;
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+}
+
+/* THREE-DOT ACTION MENU */
+.action-menu {
+    position: relative;
+    display: inline-block;
+}
+
+.action-menu-btn {
+    width: 36px;
+    height: 36px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: transparent;
+    border: none;
+    color: #6c757d;
+    cursor: pointer;
+    transition: all 0.2s;
+}
+
+.action-menu-btn:hover {
+    background: #f8f9fa;
+    color: #3b82f6;
+}
+
+.action-dropdown {
+    position: absolute;
+    top: 100%;
+    right: 0;
+    min-width: 180px;
+    background: white;
+    border-radius: 8px;
+    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.15);
+    z-index: 1000;
+    padding: 8px;
+    display: none;
+    margin-top: 5px;
+    border: 1px solid #e9ecef;
+}
+
+.action-dropdown.show {
+    display: block;
+    animation: fadeIn 0.2s ease;
+}
+
+.action-item {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 10px 12px;
+    border-radius: 6px;
+    cursor: pointer;
+    transition: all 0.2s;
+    text-decoration: none;
+    color: #475569;
+    border: none;
+    background: transparent;
+    width: 100%;
+    text-align: left;
+    font-size: 14px;
+}
+
+.action-item:hover {
+    background: #f8f9fa;
+    color: #3b82f6;
+}
+
+.action-item.delete:hover {
+    background: #fee2e2;
+    color: #dc2626;
+}
+
+/* ACTION BUTTONS (OLD - KEEPING FOR REFERENCE BUT NOT USED) */
+.action-btn {
+    padding: 6px 12px;
+    border-radius: 6px;
+    font-size: 13px;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.3s;
+    border: none;
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+}
+
+.btn-view {
+    background: #e6f4fb;
+    color: #2196f3;
+}
+
+.btn-view:hover {
+    background: #d4e9f9;
+    transform: translateY(-1px);
+}
+
+.btn-delete {
+    background: #f8d7da;
+    color: #dc3545;
+}
+
+.btn-delete:hover {
+    background: #f5c2c7;
+    transform: translateY(-1px);
+}
+
+/* STATUS BADGE */
+.status-badge {
+    font-size: 11px;
+    padding: 5px 12px;
+    border-radius: 20px;
+    font-weight: 600;
+    letter-spacing: 0.5px;
+}
+
+/* SEARCH INPUT */
+.search-input {
+    border-radius: 8px;
+    border: 2px solid #e9ecef;
+    padding: 8px 15px;
+    font-size: 14px;
+    transition: all 0.3s;
+    width: 250px;
+}
+
+.search-input:focus {
+    outline: none;
+    border-color: var(--primary);
+    box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+}
+
+/* ADD DEVICE BUTTON */
+.btn-add-device {
+    padding: 8px 20px;
+    font-size: 14px;
+    font-weight: 600;
+    border-radius: 8px;
+    background: var(--primary);
+    border: none;
+    color: white;
+    transition: all 0.3s;
+}
+
+.btn-add-device:hover {
+    background: #2563eb;
+    transform: translateY(-1px);
+    box-shadow: 0 5px 15px rgba(59, 130, 246, 0.2);
+}
+
+/* EMPTY STATE */
+.empty-state {
+    text-align: center;
+    padding: 60px 20px;
+}
+
+.empty-state i {
+    font-size: 64px;
+    color: #ccc;
+    margin-bottom: 20px;
+}
+
+.empty-state h5 {
+    color: #6c757d;
+    margin-bottom: 10px;
+}
+
+.empty-state p {
+    color: #adb5bd;
+    max-width: 400px;
+    margin: 0 auto 20px;
+}
+
+/* TABLE ROW HOVER */
+tbody tr {
+    transition: background 0.2s;
+}
+
+tbody tr:hover {
+    background: #f8f9fa;
+}
+
+/* RESPONSIVE */
+@media (max-width: 768px) {
+    .search-input {
+        width: 100%;
+        margin-bottom: 10px;
+    }
+    
+    .main-content {
+        padding: 15px;
+    }
+    
+    .table-responsive {
+        margin: 0 -15px;
+        border-radius: 0;
+    }
+    
+    .token-text {
+        max-width: 150px;
+    }
+    
+    .action-dropdown {
+        right: -50px;
+        min-width: 160px;
+    }
+}
+
+/* =========================
+   MODERN TOAST MESSAGE STYLES
+========================= */
+#toast {
+    position: fixed;
+    top: 24px;
+    right: 24px;
+    width: 320px;
+    padding: 14px 16px;
+    border-radius: 12px;
+    box-shadow: 0 15px 30px rgba(0,0,0,.2);
+    opacity: 0;
+    transform: translateY(-15px);
+    transition: .3s ease;
+    color:#fff;
+    z-index: 9999;
+}
+
+#toast.show {
+    opacity: 1;
+    transform: translateY(0);
+}
+
+.toast-row {
+    display:flex;
+    gap:12px;
+    align-items:flex-start;
+}
+
+.toast-icon {
+    width:34px;
+    height:34px;
+    border-radius:50%;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    font-size:16px;
+    background:rgba(0,0,0,.25);
+}
+
+.toast-text h4 {
+    margin:0;
+    font-size:14px;
+    font-weight:600;
+}
+
+.toast-text p {
+    margin:4px 0 0;
+    font-size:13px;
+    opacity:.9;
+}
+
+/* ✅ Toast Colors */
+.toast-success {
+    background:#16a34a;
+    color:#ffffff;
+}
+.toast-error {
+    background:#dc2626;
+    color:#ffffff;
+}
+.toast-info {
+    background:#2563eb;
+    color:#ffffff;
+}
+.toast-dark {
+    background:#111827;
+    color:#e5e7eb;
+}
+.toast-warning {
+    background:#facc15;
+    color:#1f2937;
+}
+
+/* Progress bar */
+.toast-progress {
+    height:3px;
+    border-radius:4px;
+    margin-top:10px;
+    background:rgba(255,255,255,.6);
+    animation: toast-load 3s linear forwards;
+}
+
+.toast-warning .toast-progress {
+    background:rgba(0,0,0,.4);
+}
+
+@keyframes toast-load {
+    from { width:100%; }
+    to { width:0%; }
+}
+
+/* =========================
+   IMPROVED WHATSAPP VIDEO STYLE LOADER
+========================= */
+.qr-loader {
+    width:220px;
+    height:220px;
+    margin:auto;
+    position:relative;
+    background: #f8fafc;
+    border-radius: 20px;
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+    overflow: hidden;
+}
+
+/* Animated background effect */
+.qr-loader::before {
+    content: '';
+    position: absolute;
+    top: -50%;
+    left: -50%;
+    width: 200%;
+    height: 200%;
+    background: linear-gradient(
+        45deg,
+        transparent 30%,
+        rgba(37, 211, 102, 0.1) 50%,
+        transparent 70%
+    );
+    animation: shimmer 2s infinite linear;
+}
+
+.ring {
+    position:absolute;
+    inset:0;
+    animation: rotate 1.8s linear infinite;
+}
+
+.dot-big {
+    width:95px;
+    height:95px;
+    background:#22c55e;
+    border-radius:50%;
+    position:absolute;
+    bottom:20px;
+    left:25px;
+    box-shadow: 0 8px 24px rgba(34, 197, 94, 0.4);
+    animation: pulse-green 2s infinite ease-in-out;
+}
+
+.dot-small {
+    width:55px;
+    height:55px;
+    background:#1d9bf0;
+    border-radius:50%;
+    position:absolute;
+    top:20px;
+    right:25px;
+    box-shadow: 0 8px 24px rgba(29, 155, 240, 0.4);
+    animation: pulse-blue 2s infinite ease-in-out;
+}
+
+.dot-big::after,
+.dot-small::after {
+    content:'';
+    position:absolute;
+    inset:-12px;
+    border-radius:50%;
+    background:inherit;
+    opacity:.25;
+    filter:blur(14px);
+    animation: glow 2s infinite ease-in-out;
+}
+
+/* WhatsApp logo in center */
+.whatsapp-center {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    z-index: 2;
+    font-size: 40px;
+    color: #075e54;
+    animation: heartbeat 1.5s infinite ease-in-out;
+}
+
+/* Loading dots text */
+.loading-text {
+    margin-top: 20px;
+    font-size: 14px;
+    color: #64748b;
+    font-weight: 500;
+}
+
+.loading-text span {
+    animation: dots 1.5s infinite;
+    opacity: 0;
+}
+
+.loading-text span:nth-child(1) { animation-delay: 0.1s; }
+.loading-text span:nth-child(2) { animation-delay: 0.2s; }
+.loading-text span:nth-child(3) { animation-delay: 0.3s; }
+
+/* Improved QR styling */
+#qrImage {
+    width:220px;
+    height:220px;
+    border-radius: 12px;
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.15);
+    border: 2px solid #e2e8f0;
+    padding: 10px;
+    background: white;
+    animation: fadeIn 0.5s ease-out;
+}
+
+/* Status indicator */
+.status-indicator {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    margin-top: 15px;
+    font-size: 13px;
+}
+
+/* Animations */
+@keyframes rotate {
+    from { transform: rotate(0deg); }
+    to   { transform: rotate(360deg); }
+}
+
+@keyframes pulse-green {
+    0%, 100% { transform: scale(1); }
+    50% { transform: scale(1.05); }
+}
+
+@keyframes pulse-blue {
+    0%, 100% { transform: scale(1); }
+    50% { transform: scale(1.08); }
+}
+
+@keyframes glow {
+    0%, 100% { opacity: 0.25; transform: scale(1); }
+    50% { opacity: 0.4; transform: scale(1.1); }
+}
+
+@keyframes shimmer {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+}
+
+@keyframes heartbeat {
+    0%, 100% { transform: translate(-50%, -50%) scale(1); }
+    50% { transform: translate(-50%, -50%) scale(1.1); }
+}
+
+@keyframes dots {
+    0%, 100% { opacity: 0; }
+    50% { opacity: 1; }
+}
+
+@keyframes fadeIn {
+    from { opacity: 0; transform: scale(0.9); }
+    to { opacity: 1; transform: scale(1); }
+}
+
+@keyframes slideUp {
+    from { opacity: 0; transform: translateY(10px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+/* Connection success animation */
+.success-animation {
+    animation: slideUp 0.5s ease-out;
+}
+
+.connected-check {
+    color: #22c55e;
+    font-size: 24px;
+    animation: bounceIn 0.5s ease-out;
+}
+
+@keyframes bounceIn {
+    0% { transform: scale(0); }
+    70% { transform: scale(1.2); }
+    100% { transform: scale(1); }
+}
+
+/* Countdown timer */
+.countdown {
+    font-size: 12px;
+    color: #ef4444;
+    font-weight: 600;
+    background: #fee2e2;
+    padding: 4px 12px;
+    border-radius: 20px;
+    display: inline-block;
+    margin-top: 10px;
+}
+</style>
+</head>
+
+<body>
+
+<%- include('../partials/admin/left') %>
+<%- include('../partials/admin/header') %>
+
+<!-- Toast Container -->
+<div id="toast"></div>
+
+<!-- MAIN CONTENT -->
+<div class="main-content">
+
+    <div class="card shadow-sm">
+        <div class="card-body p-4">
+
+            <!-- HEADER -->
+            <div class="d-flex justify-content-between align-items-center flex-wrap gap-3 mb-4">
+                <div>
+                    <h5 class="fw-bold mb-2">
+                        <i class="fas fa-whatsapp me-2 text-success"></i> WhatsApp Devices
+                    </h5>
+                    <p class="text-muted mb-0">Manage your WhatsApp connection devices</p>
+                </div>
+
+                <div class="d-flex gap-2 flex-wrap">
+                    <input type="text" class="form-control search-input" placeholder="Search devices..." id="searchInput">
+                    <button class="btn btn-add-device d-flex align-items-center gap-2" onclick="openQrModal()">
+                        <i class="fas fa-plus"></i> Add New Device
+                    </button>
+                </div>
+            </div>
+
+            <!-- TABLE -->
+            <div class="table-responsive">
+               <table class="table table-hover align-middle">
+    <thead class="table-light">
+        <tr>
+            <th>Device Name</th>
+            <th>WhatsApp Name</th>
+            <th>IP Address</th>
+            <th>Added On</th>
+            <!-- <th>Access Token</th> -->
+            <th>Status</th>
+            <th>WhatsApp Number</th>
+            <th class="text-center">Actions</th>
+        </tr>
+    </thead>
+
+    <tbody id="deviceTable">
+        <% if (devices && devices.length > 0) { %>
+            <% devices.forEach(device => { %>
+            <tr>
+                <td>
+                    <div class="d-flex align-items-center gap-2">
+                        <% if (device.connectionStatus === 'online') { %>
+                            <i class="fas fa-whatsapp fa-lg text-success"></i>
+                        <% } else if (device.connectionStatus === 'pending') { %>
+                            <i class="fas fa-qrcode fa-lg text-warning"></i>
+                        <% } else { %>
+                            <i class="fas fa-whatsapp fa-lg text-secondary"></i>
+                        <% } %>
+                        <div>
+                            <strong>WhatsApp Device</strong>
+                            <div class="small text-muted">ID: <%= device.deviceId.substring(0, 8) %>...</div>
+                        </div>
+                    </div>
+                </td>
+                <td>
+                    <strong><%= device.whatsappName || 'Not Available' %></strong>
+                </td>
+                <td><%= device.ipAddress || '-' %></td>
+                <td>
+                    <div class="small">
+                        <% if (device.deviceAddedAt) { %>
+                            <strong><%= new Date(device.deviceAddedAt).toLocaleDateString() %></strong>
+                            <div class="text-muted"><%= new Date(device.deviceAddedAt).toLocaleTimeString() %></div>
+                        <% } else if (device.createdAt) { %>
+                            <strong><%= new Date(device.createdAt).toLocaleDateString() %></strong>
+                            <div class="text-muted"><%= new Date(device.createdAt).toLocaleTimeString() %></div>
+                        <% } else { %>
+                            <span class="text-muted">-</span>
+                        <% } %>
+                    </div>
+                </td>
+                <!-- <td>
+                    <div class="token-text">
+                        <% if (device.token) { %>
+                            <small><%= device.token.substring(0, 20) %>...</small>
+                        <% } else { %>
+                            <span class="text-muted">No token</span>
+                        <% } %>
+                    </div>
+                </td> -->
+                <td>
+                    <% if (device.connectionStatus === 'online') { %>
+                        <span class="badge badge-connected status-badge">
+                            <i class="fas fa-wifi me-1"></i> CONNECTED
+                        </span>
+                    <% } else if (device.connectionStatus === 'pending') { %>
+                        <span class="badge badge-pending status-badge">
+                            <i class="fas fa-clock me-1"></i> PENDING SCAN
+                        </span>
+                    <% } else { %>
+                        <span class="badge badge-offline status-badge">
+                            <i class="fas fa-ban me-1"></i> OFFLINE
+                        </span>
+                    <% } %>
+                </td>
+                <td>
+                    <% if (device.whatsappNumber) { %>
+                        <span class="badge bg-light text-dark p-2">
+                            <i class="fas fa-phone me-1"></i> <%= device.whatsappNumber %>
+                        </span>
+                    <% } else if (device.phone) { %>
+                        <span class="badge bg-light text-dark p-2">
+                            <i class="fas fa-phone me-1"></i> <%= device.phone %>
+                        </span>
+                    <% } else { %>
+                        <span class="text-muted">Not connected</span>
+                    <% } %>
+                </td>
+                <td class="text-center">
+                    <div class="action-menu">
+                        <button class="action-menu-btn" onclick="toggleActionMenu(event, '<%= device.deviceId %>', '<%= device.token %>')">
+                            <i class="fas fa-ellipsis-v"></i>
+                        </button>
+                        <div class="action-dropdown" id="actionMenu-<%= device.deviceId %>">
+                            <button class="action-item" onclick="copyToken('<%= device.token %>')">
+                                <i class="fas fa-copy"></i> Copy Token
+                            </button>
+                            <button class="action-item delete" onclick="deleteDevice('<%= device.deviceId %>')">
+                                <i class="fas fa-trash"></i> Delete Device
+                            </button>
+                        </div>
+                    </div>
+                </td>
+            </tr>
+            <% }) %>
+        <% } else { %>
+            <tr>
+                <td colspan="8">
+                    <div class="empty-state">
+                        <i class="fas fa-whatsapp"></i>
+                        <h5>No WhatsApp Devices Found</h5>
+                        <p>You haven't added any WhatsApp devices yet. Click "Add New Device" to connect your WhatsApp account.</p>
+                        <button class="btn btn-primary" onclick="openQrModal()">
+                            <i class="fas fa-plus me-2"></i> Add Your First Device
+                        </button>
+                    </div>
+                </td>
+            </tr>
+        <% } %>
+    </tbody>
+</table>
+            </div>
+
+        </div>
+    </div>
+
+</div>
+
+<!-- =====================
+     IMPROVED QR MODAL
+===================== -->
+<div class="modal fade" id="qrModal" tabindex="-1">
+<div class="modal-dialog modal-dialog-centered">
+<div class="modal-content">
+
+<div class="modal-header">
+<h5 class="modal-title">Scan QR to Add New Device</h5>
+<button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+</div>
+
+<div class="modal-body text-center">
+
+<!-- Improved Loader -->
+<div id="qrLoader" class="qr-loader">
+    <div class="ring">
+        <div class="dot-big"></div>
+        <div class="dot-small"></div>
+    </div>
+    <div class="whatsapp-center">
+        <i class="fab fa-whatsapp"></i>
+    </div>
+</div>
+
+<!-- Loading Text -->
+<div id="loadingText" class="loading-text">
+    Preparing QR<span>.</span><span>.</span><span>.</span>
+</div>
+
+<!-- QR Code Container -->
+<div id="qrContainer" style="display:none">
+    <img id="qrImage" width="220"/>
+    
+    <div class="status-indicator">
+        <div class="spinner-border spinner-border-sm text-primary" role="status">
+            <span class="visually-hidden">Loading...</span>
+        </div>
+        <span class="text-muted">Waiting for scan...</span>
+    </div>
+    
+    <div id="countdownTimer" class="countdown mt-2" style="display:none">
+        Expires in: <span id="timerValue">120</span>s
+    </div>
+    
+    <p class="mt-3 text-muted" style="font-size:13px">
+        <i class="fas fa-info-circle me-1"></i>
+        Scan this QR code from your WhatsApp → Linked Devices
+    </p>
+</div>
+
+<!-- Success Message -->
+<div id="successMessage" class="success-animation" style="display:none">
+    <div class="connected-check">
+        <i class="fas fa-check-circle"></i>
+    </div>
+    <h6 class="mt-3 text-success">Device Connected Successfully!</h6>
+    <p class="text-muted" style="font-size:13px">
+        Page will refresh automatically...
+    </p>
+</div>
+
+</div>
+
+<div class="modal-footer">
+    <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">
+        <i class="fas fa-times me-1"></i> Cancel
+    </button>
+    <button type="button" class="btn btn-primary" onclick="refreshQR()" id="refreshBtn" style="display:none">
+        <i class="fas fa-redo me-1"></i> Refresh QR
+    </button>
+</div>
+
+</div>
+</div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+
+<script>
+// GLOBAL VARIABLES
+let currentDeviceId;
+let pollInterval;
+
+// ======================
+// THREE-DOT ACTION MENU FUNCTIONS
+// ======================
+function toggleActionMenu(event, deviceId, token) {
+    event.stopPropagation();
+    
+    // Close all other open menus
+    document.querySelectorAll('.action-dropdown.show').forEach(menu => {
+        if (menu.id !== `actionMenu-${deviceId}`) {
+            menu.classList.remove('show');
+        }
+    });
+    
+    // Toggle current menu
+    const menu = document.getElementById(`actionMenu-${deviceId}`);
+    if (menu) {
+        menu.classList.toggle('show');
+        
+        // Store device info for use in menu actions
+        menu.dataset.deviceId = deviceId;
+        menu.dataset.token = token;
+    }
+}
+
+// Close action menus when clicking outside
+document.addEventListener('click', function(event) {
+    if (!event.target.closest('.action-menu')) {
+        document.querySelectorAll('.action-dropdown.show').forEach(menu => {
+            menu.classList.remove('show');
+        });
+    }
+});
+
+// ======================
+// TOAST FUNCTION (SIMPLE WORKING VERSION)
+// ======================
+function showToast(title, message, type = 'info') {
+    const toast = document.getElementById('toast');
+    
+    // Clear any existing timeout
+    if (window.toastTimeout) {
+        clearTimeout(window.toastTimeout);
+    }
+    
+    // Set icon based on type
+    const icons = {
+        'success': '✔',
+        'error': '✖',
+        'warning': '⚠',
+        'info': 'ℹ',
+        'dark': '☾'
+    };
+    
+    const icon = icons[type] || 'ℹ';
+    
+    // Set toast content
+    toast.className = '';
+    toast.innerHTML = `
+        <div class="toast-row">
+            <div class="toast-icon">${icon}</div>
+            <div class="toast-text">
+                <h4>${title}</h4>
+                <p>${message}</p>
+            </div>
+        </div>
+        <div class="toast-progress"></div>
+    `;
+    
+    // Add type class
+    toast.classList.add(`toast-${type}`, 'show');
+    
+    // Auto hide after 3 seconds
+    window.toastTimeout = setTimeout(() => {
+        toast.classList.remove('show');
+    }, 3000);
+}
+
+// ======================
+// MODAL FUNCTIONS (WORKING VERSION FROM SIMPLE TEMPLATE)
+// ======================
+function openQrModal(){
+    // Reset UI - EXACTLY LIKE YOUR WORKING TEMPLATE
+    document.getElementById('qrLoader').style.display = 'block';
+    document.getElementById('loadingText').style.display = 'block';
+    document.getElementById('qrContainer').style.display = 'none';
+    document.getElementById('successMessage').style.display = 'none';
+    document.getElementById('refreshBtn').style.display = 'none';
+    
+    // Show modal
+    const modal = new bootstrap.Modal(document.getElementById('qrModal'));
+    modal.show();
+    
+    // Show loading toast
+    showToast('Creating Device', 'Generating new WhatsApp device...', 'info');
+    
+    // SIMPLE FETCH LIKE YOUR WORKING TEMPLATE
+    fetch('/add-device', { method:'POST' })
+    .then(r => r.json())
+    .then(data => {
+        if (data.status) {
+            currentDeviceId = data.deviceId;
+            showToast('Device Created', 'QR code generating...', 'success');
+            startPolling(); // Start polling for QR
+        } else {
+            showToast('Error', data.msg || 'Failed to create device', 'error');
+        }
+    })
+    .catch(error => {
+        console.error('Error:', error);
+        showToast('Error', 'Failed to generate QR. Please try again.', 'error');
+    });
+}
+
+// SIMPLE POLLING FUNCTION (EXACTLY LIKE YOUR WORKING TEMPLATE)
+function startPolling(){
+    clearInterval(pollInterval);
+    
+    pollInterval = setInterval(() => {
+        fetch('/get-qr/' + currentDeviceId)
+        .then(r => r.json())
+        .then(data => {
+            console.log('QR Polling Response:', data);
+            
+            if (data.status === 'CONNECTED') {
+                // Device connected successfully
+                clearInterval(pollInterval);
+                
+                // Show success message
+                document.getElementById('qrLoader').style.display = 'none';
+                document.getElementById('loadingText').style.display = 'none';
+                document.getElementById('qrContainer').style.display = 'none';
+                document.getElementById('successMessage').style.display = 'block';
+                
+                showToast('Success', 'Device connected successfully!', 'success');
+                
+                // Auto refresh after 2 seconds
+                setTimeout(() => {
+                    location.reload();
+                }, 2000);
+            }
+            else if (data.qr) {
+                // QR code received
+                document.getElementById('qrLoader').style.display = 'none';
+                document.getElementById('loadingText').style.display = 'none';
+                document.getElementById('qrContainer').style.display = 'block';
+                document.getElementById('qrImage').src = data.qr;
+                document.getElementById('refreshBtn').style.display = 'block';
+                
+                showToast('QR Ready', 'Scan the QR code with WhatsApp', 'info');
+            }
+        })
+        .catch(error => {
+            console.error('Error polling QR:', error);
+        });
+    }, 1500); // Poll every 1.5 seconds
+}
+
+// REFRESH QR FUNCTION
+function refreshQR() {
+    if (currentDeviceId) {
+        // Show loading state
+        document.getElementById('qrContainer').style.display = 'none';
+        document.getElementById('qrLoader').style.display = 'block';
+        document.getElementById('loadingText').style.display = 'block';
+        
+        showToast('Refreshing', 'Generating new QR code...', 'info');
+        
+        // Start polling again
+        startPolling();
+    }
+}
+
+// ======================
+// UTILITY FUNCTIONS
+// ======================
+function copyToken(token){
+    // Close the action menu
+    document.querySelectorAll('.action-dropdown.show').forEach(menu => {
+        menu.classList.remove('show');
+    });
+    
+    navigator.clipboard.writeText(token);
+    showToast('Copied!', 'Token copied to clipboard', 'success');
+}
+
+function deleteDevice(deviceId){
+    // Close the action menu
+    document.querySelectorAll('.action-dropdown.show').forEach(menu => {
+        menu.classList.remove('show');
+    });
+    
+    // Show deleting toast (NO ALERT DIALOG)
+    showToast('Deleting Device', 'Removing device from system...', 'info');
+    
+    fetch('/delete-device/' + deviceId, { method:'DELETE' })
+    .then(r => r.json())
+    .then(data => {
+        if (data.status) {
+            showToast('Deleted', 'Device deleted successfully!', 'success');
+            setTimeout(() => location.reload(), 1000);
+        } else {
+            showToast('Error', data.msg || 'Failed to delete device', 'error');
+        }
+    })
+    .catch(error => {
+        console.error('Error deleting device:', error);
+        showToast('Error', 'Error deleting device. Please try again.', 'error');
+    });
+}
+
+// Search functionality
+document.getElementById('searchInput').addEventListener('input', function() {
+    const searchTerm = this.value.toLowerCase();
+    const rows = document.querySelectorAll('#deviceTable tr');
+    
+    rows.forEach(row => {
+        if (row.querySelector('.empty-state')) return;
+        
+        const text = row.textContent.toLowerCase();
+        row.style.display = text.includes(searchTerm) ? '' : 'none';
+    });
+});
+
+// Clean up intervals when modal is closed
+document.getElementById('qrModal').addEventListener('hidden.bs.modal', function() {
+    clearInterval(pollInterval);
+    showToast('Cancelled', 'QR code generation cancelled', 'warning');
+});
+
+// Initialize tooltips
+document.addEventListener('DOMContentLoaded', function() {
+    var tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'));
+    var tooltipList = tooltipTriggerList.map(function (tooltipTriggerEl) {
+        return new bootstrap.Tooltip(tooltipTriggerEl);
+    });
+    
+    // Show initial toast
+    showToast('WhatsApp Devices', 'Manage your WhatsApp connection devices', 'info');
+});
+</script>
+
+</body>
+</html>

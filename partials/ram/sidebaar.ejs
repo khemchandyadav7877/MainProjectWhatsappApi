@@ -1,0 +1,1219 @@
+<!-- views/partials/sidebar.ejs - FINAL FIXED VERSION -->
+
+<%
+// Get user role color
+const getRoleColor = (role) => {
+    switch(role) {
+        case 'SuperAdmin': return '#4f46e5';
+        case 'Educator': return '#3b82f6';
+        case 'Trainer': return '#10b981';
+        case 'Student': return '#f59e0b';
+        default: return '#6b7280';
+    }
+};
+
+const user = locals.user || {};
+const roleColor = getRoleColor(user.role);
+%>
+
+<!-- Font Awesome -->
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+<style>
+/* ===== SIDEBAR STYLES ===== */
+:root {
+    --sidebar-width: 280px;
+    --sidebar-collapsed: 80px;
+    --primary-color: <%= roleColor %>;
+    --bg-primary: #ffffff;
+    --bg-secondary: #f9fafb;
+    --bg-hover: #f3f4f6;
+    --text-primary: #111827;
+    --text-secondary: #6b7280;
+    --border-color: #e5e7eb;
+    --shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+    --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+    --radius: 0.5rem;
+}
+
+.sidebar {
+    width: var(--sidebar-width);
+    height: 100vh;
+    background: var(--bg-primary);
+    border-right: 1px solid var(--border-color);
+    position: fixed;
+    left: 0;
+    top: 0;
+    display: flex;
+    flex-direction: column;
+    z-index: 1000;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    box-shadow: var(--shadow-md);
+}
+
+.sidebar.collapsed {
+    width: var(--sidebar-collapsed);
+}
+
+/* Header */
+.sidebar-header {
+    padding: 1.25rem 1rem;
+    border-bottom: 1px solid var(--border-color);
+    flex-shrink: 0;
+}
+
+.logo-wrapper {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+}
+
+.logo-icon {
+    font-size: 1.75rem;
+    color: var(--primary-color);
+}
+
+.logo-text {
+    display: flex;
+    flex-direction: column;
+}
+
+.logo-title {
+    font-size: 1.125rem;
+    font-weight: 700;
+    color: var(--text-primary);
+    line-height: 1.2;
+}
+
+.logo-subtitle {
+    font-size: 0.675rem;
+    color: var(--text-secondary);
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+/* Collapse Button */
+.collapse-btn {
+    position: absolute;
+    right: -12px;
+    top: 80px;
+    width: 24px;
+    height: 24px;
+    background: var(--bg-primary);
+    border: 1px solid var(--border-color);
+    border-radius: 50%;
+    color: var(--text-secondary);
+    font-size: 0.75rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    z-index: 1001;
+    transition: all 0.2s;
+    box-shadow: var(--shadow-sm);
+}
+
+.collapse-btn:hover {
+    background: var(--primary-color);
+    color: white;
+    border-color: var(--primary-color);
+}
+
+/* Content */
+.sidebar-content {
+    flex: 1;
+    padding: 1.25rem 1rem;
+    overflow-y: auto;
+    display: flex;
+    flex-direction: column;
+}
+
+/* Custom Scrollbar */
+.sidebar-content::-webkit-scrollbar {
+    width: 6px;
+}
+
+.sidebar-content::-webkit-scrollbar-track {
+    background: transparent;
+}
+
+.sidebar-content::-webkit-scrollbar-thumb {
+    background: var(--border-color);
+    border-radius: 3px;
+}
+
+.sidebar-content::-webkit-scrollbar-thumb:hover {
+    background: var(--text-secondary);
+}
+
+/* User Card */
+.user-card {
+    background: linear-gradient(135deg, <%= roleColor %>10, transparent);
+    border: 1px solid var(--border-color);
+    border-radius: var(--radius);
+    padding: 1rem;
+    margin-bottom: 1.5rem;
+}
+
+.user-avatar-wrapper {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    margin-bottom: 0.75rem;
+}
+
+.avatar {
+    position: relative;
+    width: 48px;
+    height: 48px;
+    border-radius: 50%;
+    background: var(--primary-color);
+    color: white;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: 600;
+    font-size: 1.125rem;
+    flex-shrink: 0;
+}
+
+.online-indicator {
+    position: absolute;
+    bottom: 2px;
+    right: 2px;
+    width: 10px;
+    height: 10px;
+    background: #10b981;
+    border: 2px solid white;
+    border-radius: 50%;
+    animation: pulse 2s infinite;
+}
+
+@keyframes pulse {
+    0%, 100% { opacity: 1; }
+    50% { opacity: 0.5; }
+}
+
+.user-details {
+    overflow: hidden;
+}
+
+.user-name {
+    margin: 0 0 0.25rem 0;
+    font-size: 0.875rem;
+    font-weight: 600;
+    color: var(--text-primary);
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.role-badge {
+    display: inline-block;
+    padding: 0.25rem 0.5rem;
+    background: var(--primary-color);
+    color: white;
+    font-size: 0.675rem;
+    font-weight: 600;
+    border-radius: 1rem;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+.user-email {
+    margin: 0.25rem 0 0 0;
+    font-size: 0.675rem;
+    color: var(--text-secondary);
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+/* Stats */
+.user-stats {
+    display: flex;
+    gap: 0.75rem;
+    padding-top: 0.75rem;
+    border-top: 1px solid var(--border-color);
+}
+
+.stat-item {
+    flex: 1;
+    text-align: center;
+}
+
+.stat-value {
+    display: block;
+    font-size: 1.125rem;
+    font-weight: 700;
+    color: var(--primary-color);
+}
+
+.stat-label {
+    display: block;
+    font-size: 0.625rem;
+    color: var(--text-secondary);
+    text-transform: uppercase;
+}
+
+/* Navigation */
+.nav-sections {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    gap: 0.125rem;
+    margin-bottom: 1rem;
+}
+
+/* Section Title */
+.section-title {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0.625rem 0.75rem;
+    border-radius: 0.375rem;
+    cursor: pointer;
+    color: var(--text-secondary);
+    font-weight: 600;
+    font-size: 0.75rem;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    transition: all 0.2s;
+}
+
+.section-title:hover {
+    background: var(--bg-hover);
+    color: var(--text-primary);
+}
+
+.section-title.open {
+    color: var(--primary-color);
+    background: <%= roleColor %>08;
+}
+
+.section-left {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.section-icon {
+    font-size: 0.875rem;
+    width: 20px;
+    text-align: center;
+}
+
+.arrow-icon {
+    font-size: 0.75rem;
+    transition: transform 0.2s;
+}
+
+.arrow-icon.rotate {
+    transform: rotate(180deg);
+}
+
+/* Section Links */
+.section-links {
+    padding: 0.25rem 0 0.25rem 2.25rem;
+    display: flex;
+    flex-direction: column;
+    gap: 0.125rem;
+}
+
+/* Nav Link */
+.nav-link {
+    display: flex;
+    align-items: center;
+    gap: 0.625rem;
+    padding: 0.625rem 0.75rem;
+    color: var(--text-secondary);
+    font-size: 0.813rem;
+    font-weight: 500;
+    border-radius: 0.375rem;
+    transition: all 0.2s;
+    text-decoration: none;
+    position: relative;
+}
+
+.nav-link:hover {
+    background: var(--bg-hover);
+    color: var(--text-primary);
+    transform: translateX(2px);
+}
+
+.nav-link.active {
+    background: <%= roleColor %>10;
+    color: var(--primary-color);
+    font-weight: 600;
+}
+
+.nav-link.active::before {
+    content: '';
+    position: absolute;
+    left: 0;
+    top: 50%;
+    transform: translateY(-50%);
+    width: 3px;
+    height: 16px;
+    background: var(--primary-color);
+    border-radius: 0 2px 2px 0;
+}
+
+.link-icon {
+    font-size: 0.875rem;
+    width: 18px;
+    text-align: center;
+}
+
+/* Feature Actions */
+.feature-wrapper {
+    display: flex;
+    align-items: center;
+    gap: 0.25rem;
+    position: relative;
+}
+
+.feature-actions {
+    display: flex;
+    gap: 0.125rem;
+    opacity: 0;
+    transition: opacity 0.2s;
+}
+
+.feature-wrapper:hover .feature-actions {
+    opacity: 1;
+}
+
+.action-btn {
+    width: 24px;
+    height: 24px;
+    border-radius: 4px;
+    border: 1px solid var(--border-color);
+    background: white;
+    color: var(--text-secondary);
+    font-size: 0.75rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: all 0.2s;
+}
+
+.action-btn:hover {
+    transform: scale(1.1);
+}
+
+.toggle-btn:hover {
+    color: #10b981;
+    border-color: #10b981;
+}
+
+.delete-btn:hover {
+    color: #ef4444;
+    border-color: #ef4444;
+}
+
+/* Empty State */
+.empty-state {
+    text-align: center;
+    padding: 2rem 1rem;
+    background: var(--bg-secondary);
+    border-radius: var(--radius);
+    border: 2px dashed var(--border-color);
+    margin: 1rem 0;
+}
+
+.empty-icon {
+    font-size: 2rem;
+    color: var(--text-secondary);
+    opacity: 0.5;
+    margin-bottom: 0.5rem;
+}
+
+.empty-title {
+    color: var(--text-secondary);
+    font-size: 0.875rem;
+    margin-bottom: 0.25rem;
+}
+
+.empty-subtitle {
+    color: var(--text-secondary);
+    font-size: 0.75rem;
+    opacity: 0.7;
+}
+
+/* Logout */
+.logout-link {
+    display: flex;
+    align-items: center;
+    gap: 0.625rem;
+    padding: 0.625rem 0.75rem;
+    background: #fef2f2;
+    border: 1px solid #fee2e2;
+    border-radius: 0.375rem;
+    color: #dc2626;
+    font-size: 0.813rem;
+    font-weight: 500;
+    text-decoration: none;
+    transition: all 0.2s;
+    margin-top: auto;
+}
+
+.logout-link:hover {
+    background: #fee2e2;
+    transform: translateY(-1px);
+}
+
+/* Collapsed State */
+.sidebar.collapsed .logo-text,
+.sidebar.collapsed .user-details,
+.sidebar.collapsed .user-stats,
+.sidebar.collapsed .section-title span:not(.section-icon),
+.sidebar.collapsed .arrow-icon,
+.sidebar.collapsed .section-links,
+.sidebar.collapsed .nav-link span:not(.link-icon),
+.sidebar.collapsed .logout-link span,
+.sidebar.collapsed .feature-actions {
+    display: none;
+}
+
+.sidebar.collapsed .section-title {
+    padding: 0.625rem;
+    justify-content: center;
+}
+
+.sidebar.collapsed .nav-link {
+    padding: 0.625rem;
+    justify-content: center;
+}
+
+.sidebar.collapsed .user-avatar-wrapper {
+    justify-content: center;
+}
+
+/* Mobile */
+.mobile-toggle {
+    display: none;
+    position: fixed;
+    top: 1rem;
+    left: 1rem;
+    z-index: 999;
+    width: 40px;
+    height: 40px;
+    border-radius: 0.5rem;
+    border: none;
+    background: var(--primary-color);
+    color: white;
+    font-size: 1rem;
+    cursor: pointer;
+    box-shadow: var(--shadow-md);
+    align-items: center;
+    justify-content: center;
+}
+
+.sidebar-overlay {
+    display: none;
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(0, 0, 0, 0.5);
+    backdrop-filter: blur(2px);
+    z-index: 998;
+}
+
+@media (max-width: 768px) {
+    .mobile-toggle {
+        display: flex;
+    }
+    
+    .sidebar {
+        transform: translateX(-100%);
+        box-shadow: none;
+    }
+    
+    .sidebar.open {
+        transform: translateX(0);
+        box-shadow: var(--shadow-md);
+    }
+    
+    .sidebar-overlay.active {
+        display: block;
+    }
+    
+    .collapse-btn {
+        display: none;
+    }
+}
+
+/* Loading */
+.loading-spinner {
+    text-align: center;
+    padding: 2rem;
+}
+
+.spinner {
+    width: 40px;
+    height: 40px;
+    border: 3px solid var(--border-color);
+    border-top-color: var(--primary-color);
+    border-radius: 50%;
+    animation: spin 1s linear infinite;
+    margin: 0 auto 0.5rem;
+}
+
+@keyframes spin {
+    to { transform: rotate(360deg); }
+}
+
+/* Toast Animations */
+@keyframes slideIn {
+    from { 
+        transform: translateX(100%); 
+        opacity: 0; 
+    }
+    to { 
+        transform: translateX(0); 
+        opacity: 1; 
+    }
+}
+
+@keyframes slideOut {
+    from { 
+        transform: translateX(0); 
+        opacity: 1; 
+    }
+    to { 
+        transform: translateX(100%); 
+        opacity: 0; 
+    }
+}
+
+.toast-notification {
+    position: fixed;
+    top: 20px;
+    right: 20px;
+    background: #10b981;
+    color: white;
+    padding: 12px 20px;
+    border-radius: 6px;
+    font-size: 14px;
+    font-weight: 500;
+    box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+    z-index: 9999;
+    animation: slideIn 0.3s ease;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.toast-error {
+    background: #ef4444;
+}
+</style>
+
+<!-- Mobile Toggle -->
+<button class="mobile-toggle" onclick="toggleMobileSidebar()" style="background: <%= roleColor %>;">
+    <i class="fas fa-bars" id="mobileIcon"></i>
+</button>
+
+<!-- Overlay -->
+<div class="sidebar-overlay" onclick="closeMobileSidebar()"></div>
+
+<!-- Main Sidebar -->
+<div class="sidebar" id="mainSidebar">
+    <!-- Header -->
+    <div class="sidebar-header">
+        <div class="logo-wrapper">
+            <i class="fas fa-graduation-cap logo-icon"></i>
+            <div class="logo-text">
+                <span class="logo-title">WhatsApp API</span>
+                <span class="logo-subtitle"><%= user.role || 'User' %> Panel</span>
+            </div>
+        </div>
+    </div>
+
+    <!-- Collapse Button -->
+    <button class="collapse-btn" onclick="toggleCollapse()">
+        <i class="fas fa-chevron-left" id="collapseIcon"></i>
+    </button>
+
+    <!-- Content -->
+    <div class="sidebar-content">
+        <!-- User Card -->
+        <div class="user-card">
+            <div class="user-avatar-wrapper">
+                <div class="avatar">
+                    <%= (user.firstName || user.email || 'U').charAt(0).toUpperCase() %>
+                    <span class="online-indicator"></span>
+                </div>
+                
+                <div class="user-details">
+                    <h4 class="user-name">
+                        <%= user.firstName || '' %> <%= user.lastName || '' %>
+                    </h4>
+                    <span class="role-badge" style="background: <%= roleColor %>;">
+                        <%= user.role || 'User' %>
+                    </span>
+                    <p class="user-email"><%= user.email || '' %></p>
+                </div>
+            </div>
+            
+            <div class="user-stats">
+                <div class="stat-item">
+                    <span class="stat-value" id="featuresCount">0</span>
+                    <span class="stat-label">Features</span>
+                </div>
+                <div class="stat-item">
+                    <span class="stat-value" id="sectionsCount">0</span>
+                    <span class="stat-label">Sections</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- Navigation -->
+        <div class="nav-sections" id="navContainer">
+            <!-- Dynamic Features Container -->
+            <div id="featuresContainer"></div>
+        </div>
+
+        <!-- Logout -->
+        <a href="/logout" class="logout-link">
+            <i class="fas fa-sign-out-alt"></i>
+            <span>Logout</span>
+        </a>
+    </div>
+</div>
+
+<script>
+// ============================================
+// SIDEBAR JAVASCRIPT - FINAL FIXED VERSION
+// ============================================
+
+// ✅ COMPLETE Path Mappings for ALL features
+const pathMappings = {
+    // Dashboard
+    'Dashboard': '/dashboard',
+    'Notifications': '/notifications',
+
+    // Reports
+    'Web Report': '/reports/web',
+    'API Reports': '/reports/api',
+
+    // Chats
+    'New Chat': '/chats/new',
+
+    // Virtual Numbers
+    'My Numbers': '/virtual-numbers',
+    'Buy Number': '/virtual-numbers/buy',
+    'Call Logs': '/virtual-numbers/call-logs',
+    'SMS Logs': '/virtual-numbers/sms-logs',
+
+    // Devices
+    'Add Device': '/devices/add',
+    'All Devices': '/devices',
+    'Campaign': '/devices/campaign',
+
+    // RCS
+    'RCS Campaign': '/devices/campaign',
+    'RCS Reports': '/rcs/reports',
+    'RCS Templates': '/rcs/templates',
+
+    // Scan device
+    'Whatsapp Scan': '/scan/whatsapp',
+
+    // API
+    'API Document': '/api/document',
+    'File Upload': '/api/file-upload',
+
+    // Client Management
+    'All Clients': '/clients',
+    'Add Client': '/clients/add',
+
+    // Administration
+    'Role Permissions': '/role-permissions',
+    'Add New Feature': '/add-new-feature'
+};
+
+// Section icons mapping
+const sectionIcons = {
+    'Dashboard': 'tachometer-alt',
+    'Reports': 'chart-bar',
+    'Chats': 'comments',
+    'Virtual Numbers': 'phone',
+    'Devices': 'mobile-alt',
+    'RCS': 'envelope',
+    'Scan device': 'qrcode',
+    'API': 'code',
+    'Client Management': 'users-cog',
+    'Administration': 'shield-alt'
+};
+
+// Feature icons mapping
+const featureIcons = {
+    'Dashboard': 'tachometer-alt',
+    'Notifications': 'bell',
+    'Web Report': 'chart-line',
+    'API Reports': 'chart-pie',
+    'New Chat': 'comment',
+    'My Numbers': 'phone-alt',
+    'Buy Number': 'shopping-cart',
+    'Call Logs': 'phone',
+    'SMS Logs': 'sms',
+    'Add Device': 'plus-circle',
+    'All Devices': 'mobile-alt',
+    'Campaign': 'bullhorn',
+    'RCS Campaign': 'envelope-open',
+    'RCS Reports': 'chart-bar',
+    'RCS Templates': 'file-alt',
+    'Whatsapp Scan': 'qrcode',
+    'API Document': 'file-code',
+    'File Upload': 'upload',
+    'All Clients': 'users',
+    'Add Client': 'user-plus',
+    'Role Permissions': 'user-shield',
+    'Add New Feature': 'plus-circle'
+};
+
+// State
+let features = [];
+let openSections = {};
+let isCollapsed = localStorage.getItem('sidebarCollapsed') === 'true';
+let userRole = '<%= user.role || "" %>';
+
+// ✅ Initialize on page load
+document.addEventListener('DOMContentLoaded', function() {
+    console.log('🚀 Sidebar initializing...');
+    console.log('👤 User role:', userRole);
+    
+    // Load saved section states
+    try {
+        const saved = localStorage.getItem('sidebarOpenSections');
+        if (saved) openSections = JSON.parse(saved);
+    } catch(e) {
+        console.error('Error parsing saved sections:', e);
+        openSections = {};
+    }
+    
+    // Apply collapsed state
+    if (isCollapsed) {
+        document.getElementById('mainSidebar').classList.add('collapsed');
+        document.getElementById('collapseIcon').className = 'fas fa-chevron-right';
+    }
+    
+    // Load features
+    loadSidebarFeatures();
+    
+    // Listen for updates from other tabs
+    window.addEventListener('storage', function(e) {
+        if (e.key === 'sidebarFeatures' || e.key === 'sidebar-update-time') {
+            console.log('🔄 Update detected from another tab');
+            loadSidebarFeatures(true);
+        }
+    });
+});
+
+// ✅ LOAD FEATURES FROM LOCALSTORAGE
+function loadSidebarFeatures(silent = false) {
+    const container = document.getElementById('featuresContainer');
+    
+    if (!silent) {
+        container.innerHTML = `
+            <div class="loading-spinner">
+                <div class="spinner"></div>
+                <p style="color: var(--text-secondary); font-size: 0.75rem;">Loading features...</p>
+            </div>
+        `;
+    }
+    
+    try {
+        // Get features from localStorage
+        const savedFeatures = localStorage.getItem('sidebarFeatures');
+        
+        if (!savedFeatures) {
+            console.log('ℹ️ No features in localStorage');
+            showEmptyState(container, 'No features available', 'Contact SuperAdmin for access');
+            updateStats([]);
+            return;
+        }
+        
+        // Parse features
+        const allFeatures = JSON.parse(savedFeatures);
+        console.log('✅ All features:', allFeatures.length);
+        
+        // ✅ FIX: SuperAdmin sees ALL features, others see their role features
+        let userFeatures = [];
+        
+        if (userRole === 'SuperAdmin') {
+            // SuperAdmin ko saare features dikhao
+            userFeatures = allFeatures.filter(f => f.isActive !== false);
+            console.log('👑 SuperAdmin: showing all features');
+        } else {
+            // Others ko sirf unke role ke features dikhao
+            userFeatures = allFeatures.filter(f => 
+                f.role === userRole && f.isActive !== false
+            );
+            console.log(`👤 ${userRole}: showing ${userFeatures.length} features`);
+        }
+        
+        if (userFeatures.length === 0) {
+            showEmptyState(
+                container, 
+                `No features for ${userRole}`, 
+                userRole === 'SuperAdmin' ? 'Add features from Admin panel' : 'Contact SuperAdmin for access',
+                userRole === 'SuperAdmin' ? '/add-new-feature' : null
+            );
+            updateStats([]);
+            return;
+        }
+        
+        // Add paths to features
+        const featuresWithPaths = userFeatures.map(feature => {
+            // Clean label (remove numbers)
+            const cleanLabel = feature.label.replace(/^\d+\.\s*/, '');
+            
+            // Get path from mapping or use existing
+            let path = feature.path || pathMappings[cleanLabel] || '#';
+            
+            return {
+                ...feature,
+                cleanLabel: cleanLabel,
+                path: path
+            };
+        });
+        
+        // Update state and render
+        features = featuresWithPaths;
+        renderFeatures(features);
+        updateStats(features);
+        
+    } catch (error) {
+        console.error('❌ Error loading features:', error);
+        showEmptyState(container, 'Failed to load features', error.message);
+    }
+}
+
+// ✅ RENDER FEATURES
+function renderFeatures(featuresList) {
+    const container = document.getElementById('featuresContainer');
+    
+    if (!featuresList || featuresList.length === 0) {
+        showEmptyState(container, 'No features available', 'Contact SuperAdmin for access');
+        return;
+    }
+    
+    // Group features by section (clean section names)
+    const grouped = {};
+    featuresList.forEach(f => {
+        const cleanSection = f.section.replace('*** ', '');
+        if (!grouped[cleanSection]) grouped[cleanSection] = [];
+        grouped[cleanSection].push(f);
+    });
+    
+    // Sort sections
+    const sections = Object.keys(grouped).sort((a, b) => {
+        const order = { 
+            'Dashboard': 1, 
+            'Reports': 2,
+            'Chats': 3,
+            'Virtual Numbers': 4,
+            'Devices': 5,
+            'RCS': 6,
+            'Scan device': 7,
+            'API': 8,
+            'Client Management': 9,
+            'Administration': 10
+        };
+        return (order[a] || 99) - (order[b] || 99);
+    });
+    
+    // Build HTML
+    let html = '';
+    const currentPath = window.location.pathname;
+    
+    sections.forEach(section => {
+        const isOpen = openSections[section] ?? true;
+        const sectionFeatures = grouped[section].sort((a, b) => 
+            (a.order || 999) - (b.order || 999)
+        );
+        
+        const sectionIcon = sectionIcons[section] || 'folder';
+        
+        html += `
+            <div class="nav-section">
+                <div class="section-title ${isOpen ? 'open' : ''}" 
+                     onclick="toggleSection('${escapeString(section)}')">
+                    <div class="section-left">
+                        <span class="section-icon">
+                            <i class="fas fa-${sectionIcon}"></i>
+                        </span>
+                        <span>${section}</span>
+                    </div>
+                    <i class="fas fa-chevron-down arrow-icon ${isOpen ? 'rotate' : ''}"></i>
+                </div>
+                
+                ${isOpen ? `
+                    <div class="section-links">
+                        ${sectionFeatures.map(f => renderFeature(f, currentPath)).join('')}
+                    </div>
+                ` : ''}
+            </div>
+        `;
+    });
+    
+    container.innerHTML = html;
+}
+
+// ✅ RENDER SINGLE FEATURE
+function renderFeature(feature, currentPath) {
+    const displayName = feature.cleanLabel || feature.label.replace(/^\d+\.\s*/, '');
+    const isActive = currentPath === feature.path;
+    const iconName = featureIcons[displayName] || 'circle';
+    const hasPath = feature.path && feature.path !== '#';
+    
+    return `
+        <div class="feature-wrapper">
+            <a href="${hasPath ? feature.path : '#'}" 
+               class="nav-link ${isActive ? 'active' : ''} ${!hasPath ? 'disabled' : ''}"
+               ${!hasPath ? 'onclick="return false;" style="opacity:0.6; cursor:not-allowed;"' : ''}>
+                <span class="link-icon">
+                    <i class="fas fa-${iconName}"></i>
+                </span>
+                <span class="feature-name">${displayName}</span>
+                ${!hasPath ? '<span class="warning-icon" title="No path configured">⚠️</span>' : ''}
+            </a>
+            
+            ${userRole === 'SuperAdmin' && !isCollapsed ? `
+                <div class="feature-actions">
+                    <button onclick="toggleFeatureStatus('${feature.id}', ${feature.isActive})" 
+                            class="action-btn toggle-btn"
+                            title="${feature.isActive ? 'Disable' : 'Enable'}">
+                        <i class="fas fa-toggle-${feature.isActive ? 'on' : 'off'}"></i>
+                    </button>
+                    <button onclick="deleteFeature('${feature.id}', '${escapeString(displayName)}')" 
+                            class="action-btn delete-btn"
+                            title="Delete">
+                        <i class="fas fa-trash"></i>
+                    </button>
+                </div>
+            ` : ''}
+        </div>
+    `;
+}
+
+// ✅ SHOW EMPTY STATE
+function showEmptyState(container, title, message, addLink = null) {
+    let html = `
+        <div class="empty-state">
+            <i class="fas fa-cubes empty-icon"></i>
+            <p class="empty-title">${title}</p>
+            <p class="empty-subtitle">${message}</p>
+    `;
+    
+    if (addLink) {
+        html += `<a href="${addLink}" class="add-feature-btn" style="display:inline-block; margin-top:1rem; padding:0.5rem 1rem; background:#4f46e5; color:white; text-decoration:none; border-radius:0.375rem;">+ Add Feature</a>`;
+    }
+    
+    html += '</div>';
+    container.innerHTML = html;
+}
+
+// ✅ UPDATE STATS
+function updateStats(featuresList) {
+    const activeFeatures = featuresList.filter(f => f.isActive !== false);
+    const sections = new Set(activeFeatures.map(f => f.section.replace('*** ', '')));
+    
+    document.getElementById('featuresCount').textContent = activeFeatures.length;
+    document.getElementById('sectionsCount').textContent = sections.size;
+}
+
+// ✅ TOGGLE SECTION
+function toggleSection(section) {
+    openSections[section] = !openSections[section];
+    
+    try {
+        localStorage.setItem('sidebarOpenSections', JSON.stringify(openSections));
+    } catch(e) {
+        console.error('Error saving section state:', e);
+    }
+    
+    renderFeatures(features);
+}
+
+// ✅ TOGGLE COLLAPSE
+function toggleCollapse() {
+    const sidebar = document.getElementById('mainSidebar');
+    const icon = document.getElementById('collapseIcon');
+    
+    isCollapsed = !isCollapsed;
+    
+    try {
+        localStorage.setItem('sidebarCollapsed', isCollapsed);
+    } catch(e) {
+        console.error('Error saving collapse state:', e);
+    }
+    
+    if (isCollapsed) {
+        sidebar.classList.add('collapsed');
+        icon.className = 'fas fa-chevron-right';
+    } else {
+        sidebar.classList.remove('collapsed');
+        icon.className = 'fas fa-chevron-left';
+        renderFeatures(features);
+    }
+}
+
+// ✅ TOGGLE MOBILE
+function toggleMobileSidebar() {
+    const sidebar = document.getElementById('mainSidebar');
+    const icon = document.getElementById('mobileIcon');
+    const overlay = document.querySelector('.sidebar-overlay');
+    
+    sidebar.classList.toggle('open');
+    
+    if (sidebar.classList.contains('open')) {
+        icon.className = 'fas fa-times';
+        overlay.classList.add('active');
+    } else {
+        icon.className = 'fas fa-bars';
+        overlay.classList.remove('active');
+    }
+}
+
+function closeMobileSidebar() {
+    const sidebar = document.getElementById('mainSidebar');
+    const icon = document.getElementById('mobileIcon');
+    const overlay = document.querySelector('.sidebar-overlay');
+    
+    sidebar.classList.remove('open');
+    icon.className = 'fas fa-bars';
+    overlay.classList.remove('active');
+}
+
+// ✅ TOGGLE FEATURE STATUS (SuperAdmin only)
+function toggleFeatureStatus(id, currentStatus) {
+    if (userRole !== 'SuperAdmin') {
+        showToast('Permission denied', 'error');
+        return;
+    }
+    
+    try {
+        const savedFeatures = localStorage.getItem('sidebarFeatures');
+        if (!savedFeatures) {
+            showToast('No features found', 'error');
+            return;
+        }
+        
+        let allFeatures = JSON.parse(savedFeatures);
+        
+        const featureIndex = allFeatures.findIndex(f => f.id == id);
+        if (featureIndex === -1) {
+            showToast('Feature not found', 'error');
+            return;
+        }
+        
+        allFeatures[featureIndex].isActive = !allFeatures[featureIndex].isActive;
+        
+        localStorage.setItem('sidebarFeatures', JSON.stringify(allFeatures));
+        
+        showToast(`Feature ${allFeatures[featureIndex].isActive ? 'enabled' : 'disabled'}`, 'success');
+        
+        // Update localStorage timestamp for other tabs
+        localStorage.setItem('sidebar-update-time', Date.now().toString());
+        
+        // Reload features
+        loadSidebarFeatures();
+        
+    } catch (err) {
+        console.error('Error:', err);
+        showToast('Failed to update feature', 'error');
+    }
+}
+
+// ✅ DELETE FEATURE (SuperAdmin only)
+function deleteFeature(id, name) {
+    if (userRole !== 'SuperAdmin') {
+        showToast('Permission denied', 'error');
+        return;
+    }
+    
+    if (!confirm(`Are you sure you want to delete "${name}"?`)) {
+        return;
+    }
+    
+    try {
+        const savedFeatures = localStorage.getItem('sidebarFeatures');
+        if (!savedFeatures) {
+            showToast('No features found', 'error');
+            return;
+        }
+        
+        let allFeatures = JSON.parse(savedFeatures);
+        
+        allFeatures = allFeatures.filter(f => f.id != id);
+        
+        localStorage.setItem('sidebarFeatures', JSON.stringify(allFeatures));
+        
+        showToast('Feature deleted successfully', 'success');
+        
+        // Update localStorage timestamp for other tabs
+        localStorage.setItem('sidebar-update-time', Date.now().toString());
+        
+        // Reload features
+        loadSidebarFeatures();
+        
+    } catch (err) {
+        console.error('Error:', err);
+        showToast('Failed to delete feature', 'error');
+    }
+}
+
+// ✅ UTILITIES
+function escapeString(str) {
+    if (!str) return '';
+    return str.replace(/'/g, "\\'").replace(/"/g, '&quot;');
+}
+
+function showToast(message, type = 'success') {
+    // Remove existing toast
+    document.querySelectorAll('.toast-notification').forEach(t => t.remove());
+    
+    const toast = document.createElement('div');
+    toast.className = `toast-notification ${type === 'error' ? 'toast-error' : ''}`;
+    
+    const icon = type === 'success' ? 'fa-check-circle' : 'fa-exclamation-circle';
+    
+    toast.innerHTML = `
+        <i class="fas ${icon}"></i>
+        <span>${message}</span>
+    `;
+    
+    document.body.appendChild(toast);
+    
+    setTimeout(() => {
+        toast.style.animation = 'slideOut 0.3s ease';
+        setTimeout(() => toast.remove(), 300);
+    }, 3000);
+}
+
+// ✅ Manual refresh function
+window.refreshSidebar = function() {
+    console.log('🔄 Manual sidebar refresh triggered');
+    loadSidebarFeatures();
+};
+
+// ✅ Observe URL changes for active link tracking
+let lastUrl = location.href;
+new MutationObserver(() => {
+    const url = location.href;
+    if (url !== lastUrl) {
+        lastUrl = url;
+        console.log('📍 URL changed to:', url);
+        // Re-render to update active state
+        renderFeatures(features);
+    }
+}).observe(document, {subtree: true, childList: true});
+
+console.log('✅ Sidebar script loaded successfully');
+</script>

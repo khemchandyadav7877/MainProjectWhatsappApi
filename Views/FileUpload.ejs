@@ -1,0 +1,242 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Upload Media</title>
+
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+<style>
+body{
+    margin:0;
+    font-family:system-ui, Arial;
+    background:#f3f6fb;
+}
+
+/* MAIN CONTENT */
+.main-content{
+    margin-left:220px;
+    margin-top:55px;
+    padding:20px;
+}
+
+/* UPLOAD CARD (2 COLORS + WHITE) */
+.upload-card{
+    background:linear-gradient(135deg,#ffffff 0%, #eafbf2 50%, #e6f7ff 100%);
+    border-radius:14px;
+    padding:30px;
+    height:220px;
+    position:relative;
+    box-shadow:0 10px 25px rgba(0,0,0,.08);
+}
+
+/* UPLOAD HEADER */
+.upload-header{
+    font-size:18px;
+    color:#475569;
+    font-weight:600;
+}
+
+/* CENTER UPLOAD */
+.upload-center{
+    position:absolute;
+    top:50%;
+    left:50%;
+    transform:translate(-50%,-50%);
+    text-align:center;
+}
+
+.upload-center i{
+    font-size:32px;
+    color:#38bdf8;
+}
+
+.upload-center p{
+    margin:8px 0;
+    color:#0ea5e9;
+    font-weight:600;
+}
+
+.upload-center button{
+    margin-top:10px;
+    padding:8px 22px;
+    border:none;
+    border-radius:8px;
+    background:#22c55e;
+    color:#fff;
+    font-size:15px;
+    cursor:pointer;
+}
+
+/* TABLE CARD */
+.table-card{
+    background:#fff;
+    margin-top:20px;
+    border-radius:14px;
+    padding:20px;
+    box-shadow:0 10px 25px rgba(0,0,0,.08);
+}
+
+/* TABLE HEADER */
+.table-top{
+    display:flex;
+    justify-content:flex-end;
+    margin-bottom:10px;
+}
+
+.table-top input{
+    padding:6px 10px;
+    border-radius:6px;
+    border:1px solid #cbd5e1;
+}
+
+/* TABLE */
+table{
+    width:100%;
+    border-collapse:collapse;
+}
+
+thead{
+    background:#eef3f8;
+}
+
+th,td{
+    padding:12px;
+    text-align:left;
+    font-size:15px;
+}
+
+tbody tr:nth-child(even){
+    background:#f8fafc;
+}
+
+td a{
+    color:#64748b;
+    text-decoration:none;
+}
+
+/* PAGINATION */
+.pagination{
+    display:flex;
+    justify-content:flex-end;
+    margin-top:12px;
+}
+
+.pagination button{
+    width:34px;
+    height:34px;
+    border:1px solid #cbd5e1;
+    background:#fff;
+    border-radius:6px;
+    cursor:pointer;
+}
+
+/* FLOATING SETTINGS ICON */
+.customize{
+    position:fixed;
+    right:1px;
+    top:45%;
+    background:#fff;
+    border-radius:50%;
+    width:44px;
+    height:44px;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    box-shadow:0 8px 20px rgba(0,0,0,.2);
+    z-index:9999;
+}
+
+.customize i{
+    color:#3b82f6;
+    font-size:20px;
+    animation:gearRotate 2s linear infinite;
+}
+
+/* GEAR ROTATION */
+@keyframes gearRotate{
+    from{ transform:rotate(0deg); }
+    to{ transform:rotate(360deg); }
+}
+
+/* MOBILE */
+@media(max-width:768px){
+    .main-content{
+        margin-left:0;
+        margin-top:55px;
+    }
+}
+</style>
+</head>
+
+<body>
+
+ <%- include('../partials/ram/header') %>
+        <%- include('../partials/ram/sidebaar') %>
+
+<!-- MAIN PAGE -->
+<div class="main-content">
+
+    <!-- UPLOAD -->
+    <div class="upload-card">
+        <div class="upload-header">Upload Your File</div>
+
+        <div class="upload-center">
+            <i class="fa-solid fa-cloud-arrow-up"></i>
+            <p>Upload Media File</p>
+            <button>Submit</button>
+        </div>
+    </div>
+
+    <!-- TABLE -->
+    <div class="table-card">
+
+        <div class="table-top">
+            Search:&nbsp;
+            <input type="text">
+        </div>
+
+        <table>
+            <thead>
+                <tr>
+                    <th style="width:120px;">ID</th>
+                    <th>File URL</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td>398497</td>
+                    <td>
+                        <a href="#">
+                            https://int.chatway.in/uploads/16e2754e98082cb9bc39b97440ff73b7.png
+                        </a>
+                    </td>
+                </tr>
+                <tr>
+                    <td>396542</td>
+                    <td>
+                        <a href="#">
+                            https://int.chatway.in/uploads/cb743fa24570d9e727cb91ff45817e76.jpg
+                        </a>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+
+        <div class="pagination">
+            <button>&lt;</button>
+            <button>&gt;</button>
+        </div>
+
+    </div>
+
+</div>
+
+<!-- SETTINGS ICON -->
+<div class="customize">
+    <i class="fa-solid fa-gear"></i>
+</div>
+
+</body>
+</html>

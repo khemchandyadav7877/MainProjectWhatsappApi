@@ -1,0 +1,662 @@
+router.get('/email/add-provider',(req,res)=>{
+    res.render('Email/add-provider.ejs')
+})
+router.get('/email/campaigns',(req,res)=>{
+    res.render('Email/campaigns.ejs')
+})
+router.get('/email/reports',(req,res)=>{
+    res.render('Email/email-reports.ejs')
+})
+router.get('/email/templates',(req,res)=>{
+    res.render('Email/templates.ejs')
+})
+
+
+
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard</title>
+
+    <!-- Bootstrap 5 -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+    <style>
+        :root {
+            --primary: #3b82f6;
+            --bg: #f3f6fb;
+            --card: #ffffff;
+            --text: #475569;
+            --sidebar-width: 260px;
+            --header-height: 60px;
+        }
+
+        body {
+            margin: 0;
+            background: #eef3f8;
+            font-family: system-ui, -apple-system, sans-serif;
+            overflow-x: hidden;
+        }
+
+        /* SIDEBAR SIMULATION (since you have actual sidebar) */
+        .sidebar-sim {
+            position: fixed;
+            left: 0;
+            top: 0;
+            width: var(--sidebar-width);
+            height: 100vh;
+            background: #1e293b;
+            color: white;
+            padding: 20px;
+            z-index: 1000;
+        }
+
+        .sidebar-sim h5 {
+            color: white;
+            margin-bottom: 20px;
+        }
+
+        .sidebar-sim ul {
+            list-style: none;
+            padding: 0;
+        }
+
+        .sidebar-sim li {
+            padding: 10px 0;
+            color: #94a3b8;
+        }
+
+        /* HEADER SIMULATION */
+        .header-sim {
+            position: fixed;
+            top: 0;
+            left: var(--sidebar-width);
+            right: 0;
+            height: var(--header-height);
+            background: white;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0 25px;
+            z-index: 999;
+        }
+
+        .header-sim h4 {
+            margin: 0;
+            color: #334155;
+        }
+
+        .user-profile {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        /* MAIN CONTENT */
+        .main-content {
+            margin-left: var(--sidebar-width);
+            margin-top: var(--header-height);
+            padding: 25px;
+            min-height: calc(100vh - var(--header-height));
+            transition: all 0.3s ease;
+        }
+
+        /* NOTICE BOX */
+        .notice-box {
+            background: #fff;
+            border: 2px solid var(--primary);
+            border-radius: 20px;
+            padding: 20px;
+            text-align: center;
+            margin-bottom: 25px;
+        }
+
+        /* CARD BOX */
+        .card-box {
+            background: var(--card);
+            border-radius: 7px;
+            padding: 25px;
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.06);
+            margin-bottom: 25px;
+        }
+
+        /* QUICK LINKS */
+        .quick-links {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 25px;
+            margin-top: 20px;
+        }
+
+        .quick-item {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            font-weight: 600;
+            color: var(--primary);
+        }
+
+        .quick-item i {
+            width: 36px;
+            height: 36px;
+            border-radius: 10px;
+            background: #eaf1ff;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .quick-item a {
+            color: var(--primary);
+            text-decoration: none;
+            transition: color 0.2s;
+        }
+
+        .quick-item a:hover {
+            color: #2563eb;
+        }
+
+        /* USER INFO */
+        .user-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 25px;
+            margin-top: 30px;
+        }
+
+        .user-box {
+            display: flex;
+            gap: 12px;
+            align-items: center;
+        }
+
+        .user-box i {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background: #eaf1ff;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--primary);
+        }
+
+        /* STATS */
+        .stats {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 20px;
+        }
+
+        .stat-card {
+            background: var(--card);
+            border-radius: 7px;
+            padding: 20px;
+            box-shadow: 0 8px 18px rgba(0, 0, 0, 0.06);
+        }
+
+        .stat-card h6 {
+            font-weight: 600;
+            color: #334155;
+            margin-bottom: 10px;
+        }
+
+        .stat-card a {
+            color: var(--primary);
+            font-weight: 600;
+            text-decoration: none;
+        }
+
+        /* FLOATING SETTINGS ICON */
+        .customize {
+            position: fixed;
+            right: 1px;
+            top: 45%;
+            background: #fff;
+            border-radius: 50%;
+            width: 44px;
+            height: 44px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 8px 20px rgba(0,0,0,.2);
+            z-index: 9999;
+            cursor: pointer;
+        }
+
+        .customize i {
+            color: #3b82f6;
+            font-size: 20px;
+            animation: gearRotate 2s linear infinite;
+        }
+
+        /* GEAR ROTATION */
+        @keyframes gearRotate {
+            from { transform: rotate(0deg); }
+            to { transform: rotate(360deg); }
+        }
+
+        /* RESPONSIVE */
+        @media (max-width: 1200px) {
+            .quick-links,
+            .user-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+        }
+
+        @media (max-width: 992px) {
+            .stats {
+                grid-template-columns: repeat(2, 1fr);
+            }
+            
+            .sidebar-sim,
+            .header-sim {
+                position: static;
+                width: 100%;
+            }
+            
+            .main-content {
+                margin-left: 0;
+                margin-top: 0;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .main-content {
+                padding: 15px;
+            }
+            
+            .quick-links,
+            .user-grid,
+            .stats {
+                grid-template-columns: 1fr;
+            }
+            
+            .main-content {
+                margin-left: 0;
+                margin-top: 55px;
+            }
+            
+            .customize {
+                right: 10px;
+                top: 70px;
+                width: 42px;
+                height: 42px;
+            }
+            
+            .customize i {
+                font-size: 18px;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+<!-- SIDEBAR -->
+<%- include('../partials/admin/left') %>
+
+<!-- HEADER -->
+<%- include('../partials/admin/header') %>
+
+<div class="main-content">
+    <!-- NOTICE -->
+    <div class="notice-box">
+        <strong>IMPORTANT NOTE :</strong><br>
+        📢 Notice: Due to the latest WhatsApp update, you may experience temporary fluctuations or frequent disconnections after scanning the QR code. Please keep your session as it is — it will automatically reconnect. A stable patch will be applied in the upcoming update. Thank you for your patience and cooperation.
+    </div>
+
+    <!-- WELCOME -->
+    <div class="card-box">
+        <h5 class="fw-bold text-primary">Welcome SMS Link</h5>
+        <p class="text-muted">Here are some quick links for you to start</p>
+
+        <!-- QUICK LINKS -->
+        <div class="quick-links">
+            <div class="quick-item">
+                <i class="fa-solid fa-crown"></i>
+                <a href="/campaign">Campaign</a>
+            </div>
+            <div class="quick-item">
+                <i class="fa-solid fa-chart-column"></i>
+                <a href="/reports/web">Report</a>
+            </div>
+            <div class="quick-item">
+                <i class="fa-brands fa-whatsapp"></i>
+                <a href="/WhatsappScan">Whatsapp Scan</a>
+            </div>
+            <div class="quick-item">
+                <i class="fa-solid fa-user"></i>
+                <a href="/profile">My Profile</a>
+            </div>
+        </div>
+
+        <!-- USER INFO -->
+        <div class="user-grid">
+            <div class="user-box">
+                <i class="fa-solid fa-user"></i>
+                <div>
+                    <small>Username</small><br>
+                    <strong>SMSLink</strong>
+                </div>
+            </div>
+
+            <div class="user-box">
+                <i class="fa-solid fa-id-card"></i>
+                <div>
+                    <small>User ID</small><br>
+                    <strong>3195</strong>
+                </div>
+            </div>
+
+            <div class="user-box">
+                <i class="fa-solid fa-phone"></i>
+                <div>
+                    <small>Mobile</small><br>
+                    <strong>7045420530</strong>
+                </div>
+            </div>
+
+            <div class="user-box">
+                <i class="fa-solid fa-envelope"></i>
+                <div>
+                    <small>Mail ID</small><br>
+                    <strong>SMSLink@gmail.com</strong>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- STATS -->
+    <div class="stats">
+        <div class="stat-card">
+            <h6>Total Sent</h6>
+            <a href="#">Get Count</a>
+        </div>
+        <div class="stat-card">
+            <h6>Total Delivered</h6>
+            <a href="#">Get Count</a>
+        </div>
+        <div class="stat-card">
+            <h6>Total Failed</h6>
+            <a href="#">Get Count</a>
+        </div>
+
+        <div class="stat-card">
+            <h6>Total API Sent</h6>
+            <a href="#">Get Count</a>
+        </div>
+        <div class="stat-card">
+            <h6>Total API Delivered</h6>
+            <a href="#">Get Count</a>
+        </div>
+        <div class="stat-card">
+            <h6>Total API Failed</h6>
+            <a href="#">Get Count</a>
+        </div>
+    </div>
+</div>
+
+<!-- SETTINGS ICON -->
+<div class="customize" onclick="openSettings()">
+    <i class="fa-solid fa-gear"></i>
+</div>
+
+<!-- INCLUDE SETTINGS PANEL -->
+<%- include('../partials/admin/settings-panel') %>
+
+<script>
+    // Settings panel functions
+    function openSettings() {
+        document.getElementById("settingsPanel").classList.add("active");
+        document.getElementById("settingsOverlay").classList.add("active");
+    }
+
+    function closeSettings() {
+        document.getElementById("settingsPanel").classList.remove("active");
+        document.getElementById("settingsOverlay").classList.remove("active");
+    }
+
+    // Close panel when pressing Escape key
+    document.addEventListener('keydown', function(event) {
+        if (event.key === 'Escape') {
+            closeSettings();
+        }
+    });
+
+    // Load saved navbar style from localStorage on page load
+    document.addEventListener("DOMContentLoaded", function() {
+        const savedStyle = localStorage.getItem('navbarStyle');
+        if (savedStyle) {
+            // Apply the saved style to sidebar
+            const sidebar = document.querySelector('.sidebar');
+            if (sidebar) {
+                sidebar.classList.remove('transparent', 'inverted', 'card', 'vibrant');
+                sidebar.classList.add(savedStyle);
+            }
+        }
+    });
+</script>
+
+</body>
+</html>
+
+
+  <a href="/role-permissions"><span>Role Permissions</span></a> 
+                           <a href="/add-new-feature"><span>Add Feature</span></a> 
+
+
+
+
+                           <!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard</title>
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <style>
+        /* ===== LAYOUT FIXES ===== */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            overflow-x: hidden;
+            background: #f3f4f6;
+        }
+
+        /* Header fixed */
+        .header-wrapper {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            z-index: 1030;
+        }
+
+        /* Main layout */
+        .main-wrapper {
+            margin-top: 70px;
+            display: flex;
+            width: 100%;
+            min-height: calc(100vh - 70px);
+        }
+
+        /* Sidebar wrapper */
+        .sidebar-wrapper {
+            width: 280px;
+            flex-shrink: 0;
+            position: fixed;
+            left: 0;
+            top: 70px;
+            bottom: 0;
+            z-index: 1020;
+            transition: width 0.3s ease;
+        }
+
+        /* Sidebar collapsed */
+        .sidebar-wrapper.collapsed {
+            width: 80px;
+        }
+
+        /* Content wrapper - auto adjust */
+        .content-wrapper {
+            flex: 1;
+            margin-left: 280px;
+            padding: 20px;
+            transition: margin-left 0.3s ease;
+            background: #f3f4f6;
+            min-height: calc(100vh - 70px);
+        }
+
+        /* Content when sidebar collapsed */
+        .sidebar-wrapper.collapsed + .content-wrapper {
+            margin-left: 80px;
+        }
+
+        /* Mobile responsive */
+        @media (max-width: 768px) {
+            .sidebar-wrapper {
+                transform: translateX(-100%);
+                width: 280px !important;
+            }
+            
+            .sidebar-wrapper.mobile-open {
+                transform: translateX(0);
+            }
+            
+            .content-wrapper {
+                margin-left: 0 !important;
+            }
+        }
+
+        /* Bootstrap fixes */
+        .container-fluid {
+            padding-left: 0;
+            padding-right: 0;
+        }
+
+        .row {
+            margin-left: 0;
+            margin-right: 0;
+        }
+
+        /* Main content card */
+        .main-content {
+            background: white;
+            border-radius: 12px;
+            padding: 24px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+            min-height: 500px;
+        }
+
+        /* Dashboard title */
+        .dashboard-title {
+            font-size: 28px;
+            font-weight: 600;
+            color: #1f2937;
+            margin-bottom: 20px;
+        }
+    </style>
+</head>
+<body>
+    <!-- HEADER -->
+    <div class="header-wrapper">
+        <%- include('../partials/ram/header') %>
+    </div>
+
+    <!-- MAIN LAYOUT -->
+    <div class="main-wrapper">
+        <!-- SIDEBAR -->
+        <div class="sidebar-wrapper" id="sidebarWrapper">
+            <%- include('../partials/ram/sidebaar') %>
+        </div>
+
+        <!-- CONTENT - Auto Adjust -->
+        <div class="content-wrapper" id="contentWrapper">
+            <div class="container-fluid">
+                <div class="main-content">
+                    <h1 class="dashboard-title">Dashboard</h1>
+                    <!-- Aapka content yahan aayega -->
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- SCRIPT - Sirf layout sync ke liye -->
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // Original functions intercept
+            const originalToggleCollapse = window.toggleCollapse;
+            
+            window.toggleCollapse = function() {
+                if (originalToggleCollapse) originalToggleCollapse();
+                
+                setTimeout(() => {
+                    const sidebar = document.getElementById('mainSidebar');
+                    const sidebarWrapper = document.getElementById('sidebarWrapper');
+                    
+                    if (sidebar && sidebarWrapper) {
+                        if (sidebar.classList.contains('collapsed')) {
+                            sidebarWrapper.classList.add('collapsed');
+                        } else {
+                            sidebarWrapper.classList.remove('collapsed');
+                        }
+                    }
+                }, 10);
+            };
+            
+            // Initial state
+            const sidebar = document.getElementById('mainSidebar');
+            const sidebarWrapper = document.getElementById('sidebarWrapper');
+            
+            if (sidebar && sidebarWrapper && sidebar.classList.contains('collapsed')) {
+                sidebarWrapper.classList.add('collapsed');
+            }
+            
+            // Mobile functions
+            const originalToggleMobile = window.toggleMobileSidebar;
+            
+            window.toggleMobileSidebar = function() {
+                if (originalToggleMobile) originalToggleMobile();
+                
+                const sidebar = document.getElementById('mainSidebar');
+                const sidebarWrapper = document.getElementById('sidebarWrapper');
+                
+                if (sidebar && sidebarWrapper) {
+                    if (sidebar.classList.contains('open')) {
+                        sidebarWrapper.classList.add('mobile-open');
+                    } else {
+                        sidebarWrapper.classList.remove('mobile-open');
+                    }
+                }
+            };
+            
+            const originalCloseMobile = window.closeMobileSidebar;
+            
+            window.closeMobileSidebar = function() {
+                if (originalCloseMobile) originalCloseMobile();
+                
+                const sidebarWrapper = document.getElementById('sidebarWrapper');
+                if (sidebarWrapper) {
+                    sidebarWrapper.classList.remove('mobile-open');
+                }
+            };
+        });
+    </script>
+</body>
+</html>

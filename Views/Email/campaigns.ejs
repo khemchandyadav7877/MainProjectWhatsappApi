@@ -1,0 +1,182 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Upload Contacts</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body>
+    <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+        <div class="container-fluid">
+            <a class="navbar-brand" href="/email/lists">
+                <i class="fas fa-arrow-left"></i> Back to Lists
+            </a>
+        </div>
+    </nav>
+
+    <div class="container mt-4">
+        <div class="row justify-content-center">
+            <div class="col-md-8">
+                <div class="card">
+                    <div class="card-header bg-primary text-white">
+                        <h4 class="mb-0">
+                            <i class="fas fa-file-upload"></i> Upload Contacts from CSV
+                        </h4>
+                    </div>
+                    <div class="card-body">
+                        <% if (typeof error !== 'undefined' && error) { %>
+                            <div class="alert alert-danger">
+                                <i class="fas fa-exclamation-triangle"></i> <%= error %>
+                            </div>
+                        <% } %>
+
+                        <% if (typeof success !== 'undefined' && success) { %>
+                            <div class="alert alert-success">
+                                <i class="fas fa-check-circle"></i> <%= success %>
+                            </div>
+                        <% } %>
+
+                        <form method="POST" action="/email/upload-contacts" enctype="multipart/form-data">
+                            <!-- Step 1: Select List -->
+                            <div class="mb-4">
+                                <h5><i class="fas fa-list text-primary"></i> Step 1: Select List</h5>
+                                <div class="mb-3">
+                                    <label class="form-label">Add to List *</label>
+                                    <select name="list_id" class="form-select" required>
+                                        <option value="">-- Select List --</option>
+                                        <option value="1">All Customers</option>
+                                        <option value="2">Newsletter Subscribers</option>
+                                        <option value="3">VIP Customers</option>
+                                        <option value="new">Create New List</option>
+                                    </select>
+                                </div>
+                                <div id="newListName" class="mb-3" style="display: none;">
+                                    <label class="form-label">New List Name</label>
+                                    <input type="text" name="new_list_name" class="form-control" 
+                                           placeholder="Enter new list name">
+                                </div>
+                            </div>
+
+                            <!-- Step 2: Upload CSV -->
+                            <div class="mb-4">
+                                <h5><i class="fas fa-file-csv text-primary"></i> Step 2: Upload CSV File</h5>
+                                <div class="mb-3">
+                                    <label class="form-label">Select CSV File *</label>
+                                    <input type="file" class="form-control" name="csvFile" accept=".csv" required>
+                                    <div class="form-text">
+                                        Max file size: 10MB. CSV format should have headers.
+                                    </div>
+                                </div>
+                                
+                                <div class="card bg-light">
+                                    <div class="card-body">
+                                        <h6>CSV Format Example:</h6>
+                                        <pre class="mb-0">
+email,first_name,last_name,phone,company
+john@example.com,John,Doe,1234567890,ABC Corp
+jane@example.com,Jane,Smith,0987654321,XYZ Inc
+                                        </pre>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Step 3: Map Columns -->
+                            <div class="mb-4">
+                                <h5><i class="fas fa-columns text-primary"></i> Step 3: Map Columns</h5>
+                                <p class="text-muted">Map your CSV columns to our system fields</p>
+                                
+                                <div class="row">
+                                    <div class="col-md-6 mb-3">
+                                        <label class="form-label">Email Column</label>
+                                        <select name="email_column" class="form-select">
+                                            <option value="email" selected>email</option>
+                                            <option value="Email">Email</option>
+                                            <option value="EMAIL">EMAIL</option>
+                                        </select>
+                                    </div>
+                                    <div class="col-md-6 mb-3">
+                                        <label class="form-label">First Name Column</label>
+                                        <select name="first_name_column" class="form-select">
+                                            <option value="first_name" selected>first_name</option>
+                                            <option value="First Name">First Name</option>
+                                            <option value="firstName">firstName</option>
+                                        </select>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Step 4: Duplicate Handling -->
+                            <div class="mb-4">
+                                <h5><i class="fas fa-copy text-primary"></i> Step 4: Duplicate Handling</h5>
+                                <div class="form-check mb-2">
+                                    <input class="form-check-input" type="radio" name="duplicate_action" 
+                                           value="skip" checked>
+                                    <label class="form-check-label">
+                                        Skip duplicate emails
+                                    </label>
+                                </div>
+                                <div class="form-check mb-2">
+                                    <input class="form-check-input" type="radio" name="duplicate_action" 
+                                           value="update">
+                                    <label class="form-check-label">
+                                        Update existing contacts
+                                    </label>
+                                </div>
+                                <div class="form-check">
+                                    <input class="form-check-input" type="radio" name="duplicate_action" 
+                                           value="overwrite">
+                                    <label class="form-check-label">
+                                        Overwrite existing contacts
+                                    </label>
+                                </div>
+                            </div>
+
+                            <!-- Submit -->
+                            <div class="d-flex justify-content-between">
+                                <a href="/email/lists" class="btn btn-secondary">
+                                    <i class="fas fa-times"></i> Cancel
+                                </a>
+                                <button type="submit" class="btn btn-primary">
+                                    <i class="fas fa-upload"></i> Upload & Process
+                                </button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+
+                <!-- Help Section -->
+                <div class="card mt-4">
+                    <div class="card-header bg-light">
+                        <h5 class="mb-0">
+                            <i class="fas fa-question-circle"></i> How to prepare CSV file
+                        </h5>
+                    </div>
+                    <div class="card-body">
+                        <ol>
+                            <li>Create a CSV file with headers (first row)</li>
+                            <li>Required column: <strong>email</strong></li>
+                            <li>Optional columns: first_name, last_name, phone, company, etc.</li>
+                            <li>Save file as .csv format</li>
+                            <li>Maximum 10,000 contacts per upload</li>
+                        </ol>
+                        <a href="/sample-contacts.csv" class="btn btn-sm btn-outline-primary">
+                            <i class="fas fa-download"></i> Download Sample CSV
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        // Show/hide new list name field
+        document.querySelector('select[name="list_id"]').addEventListener('change', function() {
+            const newListName = document.getElementById('newListName');
+            newListName.style.display = this.value === 'new' ? 'block' : 'none';
+        });
+    </script>
+</body>
+</html>

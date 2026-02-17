@@ -1,0 +1,1236 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Add New Device - SSPAR Cloud</title>
+
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+    <style>
+        /* RESET */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            overflow-x: hidden;
+            background: #eef3f8;
+            font-family: system-ui;
+        }
+
+        /* HEADER FIXED */
+        .header-wrapper {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            z-index: 1030;
+            background: white;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+        }
+
+        /* MAIN LAYOUT */
+        .main-wrapper {
+            margin-top: 70px;
+            display: flex;
+            width: 100%;
+            min-height: calc(100vh - 70px);
+        }
+
+        /* SIDEBAR WRAPPER */
+        .sidebar-wrapper {
+            width: 280px;
+            flex-shrink: 0;
+            position: fixed;
+            left: 0;
+            top: 70px;
+            bottom: 0;
+            z-index: 1020;
+            transition: width 0.3s ease;
+        }
+
+        .sidebar-wrapper.collapsed {
+            width: 80px;
+        }
+
+        /* CONTENT WRAPPER */
+        .content-wrapper {
+            flex: 1;
+            margin-left: 280px;
+            padding: 30px;
+            transition: margin-left 0.3s ease;
+            background: #eef3f8;
+            min-height: calc(100vh - 70px);
+        }
+
+        .sidebar-wrapper.collapsed + .content-wrapper {
+            margin-left: 80px;
+        }
+
+        /* =========================
+           MODERN TOAST STYLES
+        ========================= */
+        #toast {
+            position: fixed;
+            top: 24px;
+            right: 24px;
+            width: 320px;
+            padding: 14px 16px;
+            border-radius: 12px;
+            box-shadow: 0 15px 30px rgba(0,0,0,.2);
+            opacity: 0;
+            transform: translateY(-15px);
+            transition: .3s ease;
+            color: #fff;
+            z-index: 9999;
+        }
+
+        #toast.show {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        .toast-row {
+            display: flex;
+            gap: 12px;
+            align-items: flex-start;
+        }
+
+        .toast-icon {
+            width: 34px;
+            height: 34px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 16px;
+            background: rgba(0,0,0,.25);
+        }
+
+        .toast-text h4 {
+            margin: 0;
+            font-size: 14px;
+            font-weight: 600;
+        }
+
+        .toast-text p {
+            margin: 4px 0 0;
+            font-size: 13px;
+            opacity: .9;
+        }
+
+        /* Toast Colors */
+        .toast-success {
+            background: #16a34a;
+            color: #ffffff;
+        }
+        .toast-error {
+            background: #dc2626;
+            color: #ffffff;
+        }
+        .toast-info {
+            background: #2563eb;
+            color: #ffffff;
+        }
+        .toast-warning {
+            background: #facc15;
+            color: #1f2937;
+        }
+
+        /* Progress bar */
+        .toast-progress {
+            height: 3px;
+            border-radius: 4px;
+            margin-top: 10px;
+            background: rgba(255,255,255,.6);
+            animation: toast-load 3s linear forwards;
+        }
+
+        .toast-warning .toast-progress {
+            background: rgba(0,0,0,.4);
+        }
+
+        @keyframes toast-load {
+            from { width: 100%; }
+            to { width: 0%; }
+        }
+
+        /* DEVICE CARD */
+        .device-card {
+            background: #fff;
+            border-radius: 12px;
+            padding: 30px 35px 40px;
+            box-shadow: 0 8px 20px rgba(0,0,0,.06);
+            max-width: 900px;
+            margin: 0 auto;
+        }
+
+        .device-header {
+            text-align: center;
+            margin-bottom: 25px;
+        }
+
+        .device-header .icon {
+            width: 60px;
+            height: 60px;
+            background: #3b82f6;
+            color: #fff;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 26px;
+            margin: 0 auto 10px;
+        }
+
+        .device-header h5 {
+            margin: 0;
+            font-weight: 700;
+            color: #1f2937;
+        }
+
+        .device-sub {
+            text-align: center;
+            color: #6b7280;
+            margin-bottom: 10px;
+        }
+
+        .device-line {
+            height: 3px;
+            background: #3b82f6;
+            width: 100%;
+            margin-bottom: 25px;
+        }
+
+        .form-label {
+            font-weight: 600;
+            color: #374151;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .form-label .required {
+            color: #ef4444;
+            font-size: 12px;
+        }
+
+        .form-control, .form-select {
+            border-radius: 25px;
+            padding: 12px 18px;
+            border: 1px solid #e5e7eb;
+        }
+
+        .form-control:focus, .form-select:focus {
+            border-color: #3b82f6;
+            box-shadow: 0 0 0 0.2rem rgba(59, 130, 246, 0.25);
+        }
+
+        /* PHONE INPUT */
+        .phone-wrapper {
+            position: relative;
+        }
+
+        .country-code {
+            position: absolute;
+            left: 12px;
+            top: 50%;
+            transform: translateY(-50%);
+            background: #eef2f7;
+            padding: 6px 12px;
+            border-radius: 20px;
+            font-weight: 600;
+            font-size: 14px;
+            color: #4b5563;
+            border: 1px solid #d1d5db;
+            z-index: 2;
+        }
+
+        .phone-input {
+            padding-left: 80px !important;
+        }
+
+        /* VALIDATION ICON */
+        .validation-icon {
+            position: absolute;
+            right: 12px;
+            top: 50%;
+            transform: translateY(-50%);
+            z-index: 3;
+        }
+
+        .validation-icon.valid {
+            color: #10b981;
+        }
+
+        .validation-icon.invalid {
+            color: #ef4444;
+        }
+
+        /* STATUS RADIO */
+        .status-option {
+            background: #f8fafc;
+            border-radius: 12px;
+            padding: 12px;
+            border: 2px solid transparent;
+            transition: all 0.3s ease;
+            cursor: pointer;
+        }
+
+        .status-option:hover {
+            border-color: #3b82f6;
+            background: #f0f4ff;
+        }
+
+        .status-option input[type="radio"] {
+            margin-right: 8px;
+        }
+
+        .badge-success {
+            background: #ecfdf5;
+            color: #10b981;
+            padding: 4px 12px;
+            border-radius: 20px;
+            font-weight: 600;
+        }
+
+        .badge-secondary {
+            background: #f3f4f6;
+            color: #6b7280;
+            padding: 4px 12px;
+            border-radius: 20px;
+            font-weight: 600;
+        }
+
+        /* BUTTONS */
+        .btn {
+            border-radius: 25px;
+            padding: 10px 30px;
+            font-weight: 600;
+            transition: all 0.3s ease;
+        }
+
+        .btn-primary {
+            background: #3b82f6;
+            border: none;
+            color: white;
+        }
+
+        .btn-primary:hover {
+            background: #2563eb;
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(59, 130, 246, 0.3);
+        }
+
+        .btn-outline-secondary {
+            border: 2px solid #6c757d;
+            color: #6c757d;
+        }
+
+        .btn-outline-secondary:hover {
+            background: #6c757d;
+            color: white;
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(108, 117, 125, 0.3);
+        }
+
+        .btn-outline-info {
+            border: 2px solid #0dcaf0;
+            color: #0dcaf0;
+        }
+
+        .btn-outline-info:hover {
+            background: #0dcaf0;
+            color: white;
+            transform: translateY(-2px);
+        }
+
+        .btn-outline-success {
+            border: 2px solid #22c55e;
+            color: #22c55e;
+        }
+
+        .btn-outline-success:hover {
+            background: #22c55e;
+            color: white;
+            transform: translateY(-2px);
+        }
+
+        .action-buttons {
+            display: flex;
+            gap: 15px;
+            margin-top: 30px;
+        }
+
+        .action-buttons .btn {
+            flex: 1;
+        }
+
+        /* API STATUS */
+        .api-status {
+            display: none;
+            padding: 12px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            font-size: 14px;
+        }
+        .api-success {
+            background: #ecfdf5;
+            color: #047857;
+            border: 1px solid #a7f3d0;
+        }
+        .api-error {
+            background: #fef2f2;
+            color: #b91c1c;
+            border: 1px solid #fecaca;
+        }
+
+        /* TOOLTIP */
+        .tooltip-info {
+            color: #6b7280;
+            font-size: 12px;
+            margin-top: 4px;
+        }
+
+        /* QUICK ADD FAB */
+        .quick-add-btn {
+            position: fixed;
+            bottom: 30px;
+            right: 30px;
+            width: 60px;
+            height: 60px;
+            border-radius: 50%;
+            background: #3b82f6;
+            color: white;
+            border: none;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 20px;
+            box-shadow: 0 10px 25px rgba(59, 130, 246, 0.3);
+            cursor: pointer;
+            z-index: 100;
+            transition: all 0.3s ease;
+        }
+        .quick-add-btn:hover {
+            transform: scale(1.1);
+            box-shadow: 0 15px 30px rgba(59, 130, 246, 0.4);
+        }
+
+        /* LOADING OVERLAY */
+        .loading-overlay {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(255,255,255,0.9);
+            z-index: 9999;
+            justify-content: center;
+            align-items: center;
+            flex-direction: column;
+        }
+
+        /* MOBILE */
+        @media (max-width: 768px) {
+            .sidebar-wrapper {
+                transform: translateX(-100%);
+                width: 280px !important;
+            }
+            
+            .sidebar-wrapper.mobile-open {
+                transform: translateX(0);
+            }
+            
+            .content-wrapper {
+                margin-left: 0 !important;
+                padding: 15px;
+            }
+            
+            .device-card {
+                padding: 20px;
+            }
+            
+            .action-buttons {
+                flex-direction: column;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- HEADER -->
+    <div class="header-wrapper">
+        <%- include('../../partials/ram/header') %>
+    </div>
+
+    <!-- MAIN LAYOUT -->
+    <div class="main-wrapper">
+        <!-- SIDEBAR -->
+        <div class="sidebar-wrapper" id="sidebarWrapper">
+            <%- include('../../partials/ram/sidebaar') %>
+        </div>
+
+        <!-- CONTENT -->
+        <div class="content-wrapper" id="contentWrapper">
+            <!-- Toast Container -->
+            <div id="toast"></div>
+
+            <!-- QUICK ADD FAB BUTTON -->
+            <button class="quick-add-btn" onclick="openQuickAdd()" title="Quick Add">
+                <i class="fa fa-plus"></i>
+            </button>
+
+            <!-- DEVICE CARD -->
+            <div class="device-card">
+                <!-- HEADER -->
+                <div class="device-header">
+                    <div class="icon">
+                        <i class="fa-solid fa-mobile-screen-button"></i>
+                    </div>
+                    <h5>Add New Device</h5>
+                </div>
+
+                <div class="device-sub">Register a new WhatsApp device</div>
+                <div class="device-line"></div>
+
+                <!-- API STATUS MESSAGE -->
+                <div id="apiStatus" class="api-status"></div>
+
+                <!-- FORM -->
+                <form method="POST" action="/devices/add" id="deviceForm">
+                    <div class="row g-4">
+                        <!-- Device Name -->
+                        <div class="col-md-6">
+                            <label class="form-label">
+                                <i class="fa fa-tag fa-xs"></i>
+                                Device Name <span class="required">*</span>
+                            </label>
+                            <input type="text"
+                                   name="name"
+                                   id="deviceName"
+                                   class="form-control"
+                                   placeholder="e.g., John's iPhone, Office Android"
+                                   required
+                                   oninput="validateName()">
+                            <div class="validation-icon" id="nameValidation"></div>
+                            <div class="tooltip-info">Give a descriptive name for easy identification</div>
+                        </div>
+
+                        <!-- Device Type -->
+                        <div class="col-md-6">
+                            <label class="form-label">
+                                <i class="fa fa-mobile-alt fa-xs"></i>
+                                Device Type <span class="required">*</span>
+                            </label>
+                            <select name="deviceType" id="deviceType" class="form-select" required onchange="showDeviceIcon()">
+                                <option value="">Select device type</option>
+                                <option value="android">📱 Android Phone</option>
+                                <option value="iphone">📱 iPhone</option>
+                                <option value="tablet">📟 Tablet</option>
+                                <option value="other">🔧 Other Device</option>
+                            </select>
+                            <div id="deviceTypeIcon" style="margin-top:8px; font-size:20px;"></div>
+                        </div>
+
+                        <!-- Phone Number -->
+                        <div class="col-md-6">
+                            <label class="form-label">
+                                <i class="fa fa-phone fa-xs"></i>
+                                Phone Number <span class="required">*</span>
+                            </label>
+                            <div class="phone-wrapper">
+                                <span class="country-code">+91</span>
+                                <input type="text"
+                                       name="phoneNumber"
+                                       id="phoneNumber"
+                                       class="form-control phone-input"
+                                       placeholder="9876543210"
+                                       required
+                                       maxlength="10"
+                                       oninput="validatePhone()">
+                                <div class="validation-icon" id="phoneValidation"></div>
+                            </div>
+                            <div class="tooltip-info">Enter 10-digit Indian mobile number without country code</div>
+                        </div>
+
+                        <!-- Carrier / Network -->
+                        <div class="col-md-6">
+                            <label class="form-label">
+                                <i class="fa fa-sim-card fa-xs"></i>
+                                Carrier / Network
+                            </label>
+                            <select name="carrier" id="carrier" class="form-select">
+                                <option value="">Select carrier (Optional)</option>
+                                <option value="jio">Jio</option>
+                                <option value="airtel">Airtel</option>
+                                <option value="vi">VI (Vodafone Idea)</option>
+                                <option value="bsnl">BSNL</option>
+                                <option value="other">Other</option>
+                                <option value="unknown">Unknown</option>
+                            </select>
+                            <div class="tooltip-info">Select the mobile network provider</div>
+                        </div>
+
+                        <!-- Status -->
+                        <div class="col-12">
+                            <label class="form-label">
+                                <i class="fa fa-power-off fa-xs"></i>
+                                Initial Status
+                            </label>
+                            <div class="row g-3">
+                                <div class="col-md-6">
+                                    <div class="status-option">
+                                        <input class="form-check-input" type="radio" name="status" id="statusActive" value="active" checked>
+                                        <label class="form-check-label" for="statusActive">
+                                            <span class="badge-success">Active</span>
+                                            <small class="d-block text-muted mt-1">Device will be operational</small>
+                                        </label>
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
+                                    <div class="status-option">
+                                        <input class="form-check-input" type="radio" name="status" id="statusInactive" value="inactive">
+                                        <label class="form-check-label" for="statusInactive">
+                                            <span class="badge-secondary">Inactive</span>
+                                            <small class="d-block text-muted mt-1">Device will be paused</small>
+                                        </label>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Notes -->
+                        <div class="col-12">
+                            <label class="form-label">
+                                <i class="fa fa-sticky-note fa-xs"></i>
+                                Notes
+                            </label>
+                            <textarea name="notes"
+                                      id="notes"
+                                      class="form-control"
+                                      rows="3"
+                                      placeholder="Optional notes about this device (purpose, location, special instructions, etc.)"></textarea>
+                            <div class="tooltip-info">Add any additional information about this device</div>
+                        </div>
+                    </div>
+
+                    <!-- ACTION BUTTONS -->
+                    <div class="action-buttons">
+                        <a href="/devices" class="btn btn-outline-secondary">
+                            <i class="fa fa-arrow-left"></i> Back to Devices
+                        </a>
+                        <button type="submit" class="btn btn-primary" id="submitBtn">
+                            <i class="fa fa-save"></i> Save Device
+                        </button>
+                    </div>
+
+                    <!-- API ALTERNATIVE -->
+                    <div class="mt-4 pt-3 border-top text-center">
+                        <p class="text-muted mb-2">Or add via API</p>
+                        <button type="button" class="btn btn-outline-info btn-sm" onclick="addViaAPI()">
+                            <i class="fa fa-code"></i> Save via API
+                        </button>
+                        <button type="button" class="btn btn-outline-success btn-sm ms-2" onclick="testAPI()">
+                            <i class="fa fa-play"></i> Test API
+                        </button>
+                    </div>
+
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- LOADING OVERLAY -->
+    <div class="loading-overlay" id="loadingOverlay">
+        <div class="spinner-border text-primary mb-3" style="width:3rem;height:3rem;" role="status">
+            <span class="visually-hidden">Loading...</span>
+        </div>
+        <h5 id="loadingText">Adding Device...</h5>
+        <p class="text-muted" id="loadingSubtext">Please wait while we save your device</p>
+    </div>
+
+    <!-- QUICK ADD MODAL -->
+    <div class="modal fade" id="quickAddModal" tabindex="-1">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">
+                        <i class="fa fa-bolt me-2"></i>Quick Add Device
+                    </h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="mb-3">
+                        <label class="form-label">Device Name</label>
+                        <input type="text" class="form-control" id="quickName" placeholder="Quick Device">
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">Phone Number</label>
+                        <div class="input-group">
+                            <span class="input-group-text">+91</span>
+                            <input type="text" class="form-control" id="quickPhone" placeholder="Phone Number">
+                        </div>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">Device Type</label>
+                        <select class="form-select" id="quickType">
+                            <option value="android">Android</option>
+                            <option value="iphone">iPhone</option>
+                            <option value="other">Other</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                    <button type="button" class="btn btn-primary" onclick="quickAddViaAPI()">
+                        <i class="fa fa-plus me-1"></i> Add Device
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Bootstrap JS -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
+
+    <script>
+        // ======================
+        // SIDEBAR SYNC - EXACTLY LIKE PROFILE PAGE
+        // ======================
+        document.addEventListener('DOMContentLoaded', function() {
+            const sidebar = document.getElementById('mainSidebar');
+            const sidebarWrapper = document.getElementById('sidebarWrapper');
+            
+            if (sidebar && sidebarWrapper) {
+                if (sidebar.classList.contains('collapsed')) {
+                    sidebarWrapper.classList.add('collapsed');
+                }
+                
+                const originalToggleCollapse = window.toggleCollapse;
+                
+                window.toggleCollapse = function() {
+                    if (originalToggleCollapse) {
+                        originalToggleCollapse();
+                    }
+                    
+                    setTimeout(() => {
+                        if (sidebar.classList.contains('collapsed')) {
+                            sidebarWrapper.classList.add('collapsed');
+                        } else {
+                            sidebarWrapper.classList.remove('collapsed');
+                        }
+                    }, 10);
+                };
+                
+                const originalToggleMobile = window.toggleMobileSidebar;
+                
+                window.toggleMobileSidebar = function() {
+                    if (originalToggleMobile) {
+                        originalToggleMobile();
+                    }
+                    
+                    setTimeout(() => {
+                        if (sidebar.classList.contains('open')) {
+                            sidebarWrapper.classList.add('mobile-open');
+                        } else {
+                            sidebarWrapper.classList.remove('mobile-open');
+                        }
+                    }, 10);
+                };
+                
+                const originalCloseMobile = window.closeMobileSidebar;
+                
+                window.closeMobileSidebar = function() {
+                    if (originalCloseMobile) {
+                        originalCloseMobile();
+                    }
+                    
+                    sidebarWrapper.classList.remove('mobile-open');
+                };
+            }
+
+            // Initialize page
+            document.getElementById('deviceName').focus();
+            
+            // Load draft if exists
+            loadDraft();
+            
+            // Show welcome toast
+            setTimeout(() => {
+                showToast('Add Device', 'Fill in the details to add a new WhatsApp device', 'info');
+            }, 500);
+        });
+
+        // ======================
+        // TOAST FUNCTION - EXACT SAME AS OTHER PAGES
+        // ======================
+        let toastTimer;
+        function showToast(title, message, type = 'info') {
+            const toast = document.getElementById('toast');
+            
+            clearTimeout(toastTimer);
+            
+            const icons = {
+                'success': '✅',
+                'error': '❌',
+                'warning': '⚠️',
+                'info': 'ℹ️'
+            };
+            
+            const icon = icons[type] || 'ℹ️';
+            
+            toast.className = '';
+            toast.innerHTML = `
+                <div class="toast-row">
+                    <div class="toast-icon">${icon}</div>
+                    <div class="toast-text">
+                        <h4>${title}</h4>
+                        <p>${message}</p>
+                    </div>
+                </div>
+                <div class="toast-progress"></div>
+            `;
+            
+            toast.classList.add(`toast-${type}`, 'show');
+            
+            toastTimer = setTimeout(() => {
+                toast.classList.remove('show');
+            }, 3000);
+        }
+
+        // ======================
+        // VALIDATION FUNCTIONS
+        // ======================
+        function validateName() {
+            const nameInput = document.getElementById('deviceName');
+            const validationIcon = document.getElementById('nameValidation');
+            const name = nameInput.value.trim();
+            
+            if (name.length < 2) {
+                showValidation(validationIcon, 'invalid', 'Name must be at least 2 characters');
+                return false;
+            }
+            
+            if (name.length > 50) {
+                showValidation(validationIcon, 'invalid', 'Name must be less than 50 characters');
+                return false;
+            }
+            
+            showValidation(validationIcon, 'valid', 'Valid name');
+            return true;
+        }
+
+        function validatePhone() {
+            const phoneInput = document.getElementById('phoneNumber');
+            const validationIcon = document.getElementById('phoneValidation');
+            let phone = phoneInput.value.trim();
+            
+            phoneInput.value = phone.replace(/\D/g, '');
+            phone = phoneInput.value;
+            
+            if (phone.length !== 10) {
+                showValidation(validationIcon, 'invalid', 'Must be 10 digits');
+                return false;
+            }
+            
+            if (!/^[6-9]\d{9}$/.test(phone)) {
+                showValidation(validationIcon, 'invalid', 'Invalid Indian number');
+                return false;
+            }
+            
+            showValidation(validationIcon, 'valid', 'Valid phone number');
+            return true;
+        }
+
+        function showValidation(iconElement, status, message) {
+            iconElement.className = 'validation-icon ' + status;
+            iconElement.innerHTML = status === 'valid' ? 
+                '<i class="fa fa-check-circle"></i>' : 
+                '<i class="fa fa-exclamation-circle"></i>';
+            iconElement.title = message;
+        }
+
+        function showDeviceIcon() {
+            const type = document.getElementById('deviceType').value;
+            const iconDiv = document.getElementById('deviceTypeIcon');
+            
+            const icons = {
+                'android': '🤖 Android',
+                'iphone': '🍎 iPhone',
+                'tablet': '📟 Tablet',
+                'other': '🔧 Other'
+            };
+            
+            iconDiv.innerHTML = icons[type] || '';
+        }
+
+        function validateForm() {
+            const isNameValid = validateName();
+            const isPhoneValid = validatePhone();
+            const deviceType = document.getElementById('deviceType').value;
+            
+            if (!deviceType) {
+                showToast('Error', 'Please select a device type', 'error');
+                document.getElementById('deviceType').focus();
+                return false;
+            }
+            
+            if (!isNameValid || !isPhoneValid) {
+                showToast('Error', 'Please fix validation errors', 'error');
+                return false;
+            }
+            
+            return true;
+        }
+
+        function getFormData() {
+            return {
+                name: document.getElementById('deviceName').value.trim(),
+                phoneNumber: document.getElementById('phoneNumber').value.trim(),
+                deviceType: document.getElementById('deviceType').value,
+                carrier: document.getElementById('carrier').value || 'unknown',
+                notes: document.getElementById('notes').value.trim(),
+                status: document.querySelector('input[name="status"]:checked').value,
+                isConnected: false
+            };
+        }
+
+        // ======================
+        // FORM SUBMISSION
+        // ======================
+        const form = document.getElementById('deviceForm');
+        form.addEventListener('submit', function(e) {
+            e.preventDefault();
+            
+            if (!validateForm()) {
+                return;
+            }
+            
+            showToast('Saving', 'Adding new device...', 'info');
+            showLoading('Adding Device...', 'Please wait while we save your device');
+            
+            // Clear draft after successful submission
+            clearDraft();
+            
+            // Traditional form submission
+            this.submit();
+        });
+
+        // ======================
+        // API FUNCTIONS
+        // ======================
+        async function addViaAPI() {
+            if (!validateForm()) {
+                return;
+            }
+            
+            const formData = getFormData();
+            
+            showToast('API Request', 'Sending via API...', 'info');
+            showLoading('Adding via API...', 'Sending request to server');
+            
+            try {
+                const response = await fetch('/api/devices', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify(formData)
+                });
+                
+                const data = await response.json();
+                
+                hideLoading();
+                
+                if (data.success) {
+                    showToast('Success', 'Device added successfully via API!', 'success');
+                    showApiStatus('success', 'Device added successfully! Redirecting...');
+                    
+                    // Clear draft
+                    clearDraft();
+                    
+                    // Redirect after 2 seconds
+                    setTimeout(() => {
+                        window.location.href = '/devices';
+                    }, 2000);
+                } else {
+                    showToast('Error', data.message || 'Unknown error', 'error');
+                    showApiStatus('error', `<strong>API Error:</strong> ${data.message || 'Unknown error'}`);
+                }
+            } catch (error) {
+                hideLoading();
+                showToast('Error', 'Network error: ' + error.message, 'error');
+                showApiStatus('error', `<strong>Network Error:</strong> ${error.message}`);
+                console.error('API Error:', error);
+            }
+        }
+
+        async function testAPI() {
+            showToast('Testing API', 'Checking API connectivity...', 'info');
+            showLoading('Testing API...', 'Checking API connectivity');
+            
+            try {
+                const response = await fetch('/api/devices');
+                const data = await response.json();
+                
+                hideLoading();
+                
+                const count = data.data?.length || data.length || 0;
+                showToast('Success', `API connected! Found ${count} devices`, 'success');
+                showApiStatus('success', `
+                    <strong>API Connection Successful!</strong><br>
+                    Found ${count} devices in system.
+                `);
+                
+                console.log('API Test Response:', data);
+            } catch (error) {
+                hideLoading();
+                showToast('Error', 'API test failed: ' + error.message, 'error');
+                showApiStatus('error', `
+                    <strong>API Test Failed:</strong> ${error.message}<br>
+                    Make sure the server is running.
+                `);
+                console.error('API Test Error:', error);
+            }
+        }
+
+        // ======================
+        // QUICK ADD FUNCTIONS
+        // ======================
+        function openQuickAdd() {
+            const modal = new bootstrap.Modal(document.getElementById('quickAddModal'));
+            modal.show();
+        }
+
+        async function quickAddViaAPI() {
+            const name = document.getElementById('quickName').value.trim();
+            let phone = document.getElementById('quickPhone').value.trim().replace(/\D/g, '');
+            const type = document.getElementById('quickType').value;
+            
+            if (!name) {
+                showToast('Error', 'Please enter device name', 'error');
+                return;
+            }
+            
+            if (!phone || phone.length !== 10) {
+                showToast('Error', 'Please enter valid 10-digit phone number', 'error');
+                return;
+            }
+            
+            showToast('Quick Add', 'Adding device via API...', 'info');
+            showLoading('Quick Adding...', 'Adding device via API');
+            
+            const deviceData = {
+                name: name,
+                phoneNumber: phone,
+                deviceType: type,
+                carrier: 'unknown',
+                notes: 'Added via Quick Add',
+                status: 'active'
+            };
+            
+            try {
+                const response = await fetch('/api/devices', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify(deviceData)
+                });
+                
+                const data = await response.json();
+                
+                hideLoading();
+                
+                if (data.success) {
+                    bootstrap.Modal.getInstance(document.getElementById('quickAddModal')).hide();
+                    
+                    showToast('Success', `Device "${name}" added successfully!`, 'success');
+                    
+                    document.getElementById('quickName').value = '';
+                    document.getElementById('quickPhone').value = '';
+                    
+                    // Redirect to devices page after quick add
+                    setTimeout(() => {
+                        window.location.href = '/devices';
+                    }, 1500);
+                } else {
+                    showToast('Error', data.message, 'error');
+                }
+            } catch (error) {
+                hideLoading();
+                showToast('Error', 'Network Error: ' + error.message, 'error');
+                console.error('Quick Add Error:', error);
+            }
+        }
+
+        // ======================
+        // API STATUS DISPLAY
+        // ======================
+        const apiStatus = document.getElementById('apiStatus');
+
+        function showApiStatus(type, message) {
+            apiStatus.className = `api-status api-${type}`;
+            apiStatus.innerHTML = `
+                <div class="d-flex align-items-center">
+                    <i class="fa fa-${type === 'success' ? 'check-circle' : 'exclamation-circle'} me-2"></i>
+                    <div>${message}</div>
+                </div>
+            `;
+            apiStatus.style.display = 'block';
+            
+            setTimeout(() => {
+                apiStatus.style.display = 'none';
+            }, 5000);
+        }
+
+        // ======================
+        // LOADING OVERLAY
+        // ======================
+        const loadingOverlay = document.getElementById('loadingOverlay');
+        const loadingText = document.getElementById('loadingText');
+        const loadingSubtext = document.getElementById('loadingSubtext');
+
+        function showLoading(text, subtext) {
+            loadingText.textContent = text;
+            loadingSubtext.textContent = subtext;
+            loadingOverlay.style.display = 'flex';
+        }
+
+        function hideLoading() {
+            loadingOverlay.style.display = 'none';
+        }
+
+        // ======================
+        // DRAFT FUNCTIONS
+        // ======================
+        function saveDraft() {
+            const draft = getFormData();
+            localStorage.setItem('deviceDraft', JSON.stringify(draft));
+        }
+
+        function loadDraft() {
+            const draft = localStorage.getItem('deviceDraft');
+            if (draft) {
+                try {
+                    const data = JSON.parse(draft);
+                    document.getElementById('deviceName').value = data.name || '';
+                    document.getElementById('phoneNumber').value = data.phoneNumber || '';
+                    document.getElementById('deviceType').value = data.deviceType || '';
+                    document.getElementById('carrier').value = data.carrier || '';
+                    document.getElementById('notes').value = data.notes || '';
+                    
+                    if (data.status) {
+                        document.querySelector(`input[name="status"][value="${data.status}"]`).checked = true;
+                    }
+                    
+                    validateName();
+                    validatePhone();
+                    showDeviceIcon();
+                    
+                    if (data.name || data.phoneNumber) {
+                        showToast('Draft Loaded', 'Loaded saved draft from previous session', 'info');
+                    }
+                } catch (e) {
+                    console.error('Error loading draft:', e);
+                }
+            }
+        }
+
+        function clearDraft() {
+            localStorage.removeItem('deviceDraft');
+        }
+
+        // ======================
+        // EVENT LISTENERS
+        // ======================
+        document.getElementById('deviceName').addEventListener('input', function() {
+            validateName();
+            debounceSaveDraft();
+        });
+        
+        document.getElementById('phoneNumber').addEventListener('input', function() {
+            validatePhone();
+            debounceSaveDraft();
+        });
+        
+        document.getElementById('deviceType').addEventListener('change', function() {
+            showDeviceIcon();
+            debounceSaveDraft();
+        });
+        
+        document.getElementById('carrier').addEventListener('change', debounceSaveDraft);
+        document.getElementById('notes').addEventListener('input', debounceSaveDraft);
+        
+        document.querySelectorAll('input[name="status"]').forEach(radio => {
+            radio.addEventListener('change', debounceSaveDraft);
+        });
+
+        let draftTimer;
+        function debounceSaveDraft() {
+            clearTimeout(draftTimer);
+            draftTimer = setTimeout(saveDraft, 1000);
+        }
+
+        // ======================
+        // KEYBOARD SHORTCUTS
+        // ======================
+        document.addEventListener('keydown', function(e) {
+            if ((e.ctrlKey || e.metaKey) && e.key === 'Enter') {
+                e.preventDefault();
+                if (validateForm()) {
+                    addViaAPI();
+                }
+            }
+            
+            if ((e.ctrlKey || e.metaKey) && e.key === 's') {
+                e.preventDefault();
+                if (validateForm()) {
+                    form.submit();
+                }
+            }
+            
+            if (e.key === 'Escape') {
+                if (!confirm('Are you sure you want to cancel? Unsaved changes will be lost.')) {
+                    return;
+                }
+                window.location.href = '/devices';
+            }
+            
+            if (e.key === 'F1') {
+                e.preventDefault();
+                showToast('Help', 'Press Ctrl+Enter for API, Ctrl+S to save', 'info');
+            }
+        });
+
+        // Double-click to generate sample data
+        document.getElementById('phoneNumber').addEventListener('dblclick', function() {
+            if (!this.value) {
+                const randomNum = '9' + Math.floor(Math.random() * 1000000000).toString().padStart(9, '0');
+                this.value = randomNum;
+                validatePhone();
+                saveDraft();
+                showToast('Sample', 'Generated sample phone number', 'info');
+            }
+        });
+
+        document.getElementById('deviceName').addEventListener('dblclick', function() {
+            if (!this.value) {
+                const names = ['Office Phone', 'Personal Device', 'Backup Phone', 'Test Device', 'WhatsApp Business'];
+                const randomName = names[Math.floor(Math.random() * names.length)];
+                this.value = randomName + ' ' + (Math.floor(Math.random() * 100) + 1);
+                validateName();
+                saveDraft();
+                showToast('Sample', 'Generated sample device name', 'info');
+            }
+        });
+    </script>
+</body>
+</html>

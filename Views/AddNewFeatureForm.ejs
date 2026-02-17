@@ -1,0 +1,914 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Add New Feature - WhatsApp Business Manager</title>
+    
+    <!-- Bootstrap 5 CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Font Awesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Toastify CSS -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/toastify-js/src/toastify.min.css">
+    
+    <style>
+        .add-feature-container {
+            min-height: 100vh;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            padding: 20px;
+        }
+        
+        .main-content {
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+        
+        .form-check-inline {
+            margin-right: 0 !important;
+        }
+        
+        /* Enhanced card design */
+        .card {
+            border: none;
+            border-radius: 15px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+            transition: all 0.3s ease;
+        }
+        
+        .card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 15px 40px rgba(0, 0, 0, 0.15);
+        }
+        
+        /* Button hover effects */
+        .btn-primary {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            border: none;
+            transition: all 0.3s;
+        }
+        
+        .btn-primary:hover:not(:disabled) {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 20px rgba(102, 126, 234, 0.4);
+        }
+        
+        .btn-outline-secondary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(108, 117, 125, 0.2);
+        }
+        
+        /* Custom radio button styling */
+        .form-check-label {
+            cursor: pointer;
+            user-select: none;
+            transition: all 0.2s;
+        }
+        
+        .form-check-label:hover {
+            transform: translateY(-1px);
+        }
+        
+        /* Stats cards */
+        .stats-card {
+            background: white;
+            border-radius: 12px;
+            padding: 20px;
+            text-align: center;
+            transition: all 0.3s;
+            border: 2px solid transparent;
+        }
+        
+        .stats-card:hover {
+            transform: translateY(-5px);
+            border-color: #667eea;
+            box-shadow: 0 10px 25px rgba(102, 126, 234, 0.2);
+        }
+        
+        .stats-card h3 {
+            font-size: 2rem;
+            font-weight: 700;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            margin-bottom: 10px;
+        }
+        
+        /* Role-specific colors */
+        .role-badge-superadmin {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+        }
+        
+        .role-badge-educator {
+            background: linear-gradient(135deg, #3b82f6 0%, #2563eb 100%);
+            color: white;
+        }
+        
+        .role-badge-trainer {
+            background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+            color: white;
+        }
+        
+        .role-badge-student {
+            background: linear-gradient(135deg, #f59e0b 0%, #d97706 100%);
+            color: white;
+        }
+        
+        /* Form controls */
+        .form-control:focus,
+        .form-select:focus {
+            border-color: #667eea;
+            box-shadow: 0 0 0 0.25rem rgba(102, 126, 234, 0.25);
+        }
+        
+        /* Alert styles */
+        .alert {
+            border-radius: 10px;
+            border: none;
+        }
+        
+        .alert-warning {
+            background: linear-gradient(135deg, #fef3c7 0%, #fde68a 100%);
+            color: #92400e;
+        }
+        
+        .alert-info {
+            background: linear-gradient(135deg, #dbeafe 0%, #bfdbfe 100%);
+            color: #1e40af;
+        }
+        
+        /* Badge styles */
+        .badge {
+            border-radius: 20px;
+            padding: 6px 12px;
+            font-weight: 500;
+        }
+        
+        /* Responsive adjustments */
+        @media (max-width: 768px) {
+            .add-feature-container {
+                padding: 15px;
+            }
+            
+            .content-header .d-flex {
+                flex-direction: column;
+                align-items: flex-start !important;
+                gap: 15px;
+            }
+            
+            .stats-card h3 {
+                font-size: 1.5rem;
+            }
+        }
+        
+        @media (max-width: 576px) {
+            .add-feature-container {
+                padding: 10px;
+            }
+            
+            .stats-card {
+                padding: 15px;
+            }
+            
+            .stats-card h3 {
+                font-size: 1.3rem;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <div class="add-feature-container">
+        <div class="main-content">
+            
+            <!-- Header Card -->
+            <div class="card mb-4">
+                <div class="card-body p-4">
+                    <div class="row align-items-center">
+                        <div class="col-lg-6">
+                            <h1 class="fw-bold mb-2">
+                                <i class="fas fa-plus-circle me-2" style="color: #667eea;"></i>
+                                Add New Feature
+                            </h1>
+                            <p class="text-muted mb-0">Configure sidebar navigation for different user roles</p>
+                        </div>
+                        <div class="col-lg-6 text-lg-end mt-3 mt-lg-0">
+                            <a href="/dashboard" class="btn btn-primary me-2">
+                                <i class="fas fa-home me-2"></i>Dashboard
+                            </a>
+                            <a href="/role-permissions" class="btn btn-outline-primary">
+                                <i class="fas fa-user-shield me-2"></i>Permissions
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Stats Cards -->
+            <div class="row g-3 mb-4">
+                <div class="col-6 col-md-2">
+                    <div class="stats-card">
+                        <h3 id="totalFeatures">0</h3>
+                        <p class="text-muted small mb-0">Total</p>
+                    </div>
+                </div>
+                <div class="col-6 col-md-2">
+                    <div class="stats-card">
+                        <h3 id="superadminStats" style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); -webkit-background-clip: text; -webkit-text-fill-color: transparent;">0</h3>
+                        <p class="text-muted small mb-0">SuperAdmin</p>
+                    </div>
+                </div>
+                <div class="col-6 col-md-2">
+                    <div class="stats-card">
+                        <h3 id="educatorStats" style="background: linear-gradient(135deg, #3b82f6 0%, #2563eb 100%); -webkit-background-clip: text; -webkit-text-fill-color: transparent;">0</h3>
+                        <p class="text-muted small mb-0">Educator</p>
+                    </div>
+                </div>
+                <div class="col-6 col-md-2">
+                    <div class="stats-card">
+                        <h3 id="trainerStats" style="background: linear-gradient(135deg, #10b981 0%, #059669 100%); -webkit-background-clip: text; -webkit-text-fill-color: transparent;">0</h3>
+                        <p class="text-muted small mb-0">Trainer</p>
+                    </div>
+                </div>
+                <div class="col-6 col-md-2">
+                    <div class="stats-card">
+                        <h3 id="studentStats" style="background: linear-gradient(135deg, #f59e0b 0%, #d97706 100%); -webkit-background-clip: text; -webkit-text-fill-color: transparent;">0</h3>
+                        <p class="text-muted small mb-0">Student</p>
+                    </div>
+                </div>
+                <div class="col-6 col-md-2">
+                    <div class="stats-card">
+                        <h3 id="activeStats" style="background: linear-gradient(135deg, #10b981 0%, #059669 100%); -webkit-background-clip: text; -webkit-text-fill-color: transparent;">0</h3>
+                        <p class="text-muted small mb-0">Active</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Warning Alert (Hidden by default) -->
+            <div class="alert alert-warning mb-4" id="alreadyExistsWarning" style="display: none;">
+                <div class="d-flex align-items-center">
+                    <i class="fas fa-exclamation-triangle me-3 fs-4"></i>
+                    <div>
+                        <strong>Feature Already Exists!</strong>
+                        <p class="mb-0 mt-1 small">This feature is already configured for the selected role and section.</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Main Form Card -->
+            <div class="card">
+                <div class="card-header bg-white py-3">
+                    <h5 class="fw-bold mb-0">
+                        <i class="fas fa-cog me-2 text-primary"></i>
+                        Feature Configuration
+                    </h5>
+                </div>
+                
+                <div class="card-body p-4">
+                    <form id="addFeatureForm">
+                        
+                        <!-- Role Selection -->
+                        <div class="mb-4">
+                            <label class="form-label fw-semibold mb-3">
+                                <i class="fas fa-users me-2 text-primary"></i>
+                                Select User Role
+                            </label>
+                            <div class="d-flex flex-wrap gap-3" id="roleSelection">
+                                <!-- Roles will be populated here -->
+                            </div>
+                        </div>
+
+                        <div class="row g-4">
+                            <!-- Section Selection -->
+                            <div class="col-md-6">
+                                <label class="form-label fw-semibold">
+                                    <i class="fas fa-folder me-2 text-primary"></i>
+                                    Section
+                                </label>
+                                <select
+                                    id="sectionSelect"
+                                    class="form-select form-select-lg"
+                                    required
+                                >
+                                    <option value="">Choose section...</option>
+                                </select>
+                            </div>
+
+                            <!-- Feature Selection -->
+                            <div class="col-md-6">
+                                <label class="form-label fw-semibold">
+                                    <i class="fas fa-star me-2 text-primary"></i>
+                                    Feature
+                                    <span class="badge bg-info ms-2" id="availableCountBadge" style="display: none;">
+                                        0 available
+                                    </span>
+                                </label>
+                                <select
+                                    id="featureSelect"
+                                    class="form-select form-select-lg"
+                                    required
+                                >
+                                    <option value="">Choose feature...</option>
+                                </select>
+                                
+                                <div class="alert alert-info mt-2 py-2" id="noFeaturesAlert" style="display: none;">
+                                    <small>
+                                        <i class="fas fa-info-circle me-1"></i>
+                                        <span id="noFeaturesMessage"></span>
+                                    </small>
+                                </div>
+                            </div>
+
+                            <!-- Already Added Features -->
+                            <div class="col-12" id="alreadyAddedSection" style="display: none;">
+                                <div class="alert alert-secondary">
+                                    <small class="fw-semibold d-block mb-2">
+                                        <i class="fas fa-check-circle text-success me-1"></i>
+                                        <span id="alreadyAddedTitle">Already configured:</span>
+                                    </small>
+                                    <div class="d-flex flex-wrap gap-2" id="alreadyAddedFeatures">
+                                        <!-- Already added features badges -->
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Status Selection -->
+                            <div class="col-md-6">
+                                <label class="form-label fw-semibold">
+                                    <i class="fas fa-toggle-on me-2 text-primary"></i>
+                                    Status
+                                </label>
+                                <div class="d-flex gap-3">
+                                    <div class="form-check">
+                                        <input
+                                            class="form-check-input"
+                                            type="radio"
+                                            id="status-active"
+                                            name="status"
+                                            value="active"
+                                            checked
+                                        />
+                                        <label class="form-check-label status-label" for="status-active" data-status="active">
+                                            <i class="fas fa-check-circle text-success me-1"></i>
+                                            Active
+                                        </label>
+                                    </div>
+                                    <div class="form-check">
+                                        <input
+                                            class="form-check-input"
+                                            type="radio"
+                                            id="status-inactive"
+                                            name="status"
+                                            value="inactive"
+                                        />
+                                        <label class="form-check-label status-label" for="status-inactive" data-status="inactive">
+                                            <i class="fas fa-times-circle text-danger me-1"></i>
+                                            Inactive
+                                        </label>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Order -->
+                            <div class="col-md-6">
+                                <label class="form-label fw-semibold">
+                                    <i class="fas fa-sort-numeric-down me-2 text-primary"></i>
+                                    Display Order
+                                </label>
+                                <input
+                                    type="number"
+                                    id="orderInput"
+                                    class="form-control form-control-lg"
+                                    value="1"
+                                    min="1"
+                                    style="max-width: 150px;"
+                                />
+                                <small class="form-text text-muted">Lower numbers appear first</small>
+                            </div>
+                        </div>
+
+                        <!-- Action Buttons -->
+                        <div class="d-flex gap-3 mt-4 pt-4 border-top">
+                            <button
+                                type="submit"
+                                id="submitBtn"
+                                class="btn btn-primary btn-lg px-5"
+                            >
+                                <i class="fas fa-save me-2"></i>
+                                Add Feature
+                            </button>
+                            
+                            <button
+                                type="button"
+                                id="resetBtn"
+                                class="btn btn-outline-secondary btn-lg px-4"
+                            >
+                                <i class="fas fa-redo me-2"></i>
+                                Reset
+                            </button>
+                            
+                            <button
+                                type="button"
+                                id="cancelBtn"
+                                class="btn btn-outline-danger btn-lg px-4"
+                            >
+                                <i class="fas fa-times me-2"></i>
+                                Cancel
+                            </button>
+                        </div>
+
+                    </form>
+                </div>
+            </div>
+
+            <!-- Info Card -->
+            <div class="card mt-4">
+                <div class="card-body">
+                    <h6 class="fw-bold mb-3">
+                        <i class="fas fa-lightbulb me-2 text-warning"></i>
+                        Quick Tips
+                    </h6>
+                    <div class="row">
+                        <div class="col-md-6">
+                            <ul class="list-unstyled mb-0">
+                                <li class="mb-2">
+                                    <i class="fas fa-check text-success me-2"></i>
+                                    <small>Features appear instantly in the sidebar</small>
+                                </li>
+                                <li class="mb-2">
+                                    <i class="fas fa-check text-success me-2"></i>
+                                    <small>Each role can have unique features</small>
+                                </li>
+                                <li>
+                                    <i class="fas fa-check text-success me-2"></i>
+                                    <small>Inactive features are hidden from users</small>
+                                </li>
+                            </ul>
+                        </div>
+                        <div class="col-md-6">
+                            <ul class="list-unstyled mb-0">
+                                <li class="mb-2">
+                                    <i class="fas fa-check text-success me-2"></i>
+                                    <small>No duplicate features per role</small>
+                                </li>
+                                <li class="mb-2">
+                                    <i class="fas fa-check text-success me-2"></i>
+                                    <small>Changes sync across all tabs</small>
+                                </li>
+                                <li>
+                                    <i class="fas fa-check text-success me-2"></i>
+                                    <small>Real-time updates without refresh</small>
+                                </li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </div>
+
+    <!-- Bootstrap JS -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
+    <!-- Toastify JS -->
+    <script src="https://cdn.jsdelivr.net/npm/toastify-js"></script>
+    
+    <script>
+        // ========================================
+        // CONFIGURATION
+        // ========================================
+        
+        const roles = ['SuperAdmin', 'Educator', 'Trainer', 'Student'];
+        
+        const sectionOptions = [
+            '*** Dashboard',
+            '*** Reports',
+            '*** Chats',
+            '*** Virtual Numbers',
+            '*** Devices',
+            '*** RCS',
+            '*** Scan device',
+            '*** API',
+            '*** Administration'
+        ];
+
+        const allFeatureLabels = {
+            '*** Dashboard': ['1. Dashboard', '2. Notifications'],
+            '*** Reports': ['1. Web Report', '2. API Reports'],
+            '*** Chats': ['1. New Chat'],
+            '*** Virtual Numbers': ['1. My Numbers', '2. Buy Number', '3. Call Logs', '4. SMS Logs'],
+            '*** Devices': ['1. Add Device', '2. All Devices', '3. Campaign'],
+            '*** RCS': ['1. RCS Campaign', '2. RCS Reports', '3. RCS Templates'],
+            '*** Scan device': ['1. Whatsapp Scan'],
+            '*** API': ['1. API Document', '2. File Upload'],
+            '*** Administration': ['1. Role Permissions', '2. Add New Feature']
+        };
+
+        const featurePaths = {
+            '1. Dashboard': '/dashboard',
+            '2. Notifications': '/notifications',
+            '1. Web Report': '/reports/web',
+            '2. API Reports': '/reports/api',
+            '1. New Chat': '/chats',
+            '1. My Numbers': '/virtual-numbers',
+            '2. Buy Number': '/virtual-numbers/buy',
+            '3. Call Logs': '/virtual-numbers/call-logs',
+            '4. SMS Logs': '/virtual-numbers/sms-logs',
+            '1. Add Device': '/devices/add',
+            '2. All Devices': '/devices',
+            '3. Campaign': '/devices/campaign',
+            '1. RCS Campaign': '/rcs/campaign',
+            '2. RCS Reports': '/rcs/reports',
+            '3. RCS Templates': '/rcs/templates',
+            '1. Whatsapp Scan': '/scan/whatsapp',
+            '1. API Document': '/api/document',
+            '2. File Upload': '/api/file-upload',
+            '1. Role Permissions': '/role-permissions',
+            '2. Add New Feature': '/add-new-feature'
+        };
+
+        // ========================================
+        // STATE
+        // ========================================
+        
+        let features = [];
+        let currentRole = 'SuperAdmin';
+        let currentSection = '*** Dashboard';
+        let currentFeature = '';
+        let isActive = true;
+        let isSubmitting = false;
+
+        // DOM Elements
+        const elements = {
+            totalFeatures: document.getElementById('totalFeatures'),
+            superadminStats: document.getElementById('superadminStats'),
+            educatorStats: document.getElementById('educatorStats'),
+            trainerStats: document.getElementById('trainerStats'),
+            studentStats: document.getElementById('studentStats'),
+            activeStats: document.getElementById('activeStats'),
+            alreadyExistsWarning: document.getElementById('alreadyExistsWarning'),
+            roleSelection: document.getElementById('roleSelection'),
+            sectionSelect: document.getElementById('sectionSelect'),
+            featureSelect: document.getElementById('featureSelect'),
+            availableCountBadge: document.getElementById('availableCountBadge'),
+            noFeaturesAlert: document.getElementById('noFeaturesAlert'),
+            noFeaturesMessage: document.getElementById('noFeaturesMessage'),
+            alreadyAddedSection: document.getElementById('alreadyAddedSection'),
+            alreadyAddedTitle: document.getElementById('alreadyAddedTitle'),
+            alreadyAddedFeatures: document.getElementById('alreadyAddedFeatures'),
+            orderInput: document.getElementById('orderInput'),
+            addFeatureForm: document.getElementById('addFeatureForm'),
+            submitBtn: document.getElementById('submitBtn'),
+            resetBtn: document.getElementById('resetBtn'),
+            cancelBtn: document.getElementById('cancelBtn')
+        };
+
+        // ========================================
+        // UTILITY FUNCTIONS
+        // ========================================
+
+        function showToast(message, type = 'success') {
+            const bgColors = {
+                success: 'linear-gradient(to right, #10b981, #059669)',
+                error: 'linear-gradient(to right, #ef4444, #dc2626)',
+                warning: 'linear-gradient(to right, #f59e0b, #d97706)',
+                info: 'linear-gradient(to right, #3b82f6, #2563eb)'
+            };
+            
+            Toastify({
+                text: message,
+                duration: 3000,
+                gravity: "top",
+                position: "right",
+                style: {
+                    background: bgColors[type] || bgColors.success,
+                    borderRadius: '10px',
+                    boxShadow: '0 10px 30px rgba(0, 0, 0, 0.2)'
+                },
+                stopOnFocus: true
+            }).showToast();
+        }
+
+        function notifySidebarUpdate() {
+            try {
+                localStorage.setItem('sidebar-update-time', Date.now().toString());
+                window.dispatchEvent(new CustomEvent('featuresUpdated', {
+                    detail: { timestamp: Date.now(), action: 'feature-added' }
+                }));
+                console.log('✅ Sidebar notified of update');
+            } catch(e) {
+                console.error('❌ Error notifying sidebar:', e);
+            }
+        }
+
+        // ========================================
+        // DATA MANAGEMENT
+        // ========================================
+
+        function loadFeatures() {
+            try {
+                const saved = localStorage.getItem('sidebarFeatures');
+                features = saved ? JSON.parse(saved) : [];
+                console.log(`✅ Loaded ${features.length} features`);
+                updateStats();
+                renderForm();
+            } catch (error) {
+                console.error('❌ Error loading features:', error);
+                showToast('Failed to load features', 'error');
+            }
+        }
+
+        function saveFeatures(updatedFeatures) {
+            try {
+                localStorage.setItem('sidebarFeatures', JSON.stringify(updatedFeatures));
+                features = updatedFeatures;
+                return true;
+            } catch (error) {
+                console.error('❌ Error saving features:', error);
+                return false;
+            }
+        }
+
+        function updateStats() {
+            const total = features.length;
+            const active = features.filter(f => f.isActive).length;
+            const byRole = {
+                SuperAdmin: features.filter(f => f.role === 'SuperAdmin').length,
+                Educator: features.filter(f => f.role === 'Educator').length,
+                Trainer: features.filter(f => f.role === 'Trainer').length,
+                Student: features.filter(f => f.role === 'Student').length
+            };
+
+            elements.totalFeatures.textContent = total;
+            elements.superadminStats.textContent = byRole.SuperAdmin;
+            elements.educatorStats.textContent = byRole.Educator;
+            elements.trainerStats.textContent = byRole.Trainer;
+            elements.studentStats.textContent = byRole.Student;
+            elements.activeStats.textContent = active;
+        }
+
+        function checkFeatureExists(role, section, label) {
+            return features.some(f => 
+                f.role === role && 
+                f.section === section && 
+                f.label === label
+            );
+        }
+
+        function getAvailableLabels(role, section) {
+            const all = allFeatureLabels[section] || [];
+            return all.filter(label => !checkFeatureExists(role, section, label));
+        }
+
+        function getAlreadyAddedFeatures(role, section) {
+            return features.filter(f => f.role === role && f.section === section);
+        }
+
+        // ========================================
+        // RENDER FUNCTIONS
+        // ========================================
+
+        function renderForm() {
+            renderRoleSelection();
+            renderSections();
+            renderFeatures();
+            updateAlreadyAddedFeatures();
+        }
+
+        function renderRoleSelection() {
+            const colors = {
+                SuperAdmin: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
+                Educator: 'linear-gradient(135deg, #3b82f6 0%, #2563eb 100%)',
+                Trainer: 'linear-gradient(135deg, #10b981 0%, #059669 100%)',
+                Student: 'linear-gradient(135deg, #f59e0b 0%, #d97706 100%)'
+            };
+
+            const icons = {
+                SuperAdmin: 'fa-user-shield',
+                Educator: 'fa-chalkboard-teacher',
+                Trainer: 'fa-graduation-cap',
+                Student: 'fa-user-graduate'
+            };
+
+            let html = roles.map(role => {
+                const isSelected = role === currentRole;
+                return `
+                    <div class="form-check">
+                        <input
+                            class="form-check-input"
+                            type="radio"
+                            id="role-${role}"
+                            name="role"
+                            value="${role}"
+                            ${isSelected ? 'checked' : ''}
+                            onchange="changeRole('${role}')"
+                        />
+                        <label 
+                            class="form-check-label badge role-badge-${role.toLowerCase()}"
+                            for="role-${role}"
+                            style="padding: 10px 20px; font-size: 14px; cursor: pointer; ${isSelected ? '' : 'opacity: 0.6;'}"
+                        >
+                            <i class="fas ${icons[role]} me-2"></i>${role}
+                        </label>
+                    </div>
+                `;
+            }).join('');
+            
+            elements.roleSelection.innerHTML = html;
+        }
+
+        function renderSections() {
+            let html = '<option value="">Choose section...</option>';
+            sectionOptions.forEach(section => {
+                const name = section.replace('*** ', '');
+                html += `<option value="${section}">${name}</option>`;
+            });
+            elements.sectionSelect.innerHTML = html;
+            elements.sectionSelect.value = currentSection;
+        }
+
+        function renderFeatures() {
+            const available = getAvailableLabels(currentRole, currentSection);
+            
+            if (available.length > 0) {
+                elements.availableCountBadge.textContent = `${available.length} available`;
+                elements.availableCountBadge.style.display = 'inline-block';
+                elements.noFeaturesAlert.style.display = 'none';
+                
+                let html = '<option value="">Choose feature...</option>';
+                available.forEach(label => {
+                    html += `<option value="${label}">${label}</option>`;
+                });
+                elements.featureSelect.innerHTML = html;
+                elements.featureSelect.disabled = false;
+                
+                if (available.includes(currentFeature)) {
+                    elements.featureSelect.value = currentFeature;
+                } else {
+                    currentFeature = '';
+                }
+            } else {
+                elements.availableCountBadge.style.display = 'none';
+                elements.noFeaturesMessage.textContent = `All features added for ${currentRole} in this section`;
+                elements.noFeaturesAlert.style.display = 'block';
+                elements.featureSelect.innerHTML = '<option value="">No features available</option>';
+                elements.featureSelect.disabled = true;
+                currentFeature = '';
+            }
+            
+            updateSubmitButton();
+        }
+
+        function updateAlreadyAddedFeatures() {
+            const added = getAlreadyAddedFeatures(currentRole, currentSection);
+            
+            if (added.length > 0) {
+                elements.alreadyAddedTitle.textContent = `${currentRole} - ${currentSection.replace('*** ', '')}:`;
+                let html = added.map(f => {
+                    const name = f.label.replace(/^\d+\.\s*/, '');
+                    return `<span class="badge bg-secondary">${name}</span>`;
+                }).join('');
+                elements.alreadyAddedFeatures.innerHTML = html;
+                elements.alreadyAddedSection.style.display = 'block';
+            } else {
+                elements.alreadyAddedSection.style.display = 'none';
+            }
+        }
+
+        function updateSubmitButton() {
+            const available = getAvailableLabels(currentRole, currentSection);
+            const exists = checkFeatureExists(currentRole, currentSection, currentFeature);
+            
+            if (available.length === 0 || !currentFeature || exists || isSubmitting) {
+                elements.submitBtn.disabled = true;
+                if (isSubmitting) {
+                    elements.submitBtn.innerHTML = '<span class="spinner-border spinner-border-sm me-2"></span>Adding...';
+                } else {
+                    elements.submitBtn.innerHTML = '<i class="fas fa-save me-2"></i>Add Feature';
+                }
+                elements.alreadyExistsWarning.style.display = exists ? 'block' : 'none';
+            } else {
+                elements.submitBtn.disabled = false;
+                elements.submitBtn.innerHTML = '<i class="fas fa-save me-2"></i>Add Feature';
+                elements.alreadyExistsWarning.style.display = 'none';
+            }
+        }
+
+        // ========================================
+        // EVENT HANDLERS
+        // ========================================
+
+        window.changeRole = function(role) {
+            currentRole = role;
+            currentFeature = '';
+            renderForm();
+        };
+
+        function changeSection(section) {
+            currentSection = section;
+            currentFeature = '';
+            renderForm();
+        }
+
+        function changeFeature(feature) {
+            currentFeature = feature;
+            updateSubmitButton();
+        }
+
+        function changeStatus(status) {
+            isActive = status === 'active';
+        }
+
+        async function addNewFeature() {
+            if (isSubmitting) return;
+            
+            const available = getAvailableLabels(currentRole, currentSection);
+            if (available.length === 0 || !currentFeature) {
+                showToast('Please select a valid feature', 'warning');
+                return;
+            }
+            
+            if (checkFeatureExists(currentRole, currentSection, currentFeature)) {
+                showToast('Feature already exists!', 'warning');
+                return;
+            }
+            
+            isSubmitting = true;
+            updateSubmitButton();
+            
+            try {
+                const newId = features.length > 0 ? Math.max(...features.map(f => f.id)) + 1 : 1;
+                const sectionFeatures = features
+                    .filter(f => f.role === currentRole && f.section === currentSection)
+                    .sort((a, b) => a.order - b.order);
+                const newOrder = sectionFeatures.length > 0 
+                    ? Math.max(...sectionFeatures.map(f => f.order)) + 1 
+                    : parseInt(elements.orderInput.value) || 1;
+                
+                const newFeature = {
+                    id: newId,
+                    role: currentRole,
+                    section: currentSection,
+                    label: currentFeature,
+                    path: featurePaths[currentFeature] || '#',
+                    isActive: isActive,
+                    order: newOrder,
+                    createdAt: new Date().toISOString()
+                };
+                
+                const saved = saveFeatures([...features, newFeature]);
+                
+                if (saved) {
+                    notifySidebarUpdate();
+                    showToast(`✅ ${currentFeature} added for ${currentRole}!`, 'success');
+                    currentFeature = '';
+                    loadFeatures();
+                } else {
+                    showToast('Failed to save feature', 'error');
+                }
+            } catch (error) {
+                console.error('❌ Error:', error);
+                showToast('Failed to add feature', 'error');
+            } finally {
+                isSubmitting = false;
+                updateSubmitButton();
+            }
+        }
+
+        function resetForm() {
+            currentRole = 'SuperAdmin';
+            currentSection = '*** Dashboard';
+            currentFeature = '';
+            isActive = true;
+            elements.orderInput.value = 1;
+            renderForm();
+            showToast('Form reset', 'info');
+        }
+
+        // ========================================
+        // INITIALIZATION
+        // ========================================
+
+        function init() {
+            console.log('🚀 Initializing...');
+            
+            elements.sectionSelect.addEventListener('change', e => changeSection(e.target.value));
+            elements.featureSelect.addEventListener('change', e => changeFeature(e.target.value));
+            document.querySelectorAll('input[name="status"]').forEach(radio => {
+                radio.addEventListener('change', e => changeStatus(e.target.value));
+            });
+            elements.addFeatureForm.addEventListener('submit', e => {
+                e.preventDefault();
+                addNewFeature();
+            });
+            elements.resetBtn.addEventListener('click', resetForm);
+            elements.cancelBtn.addEventListener('click', () => window.location.href = '/role-permissions');
+            
+            loadFeatures();
+        }
+
+        document.addEventListener('DOMContentLoaded', init);
+    </script>
+</body>
+</html>

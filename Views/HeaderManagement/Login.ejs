@@ -1,0 +1,621 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>WhatsApp API · Sign in</title>
+    <!-- Google Fonts Inter & Font Awesome -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,400;14..32,500;14..32,600;14..32,700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            height: 100vh;
+            display: flex;
+            background: #fcfcfd;
+            overflow: hidden;           /* no scroll on body */
+        }
+
+        /* ===== LEFT SIDE (IMAGE + BOTTOM CONTENT) ===== */
+        .left-panel {
+            flex: 1.1;                  /* slightly wider for image impact */
+            background: linear-gradient(145deg, #0f172a, #1e293b);
+            display: flex;
+            flex-direction: column;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .image-area {
+            flex: 1;                    /* takes available space */
+            background-image: url('https://images.unsplash.com/photo-1611162617213-7d7a39e9b1d7?q=80&w=1974&auto=format&fit=crop'); /* whatsapp / chat concept */
+            background-size: cover;
+            background-position: center 30%;
+            background-repeat: no-repeat;
+            position: relative;
+            display: flex;
+            align-items: flex-end;       /* pushes content to bottom inside image */
+            padding: 2.5rem;
+            color: white;
+        }
+
+        /* dark overlay for readability */
+        .image-area::after {
+            content: '';
+            position: absolute;
+            inset: 0;
+            background: linear-gradient(0deg, rgba(15,23,42,0.7) 0%, rgba(15,23,42,0.3) 50%, transparent 80%);
+            pointer-events: none;
+        }
+
+        .image-text {
+            position: relative;
+            z-index: 2;
+            max-width: 500px;
+        }
+
+        .image-text h2 {
+            font-size: 2.2rem;
+            font-weight: 700;
+            line-height: 1.2;
+            margin-bottom: 0.5rem;
+            text-shadow: 0 4px 12px rgba(0,0,0,0.3);
+        }
+
+        .image-text p {
+            font-size: 1rem;
+            opacity: 0.9;
+            text-shadow: 0 2px 6px rgba(0,0,0,0.4);
+        }
+
+        /* bottom content – website / project info (whatsapp api) */
+        .bottom-content {
+            background: #0b1422;
+            padding: 1.8rem 2.5rem;
+            color: #cdd9f0;
+            border-top: 1px solid rgba(255,255,255,0.06);
+        }
+
+        .bottom-content .project-title {
+            font-size: 1.1rem;
+            font-weight: 600;
+            color: white;
+            margin-bottom: 0.3rem;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .bottom-content .project-title i {
+            color: #25d366;  /* whatsapp green */
+            font-size: 1.3rem;
+        }
+
+        .project-desc {
+            font-size: 0.9rem;
+            line-height: 1.5;
+            opacity: 0.8;
+            margin-bottom: 1rem;
+            max-width: 500px;
+        }
+
+        .tech-badges {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.6rem;
+        }
+
+        .badge {
+            background: rgba(255,255,255,0.06);
+            border: 1px solid rgba(255,255,255,0.1);
+            padding: 0.3rem 1rem;
+            border-radius: 40px;
+            font-size: 0.8rem;
+            font-weight: 500;
+            color: #b0c7f0;
+        }
+
+        /* ===== RIGHT SIDE (LOGIN CARD) ===== */
+        .right-panel {
+            flex: 0.9;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: #f9fafc;
+            padding: 2rem;
+        }
+
+        .login-card {
+            width: 100%;
+            max-width: 400px;
+            background: #ffffff;
+            border-radius: 2.5rem;
+            /* REDUCED HEIGHT: smaller vertical padding */
+            padding: 2rem 2.2rem 2.2rem 2.2rem;   /* top padding 2rem (was 2.8) */
+            box-shadow: 0 30px 50px -25px rgba(0,0,0,0.2), 0 10px 20px -10px rgba(0,0,0,0.05);
+            border: 1px solid rgba(0,0,0,0.02);
+        }
+
+        .login-header {
+            text-align: center;
+            margin-bottom: 1.5rem;       /* reduced from 2.2rem */
+        }
+
+        .logo-icon {
+            width: 52px;                  /* slightly smaller */
+            height: 52px;
+            background: #0f172a;
+            border-radius: 16px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 0.8rem;        /* less bottom margin */
+            box-shadow: 0 15px 22px -10px rgba(15,23,42,0.3);
+        }
+
+        .logo-icon i {
+            font-size: 26px;               /* adjusted */
+            color: white;
+        }
+
+        .login-header h2 {
+            font-size: 1.7rem;              /* slightly smaller */
+            font-weight: 700;
+            color: #0f172a;
+            letter-spacing: -0.02em;
+            margin-bottom: 0.1rem;
+        }
+
+        .login-header p {
+            color: #566981;
+            font-size: 0.9rem;
+        }
+
+        /* form */
+        .form-group {
+            margin-bottom: 1.2rem;           /* reduced from 1.5 */
+        }
+
+        .form-group label {
+            font-size: 0.8rem;
+            font-weight: 600;
+            color: #1e293b;
+            display: block;
+            margin-bottom: 0.2rem;           /* less space */
+        }
+
+        .input-wrapper {
+            position: relative;
+            display: flex;
+            align-items: center;
+        }
+
+        .input-wrapper i {
+            position: absolute;
+            left: 16px;
+            color: #94a3b8;
+            font-size: 0.95rem;
+            pointer-events: none;
+        }
+
+        .input-wrapper input {
+            width: 100%;
+            padding: 0.85rem 1.2rem 0.85rem 3rem;    /* reduced vertical padding */
+            border: 1.5px solid #e9edf4;
+            border-radius: 20px;
+            font-size: 0.9rem;
+            background: #ffffff;
+            transition: all 0.2s;
+        }
+
+        .input-wrapper input:focus {
+            border-color: #2563eb;
+            outline: none;
+            box-shadow: 0 0 0 4px rgba(37,99,235,0.1);
+        }
+
+        .input-wrapper input:focus + i {
+            color: #2563eb;
+        }
+
+        /* extras row */
+        .row-actions {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin: 0.2rem 0 1.2rem;         /* reduced margins */
+        }
+
+        .remember {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .remember input {
+            width: 0.95rem;
+            height: 0.95rem;
+            accent-color: #2563eb;
+        }
+
+        .remember label {
+            font-size: 0.85rem;
+            color: #364d64;
+        }
+
+        .forgot-link {
+            font-size: 0.85rem;
+            color: #2563eb;
+            font-weight: 500;
+            text-decoration: none;
+        }
+
+        .forgot-link:hover {
+            text-decoration: underline;
+        }
+
+        .login-btn {
+            width: 100%;
+            background: #0f172a;
+            border: none;
+            border-radius: 30px;
+            padding: 0.9rem;                /* reduced from 1rem */
+            color: white;
+            font-weight: 600;
+            font-size: 0.95rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            cursor: pointer;
+            transition: 0.2s;
+            box-shadow: 0 12px 24px -12px #0f172a;
+        }
+
+        .login-btn:hover {
+            background: #1e2a44;
+            transform: scale(1.01);
+        }
+
+        .login-btn:active {
+            transform: scale(0.99);
+        }
+
+        .login-btn:disabled {
+            opacity: 0.7;
+            cursor: not-allowed;
+        }
+
+        .signup-text {
+            text-align: center;
+            margin-top: 1.2rem;               /* reduced */
+            font-size: 0.85rem;
+            color: #62748c;
+        }
+
+        .signup-text a {
+            color: #2563eb;
+            font-weight: 600;
+            text-decoration: none;
+        }
+
+        .signup-text a:hover {
+            text-decoration: underline;
+        }
+
+        /* Toast Notification */
+        .toast-container {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            z-index: 1000;
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+
+        .toast {
+            padding: 16px 20px;
+            border-radius: 10px;
+            color: white;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            animation: slideIn 0.3s ease;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+            max-width: 350px;
+            min-width: 300px;
+            backdrop-filter: blur(10px);
+        }
+
+        .toast-success {
+            background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+        }
+
+        .toast-error {
+            background: linear-gradient(135deg, #ef4444 0%, #dc2626 100%);
+        }
+
+        .toast-info {
+            background: linear-gradient(135deg, #3b82f6 0%, #2563eb 100%);
+        }
+
+        .toast-close {
+            background: none;
+            border: none;
+            color: white;
+            cursor: pointer;
+            margin-left: auto;
+            opacity: 0.8;
+            font-size: 18px;
+            padding: 0;
+        }
+
+        .toast-close:hover {
+            opacity: 1;
+        }
+
+        @keyframes slideIn {
+            from { transform: translateX(100%); opacity: 0; }
+            to { transform: translateX(0); opacity: 1; }
+        }
+
+        @keyframes slideOut {
+            from { transform: translateX(0); opacity: 1; }
+            to { transform: translateX(100%); opacity: 0; }
+        }
+
+        /* Message container for server-side flash messages */
+        .message-container {
+            margin-bottom: 1.5rem;
+        }
+
+        .message {
+            padding: 0.9rem 1.2rem;
+            border-radius: 16px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            font-size: 0.9rem;
+            animation: slideDown 0.4s ease;
+        }
+
+        @keyframes slideDown {
+            from { opacity: 0; transform: translateY(-10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .message-success {
+            background: #d1fae5;
+            color: #065f46;
+            border: 1px solid #6ee7b7;
+        }
+        
+
+        .message-error {
+            background: #fee2e2;
+            color: #991b1b;
+            border: 1px solid #fca5a5;
+        }
+
+        .message-info {
+            background: #dbeafe;
+            color: #1e40af;
+            border: 1px solid #93c5fd;
+        }
+
+        /* responsive: on narrow screens, still no scroll, but left panel collapses */
+        @media (max-width: 900px) {
+            body { flex-direction: column; overflow: auto; }
+            .left-panel { flex: auto; min-height: 40vh; }
+            .right-panel { flex: auto; }
+        }
+    </style>
+</head>
+<body>
+    <!-- LEFT PANEL: image + bottom project info (whatsapp api) -->
+    <div class="left-panel">
+        <div class="image-area">
+            <div class="image-text">
+                <h2>WhatsApp Business API</h2>
+                <p>Engage customers effortlessly · secure, reliable, and scalable messaging.</p>
+            </div>
+        </div>
+        <!-- bottom content exactly as requested: whatsapp api website / project -->
+        <div class="bottom-content">
+            <div class="project-title">
+                <i class="fab fa-whatsapp"></i> WhatsApp API Project
+            </div>
+            <div class="project-desc">
+                Official Cloud API · message templates · interactive buttons · high throughput. 
+                Built for developers and businesses.
+            </div>
+            <div class="tech-badges">
+                <span class="badge">REST API</span>
+                <span class="badge">Webhooks</span>
+                <span class="badge">Templates</span>
+                <span class="badge">Meta Verified</span>
+                <span class="badge">Media CDN</span>
+            </div>
+        </div>
+    </div>
+
+    <!-- RIGHT PANEL: perfect login card (backend connected) -->
+    <div class="right-panel">
+        <div class="login-card">
+            <div class="login-header">
+                <div class="logo-icon">
+                    <i class="fas fa-comment-dots"></i>
+                </div>
+                <h2>Welcome back</h2>
+                <p>Sign in to your WhatsApp API dashboard</p>
+            </div>
+
+            <!-- Server-side flash message will be injected here by backend (EJS syntax) -->
+            <% if (typeof message !== 'undefined' && message) { %>
+                <div class="message-container">
+                    <div class="message message-<%= messageType || 'info' %>">
+                        <% if (messageType === 'success') { %>
+                            <i class="fas fa-check-circle"></i>
+                        <% } else if (messageType === 'error') { %>
+                            <i class="fas fa-exclamation-circle"></i>
+                        <% } else { %>
+                            <i class="fas fa-info-circle"></i>
+                        <% } %>
+                        <span><%= message %></span>
+                    </div>
+                </div>
+            <% } %>
+
+            <!-- Login Form with Backend Integration (method="POST" action="/login") -->
+            <form class="login-form" id="loginForm" method="POST" action="/login">
+                <!-- email -->
+                <div class="form-group">
+                    <label>Email</label>
+                    <div class="input-wrapper">
+                        <i class="fas fa-envelope"></i>
+                        <input type="email" id="email" name="email" placeholder="name@company.com" required autocomplete="email">
+                    </div>
+                </div>
+                <!-- password -->
+                <div class="form-group">
+                    <label>Password</label>
+                    <div class="input-wrapper">
+                        <i class="fas fa-lock"></i>
+                        <input type="password" id="password" name="password" placeholder="········" required autocomplete="current-password">
+                    </div>
+                </div>
+
+                <!-- remember + forgot -->
+                <div class="row-actions">
+                    <div class="remember">
+                        <input type="checkbox" id="remember" name="remember">
+                        <label for="remember">Keep me signed in</label>
+                    </div>
+                    <a href="/forgot-password" class="forgot-link">Forgot password?</a>
+                </div>
+
+                <button type="submit" class="login-btn" id="loginBtn">
+                    <i class="fas fa-arrow-right-to-bracket"></i> <span>Sign in</span>
+                </button>
+
+                <div class="signup-text">
+                    <a href="/">← Back to Home</a>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Toast Container -->
+    <div id="toastContainer" class="toast-container"></div>
+
+    <!-- Backend-Ready JavaScript (Toast & URL handling) -->
+    <script>
+        // Function to show toast notification
+        function showToast(message, type = 'info') {
+            const toastContainer = document.getElementById('toastContainer');
+            const toast = document.createElement('div');
+            toast.className = `toast toast-${type}`;
+            
+            // Icon based on type
+            let icon = 'fa-info-circle';
+            if (type === 'success') icon = 'fa-check-circle';
+            if (type === 'error') icon = 'fa-exclamation-circle';
+            
+            toast.innerHTML = `
+                <i class="fas ${icon}"></i>
+                <span>${message}</span>
+                <button class="toast-close" onclick="this.parentElement.remove()">
+                    <i class="fas fa-times"></i>
+                </button>
+            `;
+            
+            toastContainer.appendChild(toast);
+            
+            // Auto remove after 5 seconds
+            setTimeout(() => {
+                if (toast.parentElement) {
+                    toast.style.animation = 'slideOut 0.3s ease';
+                    setTimeout(() => {
+                        if (toast.parentElement) {
+                            toast.remove();
+                        }
+                    }, 300);
+                }
+            }, 5000);
+        }
+
+        // Check URL for success message (for signup success, etc.)
+        document.addEventListener('DOMContentLoaded', function() {
+            const urlParams = new URLSearchParams(window.location.search);
+            const message = urlParams.get('message');
+            const messageType = urlParams.get('messageType');
+            
+            if (message && messageType) {
+                // Show toast notification
+                showToast(decodeURIComponent(message), messageType);
+                
+                // Clear URL parameters
+                const newUrl = window.location.pathname;
+                window.history.replaceState({}, document.title, newUrl);
+            }
+        });
+
+        // Handle form submission loading state (works with actual backend POST)
+        document.getElementById('loginForm').addEventListener('submit', function(e) {
+            const submitBtn = this.querySelector('.login-btn');
+            const email = document.getElementById('email').value.trim();
+            const password = document.getElementById('password').value;
+            
+            // Basic validation before submitting to backend
+            if (!email || !password) {
+                e.preventDefault(); // prevent submission if fields are empty
+                showToast('Please fill in both fields', 'error');
+                return;
+            }
+
+            // Show loading state (button will remain disabled until server responds)
+            submitBtn.innerHTML = '<i class="fas fa-spinner fa-pulse"></i> <span>Signing In...</span>';
+            submitBtn.disabled = true;
+            // Form will continue to submit to backend at /login
+        });
+
+        // Auto-hide any server-side message containers after 5 seconds
+        setTimeout(() => {
+            const messages = document.querySelectorAll('.message-container');
+            messages.forEach(message => {
+                message.style.opacity = '0';
+                message.style.transition = 'opacity 0.5s ease';
+                setTimeout(() => {
+                    if (message.parentElement) {
+                        message.remove();
+                    }
+                }, 500);
+            });
+        }, 5000);
+
+        // Keyboard shortcut: Ctrl+Enter to submit
+        document.addEventListener('keydown', function(e) {
+            if ((e.ctrlKey || e.metaKey) && e.key === 'Enter') {
+                document.getElementById('loginForm').submit();
+            }
+        });
+    </script>
+
+    <!-- ensure no overflow / scroll on body -->
+    <style>
+        body { overflow: hidden; }
+        @media (max-width:900px) {
+            body { overflow: auto; }  /* small screens scroll, but fine */
+        }
+        .left-panel, .right-panel { overflow-y: auto; scrollbar-width: none; }
+        .left-panel::-webkit-scrollbar, .right-panel::-webkit-scrollbar { display: none; }
+    </style>
+</body>
+</html>

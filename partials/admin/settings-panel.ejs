@@ -1,0 +1,585 @@
+<!-- SETTINGS OVERLAY -->
+<div class="settings-overlay" id="settingsOverlay" onclick="closeSettings()"></div>
+
+<!-- SETTINGS PANEL -->
+<div class="settings-panel" id="settingsPanel">
+    <div class="settings-header">
+        <div>
+            <h4>⚙️ Settings</h4>
+            <small>Select your own customized style</small>
+        </div>
+        <div>
+            <button class="reset-btn" onclick="resetSettings()">Reset</button>
+            <span class="close-btn" onclick="closeSettings()">✕</span>
+        </div>
+    </div>
+
+    <div class="settings-body">
+        <div class="section">
+            <h5>Color Scheme</h5>
+            <p>Choose the perfect color mode for your app.</p>
+
+            <div class="color-options">
+                <div class="color-card active" onclick="selectColorScheme(this, 'light')">
+                    <div class="preview light-preview"></div>
+                    Light
+                </div>
+                <div class="color-card" onclick="selectColorScheme(this, 'dark')">
+                    <div class="preview dark-preview"></div>
+                    Dark
+                </div>
+            </div>
+        </div>
+
+        <div class="toggle">
+            <span>RTL Mode</span>
+            <label class="switch">
+                <input type="checkbox" id="rtlToggle">
+                <span class="slider"></span>
+            </label>
+        </div>
+
+        <div class="toggle">
+            <span>Fluid Layout</span>
+            <label class="switch">
+                <input type="checkbox" id="fluidToggle">
+                <span class="slider"></span>
+            </label>
+        </div>
+
+        <div class="section">
+            <h5>Vertical Navbar Style</h5>
+            <p>Switch between styles for your vertical navbar</p>
+
+            <div class="nav-style">
+                <div class="nav-card" onclick="selectNavStyle('transparent')">Transparent</div>
+                <div class="nav-card" onclick="selectNavStyle('inverted')">Inverted</div>
+                <div class="nav-card" onclick="selectNavStyle('card')">Card</div>
+                <div class="nav-card active" onclick="selectNavStyle('vibrant')">Vibrant</div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+    /* SETTINGS PANEL STYLES */
+    .settings-overlay {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: rgba(0, 0, 0, 0.35);
+        z-index: 9997;
+        display: none;
+    }
+
+    .settings-overlay.active {
+        display: block;
+    }
+
+    .settings-panel {
+        position: fixed;
+        top: 0;
+        right: -360px;
+        width: 360px;
+        height: 100vh;
+        background: #ffffff;
+        box-shadow: -10px 0 25px rgba(0, 0, 0, 0.15);
+        transition: 0.4s ease;
+        z-index: 9998;
+        display: flex;
+        flex-direction: column;
+    }
+
+    .settings-panel.active {
+        right: 0;
+    }
+
+    /* HEADER */
+    .settings-header {
+        background: linear-gradient(135deg, #3b82f6, #2563eb);
+        color: #fff;
+        padding: 16px;
+        display: flex;
+        justify-content: space-between;
+        align-items: flex-start;
+    }
+
+    .settings-header h4 {
+        margin: 0;
+        font-size: 16px;
+        font-weight: 600;
+    }
+
+    .settings-header small {
+        font-size: 12px;
+        opacity: 0.9;
+        display: block;
+        margin-top: 4px;
+    }
+
+    .reset-btn {
+        background: rgba(255, 255, 255, 0.2);
+        border: none;
+        color: #fff;
+        padding: 4px 10px;
+        border-radius: 20px;
+        font-size: 12px;
+        cursor: pointer;
+        margin-right: 6px;
+        transition: all 0.2s;
+    }
+
+    .reset-btn:hover {
+        background: rgba(255, 255, 255, 0.3);
+    }
+
+    .close-btn {
+        cursor: pointer;
+        font-size: 18px;
+        padding: 2px 8px;
+        border-radius: 4px;
+        transition: all 0.2s;
+    }
+
+    .close-btn:hover {
+        background: rgba(255, 255, 255, 0.1);
+    }
+
+    /* BODY */
+    .settings-body {
+        padding: 16px;
+        overflow-y: auto;
+        flex: 1;
+    }
+
+    .section {
+        margin-bottom: 18px;
+    }
+
+    .section h5 {
+        margin: 0 0 6px;
+        font-size: 14px;
+        font-weight: 600;
+        color: #334155;
+    }
+
+    .section p {
+        margin: 0 0 10px;
+        font-size: 12px;
+        color: #64748b;
+    }
+
+    /* COLOR SCHEME */
+    .color-options {
+        display: flex;
+        gap: 10px;
+    }
+
+    .color-card {
+        flex: 1;
+        border: 2px solid #e5e7eb;
+        border-radius: 10px;
+        padding: 8px;
+        cursor: pointer;
+        text-align: center;
+        font-size: 13px;
+        transition: all 0.2s;
+    }
+
+    .color-card.active {
+        border-color: #22c55e;
+        background: #f0fdf4;
+    }
+
+    .color-card:hover {
+        border-color: #3b82f6;
+    }
+
+    .preview {
+        height: 60px;
+        border-radius: 6px;
+        margin-bottom: 6px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+
+    .light-preview {
+        background: #f8fafc;
+        border: 1px solid #e5e7eb;
+    }
+
+    .light-preview::after {
+        content: "🌞";
+        font-size: 20px;
+    }
+
+    .dark-preview {
+        background: #0f172a;
+        border: 1px solid #334155;
+    }
+
+    .dark-preview::after {
+        content: "🌙";
+        font-size: 20px;
+        color: white;
+    }
+
+    /* TOGGLE SWITCHES */
+    .toggle {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 12px 0;
+        border-top: 1px solid #e5e7eb;
+        font-size: 14px;
+    }
+
+    .toggle:last-child {
+        border-bottom: 1px solid #e5e7eb;
+    }
+
+    /* Custom Toggle Switch */
+    .switch {
+        position: relative;
+        display: inline-block;
+        width: 44px;
+        height: 22px;
+    }
+
+    .switch input {
+        opacity: 0;
+        width: 0;
+        height: 0;
+    }
+
+    .slider {
+        position: absolute;
+        cursor: pointer;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background-color: #cbd5e1;
+        transition: .4s;
+        border-radius: 34px;
+    }
+
+    .slider:before {
+        position: absolute;
+        content: "";
+        height: 18px;
+        width: 18px;
+        left: 2px;
+        bottom: 2px;
+        background-color: white;
+        transition: .4s;
+        border-radius: 50%;
+    }
+
+    input:checked + .slider {
+        background-color: #22c55e;
+    }
+
+    input:checked + .slider:before {
+        transform: translateX(22px);
+    }
+
+    /* NAV STYLE */
+    .nav-style {
+        display: grid;
+        grid-template-columns: repeat(2, 1fr);
+        gap: 10px;
+    }
+
+    .nav-card {
+        border: 2px solid #e5e7eb;
+        border-radius: 10px;
+        padding: 16px;
+        text-align: center;
+        cursor: pointer;
+        font-size: 13px;
+        transition: all 0.2s;
+        font-weight: 500;
+    }
+
+    .nav-card.active {
+        border-color: #22c55e;
+        background: #f0fdf4;
+    }
+
+    .nav-card:hover {
+        border-color: #3b82f6;
+        background: #f8fafc;
+    }
+
+    /* RESPONSIVE */
+    @media (max-width: 768px) {
+        .settings-panel {
+            width: 320px;
+        }
+    }
+
+    @media (max-width: 480px) {
+        .settings-panel {
+            width: 100%;
+        }
+    }
+</style>
+
+<script>
+    // Color scheme selection
+    function selectColorScheme(element, scheme) {
+        // Remove active class from all color cards
+        document.querySelectorAll('.color-card').forEach(card => {
+            card.classList.remove('active');
+        });
+        
+        // Add active class to clicked card
+        element.classList.add('active');
+        
+        // Apply theme based on selection
+        if (scheme === 'dark') {
+            document.body.style.setProperty('--bg', '#0f172a');
+            document.body.style.setProperty('--card', '#1e293b');
+            document.body.style.setProperty('--text', '#f1f5f9');
+            
+            // Update text colors for dark mode
+            document.querySelectorAll('.card-box, .stat-card, .notice-box').forEach(el => {
+                el.style.color = '#f1f5f9';
+            });
+            
+            document.querySelectorAll('h5, h6, strong').forEach(el => {
+                el.style.color = '#f1f5f9';
+            });
+            
+            document.querySelectorAll('.text-muted').forEach(el => {
+                el.style.color = '#94a3b8';
+            });
+        } else {
+            document.body.style.setProperty('--bg', '#f3f6fb');
+            document.body.style.setProperty('--card', '#ffffff');
+            document.body.style.setProperty('--text', '#475569');
+            
+            // Reset text colors for light mode
+            document.querySelectorAll('.card-box, .stat-card, .notice-box').forEach(el => {
+                el.style.color = '';
+            });
+            
+            document.querySelectorAll('h5, h6, strong').forEach(el => {
+                el.style.color = '';
+            });
+            
+            document.querySelectorAll('.text-muted').forEach(el => {
+                el.style.color = '';
+            });
+        }
+        
+        // Store in localStorage
+        localStorage.setItem('colorScheme', scheme);
+        showNotification(`Color scheme changed to: ${scheme}`);
+    }
+
+    // Nav style selection
+    function selectNavStyle(style) {
+        // Remove active class from all nav cards
+        document.querySelectorAll('.nav-card').forEach(card => {
+            card.classList.remove('active');
+        });
+        
+        // Add active class to clicked card
+        const navCards = document.querySelectorAll('.nav-card');
+        navCards.forEach(card => {
+            if (card.textContent.toLowerCase() === style) {
+                card.classList.add('active');
+            }
+        });
+        
+        // Get the sidebar element
+        const sidebar = document.querySelector('.sidebar');
+        if (!sidebar) {
+            console.log("Sidebar not found");
+            return;
+        }
+        
+        // Remove all existing style classes
+        sidebar.classList.remove('transparent', 'inverted', 'card', 'vibrant');
+        
+        // Add the selected style class
+        sidebar.classList.add(style);
+        
+        // Store the selected style in localStorage
+        localStorage.setItem('navbarStyle', style);
+        
+        // Show notification
+        showNotification(`Navbar style changed to: ${style.charAt(0).toUpperCase() + style.slice(1)}`);
+    }
+
+    // Reset button functionality
+    function resetSettings() {
+        // Reset color scheme
+        document.querySelectorAll('.color-card').forEach((card, index) => {
+            card.classList.remove('active');
+            if (index === 0) card.classList.add('active');
+        });
+        
+        // Reset navbar style
+        document.querySelectorAll('.nav-card').forEach((card, index) => {
+            card.classList.remove('active');
+            if (index === 3) card.classList.add('active');
+        });
+        
+        // Reset toggles
+        document.querySelectorAll('.toggle input[type="checkbox"]').forEach(toggle => {
+            toggle.checked = false;
+        });
+        
+        // Reset theme to light
+        document.body.style.setProperty('--bg', '#f3f6fb');
+        document.body.style.setProperty('--card', '#ffffff');
+        document.body.style.setProperty('--text', '#475569');
+        
+        // Reset navbar style to vibrant (default)
+        const sidebar = document.querySelector('.sidebar');
+        if (sidebar) {
+            sidebar.classList.remove('transparent', 'inverted', 'card', 'vibrant');
+            sidebar.classList.add('vibrant');
+        }
+        
+        // Reset layout
+        document.body.style.direction = 'ltr';
+        const mainContent = document.querySelector('.main-content');
+        if (mainContent) {
+            mainContent.style.marginLeft = '260px';
+            mainContent.style.marginRight = '0';
+            mainContent.style.maxWidth = '';
+            mainContent.style.padding = '25px';
+        }
+        
+        // Reset text colors
+        document.querySelectorAll('.card-box, .stat-card, .notice-box').forEach(el => {
+            el.style.color = '';
+        });
+        
+        document.querySelectorAll('h5, h6, strong').forEach(el => {
+            el.style.color = '';
+        });
+        
+        // Clear localStorage
+        localStorage.removeItem('navbarStyle');
+        localStorage.removeItem('colorScheme');
+        
+        showNotification('Settings have been reset to default!');
+    }
+
+    // Toggle switches functionality
+    document.addEventListener("DOMContentLoaded", function() {
+        // RTL Toggle
+        const rtlToggle = document.getElementById('rtlToggle');
+        if (rtlToggle) {
+            rtlToggle.addEventListener('change', function() {
+                if (this.checked) {
+                    document.body.style.direction = 'rtl';
+                    const mainContent = document.querySelector('.main-content');
+                    if (mainContent) {
+                        mainContent.style.marginLeft = '0';
+                        mainContent.style.marginRight = '260px';
+                    }
+                    showNotification('RTL Mode enabled');
+                } else {
+                    document.body.style.direction = 'ltr';
+                    const mainContent = document.querySelector('.main-content');
+                    if (mainContent) {
+                        mainContent.style.marginLeft = '260px';
+                        mainContent.style.marginRight = '0';
+                    }
+                }
+            });
+        }
+
+        // Fluid Layout Toggle
+        const fluidToggle = document.getElementById('fluidToggle');
+        if (fluidToggle) {
+            fluidToggle.addEventListener('change', function() {
+                const mainContent = document.querySelector('.main-content');
+                if (!mainContent) return;
+                
+                if (this.checked) {
+                    mainContent.style.maxWidth = '100%';
+                    mainContent.style.padding = '25px 40px';
+                    showNotification('Fluid Layout enabled');
+                } else {
+                    mainContent.style.maxWidth = '';
+                    mainContent.style.padding = '25px';
+                }
+            });
+        }
+
+        // Close panel when clicking outside
+        const settingsOverlay = document.getElementById('settingsOverlay');
+        if (settingsOverlay) {
+            settingsOverlay.addEventListener('click', function(e) {
+                if (e.target === this) {
+                    closeSettings();
+                }
+            });
+        }
+
+        // Prevent panel close when clicking inside panel
+        const settingsPanel = document.getElementById('settingsPanel');
+        if (settingsPanel) {
+            settingsPanel.addEventListener('click', function(e) {
+                e.stopPropagation();
+            });
+        }
+    });
+
+    // Notification function
+    function showNotification(message) {
+        // Create notification element
+        const notification = document.createElement('div');
+        notification.style.cssText = `
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            background: #10b981;
+            color: white;
+            padding: 12px 20px;
+            border-radius: 8px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+            z-index: 10000;
+            font-weight: 500;
+            animation: slideIn 0.3s ease, fadeOut 0.3s ease 2.7s;
+            max-width: 300px;
+        `;
+        
+        // Add keyframes for animation
+        const style = document.createElement('style');
+        style.textContent = `
+            @keyframes slideIn {
+                from { transform: translateX(100%); opacity: 0; }
+                to { transform: translateX(0); opacity: 1; }
+            }
+            @keyframes fadeOut {
+                from { opacity: 1; }
+                to { opacity: 0; }
+            }
+        `;
+        document.head.appendChild(style);
+        
+        notification.textContent = message;
+        document.body.appendChild(notification);
+        
+        // Remove notification after 3 seconds
+        setTimeout(() => {
+            if (notification.parentNode) {
+                notification.parentNode.removeChild(notification);
+            }
+            if (style.parentNode) {
+                style.parentNode.removeChild(style);
+            }
+        }, 3000);
+    }
+</script>

@@ -1,0 +1,1111 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>All Devices - SSPAR Cloud</title>
+
+<!-- Bootstrap -->
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+<!-- Font Awesome -->
+<link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" rel="stylesheet">
+
+<style>
+/* RESET */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    overflow-x: hidden;
+    background: #f3f4f6;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+}
+
+/* HEADER FIXED */
+.header-wrapper {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    z-index: 1030;
+    background: white;
+    box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+}
+
+/* MAIN LAYOUT */
+.main-wrapper {
+    margin-top: 70px;
+    display: flex;
+    width: 100%;
+    min-height: calc(100vh - 70px);
+}
+
+/* SIDEBAR WRAPPER */
+.sidebar-wrapper {
+    width: 280px;
+    flex-shrink: 0;
+    position: fixed;
+    left: 0;
+    top: 70px;
+    bottom: 0;
+    z-index: 1020;
+    transition: width 0.3s ease;
+}
+
+.sidebar-wrapper.collapsed {
+    width: 80px;
+}
+
+/* CONTENT WRAPPER */
+.content-wrapper {
+    flex: 1;
+    margin-left: 280px;
+    padding: 20px;
+    transition: margin-left 0.3s ease;
+    background: #f3f4f6;
+    min-height: calc(100vh - 70px);
+}
+
+.sidebar-wrapper.collapsed + .content-wrapper {
+    margin-left: 80px;
+}
+
+/* MAIN CONTENT */
+.mid-content {
+    background: white;
+    border-radius: 12px;
+    padding: 24px;
+    box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+    min-height: 500px;
+}
+
+/* MOBILE */
+@media (max-width: 768px) {
+    .sidebar-wrapper {
+        transform: translateX(-100%);
+        width: 280px !important;
+    }
+    
+    .sidebar-wrapper.mobile-open {
+        transform: translateX(0);
+    }
+    
+    .content-wrapper {
+        margin-left: 0 !important;
+    }
+    
+    .mid-content {
+        padding: 16px;
+    }
+}
+
+/* =========================
+   MODERN TOAST STYLES
+========================= */
+#toast {
+    position: fixed;
+    top: 24px;
+    right: 24px;
+    width: 320px;
+    padding: 14px 16px;
+    border-radius: 12px;
+    box-shadow: 0 15px 30px rgba(0,0,0,.2);
+    opacity: 0;
+    transform: translateY(-15px);
+    transition: .3s ease;
+    color: #fff;
+    z-index: 9999;
+}
+
+#toast.show {
+    opacity: 1;
+    transform: translateY(0);
+}
+
+.toast-row {
+    display: flex;
+    gap: 12px;
+    align-items: flex-start;
+}
+
+.toast-icon {
+    width: 34px;
+    height: 34px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 16px;
+    background: rgba(0,0,0,.25);
+}
+
+.toast-text h4 {
+    margin: 0;
+    font-size: 14px;
+    font-weight: 600;
+}
+
+.toast-text p {
+    margin: 4px 0 0;
+    font-size: 13px;
+    opacity: .9;
+}
+
+/* Toast Colors */
+.toast-success {
+    background: #16a34a;
+    color: #ffffff;
+}
+.toast-error {
+    background: #dc2626;
+    color: #ffffff;
+}
+.toast-info {
+    background: #2563eb;
+    color: #ffffff;
+}
+.toast-warning {
+    background: #facc15;
+    color: #1f2937;
+}
+
+/* Progress bar */
+.toast-progress {
+    height: 3px;
+    border-radius: 4px;
+    margin-top: 10px;
+    background: rgba(255,255,255,.6);
+    animation: toast-load 3s linear forwards;
+}
+
+.toast-warning .toast-progress {
+    background: rgba(0,0,0,.4);
+}
+
+@keyframes toast-load {
+    from { width: 100%; }
+    to { width: 0%; }
+}
+
+/* TITLES */
+.page-title {
+    font-size: 26px;
+    font-weight: 600;
+}
+.sub-title {
+    color: #6c757d;
+}
+
+/* STAT CARDS */
+.stat-card {
+    background: #fff;
+    border-radius: 14px;
+    padding: 20px;
+    display: flex;
+    align-items: center;
+    gap: 15px;
+    box-shadow: 0 8px 25px rgba(0,0,0,.05);
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+    cursor: pointer;
+}
+.stat-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 12px 30px rgba(0,0,0,.1);
+}
+.stat-icon {
+    width: 48px;
+    height: 48px;
+    border-radius: 12px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 20px;
+}
+.icon-blue { background: #eef2ff; color: #4f46e5; }
+.icon-green { background: #ecfdf5; color: #10b981; }
+.icon-red { background: #fef2f2; color: #ef4444; }
+.icon-yellow { background: #fff7ed; color: #f59e0b; }
+
+/* FILTER */
+.filter-box {
+    background: #fff;
+    border-radius: 14px;
+    padding: 20px;
+    box-shadow: 0 8px 25px rgba(0,0,0,.05);
+}
+.filter-tag {
+    background: #eef2ff;
+    color: #4f46e5;
+    padding: 4px 10px;
+    border-radius: 20px;
+    font-size: 12px;
+    font-weight: 600;
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    margin-right: 8px;
+    margin-bottom: 8px;
+}
+
+/* TABLE */
+.device-table {
+    background: #fff;
+    border-radius: 14px;
+    overflow-x: auto;
+    box-shadow: 0 8px 25px rgba(0,0,0,.05);
+}
+.table th {
+    font-size: 13px;
+    color: #6c757d;
+    font-weight: 600;
+    border-bottom: 2px solid #f1f5f9;
+    padding: 16px 12px;
+}
+.table td {
+    padding: 16px 12px;
+    vertical-align: middle;
+    border-bottom: 1px solid #f1f5f9;
+}
+.table tr:hover {
+    background: #f8fafc;
+}
+.badge-soft {
+    padding: 6px 12px;
+    border-radius: 20px;
+    font-weight: 600;
+    font-size: 12px;
+    display: inline-block;
+    text-decoration: none !important;
+}
+.badge-active { background: #ecfdf5; color: #10b981; }
+.badge-inactive { background: #fef2f2; color: #ef4444; }
+.badge-connected { background: #dbeafe; color: #1d4ed8; }
+.badge-disconnected { background: #f3f4f6; color: #6b7280; }
+
+/* ACTION BUTTONS */
+.action-btn {
+    width: 34px;
+    height: 34px;
+    border-radius: 10px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    text-decoration: none;
+    margin-right: 5px;
+    transition: all 0.2s ease;
+}
+.action-btn:hover {
+    transform: scale(1.1);
+}
+.btn-view { background: #ecfdf5; color: #10b981; }
+.btn-edit { background: #eef2ff; color: #4f46e5; }
+.btn-delete { background: #fef2f2; color: #ef4444; }
+
+/* CHECKBOX */
+.device-checkbox {
+    width: 20px;
+    height: 20px;
+    border-radius: 5px;
+    border: 2px solid #adb5bd;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.2s ease;
+}
+.device-checkbox.checked {
+    background: var(--primary, #4c6ef5);
+    border-color: var(--primary, #4c6ef5);
+}
+.device-checkbox.checked::after {
+    content: '✓';
+    color: white;
+    font-size: 12px;
+    font-weight: bold;
+}
+
+/* CONNECTION STATUS */
+.connection-dot {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    display: inline-block;
+    margin-right: 6px;
+}
+.dot-connected { background: #10b981; }
+.dot-disconnected { background: #ef4444; }
+
+/* LOADING */
+.loading-overlay {
+    display: none;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(255,255,255,0.8);
+    z-index: 9999;
+    justify-content: center;
+    align-items: center;
+}
+
+/* SELECTED DEVICES COUNTER */
+.selected-counter {
+    position: fixed;
+    bottom: 30px;
+    right: 30px;
+    background: #4c6ef5;
+    color: white;
+    padding: 12px 20px;
+    border-radius: 50px;
+    box-shadow: 0 10px 25px rgba(76, 110, 245, 0.3);
+    font-weight: 600;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    z-index: 100;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+.selected-counter:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 15px 30px rgba(76, 110, 245, 0.4);
+}
+
+/* RESPONSIVE */
+@media(max-width:992px){
+    .content-wrapper {
+        margin-left: 0;
+    }
+    .page-content {
+        margin-left: 0;
+        padding: 15px;
+    }
+}
+@media(max-width:768px){
+    .stat-card {
+        padding: 15px;
+    }
+    .action-buttons {
+        display: flex;
+        flex-wrap: nowrap;
+    }
+    .device-table {
+        overflow-x: auto;
+    }
+    .table {
+        min-width: 800px;
+    }
+}
+</style>
+</head>
+
+<body>
+    <!-- HEADER -->
+    <div class="header-wrapper">
+        <%- include('../../partials/ram/header') %>
+    </div>
+
+    <!-- MAIN LAYOUT -->
+    <div class="main-wrapper">
+        <!-- SIDEBAR -->
+        <div class="sidebar-wrapper" id="sidebarWrapper">
+            <%- include('../../partials/ram/sidebaar') %>
+        </div>
+
+        <!-- CONTENT -->
+        <div class="content-wrapper" id="contentWrapper">
+            <div class="mid-content">
+                <!-- Toast Container -->
+                <div id="toast"></div>
+
+                <!-- SELECTED DEVICES COUNTER (Floating) -->
+                <div class="selected-counter" id="selectedCounter" style="display:none;" onclick="useSelectedInCampaign()">
+                    <i class="fa fa-paper-plane"></i>
+                    <span id="selectedCount">0</span> Selected - Use in Campaign
+                </div>
+
+                <!-- PAGE HEADER -->
+                <div class="d-flex flex-column flex-md-row justify-content-between align-items-start align-items-md-center mb-4">
+                    <div>
+                        <div class="page-title">
+                            <i class="fa-solid fa-mobile-screen-button text-primary me-2"></i>
+                            All Devices
+                        </div>
+                        <div class="sub-title">Manage all WhatsApp devices</div>
+                    </div>
+                    <div class="mt-3 mt-md-0 d-flex flex-wrap gap-2">
+                        <button onclick="selectAllDevices()" class="btn btn-outline-primary rounded-pill me-2">
+                            <i class="fa fa-check-square me-1"></i> Select All
+                        </button>
+                        <button onclick="deselectAllDevices()" class="btn btn-outline-secondary rounded-pill me-2">
+                            <i class="fa fa-square me-1"></i> Deselect All
+                        </button>
+                        <a href="/devices/add" class="btn btn-primary rounded-pill me-2">
+                            <i class="fa fa-plus me-1"></i> Add Device
+                        </a>
+                        <button onclick="location.reload()" class="btn btn-outline-secondary rounded-pill me-2">
+                            <i class="fa fa-rotate"></i>
+                        </button>
+                    </div>
+                </div>
+
+                <!-- STATS -->
+                <div class="row g-4 mb-4">
+                    <div class="col-sm-6 col-lg-3" onclick="filterByStatus('all')" style="cursor:pointer;">
+                        <div class="stat-card">
+                            <div class="stat-icon icon-blue"><i class="fa fa-mobile"></i></div>
+                            <div>
+                                <h4 class="mb-0"><%= stats?.total || 0 %></h4>
+                                <small>Total Devices</small>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-sm-6 col-lg-3" onclick="filterByStatus('active')" style="cursor:pointer;">
+                        <div class="stat-card">
+                            <div class="stat-icon icon-green"><i class="fa fa-check"></i></div>
+                            <div>
+                                <h4 class="mb-0"><%= stats?.active || 0 %></h4>
+                                <small>Active</small>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-sm-6 col-lg-3" onclick="filterByStatus('inactive')" style="cursor:pointer;">
+                        <div class="stat-card">
+                            <div class="stat-icon icon-red"><i class="fa fa-xmark"></i></div>
+                            <div>
+                                <h4 class="mb-0"><%= stats?.inactive || 0 %></h4>
+                                <small>Inactive</small>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-sm-6 col-lg-3" onclick="useSelectedInCampaign()" style="cursor:pointer;">
+                        <div class="stat-card">
+                            <div class="stat-icon icon-yellow"><i class="fa fa-paper-plane"></i></div>
+                            <div>
+                                <h4 class="mb-0" id="selectedDevicesCount">0</h4>
+                                <small>Selected</small>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- FILTER -->
+                <div class="filter-box mb-4">
+                    <form method="get" id="filterForm">
+                        <!-- Active Filters -->
+                        <% if(filters && (filters.search || filters.status !== 'all' || filters.type !== 'all' || filters.carrier !== 'all')) { %>
+                        <div class="mb-3">
+                            <small class="text-muted d-block mb-2">Active Filters:</small>
+                            <% if(filters.search) { %>
+                            <span class="filter-tag">
+                                Search: "<%= filters.search %>"
+                                <a href="javascript:void(0)" onclick="removeFilter('search')" class="text-danger ms-1">
+                                    <i class="fa fa-times"></i>
+                                </a>
+                            </span>
+                            <% } %>
+                            <% if(filters.status && filters.status !== 'all') { %>
+                            <span class="filter-tag">
+                                Status: <%= filters.status %>
+                                <a href="javascript:void(0)" onclick="removeFilter('status')" class="text-danger ms-1">
+                                    <i class="fa fa-times"></i>
+                                </a>
+                            </span>
+                            <% } %>
+                            <% if(filters.type && filters.type !== 'all') { %>
+                            <span class="filter-tag">
+                                Type: <%= filters.type %>
+                                <a href="javascript:void(0)" onclick="removeFilter('type')" class="text-danger ms-1">
+                                    <i class="fa fa-times"></i>
+                                </a>
+                            </span>
+                            <% } %>
+                            <% if(filters.carrier && filters.carrier !== 'all') { %>
+                            <span class="filter-tag">
+                                Carrier: <%= filters.carrier %>
+                                <a href="javascript:void(0)" onclick="removeFilter('carrier')" class="text-danger ms-1">
+                                    <i class="fa fa-times"></i>
+                                </a>
+                            </span>
+                            <% } %>
+                            <a href="/devices" class="btn btn-sm btn-outline-danger">Clear All</a>
+                        </div>
+                        <% } %>
+
+                        <input type="text" 
+                               name="search" 
+                               class="form-control mb-3" 
+                               placeholder="Search by name or phone number..." 
+                               value="<%= filters?.search || '' %>"
+                               onkeyup="debounceSearch()">
+
+                        <div class="row g-3">
+                            <div class="col-md-3">
+                                <select name="status" class="form-select rounded-pill" onchange="this.form.submit()">
+                                    <option value="all" <%= (!filters?.status || filters.status==='all') ? 'selected' : '' %>>All Status</option>
+                                    <option value="active" <%= filters?.status==='active' ? 'selected' : '' %>>Active</option>
+                                    <option value="inactive" <%= filters?.status==='inactive' ? 'selected' : '' %>>Inactive</option>
+                                </select>
+                            </div>
+                            <div class="col-md-3">
+                                <select name="type" class="form-select rounded-pill" onchange="this.form.submit()">
+                                    <option value="all" <%= (!filters?.type || filters.type==='all') ? 'selected' : '' %>>All Types</option>
+                                    <option value="android" <%= filters?.type==='android' ? 'selected' : '' %>>Android</option>
+                                    <option value="iphone" <%= filters?.type==='iphone' ? 'selected' : '' %>>iPhone</option>
+                                    <option value="tablet" <%= filters?.type==='tablet' ? 'selected' : '' %>>Tablet</option>
+                                    <option value="other" <%= filters?.type==='other' ? 'selected' : '' %>>Other</option>
+                                </select>
+                            </div>
+                            <div class="col-md-3">
+                                <select name="carrier" class="form-select rounded-pill" onchange="this.form.submit()">
+                                    <option value="all" <%= (!filters?.carrier || filters.carrier==='all') ? 'selected' : '' %>>All Carriers</option>
+                                    <option value="airtel" <%= filters?.carrier==='airtel' ? 'selected' : '' %>>Airtel</option>
+                                    <option value="jio" <%= filters?.carrier==='jio' ? 'selected' : '' %>>Jio</option>
+                                    <option value="vi" <%= filters?.carrier==='vi' ? 'selected' : '' %>>Vi</option>
+                                    <option value="bsnl" <%= filters?.carrier==='bsnl' ? 'selected' : '' %>>BSNL</option>
+                                    <option value="other" <%= filters?.carrier==='other' ? 'selected' : '' %>>Other</option>
+                                    <option value="unknown" <%= filters?.carrier==='unknown' ? 'selected' : '' %>>Unknown</option>
+                                </select>
+                            </div>
+                            <div class="col-md-3">
+                                <select name="sort" class="form-select rounded-pill" onchange="this.form.submit()">
+                                    <option value="newest" <%= (!filters?.sort || filters.sort==='newest') ? 'selected' : '' %>>Newest First</option>
+                                    <option value="oldest" <%= filters?.sort==='oldest' ? 'selected' : '' %>>Oldest First</option>
+                                    <option value="name" <%= filters?.sort==='name' ? 'selected' : '' %>>By Name (A-Z)</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="d-flex justify-content-between mt-3">
+                            <button type="submit" class="btn btn-primary rounded-pill">
+                                <i class="fa fa-filter me-1"></i> Apply Filters
+                            </button>
+                            <div class="text-muted">
+                                <small><%= devices.length %> device(s) found</small>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+
+                <!-- DEVICE TABLE -->
+                <div class="device-table">
+                    <table class="table align-middle mb-0">
+                        <thead>
+                            <tr>
+                                <th style="width:40px;">
+                                    <input type="checkbox" class="device-checkbox" id="selectAllCheckbox" onchange="toggleSelectAll(this)">
+                                </th>
+                                <th>Device</th>
+                                <th>Phone Number</th>
+                                <th>Type</th>
+                                <th>Status</th>
+                                <th>Added</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+
+                        <% if(devices && devices.length){ %>
+                            <% devices.forEach(device => { %>
+                            <tr data-device-id="<%= device._id %>">
+                                <td>
+                                    <div class="device-checkbox" onclick="toggleDeviceSelection(this, '<%= device._id %>', '<%= device.phoneNumber %>', '<%= device.name %>')"></div>
+                                </td>
+                                <td>
+                                    <div class="d-flex align-items-center">
+                                        <div class="me-3">
+                                            <% if(device.deviceType === 'iphone') { %>
+                                            <i class="fa fa-mobile text-primary fs-4"></i>
+                                            <% } else if(device.deviceType === 'android') { %>
+                                            <i class="fa fa-mobile-android text-success fs-4"></i>
+                                            <% } else if(device.deviceType === 'tablet') { %>
+                                            <i class="fa fa-tablet-alt text-info fs-4"></i>
+                                            <% } else { %>
+                                            <i class="fa fa-mobile-alt text-secondary fs-4"></i>
+                                            <% } %>
+                                        </div>
+                                        <div>
+                                            <strong><%= device.name %></strong>
+                                            <div>
+                                                <small class="text-muted">ID: <%= device._id.toString().substring(0, 8) %>...</small>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </td>
+                                <td>
+                                    <div class="fw-medium">+91 <%= device.phoneNumber %></div>
+                                </td>
+                                <td>
+                                    <span class="text-capitalize"><%= device.deviceType %></span>
+                                </td>
+
+                                <!-- STATUS -->
+                                <td>
+                                    <a href="/devices/status/<%= device._id %>" 
+                                       class="badge-soft <%= device.status === 'active' ? 'badge-active' : 'badge-inactive' %>">
+                                        <%= device.status === 'active' ? 'Active' : 'Inactive' %>
+                                    </a>
+                                </td>
+
+                                <td>
+                                    <%= new Date(device.createdAt).toLocaleDateString() %>
+                                    <div><small class="text-muted"><%= new Date(device.createdAt).toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'}) %></small></div>
+                                </td>
+                                <td>
+                                    <div class="action-buttons d-flex">
+                                        <a href="/devices/edit/<%= device._id %>" class="action-btn btn-edit" title="Edit">
+                                            <i class="fa fa-pen"></i>
+                                        </a>
+                                        <a href="javascript:void(0)"
+                                           onclick="deleteDevice('<%= device._id %>', '<%= device.name %>')"
+                                           class="action-btn btn-delete" title="Delete">
+                                            <i class="fa fa-trash"></i>
+                                        </a>
+                                    </div>
+                                </td>
+                            </tr>
+                            <% }) %>
+                        <% } else { %>
+                            <tr>
+                                <td colspan="7" class="text-center py-5">
+                                    <div class="text-muted mb-3">
+                                        <i class="fa fa-mobile-alt fa-3x opacity-25"></i>
+                                    </div>
+                                    <h5 class="text-muted">No devices found</h5>
+                                    <% if(filters && (filters.search || filters.status !== 'all' || filters.type !== 'all' || filters.carrier !== 'all')) { %>
+                                    <p class="text-muted">Try changing your filters</p>
+                                    <a href="/devices" class="btn btn-sm btn-primary">Clear Filters</a>
+                                    <% } else { %>
+                                    <p class="text-muted">Add your first device to get started</p>
+                                    <a href="/devices/add" class="btn btn-primary">
+                                        <i class="fa fa-plus me-1"></i> Add Device
+                                    </a>
+                                    <% } %>
+                                </td>
+                            </tr>
+                        <% } %>
+
+                        </tbody>
+                    </table>
+                </div>
+
+                <!-- SELECTED DEVICES ACTION -->
+                <% if(devices && devices.length > 0) { %>
+                <div class="d-flex justify-content-between align-items-center mt-4">
+                    <div class="text-muted">
+                        Showing <%= devices.length %> of <%= stats.total %> devices
+                    </div>
+                    <div class="btn-group">
+                        <button class="btn btn-primary" onclick="useSelectedInCampaign()">
+                            <i class="fa fa-paper-plane me-1"></i> Use Selected in Campaign (<span id="bottomSelectedCount">0</span>)
+                        </button>
+                    </div>
+                </div>
+                <% } %>
+            </div>
+        </div>
+    </div>
+
+    <!-- LOADING OVERLAY -->
+    <div class="loading-overlay" id="loadingOverlay">
+        <div class="text-center">
+            <div class="spinner-border text-primary mb-3" role="status">
+                <span class="visually-hidden">Loading...</span>
+            </div>
+            <p class="text-muted">Loading...</p>
+        </div>
+    </div>
+
+    <!-- Bootstrap JS -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+
+    <script>
+        // ======================
+        // SIDEBAR SYNC - EXACTLY LIKE DASHBOARD
+        // ======================
+        document.addEventListener('DOMContentLoaded', function() {
+            const sidebar = document.getElementById('mainSidebar');
+            const sidebarWrapper = document.getElementById('sidebarWrapper');
+            
+            if (sidebar && sidebarWrapper) {
+                if (sidebar.classList.contains('collapsed')) {
+                    sidebarWrapper.classList.add('collapsed');
+                }
+                
+                const originalToggleCollapse = window.toggleCollapse;
+                
+                window.toggleCollapse = function() {
+                    if (originalToggleCollapse) {
+                        originalToggleCollapse();
+                    }
+                    
+                    setTimeout(() => {
+                        if (sidebar.classList.contains('collapsed')) {
+                            sidebarWrapper.classList.add('collapsed');
+                        } else {
+                            sidebarWrapper.classList.remove('collapsed');
+                        }
+                    }, 10);
+                };
+                
+                const originalToggleMobile = window.toggleMobileSidebar;
+                
+                window.toggleMobileSidebar = function() {
+                    if (originalToggleMobile) {
+                        originalToggleMobile();
+                    }
+                    
+                    setTimeout(() => {
+                        if (sidebar.classList.contains('open')) {
+                            sidebarWrapper.classList.add('mobile-open');
+                        } else {
+                            sidebarWrapper.classList.remove('mobile-open');
+                        }
+                    }, 10);
+                };
+                
+                const originalCloseMobile = window.closeMobileSidebar;
+                
+                window.closeMobileSidebar = function() {
+                    if (originalCloseMobile) {
+                        originalCloseMobile();
+                    }
+                    
+                    sidebarWrapper.classList.remove('mobile-open');
+                };
+            }
+
+            // Initialize on page load
+            updateSelectedCount();
+            
+            // Load saved selections from localStorage
+            loadSavedSelections();
+            
+            // Add click listeners to rows
+            addRowClickListeners();
+            
+            // Show welcome toast
+            setTimeout(() => {
+                showToast('Devices Loaded', `Found ${document.querySelectorAll('tbody tr').length} devices`, 'info');
+            }, 1000);
+        });
+
+        // ======================
+        // TOAST FUNCTION - EXACT SAME AS OTHER PAGES
+        // ======================
+        let toastTimer;
+        function showToast(title, message, type = 'info') {
+            const toast = document.getElementById('toast');
+            
+            clearTimeout(toastTimer);
+            
+            const icons = {
+                'success': '✅',
+                'error': '❌',
+                'warning': '⚠️',
+                'info': 'ℹ️'
+            };
+            
+            const icon = icons[type] || 'ℹ️';
+            
+            toast.className = '';
+            toast.innerHTML = `
+                <div class="toast-row">
+                    <div class="toast-icon">${icon}</div>
+                    <div class="toast-text">
+                        <h4>${title}</h4>
+                        <p>${message}</p>
+                    </div>
+                </div>
+                <div class="toast-progress"></div>
+            `;
+            
+            toast.classList.add(`toast-${type}`, 'show');
+            
+            toastTimer = setTimeout(() => {
+                toast.classList.remove('show');
+            }, 3000);
+        }
+
+        // ======================
+        // GLOBAL VARIABLES
+        // ======================
+        let selectedDevices = new Map(); // Map of deviceId -> {phoneNumber, name}
+
+        // ======================
+        // ROW CLICK LISTENERS
+        // ======================
+        function addRowClickListeners() {
+            document.querySelectorAll('tbody tr').forEach(row => {
+                row.addEventListener('click', function(e) {
+                    if (e.target.classList.contains('device-checkbox') || 
+                        e.target.closest('.device-checkbox') ||
+                        e.target.closest('.action-btn')) {
+                        return;
+                    }
+                    
+                    const checkbox = this.querySelector('.device-checkbox');
+                    const deviceId = this.getAttribute('data-device-id');
+                    const phoneCell = this.cells[2];
+                    const nameCell = this.cells[1];
+                    
+                    if (phoneCell && nameCell) {
+                        const phoneNumber = phoneCell.textContent.trim();
+                        const name = nameCell.querySelector('strong').textContent.trim();
+                        toggleDeviceSelection(checkbox, deviceId, phoneNumber.replace('+91 ', ''), name);
+                    }
+                });
+            });
+        }
+
+        // ======================
+        // FILTER FUNCTIONS
+        // ======================
+        let searchTimer;
+        function debounceSearch() {
+            clearTimeout(searchTimer);
+            searchTimer = setTimeout(() => {
+                document.getElementById('filterForm').submit();
+            }, 500);
+        }
+
+        function filterByStatus(status) {
+            const form = document.getElementById('filterForm');
+            form.elements['status'].value = status;
+            form.submit();
+            showToast('Filtering', `Showing ${status} devices`, 'info');
+        }
+
+        function removeFilter(filterName) {
+            const url = new URL(window.location.href);
+            url.searchParams.delete(filterName);
+            window.location.href = url.toString();
+        }
+
+        // ======================
+        // DEVICE SELECTION FUNCTIONS
+        // ======================
+        function toggleDeviceSelection(checkbox, deviceId, phoneNumber, deviceName) {
+            const fullPhoneNumber = '+91' + phoneNumber;
+            
+            if (selectedDevices.has(deviceId)) {
+                selectedDevices.delete(deviceId);
+                checkbox.classList.remove('checked');
+                showToast('Removed', `${deviceName} removed from selection`, 'info');
+            } else {
+                selectedDevices.set(deviceId, {
+                    phoneNumber: fullPhoneNumber,
+                    name: deviceName
+                });
+                checkbox.classList.add('checked');
+                showToast('Selected', `${deviceName} added to selection`, 'success');
+            }
+            
+            updateSelectedCount();
+            saveSelectionsToStorage();
+        }
+
+        function toggleSelectAll(masterCheckbox) {
+            const checkboxes = document.querySelectorAll('tbody .device-checkbox');
+            const rows = document.querySelectorAll('tbody tr');
+            
+            if (masterCheckbox.checked) {
+                showToast('Select All', 'Selecting all visible devices', 'info');
+                checkboxes.forEach((checkbox, index) => {
+                    checkbox.classList.add('checked');
+                    const row = rows[index];
+                    const deviceId = row.getAttribute('data-device-id');
+                    const phoneCell = row.cells[2];
+                    const nameCell = row.cells[1];
+                    
+                    if (phoneCell && nameCell) {
+                        const phoneNumber = phoneCell.textContent.trim();
+                        const name = nameCell.querySelector('strong').textContent.trim();
+                        selectedDevices.set(deviceId, {
+                            phoneNumber: phoneNumber,
+                            name: name
+                        });
+                    }
+                });
+            } else {
+                showToast('Deselect All', 'Clearing all selections', 'info');
+                checkboxes.forEach((checkbox, index) => {
+                    checkbox.classList.remove('checked');
+                    const row = rows[index];
+                    const deviceId = row.getAttribute('data-device-id');
+                    selectedDevices.delete(deviceId);
+                });
+            }
+            
+            updateSelectedCount();
+            saveSelectionsToStorage();
+        }
+
+        function selectAllDevices() {
+            const checkboxes = document.querySelectorAll('tbody .device-checkbox');
+            const rows = document.querySelectorAll('tbody tr');
+            
+            checkboxes.forEach((checkbox, index) => {
+                checkbox.classList.add('checked');
+                const row = rows[index];
+                const deviceId = row.getAttribute('data-device-id');
+                const phoneCell = row.cells[2];
+                const nameCell = row.cells[1];
+                
+                if (phoneCell && nameCell) {
+                    const phoneNumber = phoneCell.textContent.trim();
+                    const name = nameCell.querySelector('strong').textContent.trim();
+                    selectedDevices.set(deviceId, {
+                        phoneNumber: phoneNumber,
+                        name: name
+                    });
+                }
+            });
+            
+            document.getElementById('selectAllCheckbox').checked = true;
+            updateSelectedCount();
+            saveSelectionsToStorage();
+            
+            showToast('Success', `Selected ${selectedDevices.size} devices`, 'success');
+        }
+
+        function deselectAllDevices() {
+            const checkboxes = document.querySelectorAll('.device-checkbox');
+            checkboxes.forEach(checkbox => {
+                checkbox.classList.remove('checked');
+            });
+            
+            document.getElementById('selectAllCheckbox').checked = false;
+            selectedDevices.clear();
+            updateSelectedCount();
+            saveSelectionsToStorage();
+            
+            showToast('Cleared', 'All selections cleared', 'info');
+        }
+
+        // ======================
+        // SELECTED COUNT FUNCTIONS
+        // ======================
+        function updateSelectedCount() {
+            const count = selectedDevices.size;
+            document.getElementById('selectedDevicesCount').textContent = count;
+            document.getElementById('bottomSelectedCount').textContent = count;
+            document.getElementById('selectedCount').textContent = count;
+            
+            const counter = document.getElementById('selectedCounter');
+            if (count > 0) {
+                counter.style.display = 'flex';
+            } else {
+                counter.style.display = 'none';
+            }
+        }
+
+        // ======================
+        // CAMPAIGN FUNCTIONS
+        // ======================
+        function useSelectedInCampaign() {
+            if (selectedDevices.size === 0) {
+                showToast('Error', 'Please select at least one device first!', 'error');
+                return;
+            }
+            
+            showToast('Processing', `Preparing ${selectedDevices.size} devices for campaign...`, 'info');
+            
+            const selectedNumbers = Array.from(selectedDevices.values()).map(device => device.phoneNumber);
+            const devicesData = Array.from(selectedDevices.entries()).map(([id, device]) => ({
+                id: id,
+                phoneNumber: device.phoneNumber,
+                name: device.name
+            }));
+            
+            localStorage.setItem('selectedCampaignDevices', JSON.stringify(devicesData));
+            localStorage.setItem('selectedCampaignNumbers', JSON.stringify(selectedNumbers));
+            
+            showToast('Redirecting', 'Opening campaign page...', 'success');
+            
+            setTimeout(() => {
+                window.location.href = '/campaign';
+            }, 1000);
+        }
+
+        // ======================
+        // DELETE FUNCTION
+        // ======================
+        function deleteDevice(deviceId, deviceName) {
+            if (confirm(`Are you sure you want to delete device: ${deviceName}?`)) {
+                showToast('Deleting', `Removing device: ${deviceName}`, 'warning');
+                
+                // If device is selected, remove it from selection
+                if (selectedDevices.has(deviceId)) {
+                    selectedDevices.delete(deviceId);
+                    updateSelectedCount();
+                    saveSelectionsToStorage();
+                }
+                
+                // Redirect to delete URL
+                window.location.href = '/devices/delete/' + deviceId;
+            }
+        }
+
+        // ======================
+        // STORAGE FUNCTIONS
+        // ======================
+        function saveSelectionsToStorage() {
+            const selections = Array.from(selectedDevices.entries());
+            localStorage.setItem('deviceSelections', JSON.stringify(selections));
+        }
+
+        function loadSavedSelections() {
+            try {
+                const saved = localStorage.getItem('deviceSelections');
+                if (saved) {
+                    const selections = JSON.parse(saved);
+                    selectedDevices = new Map(selections);
+                    
+                    const rows = document.querySelectorAll('tbody tr');
+                    rows.forEach(row => {
+                        const deviceId = row.getAttribute('data-device-id');
+                        if (selectedDevices.has(deviceId)) {
+                            const checkbox = row.querySelector('.device-checkbox');
+                            if (checkbox) {
+                                checkbox.classList.add('checked');
+                            }
+                        }
+                    });
+                    
+                    const allCheckboxes = document.querySelectorAll('tbody .device-checkbox');
+                    const checkedCount = document.querySelectorAll('tbody .device-checkbox.checked').length;
+                    document.getElementById('selectAllCheckbox').checked = checkedCount === allCheckboxes.length;
+                    
+                    updateSelectedCount();
+                }
+            } catch (e) {
+                console.error('Error loading saved selections:', e);
+            }
+        }
+
+        // ======================
+        // KEYBOARD SHORTCUTS
+        // ======================
+        document.addEventListener('keydown', function(e) {
+            if ((e.ctrlKey || e.metaKey) && e.key === 'a') {
+                e.preventDefault();
+                selectAllDevices();
+            }
+            
+            if (e.key === 'Escape') {
+                deselectAllDevices();
+            }
+            
+            if ((e.ctrlKey || e.metaKey) && e.key === 'Enter') {
+                e.preventDefault();
+                useSelectedInCampaign();
+            }
+        });
+    </script>
+</body>
+</html>

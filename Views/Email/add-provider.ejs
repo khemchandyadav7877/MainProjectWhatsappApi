@@ -1,0 +1,283 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Email Lists</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body>
+    <!-- Navigation -->
+    <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+        <div class="container-fluid">
+            <a class="navbar-brand" href="/email/providers">
+                <i class="fas fa-arrow-left"></i> Email System
+            </a>
+        </div>
+    </nav>
+
+    <div class="container mt-4">
+        <!-- Header -->
+        <div class="d-flex justify-content-between align-items-center mb-4">
+            <h1><i class="fas fa-users text-primary"></i> Email Lists</h1>
+            <div>
+                <a href="/email/upload-contacts" class="btn btn-primary">
+                    <i class="fas fa-upload"></i> Upload CSV
+                </a>
+                <button class="btn btn-success" data-bs-toggle="modal" data-bs-target="#addListModal">
+                    <i class="fas fa-plus"></i> Create List
+                </button>
+            </div>
+        </div>
+
+        <!-- Stats -->
+        <div class="row mb-4">
+            <div class="col-md-3">
+                <div class="card bg-info text-white">
+                    <div class="card-body">
+                        <h5 class="card-title">Total Lists</h5>
+                        <h2>5</h2>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-3">
+                <div class="card bg-success text-white">
+                    <div class="card-body">
+                        <h5 class="card-title">Total Contacts</h5>
+                        <h2>18,011</h2>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-3">
+                <div class="card bg-warning text-white">
+                    <div class="card-body">
+                        <h5 class="card-title">Active</h5>
+                        <h2>4</h2>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-3">
+                <div class="card bg-primary text-white">
+                    <div class="card-body">
+                        <h5 class="card-title">Last Updated</h5>
+                        <h6>Today</h6>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Email Lists Grid -->
+        <div class="row">
+            <!-- List 1 -->
+            <div class="col-md-4 mb-3">
+                <div class="card h-100">
+                    <div class="card-body">
+                        <div class="d-flex justify-content-between align-items-start">
+                            <h5 class="card-title">All Customers</h5>
+                            <span class="badge bg-success">Active</span>
+                        </div>
+                        <p class="text-muted mb-2">All registered customers</p>
+                        <p><i class="fas fa-users"></i> <strong>5,432</strong> contacts</p>
+                        <p><i class="fas fa-calendar"></i> Updated: 2 days ago</p>
+                        <div class="mt-3">
+                            <a href="/email/view-contacts/1" class="btn btn-sm btn-outline-primary">
+                                <i class="fas fa-eye"></i> View
+                            </a>
+                            <a href="/email/create-campaign?list=1" class="btn btn-sm btn-success">
+                                <i class="fas fa-paper-plane"></i> Send
+                            </a>
+                            <button class="btn btn-sm btn-outline-danger">
+                                <i class="fas fa-trash"></i>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- List 2 -->
+            <div class="col-md-4 mb-3">
+                <div class="card h-100">
+                    <div class="card-body">
+                        <div class="d-flex justify-content-between align-items-start">
+                            <h5 class="card-title">Newsletter Subscribers</h5>
+                            <span class="badge bg-success">Active</span>
+                        </div>
+                        <p class="text-muted mb-2">Weekly newsletter audience</p>
+                        <p><i class="fas fa-users"></i> <strong>12,345</strong> contacts</p>
+                        <p><i class="fas fa-calendar"></i> Updated: Today</p>
+                        <div class="mt-3">
+                            <a href="/email/view-contacts/2" class="btn btn-sm btn-outline-primary">
+                                <i class="fas fa-eye"></i> View
+                            </a>
+                            <a href="/email/create-campaign?list=2" class="btn btn-sm btn-success">
+                                <i class="fas fa-paper-plane"></i> Send
+                            </a>
+                            <button class="btn btn-sm btn-outline-danger">
+                                <i class="fas fa-trash"></i>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- List 3 -->
+            <div class="col-md-4 mb-3">
+                <div class="card h-100">
+                    <div class="card-body">
+                        <div class="d-flex justify-content-between align-items-start">
+                            <h5 class="card-title">VIP Customers</h5>
+                            <span class="badge bg-success">Active</span>
+                        </div>
+                        <p class="text-muted mb-2">Premium customers list</p>
+                        <p><i class="fas fa-users"></i> <strong>234</strong> contacts</p>
+                        <p><i class="fas fa-calendar"></i> Updated: 1 week ago</p>
+                        <div class="mt-3">
+                            <a href="/email/view-contacts/3" class="btn btn-sm btn-outline-primary">
+                                <i class="fas fa-eye"></i> View
+                            </a>
+                            <a href="/email/create-campaign?list=3" class="btn btn-sm btn-success">
+                                <i class="fas fa-paper-plane"></i> Send
+                            </a>
+                            <button class="btn btn-sm btn-outline-danger">
+                                <i class="fas fa-trash"></i>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- List 4 -->
+            <div class="col-md-4 mb-3">
+                <div class="card h-100">
+                    <div class="card-body">
+                        <div class="d-flex justify-content-between align-items-start">
+                            <h5 class="card-title">Inactive Users</h5>
+                            <span class="badge bg-secondary">Draft</span>
+                        </div>
+                        <p class="text-muted mb-2">Users not active for 30+ days</p>
+                        <p><i class="fas fa-users"></i> <strong>3,450</strong> contacts</p>
+                        <p><i class="fas fa-calendar"></i> Updated: 1 month ago</p>
+                        <div class="mt-3">
+                            <a href="/email/view-contacts/4" class="btn btn-sm btn-outline-primary">
+                                <i class="fas fa-eye"></i> View
+                            </a>
+                            <a href="/email/create-campaign?list=4" class="btn btn-sm btn-success">
+                                <i class="fas fa-paper-plane"></i> Send
+                            </a>
+                            <button class="btn btn-sm btn-outline-danger">
+                                <i class="fas fa-trash"></i>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Quick Actions -->
+        <div class="card mt-4">
+            <div class="card-header bg-light">
+                <h5 class="mb-0"><i class="fas fa-bolt"></i> Quick Actions</h5>
+            </div>
+            <div class="card-body">
+                <div class="row">
+                    <div class="col-md-4 mb-3">
+                        <a href="/email/upload-contacts" class="btn btn-outline-primary w-100">
+                            <i class="fas fa-file-upload"></i> Upload CSV File
+                        </a>
+                    </div>
+                    <div class="col-md-4 mb-3">
+                        <button class="btn btn-outline-success w-100" data-bs-toggle="modal" data-bs-target="#addContactModal">
+                            <i class="fas fa-user-plus"></i> Add Single Contact
+                        </button>
+                    </div>
+                    <div class="col-md-4 mb-3">
+                        <a href="/email/create-campaign" class="btn btn-outline-warning w-100">
+                            <i class="fas fa-bullhorn"></i> Create Campaign
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Add List Modal -->
+    <div class="modal fade" id="addListModal">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Create New Email List</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <form method="POST" action="/email/create-list">
+                    <div class="modal-body">
+                        <div class="mb-3">
+                            <label class="form-label">List Name *</label>
+                            <input type="text" name="list_name" class="form-control" 
+                                   placeholder="e.g., Weekly Newsletter" required>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label">Description</label>
+                            <textarea name="description" class="form-control" rows="3" 
+                                      placeholder="About this list..."></textarea>
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                        <button type="submit" class="btn btn-primary">Create List</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- Add Contact Modal -->
+    <div class="modal fade" id="addContactModal">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Add Single Contact</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <form method="POST" action="/email/add-contact">
+                    <div class="modal-body">
+                        <div class="mb-3">
+                            <label class="form-label">Select List *</label>
+                            <select name="list_id" class="form-select" required>
+                                <option value="">-- Select List --</option>
+                                <option value="1">All Customers</option>
+                                <option value="2">Newsletter Subscribers</option>
+                                <option value="3">VIP Customers</option>
+                                <option value="4">Inactive Users</option>
+                            </select>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label">Email Address *</label>
+                            <input type="email" name="email" class="form-control" 
+                                   placeholder="user@example.com" required>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-6 mb-3">
+                                <label class="form-label">First Name</label>
+                                <input type="text" name="first_name" class="form-control" 
+                                       placeholder="John">
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <label class="form-label">Last Name</label>
+                                <input type="text" name="last_name" class="form-control" 
+                                       placeholder="Doe">
+                            </div>
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                        <button type="submit" class="btn btn-primary">Add Contact</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

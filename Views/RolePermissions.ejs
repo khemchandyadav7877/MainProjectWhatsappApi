@@ -1,0 +1,1559 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Role Permissions Management</title>
+    
+    <!-- Bootstrap 5 CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Font Awesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Toastify CSS -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/toastify-js/src/toastify.min.css">
+    
+    <style>
+        .role-permissions-container {
+            min-height: 100vh;
+            background-color: #f8f9fa;
+            padding: 20px;
+        }
+        
+        .main-content {
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+        
+        /* Enhanced Refresh Button */
+        .refresh-btn {
+            background: linear-gradient(135deg, #0d6efd, #0a58ca);
+            border: none;
+            color: white;
+            padding: 8px 16px;
+            border-radius: 8px;
+            transition: all 0.3s ease;
+            box-shadow: 0 2px 5px rgba(13, 110, 253, 0.3);
+        }
+        
+        .refresh-btn:hover:not(:disabled) {
+            background: linear-gradient(135deg, #0a58ca, #084298);
+            transform: translateY(-2px);
+            box-shadow: 0 4px 10px rgba(13, 110, 253, 0.4);
+        }
+        
+        .refresh-btn:disabled {
+            opacity: 0.7;
+            cursor: not-allowed;
+        }
+        
+        /* Enhanced Export Button */
+        .export-btn {
+            background: linear-gradient(135deg, #198754, #146c43);
+            border: none;
+            color: white;
+            padding: 8px 16px;
+            border-radius: 8px;
+            transition: all 0.3s ease;
+            box-shadow: 0 2px 5px rgba(25, 135, 84, 0.3);
+        }
+        
+        .export-btn:hover:not(:disabled) {
+            background: linear-gradient(135deg, #146c43, #0f5132);
+            transform: translateY(-2px);
+            box-shadow: 0 4px 10px rgba(25, 135, 84, 0.4);
+        }
+        
+        .export-btn:disabled {
+            opacity: 0.7;
+            cursor: not-allowed;
+        }
+        
+        /* Spin animation for refresh icon */
+        .spin {
+            animation: spin 1s linear infinite;
+        }
+        
+        @keyframes spin {
+            from { transform: rotate(0deg); }
+            to { transform: rotate(360deg); }
+        }
+        
+        /* Improved Table Action Buttons */
+        .btn-group .btn {
+            border-radius: 6px !important;
+            padding: 8px 12px;
+            font-size: 14px;
+        }
+        
+        .btn-group .btn:hover {
+            transform: translateY(-1px);
+        }
+        
+        /* Table styling */
+        .table th {
+            font-weight: 600;
+            color: #6c757d;
+            font-size: 0.875rem;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            border-bottom: 2px solid #dee2e6;
+        }
+        
+        .table td {
+            vertical-align: middle;
+            padding: 1rem 0.75rem;
+            border-bottom: 1px solid #e9ecef;
+        }
+        
+        .table tbody tr:hover {
+            background-color: rgba(13, 110, 253, 0.05);
+        }
+        
+        .table-primary {
+            background-color: rgba(13, 110, 253, 0.1) !important;
+        }
+        
+        /* Order controls */
+        .order-controls button {
+            width: 30px;
+            height: 30px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        /* Icon text styling */
+        .icon-text {
+            font-size: 18px;
+            display: inline-block;
+        }
+        
+        /* Stats cards styling */
+        .card.border-0.shadow-sm {
+            border-radius: 12px;
+            transition: transform 0.2s ease;
+        }
+        
+        .card.border-0.shadow-sm:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1) !important;
+        }
+        
+        /* Role tabs styling */
+        .btn-outline-primary {
+            border-color: #dee2e6;
+            color: #6c757d;
+        }
+        
+        .btn-outline-primary:hover {
+            background-color: #0d6efd;
+            border-color: #0d6efd;
+            color: white;
+        }
+        
+        /* Badge colors */
+        .badge.bg-primary {
+            background-color: #0d6efd !important;
+        }
+        
+        .badge.bg-danger {
+            background-color: #dc3545 !important;
+        }
+        
+        .badge.bg-success {
+            background-color: #198754 !important;
+        }
+        
+        .badge.bg-warning {
+            background-color: #ffc107 !important;
+            color: #000;
+        }
+        
+        .badge.bg-secondary {
+            background-color: #6c757d !important;
+        }
+        
+        .badge.bg-info {
+            background-color: #0dcaf0 !important;
+        }
+        
+        /* Responsive adjustments */
+        @media (max-width: 768px) {
+            .role-permissions-container {
+                padding: 15px;
+            }
+            
+            .content-header .d-flex {
+                flex-direction: column;
+                align-items: flex-start !important;
+                gap: 15px;
+            }
+            
+            .content-header .input-group {
+                width: 100% !important;
+            }
+            
+            .btn-group .btn {
+                padding: 6px 10px;
+                font-size: 12px;
+            }
+            
+            .table-responsive {
+                margin: 0 -15px;
+                padding: 0 15px;
+            }
+            
+            /* Hide order column on mobile */
+            .table td:nth-child(5),
+            .table th:nth-child(5) {
+                display: none;
+            }
+            
+            /* Smaller section/feature icons on mobile */
+            .table td div.rounded-circle {
+                width: 35px !important;
+                height: 35px !important;
+            }
+            
+            .table td .fs-5 {
+                font-size: 1rem !important;
+            }
+        }
+        
+        @media (max-width: 576px) {
+            .role-permissions-container {
+                padding: 10px;
+            }
+            
+            .content-header {
+                padding: 15px;
+            }
+            
+            /* Hide status column on small mobile */
+            .table td:nth-child(4),
+            .table th:nth-child(4) {
+                display: none;
+            }
+            
+            .badge {
+                font-size: 0.75rem;
+                padding: 0.5rem 0.75rem !important;
+            }
+            
+            .stats-cards .col-6 {
+                padding: 0 5px;
+            }
+            
+            .card-body.text-center {
+                padding: 10px !important;
+            }
+            
+            h3.fw-bold {
+                font-size: 1.2rem !important;
+            }
+        }
+        
+        @media (max-width: 480px) {
+            /* Stack buttons vertically */
+            .card-header .btn-group {
+                flex-direction: column;
+                width: 100%;
+            }
+            
+            .card-header .btn-group .btn {
+                width: 100%;
+                margin-bottom: 5px;
+            }
+            
+            /* Reduce font sizes */
+            .fs-4 {
+                font-size: 1.1rem !important;
+            }
+            
+            .text-muted.small {
+                font-size: 0.8rem;
+            }
+            
+            /* Compact table row */
+            .table td {
+                padding: 8px 5px;
+            }
+            
+            /* Smaller icons in table */
+            .table td div.rounded-circle {
+                width: 30px !important;
+                height: 30px !important;
+            }
+        }
+        
+        @media (max-width: 360px) {
+            /* Very small screens */
+            .content-header h1 {
+                font-size: 1rem !important;
+            }
+            
+            .btn-sm {
+                padding: 4px 8px;
+                font-size: 0.75rem;
+            }
+            
+            /* Hide section column */
+            .table td:nth-child(2),
+            .table th:nth-child(2) {
+                display: none;
+            }
+        }
+    </style>
+</head>
+<body>
+
+
+    <div class="role-permissions-container">
+        <div class="main-content">
+            
+            <!-- Content Header -->
+            <div class="content-header bg-white rounded shadow-sm p-3 mb-4">
+                <div class="d-flex align-items-center justify-content-between mb-3">
+                    <div>
+                        <h1 class="fw-bold text-dark mb-0 fs-4">
+                            <i class="fas fa-cubes me-2 text-primary"></i>
+                            Role Permissions Management
+                        </h1>
+                        <p class="text-muted mb-0 small">Manage sidebar navigation features for each role</p>
+                    </div>
+                    
+                    <div class="d-flex align-items-center gap-3">
+                        <div class="input-group" style="width: 300px;">
+                            <span class="input-group-text bg-white border-end-0">
+                                <i class="fas fa-search text-muted"></i>
+                            </span>
+                            <input
+                                type="text"
+                                class="form-control border-start-0"
+                                id="searchInput"
+                                placeholder="Search features..."
+                            />
+                        </div>
+                        <a 
+                            href="/dashboard"
+                            class="btn btn-primary d-flex align-items-center gap-2 text-white"
+                        >
+                            <i class="fas fa-home"></i> Dashboard
+                        </a>
+                        <a 
+                            href="/add-new-feature"
+                            class="btn btn-success d-flex align-items-center gap-2 text-white"
+                        >
+                            <i class="fas fa-plus"></i> Add New Feature
+                        </a>
+                    </div>
+                </div>
+
+                <!-- Filter Controls -->
+                <div class="row g-3 align-items-center">
+                    <div class="col-auto">
+                        <button 
+                            class="btn btn-sm btn-outline-primary d-flex align-items-center gap-2"
+                            id="toggleFilters"
+                        >
+                            <i class="fas fa-filter"></i>
+                            <span id="filterText">Show Filters</span>
+                        </button>
+                    </div>
+                    
+                    <div id="filterControls" style="display: none;">
+                        <div class="col-auto">
+                            <label class="form-label mb-0 text-muted small">Status</label>
+                            <select 
+                                class="form-select form-select-sm border-primary"
+                                id="statusFilter"
+                            >
+                                <option value="all">All Status</option>
+                                <option value="active">Active</option>
+                                <option value="inactive">Inactive</option>
+                            </select>
+                        </div>
+                        <div class="col-auto">
+                            <label class="form-label mb-0 text-muted small">Sort By</label>
+                            <select 
+                                class="form-select form-select-sm border-primary"
+                                id="sortBy"
+                            >
+                                <option value="order">By Order</option>
+                                <option value="name">A-Z by Name</option>
+                                <option value="section">By Section</option>
+                                <option value="newest">Newest First</option>
+                                <option value="oldest">Oldest First</option>
+                            </select>
+                        </div>
+                    </div>
+                    
+                    <!-- Action Buttons -->
+                    <div class="col-auto ms-auto">
+                        <div class="d-flex align-items-center gap-2">
+                            <button
+                                class="btn btn-primary btn-sm d-flex align-items-center gap-2 refresh-btn"
+                                id="refreshBtn"
+                                title="Refresh Features"
+                            >
+                                <i class="fas fa-sync"></i>
+                                Refresh
+                            </button>
+                            
+                            <button
+                                class="btn btn-success btn-sm d-flex align-items-center gap-2 export-btn"
+                                id="exportBtn"
+                                title="Export to CSV"
+                            >
+                                <i class="fas fa-file-export"></i>
+                                Export
+                            </button>
+
+                            <button
+                                class="btn btn-warning btn-sm d-flex align-items-center gap-2"
+                                id="resetBtn"
+                                title="Reset to Defaults"
+                            >
+                                <i class="fas fa-sync"></i>
+                                Reset
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Quick Stats Bar -->
+            <div class="card border-0 bg-light mb-4">
+                <div class="card-body py-3">
+                    <div class="d-flex justify-content-between align-items-center">
+                        <div class="d-flex align-items-center gap-4">
+                            <div class="d-flex align-items-center gap-2">
+                                <i class="fas fa-cubes text-primary"></i>
+                                <span class="text-muted">Total Features:</span>
+                                <span class="fw-bold" id="totalFeatures">0</span>
+                            </div>
+                            <div class="d-flex align-items-center gap-2">
+                                <i class="fas fa-check-circle text-success"></i>
+                                <span class="text-muted">Active:</span>
+                                <span class="fw-bold text-success" id="activeFeatures">0</span>
+                            </div>
+                            <div class="d-flex align-items-center gap-2">
+                                <i class="fas fa-times-circle text-secondary"></i>
+                                <span class="text-muted">Inactive:</span>
+                                <span class="fw-bold text-secondary" id="inactiveFeatures">0</span>
+                            </div>
+                        </div>
+                        <button 
+                            class="btn btn-sm btn-outline-primary"
+                            id="debugBtn"
+                        >
+                            Debug Data
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Stats Cards -->
+            <div class="row g-3 mb-4">
+                <div class="col-6 col-md-3 col-lg-2">
+                    <div class="card border-0 shadow-sm h-100">
+                        <div class="card-body text-center p-3">
+                            <h3 class="fw-bold text-dark mb-2" id="totalStats">0</h3>
+                            <p class="text-muted small mb-0">Total Features</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-6 col-md-3 col-lg-2">
+                    <div class="card border-0 shadow-sm h-100">
+                        <div class="card-body text-center p-3">
+                            <h3 class="fw-bold text-dark mb-2" id="superadminStats">0</h3>
+                            <p class="text-muted small mb-0">SuperAdmin</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-6 col-md-3 col-lg-2">
+                    <div class="card border-0 shadow-sm h-100">
+                        <div class="card-body text-center p-3">
+                            <h3 class="fw-bold text-dark mb-2" id="educatorStats">0</h3>
+                            <p class="text-muted small mb-0">Educator</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-6 col-md-3 col-lg-2">
+                    <div class="card border-0 shadow-sm h-100">
+                        <div class="card-body text-center p-3">
+                            <h3 class="fw-bold text-dark mb-2" id="trainerStats">0</h3>
+                            <p class="text-muted small mb-0">Trainer</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-6 col-md-3 col-lg-2">
+                    <div class="card border-0 shadow-sm h-100">
+                        <div class="card-body text-center p-3">
+                            <h3 class="fw-bold text-dark mb-2" id="studentStats">0</h3>
+                            <p class="text-muted small mb-0">Student</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-6 col-md-3 col-lg-2">
+                    <div class="card border-0 shadow-sm h-100">
+                        <div class="card-body text-center p-3">
+                            <h3 class="fw-bold text-dark mb-2" id="activeStats">0</h3>
+                            <p class="text-muted small mb-0">Active</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Role Tabs -->
+            <div class="card border-0 shadow-sm mb-4">
+                <div class="card-body">
+                    <div class="d-flex flex-wrap gap-2" id="roleTabs">
+                        <button
+                            class="btn btn-primary d-flex align-items-center gap-2 role-tab"
+                            data-role="SuperAdmin"
+                        >
+                            <i class="fas fa-user-shield"></i>
+                            SuperAdmin
+                            <span class="badge bg-light text-dark ms-1" id="superadminCount">0</span>
+                        </button>
+                        <button
+                            class="btn btn-outline-primary d-flex align-items-center gap-2 role-tab"
+                            data-role="Educator"
+                        >
+                            <i class="fas fa-user-tie"></i>
+                            Educator
+                            <span class="badge bg-light text-dark ms-1" id="educatorCount">0</span>
+                        </button>
+                        <button
+                            class="btn btn-outline-primary d-flex align-items-center gap-2 role-tab"
+                            data-role="Trainer"
+                        >
+                            <i class="fas fa-graduation-cap"></i>
+                            Trainer
+                            <span class="badge bg-light text-dark ms-1" id="trainerCount">0</span>
+                        </button>
+                        <button
+                            class="btn btn-outline-primary d-flex align-items-center gap-2 role-tab"
+                            data-role="Student"
+                        >
+                            <i class="fas fa-chalkboard-teacher"></i>
+                            Student
+                            <span class="badge bg-light text-dark ms-1" id="studentCount">0</span>
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Bulk Actions -->
+            <div class="card border-primary border-2 mb-4" id="bulkActions" style="display: none;">
+                <div class="card-body bg-primary bg-opacity-5 py-3">
+                    <div class="d-flex justify-content-between align-items-center">
+                        <div class="d-flex align-items-center gap-3">
+                            <div class="bg-primary text-white rounded-circle p-2">
+                                <i class="fas fa-cubes" style="font-size: 20px;"></i>
+                            </div>
+                            <div>
+                                <h6 class="fw-bold mb-0" id="selectedCount">0 feature(s) selected</h6>
+                                <small class="text-muted">Perform bulk actions on selected features</small>
+                            </div>
+                        </div>
+                        <div class="d-flex gap-2">
+                            <button
+                                class="btn btn-outline-success btn-sm d-flex align-items-center gap-2"
+                                id="bulkActiveBtn"
+                            >
+                                <i class="fas fa-check-circle"></i> Active
+                            </button>
+                            <button
+                                class="btn btn-outline-secondary btn-sm d-flex align-items-center gap-2"
+                                id="bulkInactiveBtn"
+                            >
+                                <i class="fas fa-times-circle"></i> Inactive
+                            </button>
+                            <button
+                                class="btn btn-outline-danger btn-sm d-flex align-items-center gap-2"
+                                id="bulkDeleteBtn"
+                            >
+                                <i class="fas fa-trash"></i> Delete
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Features Table -->
+            <div class="card border-0 shadow-sm">
+                <div class="card-header bg-white border-0 py-3">
+                    <div class="d-flex justify-content-between align-items-center">
+                        <h5 class="fw-bold mb-0">
+                            <i class="fas fa-cubes me-2 text-primary"></i>
+                            <span id="currentRoleTitle">SuperAdmin</span> Features (<span id="filteredCount">0</span>)
+                            <span id="statusFilterText"></span>
+                        </h5>
+                        
+                        <!-- Table Action Buttons -->
+                        <div class="d-flex align-items-center gap-3">
+                            <div class="text-muted small d-flex align-items-center gap-1">
+                                <i class="fas fa-sort"></i>
+                                <span id="sortText">Sorted: Order</span>
+                            </div>
+                            
+                            <div class="btn-group" role="group">
+                                <button 
+                                    class="btn btn-outline-primary d-flex align-items-center gap-2"
+                                    id="refreshTableBtn"
+                                    title="Refresh Data"
+                                >
+                                    <i class="fas fa-sync"></i>
+                                    <span class="d-none d-md-inline">Refresh</span>
+                                </button>
+                                
+                                <button 
+                                    class="btn btn-outline-success d-flex align-items-center gap-2"
+                                    id="exportTableBtn"
+                                    title="Export to CSV"
+                                >
+                                    <i class="fas fa-file-export"></i>
+                                    <span class="d-none d-md-inline">Export</span>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="card-body p-0">
+                    <div id="loadingState" class="text-center py-5">
+                        <div class="spinner-border text-primary" role="status">
+                            <span class="visually-hidden">Loading...</span>
+                        </div>
+                        <p class="text-muted mt-3">Loading features...</p>
+                    </div>
+                    
+                    <div id="emptyState" class="text-center py-5" style="display: none;">
+                        <div class="mb-3">
+                            <i class="fas fa-cubes text-muted" style="font-size: 3rem;"></i>
+                        </div>
+                        <h5 class="text-muted">No features found</h5>
+                        <p class="text-muted small" id="emptyMessage">
+                            Try different search terms
+                        </p>
+                    </div>
+                    
+                    <div id="tableContainer" style="display: none;">
+                        <div class="table-responsive">
+                            <table class="table table-hover align-middle mb-0">
+                                <thead class="table-light">
+                                    <tr>
+                                        <th style="width: 50px;">
+                                            <div class="form-check">
+                                                <input
+                                                    class="form-check-input"
+                                                    type="checkbox"
+                                                    id="selectAll"
+                                                />
+                                            </div>
+                                        </th>
+                                        <th>Section</th>
+                                        <th>Feature</th>
+                                        <th class="text-center">Status</th>
+                                        <th class="text-center">Order</th>
+                                        <th class="text-center">Actions</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="featuresTableBody">
+                                    <!-- Features will be populated here -->
+                                </tbody>
+                            </table>
+                        </div>
+
+                        <!-- Pagination -->
+                        <div id="paginationContainer" class="d-flex justify-content-between align-items-center p-3 border-top">
+                            <!-- Pagination will be populated here -->
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Footer -->
+            <div class="text-center text-muted mt-4 small pt-3 border-top">
+                © 2025 eClassify - Role Permissions Management System
+            </div>
+        </div>
+    </div>
+
+    <!-- Bootstrap JS Bundle -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
+    <!-- Toastify JS -->
+    <script src="https://cdn.jsdelivr.net/npm/toastify-js"></script>
+    
+    <script>
+        // ============================================
+        // ROLE PERMISSIONS MANAGEMENT
+        // Synchronized with Add New Feature data ✅
+        // ============================================
+
+        const roles = ['SuperAdmin', 'Educator', 'Trainer', 'Student'];
+        
+        // Updated sections to match Add New Feature page
+        const sectionOptions = [
+            '*** Dashboard',
+            '*** Reports',
+            '*** Chats',
+            '*** Virtual Numbers',
+            '*** Devices',
+            '*** RCS',
+            '*** Scan device',
+            '*** API',
+            '*** Client Management',
+            '*** Administration'
+        ];
+
+        // Updated feature labels to match Add New Feature page
+        const allFeatureLabels = {
+            '*** Dashboard': ['1. Dashboard', '2. Notifications'],
+            '*** Reports': ['1. Web Report', '2. API Reports'],
+            '*** Chats': ['1. New Chat'],
+            '*** Virtual Numbers': ['1. My Numbers', '2. Buy Number', '3. Call Logs', '4. SMS Logs'],
+            '*** Devices': ['1. Add Device', '2. All Devices', '3. Campaign'],
+            '*** RCS': ['1. RCS Campaign', '2. RCS Reports', '3. RCS Templates'],
+            '*** Scan device': ['1. Whatsapp Scan'],
+            '*** API': ['1. API Document', '2. File Upload'],
+            '*** Client Management': ['1. All Clients', '2. Add Client'],
+            '*** Administration': ['1. Role Permissions', '2. Add New Feature']
+        };
+
+        const sectionIcons = {
+            '*** Dashboard': '<i class="fas fa-chart-line"></i>',
+            '*** Reports': '<i class="fas fa-file-alt"></i>',
+            '*** Chats': '<i class="fas fa-comment-dots"></i>',
+            '*** Virtual Numbers': '<i class="fas fa-phone-alt"></i>',
+            '*** Devices': '<i class="fas fa-mobile-alt"></i>',
+            '*** RCS': '<i class="fas fa-envelope"></i>',
+            '*** Scan device': '<i class="fas fa-qrcode"></i>',
+            '*** API': '<i class="fas fa-code"></i>',
+            '*** Client Management': '<i class="fas fa-users"></i>',
+            '*** Administration': '<i class="fas fa-cog"></i>'
+        };
+
+        const featureIcons = {
+            '1. Dashboard': '<i class="fas fa-chart-line"></i>',
+            '2. Notifications': '<i class="fas fa-bell"></i>',
+            '1. Web Report': '<i class="fas fa-file-alt"></i>',
+            '2. API Reports': '<i class="fas fa-code"></i>',
+            '1. New Chat': '<i class="fas fa-comment-dots"></i>',
+            '1. My Numbers': '<i class="fas fa-phone-alt"></i>',
+            '2. Buy Number': '<i class="fas fa-shopping-cart"></i>',
+            '3. Call Logs': '<i class="fas fa-phone"></i>',
+            '4. SMS Logs': '<i class="fas fa-sms"></i>',
+            '1. Add Device': '<i class="fas fa-plus-circle"></i>',
+            '2. All Devices': '<i class="fas fa-mobile-alt"></i>',
+            '3. Campaign': '<i class="fas fa-bullhorn"></i>',
+            '1. RCS Campaign': '<i class="fas fa-bullhorn"></i>',
+            '2. RCS Reports': '<i class="fas fa-file-alt"></i>',
+            '3. RCS Templates': '<i class="fas fa-file"></i>',
+            '1. Whatsapp Scan': '<i class="fab fa-whatsapp"></i>',
+            '1. API Document': '<i class="fas fa-file-code"></i>',
+            '2. File Upload': '<i class="fas fa-upload"></i>',
+            '1. All Clients': '<i class="fas fa-list"></i>',      // <-- list of clients
+            '2. Add Client': '<i class="fas fa-user-plus"></i>',
+            '1. Role Permissions': '<i class="fas fa-user-shield"></i>',
+            '2. Add New Feature': '<i class="fas fa-plus"></i>'
+        };
+
+        // Application state
+        let features = [];
+        let activeTab = 'SuperAdmin';
+        let isLoading = true;
+        let searchTerm = "";
+        let statusFilter = "all";
+        let sortBy = "order";
+        let selectedFeatures = [];
+        let currentPage = 1;
+        let showFilters = false;
+        const featuresPerPage = 10;
+
+        // DOM Elements
+        const elements = {
+            searchInput: document.getElementById('searchInput'),
+            toggleFilters: document.getElementById('toggleFilters'),
+            filterText: document.getElementById('filterText'),
+            filterControls: document.getElementById('filterControls'),
+            statusFilter: document.getElementById('statusFilter'),
+            sortBy: document.getElementById('sortBy'),
+            refreshBtn: document.getElementById('refreshBtn'),
+            exportBtn: document.getElementById('exportBtn'),
+            resetBtn: document.getElementById('resetBtn'),
+            debugBtn: document.getElementById('debugBtn'),
+            totalFeatures: document.getElementById('totalFeatures'),
+            activeFeatures: document.getElementById('activeFeatures'),
+            inactiveFeatures: document.getElementById('inactiveFeatures'),
+            totalStats: document.getElementById('totalStats'),
+            superadminStats: document.getElementById('superadminStats'),
+            educatorStats: document.getElementById('educatorStats'),
+            trainerStats: document.getElementById('trainerStats'),
+            studentStats: document.getElementById('studentStats'),
+            activeStats: document.getElementById('activeStats'),
+            roleTabs: document.getElementById('roleTabs'),
+            superadminCount: document.getElementById('superadminCount'),
+            educatorCount: document.getElementById('educatorCount'),
+            trainerCount: document.getElementById('trainerCount'),
+            studentCount: document.getElementById('studentCount'),
+            bulkActions: document.getElementById('bulkActions'),
+            selectedCount: document.getElementById('selectedCount'),
+            bulkActiveBtn: document.getElementById('bulkActiveBtn'),
+            bulkInactiveBtn: document.getElementById('bulkInactiveBtn'),
+            bulkDeleteBtn: document.getElementById('bulkDeleteBtn'),
+            currentRoleTitle: document.getElementById('currentRoleTitle'),
+            filteredCount: document.getElementById('filteredCount'),
+            statusFilterText: document.getElementById('statusFilterText'),
+            sortText: document.getElementById('sortText'),
+            refreshTableBtn: document.getElementById('refreshTableBtn'),
+            exportTableBtn: document.getElementById('exportTableBtn'),
+            loadingState: document.getElementById('loadingState'),
+            emptyState: document.getElementById('emptyState'),
+            emptyMessage: document.getElementById('emptyMessage'),
+            tableContainer: document.getElementById('tableContainer'),
+            featuresTableBody: document.getElementById('featuresTableBody'),
+            paginationContainer: document.getElementById('paginationContainer'),
+            selectAll: document.getElementById('selectAll')
+        };
+
+        // Toast notification
+        function showToast(message, type = 'success') {
+            Toastify({
+                text: message,
+                duration: 3000,
+                gravity: "top",
+                position: "right",
+                backgroundColor: type === 'success' ? "#198754" : 
+                               type === 'error' ? "#dc3545" : 
+                               type === 'warning' ? "#ffc107" : "#0d6efd",
+                stopOnFocus: true
+            }).showToast();
+        }
+
+        // Load features from localStorage
+        function loadFeatures() {
+            isLoading = true;
+            updateLoadingState();
+            
+            try {
+                const savedFeatures = localStorage.getItem('sidebarFeatures');
+                
+                if (savedFeatures) {
+                    const parsedFeatures = JSON.parse(savedFeatures);
+                    console.log("✅ Loaded features from localStorage:", parsedFeatures.length);
+                    features = parsedFeatures;
+                } else {
+                    // Create default features for SuperAdmin using the updated sections
+                    features = [];
+                    let idCounter = 1;
+                    
+                    // Only add features for SuperAdmin by default
+                    // Other roles can be added via the Add New Feature page
+                    Object.keys(allFeatureLabels).forEach(section => {
+                        allFeatureLabels[section].forEach((label, index) => {
+                            features.push({
+                                id: idCounter++,
+                                role: 'SuperAdmin',
+                                section: section,
+                                label: label,
+                                isActive: true,
+                                order: index + 1,
+                                createdAt: new Date().toISOString()
+                            });
+                        });
+                    });
+                    
+                    console.log("✅ Created default SuperAdmin features:", features.length);
+                    localStorage.setItem('sidebarFeatures', JSON.stringify(features));
+                }
+                
+                updateStats();
+                renderTable();
+                showToast("Features loaded successfully!");
+            } catch (error) {
+                console.error('❌ Error loading features:', error);
+                showToast("Failed to load features", 'error');
+            } finally {
+                isLoading = false;
+                updateLoadingState();
+            }
+        }
+
+        // Save features to localStorage
+        function saveFeatures(updatedFeatures) {
+            try {
+                localStorage.setItem('sidebarFeatures', JSON.stringify(updatedFeatures));
+                features = updatedFeatures;
+                
+                // Notify other tabs/pages that features have been updated
+                localStorage.setItem('sidebar-update-time', Date.now().toString());
+                window.dispatchEvent(new CustomEvent('featuresUpdated'));
+                
+                showToast("Features updated successfully!");
+                
+                updateStats();
+                renderTable();
+            } catch (error) {
+                console.error('❌ Error saving features:', error);
+                showToast("Failed to save features", 'error');
+            }
+        }
+
+        // Update statistics
+        function updateStats() {
+            const roleStats = {
+                total: features.length,
+                superadmin: features.filter(f => f.role === 'SuperAdmin').length,
+                educator: features.filter(f => f.role === 'Educator').length,
+                trainer: features.filter(f => f.role === 'Trainer').length,
+                student: features.filter(f => f.role === 'Student').length,
+                active: features.filter(f => f.isActive).length,
+                inactive: features.filter(f => !f.isActive).length
+            };
+
+            // Update quick stats
+            elements.totalFeatures.textContent = roleStats.total;
+            elements.activeFeatures.textContent = roleStats.active;
+            elements.inactiveFeatures.textContent = roleStats.inactive;
+
+            // Update stats cards
+            elements.totalStats.textContent = roleStats.total;
+            elements.superadminStats.textContent = roleStats.superadmin;
+            elements.educatorStats.textContent = roleStats.educator;
+            elements.trainerStats.textContent = roleStats.trainer;
+            elements.studentStats.textContent = roleStats.student;
+            elements.activeStats.textContent = roleStats.active;
+
+            // Update role tabs counts
+            elements.superadminCount.textContent = roleStats.superadmin;
+            elements.educatorCount.textContent = roleStats.educator;
+            elements.trainerCount.textContent = roleStats.trainer;
+            elements.studentCount.textContent = roleStats.student;
+        }
+
+        // Get features for current role
+        function getFeaturesForCurrentRole() {
+            return features.filter(f => f.role === activeTab);
+        }
+
+        // Filter and sort features
+        function getFilteredFeatures() {
+            const roleFeatures = getFeaturesForCurrentRole();
+            
+            return roleFeatures
+                .filter(feature => {
+                    const matchesSearch = 
+                        (feature.label && feature.label.toLowerCase().includes(searchTerm.toLowerCase())) ||
+                        (feature.section && feature.section.toLowerCase().includes(searchTerm.toLowerCase()));
+                    
+                    const matchesStatus = 
+                        statusFilter === "all" || 
+                        (statusFilter === "active" && feature.isActive) ||
+                        (statusFilter === "inactive" && !feature.isActive);
+                    
+                    return matchesSearch && matchesStatus;
+                })
+                .sort((a, b) => {
+                    switch(sortBy) {
+                        case "order":
+                            return a.order - b.order;
+                        case "name":
+                            return a.label.localeCompare(b.label);
+                        case "section":
+                            return a.section.localeCompare(b.section);
+                        case "newest":
+                            return new Date(b.createdAt || 0) - new Date(a.createdAt || 0);
+                        case "oldest":
+                            return new Date(a.createdAt || 0) - new Date(b.createdAt || 0);
+                        default:
+                            return 0;
+                    }
+                });
+        }
+
+        // Render table
+        function renderTable() {
+            const filteredFeatures = getFilteredFeatures();
+            const lastIndex = currentPage * featuresPerPage;
+            const firstIndex = lastIndex - featuresPerPage;
+            const currentFeatures = filteredFeatures.slice(firstIndex, lastIndex);
+            const totalPages = Math.ceil(filteredFeatures.length / featuresPerPage);
+
+            // Update header information
+            elements.currentRoleTitle.textContent = activeTab;
+            elements.filteredCount.textContent = filteredFeatures.length;
+            
+            if (statusFilter !== "all") {
+                elements.statusFilterText.textContent = ` - ${statusFilter.toUpperCase()}`;
+            } else {
+                elements.statusFilterText.textContent = '';
+            }
+            
+            // Update sort text
+            const sortTexts = {
+                'order': 'Sorted: Order',
+                'name': 'Sorted: Name A-Z',
+                'section': 'Sorted: Section',
+                'newest': 'Sorted: Newest',
+                'oldest': 'Sorted: Oldest'
+            };
+            elements.sortText.textContent = sortTexts[sortBy] || 'Sorted: Order';
+
+            // Show/hide states
+            if (isLoading) {
+                elements.loadingState.style.display = 'block';
+                elements.emptyState.style.display = 'none';
+                elements.tableContainer.style.display = 'none';
+                return;
+            }
+
+            if (filteredFeatures.length === 0) {
+                elements.loadingState.style.display = 'none';
+                elements.emptyState.style.display = 'block';
+                elements.tableContainer.style.display = 'none';
+                elements.emptyMessage.textContent = searchTerm ? "Try different search terms" : "No features for this role. Add features from the 'Add New Feature' page.";
+                return;
+            }
+
+            elements.loadingState.style.display = 'none';
+            elements.emptyState.style.display = 'none';
+            elements.tableContainer.style.display = 'block';
+
+            // Render table rows
+            let tableHTML = '';
+            currentFeatures.forEach((feature) => {
+                const isSelected = selectedFeatures.includes(feature.id);
+                const rowClass = isSelected ? 'table-primary' : '';
+                
+                const sectionIcon = sectionIcons[feature.section] || '<i class="fas fa-cog"></i>';
+                const featureIcon = featureIcons[feature.label] || '<i class="fas fa-cog"></i>';
+                
+                tableHTML += `
+                    <tr 
+                        class="${rowClass}"
+                        onclick="toggleSelect(${feature.id})"
+                        style="cursor: pointer;"
+                    >
+                        <td onclick="event.stopPropagation();">
+                            <div class="form-check">
+                                <input
+                                    class="form-check-input feature-checkbox"
+                                    type="checkbox"
+                                    data-id="${feature.id}"
+                                    ${isSelected ? 'checked' : ''}
+                                    onclick="event.stopPropagation(); handleFeatureCheckbox(${feature.id}, event)"
+                                />
+                            </div>
+                        </td>
+                        
+                        <td>
+                            <div class="d-flex align-items-center gap-3">
+                                <div class="rounded-circle d-flex align-items-center justify-content-center"
+                                    style="
+                                        width: 45px;
+                                        height: 45px;
+                                        background-color: #f3f4f6;
+                                    "
+                                >
+                                    <span class="text-primary fs-5">
+                                        ${sectionIcon}
+                                    </span>
+                                </div>
+                                <div>
+                                    <div class="fw-semibold text-dark">
+                                        ${feature.section.replace('*** ', '')}
+                                    </div>
+                                    <div class="text-muted small">
+                                        ${feature.role}
+                                    </div>
+                                </div>
+                            </div>
+                        </td>
+                        
+                        <td>
+                            <div class="d-flex align-items-center gap-3">
+                                <div class="rounded-circle d-flex align-items-center justify-content-center"
+                                    style="
+                                        width: 45px;
+                                        height: 45px;
+                                        background-color: #f0f9ff;
+                                    "
+                                >
+                                    <span class="text-primary fs-5">
+                                        ${featureIcon}
+                                    </span>
+                                </div>
+                                <div>
+                                    <div class="fw-semibold text-dark">
+                                        ${feature.label}
+                                    </div>
+                                    <div class="text-muted small">
+                                        Order: ${feature.order}
+                                    </div>
+                                </div>
+                            </div>
+                        </td>
+                        
+                        <td class="text-center">
+                            <span
+                                class="badge ${feature.isActive ? 'bg-success' : 'bg-secondary'} px-3 py-2"
+                                style="cursor: pointer;"
+                                onclick="event.stopPropagation(); toggleFeatureStatus(${feature.id})"
+                                title="Click to toggle status (Current: ${feature.isActive ? 'Active' : 'Inactive'})"
+                            >
+                                ${feature.isActive ? 
+                                    '<i class="fas fa-check-circle"></i> Active' : 
+                                    '<i class="fas fa-times-circle"></i> Inactive'}
+                            </span>
+                        </td>
+                        
+                        <td class="text-center">
+                            <div class="d-flex flex-column align-items-center">
+                                <div class="order-controls d-flex align-items-center gap-2">
+                                    <button
+                                        class="btn btn-sm btn-outline-primary p-1"
+                                        onclick="event.stopPropagation(); moveFeature(${feature.id}, 'up')"
+                                        title="Move Up"
+                                        ${feature.order === 1 ? 'disabled' : ''}
+                                    >
+                                        <i class="fas fa-arrow-up"></i>
+                                    </button>
+                                    <span class="fw-bold">${feature.order}</span>
+                                    <button
+                                        class="btn btn-sm btn-outline-primary p-1"
+                                        onclick="event.stopPropagation(); moveFeature(${feature.id}, 'down')"
+                                        title="Move Down"
+                                    >
+                                        <i class="fas fa-arrow-down"></i>
+                                    </button>
+                                </div>
+                            </div>
+                        </td>
+                        
+                        <td class="text-center" onclick="event.stopPropagation();">
+                            <div class="btn-group" role="group">
+                                <button
+                                    class="btn btn-outline-primary btn-sm"
+                                    onclick="startEditing(${feature.id})"
+                                    title="Edit Feature"
+                                >
+                                    <i class="fas fa-edit"></i>
+                                </button>
+                                <button
+                                    class="btn btn-outline-danger btn-sm"
+                                    onclick="deleteFeature(${feature.id}, '${feature.label.replace(/'/g, "\\'")}')"
+                                    title="Delete Feature"
+                                >
+                                    <i class="fas fa-trash"></i>
+                                </button>
+                            </div>
+                        </td>
+                    </tr>
+                `;
+            });
+
+            elements.featuresTableBody.innerHTML = tableHTML;
+
+            // Render pagination
+            renderPagination(filteredFeatures.length, totalPages);
+        }
+
+        // Render pagination
+        function renderPagination(totalItems, totalPages) {
+            if (totalPages <= 1) {
+                elements.paginationContainer.style.display = 'none';
+                return;
+            }
+
+            elements.paginationContainer.style.display = 'flex';
+
+            let paginationHTML = `
+                <div>
+                    <small class="text-muted">
+                        Showing ${Math.min((currentPage - 1) * featuresPerPage + 1, totalItems)} to ${Math.min(currentPage * featuresPerPage, totalItems)} of ${totalItems} features
+                    </small>
+                </div>
+                
+                <div class="d-flex align-items-center gap-2">
+                    <button
+                        class="btn btn-outline-primary btn-sm"
+                        ${currentPage === 1 ? 'disabled' : ''}
+                        onclick="changePage(${currentPage - 1})"
+                    >
+                        Previous
+                    </button>
+                    
+                    <div class="d-flex gap-1">
+            `;
+
+            // Calculate page numbers to show
+            let startPage = Math.max(1, currentPage - 2);
+            let endPage = Math.min(totalPages, currentPage + 2);
+
+            for (let i = startPage; i <= endPage; i++) {
+                paginationHTML += `
+                    <button
+                        class="btn btn-sm ${currentPage === i ? 'btn-primary text-white' : 'btn-outline-primary'}"
+                        onclick="changePage(${i})"
+                    >
+                        ${i}
+                    </button>
+                `;
+            }
+
+            paginationHTML += `
+                    </div>
+                    
+                    <button
+                        class="btn btn-outline-primary btn-sm"
+                        ${currentPage === totalPages ? 'disabled' : ''}
+                        onclick="changePage(${currentPage + 1})"
+                    >
+                        Next
+                    </button>
+                </div>
+            `;
+
+            elements.paginationContainer.innerHTML = paginationHTML;
+        }
+
+        // Update loading state
+        function updateLoadingState() {
+            const buttons = document.querySelectorAll('.refresh-btn, #refreshTableBtn');
+            buttons.forEach(btn => {
+                if (isLoading) {
+                    btn.innerHTML = '<i class="fas fa-sync spin"></i> Refreshing...';
+                    btn.disabled = true;
+                } else {
+                    btn.innerHTML = '<i class="fas fa-sync"></i> Refresh';
+                    btn.disabled = false;
+                }
+            });
+        }
+
+        // Feature actions (exposed to global scope for onclick handlers)
+        window.toggleSelect = function(id) {
+            if (selectedFeatures.includes(id)) {
+                selectedFeatures = selectedFeatures.filter(fId => fId !== id);
+            } else {
+                selectedFeatures.push(id);
+            }
+            updateBulkActions();
+            renderTable();
+        };
+
+        window.handleFeatureCheckbox = function(id, event) {
+            event.stopPropagation();
+            window.toggleSelect(id);
+        };
+
+        window.toggleFeatureStatus = function(id) {
+            const updatedFeatures = features.map(f => 
+                f.id === id ? { ...f, isActive: !f.isActive } : f
+            );
+            saveFeatures(updatedFeatures);
+        };
+
+        window.moveFeature = function(id, direction) {
+            const feature = features.find(f => f.id === id);
+            const sectionFeatures = features
+                .filter(f => f.role === feature.role && f.section === feature.section)
+                .sort((a, b) => a.order - b.order);
+            
+            const currentIndex = sectionFeatures.findIndex(f => f.id === id);
+            
+            if (direction === 'up' && currentIndex > 0) {
+                const tempOrder = sectionFeatures[currentIndex].order;
+                sectionFeatures[currentIndex].order = sectionFeatures[currentIndex - 1].order;
+                sectionFeatures[currentIndex - 1].order = tempOrder;
+            } else if (direction === 'down' && currentIndex < sectionFeatures.length - 1) {
+                const tempOrder = sectionFeatures[currentIndex].order;
+                sectionFeatures[currentIndex].order = sectionFeatures[currentIndex + 1].order;
+                sectionFeatures[currentIndex + 1].order = tempOrder;
+            }
+            
+            const otherFeatures = features.filter(f => 
+                !(f.role === feature.role && f.section === feature.section)
+            );
+            const updatedFeatures = [...otherFeatures, ...sectionFeatures];
+            saveFeatures(updatedFeatures);
+        };
+
+        window.startEditing = function(id) {
+            const feature = features.find(f => f.id === id);
+            if (feature) {
+                // For demonstration, show alert with edit info
+                // In production, open a modal with edit form
+                alert(`Edit Feature: ${feature.label}\n\nRole: ${feature.role}\nSection: ${feature.section}\n\nThis would open an edit form in production.`);
+            }
+        };
+
+        window.deleteFeature = function(id, name) {
+            if (confirm(`Delete feature "${name}"?`)) {
+                const updatedFeatures = features.filter(f => f.id !== id);
+                saveFeatures(updatedFeatures);
+                selectedFeatures = selectedFeatures.filter(fId => fId !== id);
+                updateBulkActions();
+            }
+        };
+
+        window.changePage = function(page) {
+            currentPage = page;
+            renderTable();
+        };
+
+        // Bulk actions
+        function updateBulkActions() {
+            if (selectedFeatures.length > 0) {
+                elements.bulkActions.style.display = 'block';
+                elements.selectedCount.textContent = `${selectedFeatures.length} feature(s) selected`;
+                
+                // Update select all checkbox
+                const currentFeatures = getFilteredFeatures();
+                elements.selectAll.checked = selectedFeatures.length === currentFeatures.length;
+            } else {
+                elements.bulkActions.style.display = 'none';
+            }
+        }
+
+        function handleBulkStatus(newStatus) {
+            if (selectedFeatures.length === 0) {
+                showToast("Please select features first", 'warning');
+                return;
+            }
+            
+            if (confirm(`Change status to ${newStatus} for ${selectedFeatures.length} feature(s)?`)) {
+                const updatedFeatures = features.map(f =>
+                    selectedFeatures.includes(f.id) ? { 
+                        ...f, 
+                        isActive: newStatus === 'active' 
+                    } : f
+                );
+                saveFeatures(updatedFeatures);
+                selectedFeatures = [];
+                updateBulkActions();
+            }
+        }
+
+        function handleBulkDelete() {
+            if (selectedFeatures.length === 0) {
+                showToast("Please select features first", 'warning');
+                return;
+            }
+            
+            if (confirm(`Delete ${selectedFeatures.length} selected feature(s)?`)) {
+                const updatedFeatures = features.filter(f => !selectedFeatures.includes(f.id));
+                saveFeatures(updatedFeatures);
+                selectedFeatures = [];
+                updateBulkActions();
+            }
+        }
+
+        // Reset to defaults (SuperAdmin features only)
+        function resetToDefaults() {
+            if (confirm('Reset all features to default SuperAdmin features? This will remove all features for other roles.\n\nThis cannot be undone.')) {
+                const defaultFeatures = [];
+                let idCounter = 1;
+                
+                Object.keys(allFeatureLabels).forEach(section => {
+                    allFeatureLabels[section].forEach((label, index) => {
+                        defaultFeatures.push({
+                            id: idCounter++,
+                            role: 'SuperAdmin',
+                            section: section,
+                            label: label,
+                            isActive: true,
+                            order: index + 1,
+                            createdAt: new Date().toISOString()
+                        });
+                    });
+                });
+                
+                saveFeatures(defaultFeatures);
+                selectedFeatures = [];
+                updateBulkActions();
+            }
+        }
+
+        // Export features to CSV
+        function handleExport() {
+            const filteredFeatures = getFilteredFeatures();
+            
+            if (filteredFeatures.length === 0) {
+                showToast("No data to export", 'warning');
+                return;
+            }
+
+            try {
+                // Create CSV headers
+                const headers = [
+                    "Section",
+                    "Feature",
+                    "Role",
+                    "Status",
+                    "Order",
+                    "Created At"
+                ];
+
+                // Create CSV rows
+                const rows = filteredFeatures.map(feature => [
+                    feature.section.replace('*** ', ''),
+                    feature.label,
+                    feature.role,
+                    feature.isActive ? "Active" : "Inactive",
+                    feature.order,
+                    new Date(feature.createdAt).toLocaleDateString('en-IN')
+                ]);
+
+                // Combine headers and rows
+                const csvContent = [
+                    headers.join(","),
+                    ...rows.map(row => row.map(cell => `"${cell}"`).join(","))
+                ].join("\n");
+
+                // Create and download file
+                const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+                const url = URL.createObjectURL(blob);
+                const link = document.createElement('a');
+                link.href = url;
+                link.setAttribute('download', `features_${activeTab}_${new Date().toISOString().split('T')[0]}.csv`);
+                document.body.appendChild(link);
+                link.click();
+                document.body.removeChild(link);
+                
+                showToast(`✅ Exported ${filteredFeatures.length} features successfully!`);
+            } catch (error) {
+                console.error('Export error:', error);
+                showToast("Failed to export data", 'error');
+            }
+        }
+
+        // Initialize event listeners
+        function initEventListeners() {
+            // Search input
+            elements.searchInput.addEventListener('input', (e) => {
+                searchTerm = e.target.value;
+                currentPage = 1;
+                renderTable();
+            });
+
+            // Toggle filters
+            elements.toggleFilters.addEventListener('click', () => {
+                showFilters = !showFilters;
+                if (showFilters) {
+                    elements.filterControls.style.display = 'flex';
+                    elements.filterText.textContent = 'Hide Filters';
+                } else {
+                    elements.filterControls.style.display = 'none';
+                    elements.filterText.textContent = 'Show Filters';
+                }
+            });
+
+            // Status filter
+            elements.statusFilter.addEventListener('change', (e) => {
+                statusFilter = e.target.value;
+                currentPage = 1;
+                renderTable();
+            });
+
+            // Sort by
+            elements.sortBy.addEventListener('change', (e) => {
+                sortBy = e.target.value;
+                currentPage = 1;
+                renderTable();
+            });
+
+            // Refresh button
+            elements.refreshBtn.addEventListener('click', loadFeatures);
+            elements.refreshTableBtn.addEventListener('click', loadFeatures);
+
+            // Export button
+            elements.exportBtn.addEventListener('click', handleExport);
+            elements.exportTableBtn.addEventListener('click', handleExport);
+
+            // Reset button
+            elements.resetBtn.addEventListener('click', resetToDefaults);
+
+            // Debug button
+            elements.debugBtn.addEventListener('click', () => {
+                console.log("Current features data:", features);
+                console.log("LocalStorage data:", localStorage.getItem('sidebarFeatures'));
+                showToast("Check browser console for features data", 'info');
+            });
+
+            // Role tabs
+            document.querySelectorAll('.role-tab').forEach(tab => {
+                tab.addEventListener('click', (e) => {
+                    const role = e.currentTarget.getAttribute('data-role');
+                    
+                    // Update active tab
+                    activeTab = role;
+                    
+                    // Update tab buttons
+                    document.querySelectorAll('.role-tab').forEach(t => {
+                        if (t.getAttribute('data-role') === role) {
+                            t.classList.remove('btn-outline-primary');
+                            t.classList.add('btn-primary');
+                        } else {
+                            t.classList.remove('btn-primary');
+                            t.classList.add('btn-outline-primary');
+                        }
+                    });
+                    
+                    // Reset pagination and selection
+                    currentPage = 1;
+                    selectedFeatures = [];
+                    updateBulkActions();
+                    
+                    // Render table
+                    renderTable();
+                });
+            });
+
+            // Bulk action buttons
+            elements.bulkActiveBtn.addEventListener('click', () => handleBulkStatus('active'));
+            elements.bulkInactiveBtn.addEventListener('click', () => handleBulkStatus('inactive'));
+            elements.bulkDeleteBtn.addEventListener('click', handleBulkDelete);
+
+            // Select all checkbox
+            elements.selectAll.addEventListener('change', (e) => {
+                const currentFeatures = getFilteredFeatures();
+                if (e.target.checked) {
+                    selectedFeatures = currentFeatures.map(f => f.id);
+                } else {
+                    selectedFeatures = [];
+                }
+                updateBulkActions();
+                renderTable();
+            });
+
+            // Listen for storage events (cross-tab sync)
+            window.addEventListener('storage', (e) => {
+                if (e.key === 'sidebarFeatures' || e.key === 'sidebar-update-time') {
+                    console.log('🔄 Detected update from another tab, reloading...');
+                    loadFeatures();
+                }
+            });
+
+            // Listen for custom events from Add New Feature page
+            window.addEventListener('featuresUpdated', () => {
+                console.log('🔄 featuresUpdated event received, reloading...');
+                loadFeatures();
+            });
+        }
+
+        // Initialize the application
+        function init() {
+            console.log("🚀 Initializing Role Permissions Management...");
+            initEventListeners();
+            loadFeatures();
+        }
+
+        // Start when DOM is loaded
+        document.addEventListener('DOMContentLoaded', init);
+    </script>
+</body>
+</html>

@@ -1,0 +1,402 @@
+<!-- <!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>404 | Page Not Found</title>
+
+<style>
+body{
+    margin:0;
+    font-family:Arial, Helvetica, sans-serif;
+    background:#f4f6f9;
+    color:#1f2937;
+}
+
+/* HEADER */
+.header{
+    background:#0f4c81;
+    color:#fff;
+    padding:15px 25px;
+    font-size:18px;
+    font-weight:600;
+}
+
+/* CONTENT */
+.container{
+    max-width:900px;
+    margin:60px auto;
+    background:#ffffff;
+    border:1px solid #d1d5db;
+    padding:40px;
+}
+
+.error-code{
+    font-size:72px;
+    font-weight:bold;
+    color:#b91c1c;
+    margin-bottom:10px;
+}
+
+.error-title{
+    font-size:24px;
+    font-weight:600;
+    margin-bottom:15px;
+}
+
+.error-text{
+    font-size:16px;
+    line-height:1.6;
+    color:#374151;
+}
+
+.note{
+    margin-top:20px;
+    padding:15px;
+    background:#f9fafb;
+    border-left:5px solid #0f4c81;
+    font-size:15px;
+}
+
+/* BUTTON */
+.back-btn{
+    display:inline-block;
+    margin-top:30px;
+    padding:10px 20px;
+    background:#0f4c81;
+    color:#fff;
+    text-decoration:none;
+    font-weight:600;
+    border-radius:3px;
+}
+
+/* FOOTER */
+.footer{
+    text-align:center;
+    margin-top:60px;
+    padding:15px;
+    font-size:14px;
+    color:#6b7280;
+    border-top:1px solid #d1d5db;
+}
+
+/* MOBILE */
+@media(max-width:768px){
+    .container{
+        margin:30px 15px;
+        padding:25px;
+    }
+}
+</style>
+</head>
+
+<body>
+
+<div class="header">
+    Government of India | Official Portal
+</div>
+
+<div class="container">
+
+    <div class="error-code">404</div>
+    <div class="error-title">Page Not Found</div>
+
+    <p class="error-text">
+        The page you are trying to access does not exist or may have been moved,
+        renamed, or is temporarily unavailable.
+    </p>
+
+    <div class="note">
+        <strong>Note:</strong> Please check the URL carefully. If you believe this
+        is an error, contact the system administrator or return to the home page.
+    </div>
+
+    <a href="/dashboard" class="back-btn">← Go to Dashboard</a>
+
+</div>
+
+<div class="footer">
+    © Government of India | This is an official website
+</div>
+
+</body>
+</html>
+
+ -->
+
+
+ <!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Page Not Found - WhatsApp API</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        
+        body {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+        }
+        
+        .notfound-container {
+            background: white;
+            border-radius: 20px;
+            padding: 50px 40px;
+            max-width: 600px;
+            width: 100%;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+            text-align: center;
+        }
+        
+        .notfound-icon {
+            font-size: 120px;
+            color: #667eea;
+            margin-bottom: 20px;
+            line-height: 1;
+        }
+        
+        .notfound-title {
+            color: #333;
+            font-size: 48px;
+            margin-bottom: 10px;
+            font-weight: 700;
+        }
+        
+        .notfound-subtitle {
+            color: #666;
+            font-size: 20px;
+            margin-bottom: 20px;
+        }
+        
+        .notfound-message {
+            color: #666;
+            font-size: 16px;
+            margin-bottom: 40px;
+            line-height: 1.6;
+            max-width: 500px;
+            margin-left: auto;
+            margin-right: auto;
+        }
+        
+        .search-box {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 40px;
+            max-width: 400px;
+            margin-left: auto;
+            margin-right: auto;
+        }
+        
+        .search-input {
+            flex: 1;
+            padding: 12px 20px;
+            border: 2px solid #e0e6ed;
+            border-radius: 10px;
+            font-size: 16px;
+            outline: none;
+            transition: all 0.3s;
+        }
+        
+        .search-input:focus {
+            border-color: #667eea;
+            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+        }
+        
+        .search-btn {
+            padding: 12px 24px;
+            background: #667eea;
+            color: white;
+            border: none;
+            border-radius: 10px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+        
+        .search-btn:hover {
+            background: #5a6fd8;
+            transform: translateY(-2px);
+        }
+        
+        .action-buttons {
+            display: flex;
+            gap: 15px;
+            justify-content: center;
+            flex-wrap: wrap;
+        }
+        
+        .btn {
+            padding: 12px 24px;
+            border-radius: 10px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            display: inline-flex;
+            align-items: center;
+            gap: 10px;
+            transition: all 0.3s;
+            text-decoration: none;
+        }
+        
+        .btn-primary {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+        }
+        
+        .btn-secondary {
+            background: white;
+            color: #333;
+            border: 2px solid #e0e6ed;
+        }
+        
+        .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 20px rgba(0,0,0,0.1);
+        }
+        
+        .btn i {
+            font-size: 18px;
+        }
+        
+        .quick-links {
+            margin-top: 40px;
+            padding-top: 30px;
+            border-top: 1px solid #e0e6ed;
+        }
+        
+        .quick-links h3 {
+            color: #666;
+            font-size: 16px;
+            margin-bottom: 15px;
+            font-weight: 600;
+        }
+        
+        .links {
+            display: flex;
+            gap: 15px;
+            justify-content: center;
+            flex-wrap: wrap;
+        }
+        
+        .link-item {
+            color: #667eea;
+            text-decoration: none;
+            padding: 8px 16px;
+            border-radius: 20px;
+            background: #f0f4ff;
+            transition: all 0.3s;
+            font-size: 14px;
+        }
+        
+        .link-item:hover {
+            background: #667eea;
+            color: white;
+        }
+        
+        @media (max-width: 768px) {
+            .notfound-container {
+                padding: 30px 20px;
+            }
+            
+            .notfound-title {
+                font-size: 36px;
+            }
+            
+            .notfound-icon {
+                font-size: 80px;
+            }
+            
+            .action-buttons {
+                flex-direction: column;
+            }
+            
+            .btn {
+                width: 100%;
+                justify-content: center;
+            }
+            
+            .search-box {
+                flex-direction: column;
+            }
+        }
+    </style>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body>
+    <div class="notfound-container">
+        <div class="notfound-icon">
+            <i class="fas fa-map-marker-alt"></i>
+        </div>
+        
+        <h1 class="notfound-title">404</h1>
+        
+        <h2 class="notfound-subtitle">Page Not Found</h2>
+        
+        <p class="notfound-message">
+            The page you are looking for might have been removed, had its name changed, 
+            or is temporarily unavailable.
+        </p>
+        
+        <div class="search-box">
+            <input type="text" class="search-input" placeholder="Search for pages..." id="searchInput">
+            <button class="search-btn" onclick="searchPage()">
+                <i class="fas fa-search"></i> Search
+            </button>
+        </div>
+        
+        <div class="action-buttons">
+            <a href="/" class="btn btn-primary">
+                <i class="fas fa-home"></i> Go to Homepage
+            </a>
+            
+            <button onclick="window.history.back()" class="btn btn-secondary">
+                <i class="fas fa-arrow-left"></i> Go Back
+            </button>
+            
+            <a href="/WhatsappScan" class="btn btn-secondary">
+                <i class="fab fa-whatsapp"></i> WhatsApp Scan
+            </a>
+        </div>
+        
+        <div class="quick-links">
+            <h3>Quick Links:</h3>
+            <div class="links">
+                <a href="/" class="link-item">Home</a>
+                <a href="/WhatsappScan" class="link-item">WhatsApp Scan</a>
+                <a href="/campaign" class="link-item">Campaign</a>
+                <a href="/chats" class="link-item">Chats</a>
+                <a href="/settings" class="link-item">Settings</a>
+            </div>
+        </div>
+    </div>
+    
+    <script>
+        function searchPage() {
+            const query = document.getElementById('searchInput').value;
+            if (query.trim()) {
+                // You can implement actual search logic here
+                alert('Search functionality will be implemented soon!');
+            }
+        }
+        
+        // Allow pressing Enter to search
+        document.getElementById('searchInput').addEventListener('keypress', function(e) {
+            if (e.key === 'Enter') {
+                searchPage();
+            }
+        });
+    </script>
+</body>
+</html>
