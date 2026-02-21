@@ -1,0 +1,1122 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Educator Notifications - WhatsApp Manager</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        body {
+            background: #f5f7fa;
+            min-height: 100vh;
+        }
+
+        .notifications-container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        .page-header {
+            background: linear-gradient(135deg, #43e97b 0%, #38f9d7 100%);
+            color: white;
+            padding: 30px;
+            border-radius: 15px;
+            margin-bottom: 30px;
+            box-shadow: 0 5px 20px rgba(67, 233, 123, 0.3);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .page-header h1 {
+            font-size: 32px;
+            margin-bottom: 10px;
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .page-header p {
+            opacity: 0.9;
+            font-size: 16px;
+        }
+
+        .user-info {
+            background: rgba(255,255,255,0.2);
+            padding: 10px 20px;
+            border-radius: 50px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .action-buttons {
+            display: flex;
+            gap: 15px;
+            margin-bottom: 20px;
+        }
+
+        .primary-btn {
+            padding: 15px 30px;
+            border: none;
+            border-radius: 12px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: transform 0.3s, box-shadow 0.3s;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            background: white;
+            color: #43e97b;
+            border: 2px solid #43e97b;
+        }
+
+        .primary-btn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 10px 20px rgba(67, 233, 123, 0.2);
+            background: linear-gradient(135deg, #43e97b 0%, #38f9d7 100%);
+            color: white;
+        }
+
+        .primary-btn i {
+            font-size: 18px;
+        }
+
+        .stats-row {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+
+        .stat-card {
+            background: white;
+            padding: 25px;
+            border-radius: 12px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.08);
+            display: flex;
+            align-items: center;
+            gap: 20px;
+            transition: transform 0.3s;
+            cursor: pointer;
+        }
+
+        .stat-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 5px 20px rgba(0,0,0,0.12);
+        }
+
+        .stat-card.active {
+            border: 2px solid #43e97b;
+        }
+
+        .stat-icon {
+            width: 60px;
+            height: 60px;
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 24px;
+            color: white;
+        }
+
+        .stat-icon.all { background: linear-gradient(135deg, #43e97b 0%, #38f9d7 100%); }
+        .stat-icon.unread { background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%); }
+        .stat-icon.superadmin { background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); }
+        .stat-icon.sent { background: linear-gradient(135deg, #fa709a 0%, #fee140 100%); }
+
+        .stat-info h3 {
+            font-size: 14px;
+            color: #8492a6;
+            font-weight: 500;
+            margin-bottom: 5px;
+        }
+
+        .stat-info p {
+            font-size: 28px;
+            font-weight: bold;
+            color: #1f2937;
+        }
+
+        .filters-bar {
+            background: white;
+            padding: 20px;
+            border-radius: 12px;
+            margin-bottom: 20px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.08);
+            display: flex;
+            gap: 15px;
+            flex-wrap: wrap;
+            align-items: center;
+        }
+
+        .filter-btn {
+            padding: 10px 20px;
+            border: 2px solid #e5e7eb;
+            background: white;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 14px;
+            font-weight: 600;
+            color: #6b7280;
+            transition: all 0.3s;
+        }
+
+        .filter-btn:hover {
+            border-color: #43e97b;
+            color: #43e97b;
+        }
+
+        .filter-btn.active {
+            background: linear-gradient(135deg, #43e97b 0%, #38f9d7 100%);
+            color: white;
+            border-color: transparent;
+        }
+
+        .search-box {
+            flex: 1;
+            min-width: 250px;
+            position: relative;
+        }
+
+        .search-box input {
+            width: 100%;
+            padding: 12px 15px 12px 45px;
+            border: 2px solid #e5e7eb;
+            border-radius: 8px;
+            font-size: 14px;
+            transition: border-color 0.3s;
+        }
+
+        .search-box input:focus {
+            outline: none;
+            border-color: #43e97b;
+        }
+
+        .search-box i {
+            position: absolute;
+            left: 15px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: #9ca3af;
+        }
+
+        .notifications-list {
+            background: white;
+            border-radius: 12px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.08);
+            overflow: hidden;
+        }
+
+        .notification-item {
+            padding: 20px;
+            border-bottom: 1px solid #f3f4f6;
+            display: flex;
+            gap: 15px;
+            cursor: pointer;
+            transition: background 0.3s;
+            position: relative;
+        }
+
+        .notification-item:hover {
+            background: #f9fafb;
+        }
+
+        .notification-item.unread {
+            background: #f0fdf4;
+            border-left: 4px solid #43e97b;
+        }
+
+        .notification-item.unread::before {
+            content: '';
+            position: absolute;
+            left: 10px;
+            top: 50%;
+            transform: translateY(-50%);
+            width: 8px;
+            height: 8px;
+            background: #43e97b;
+            border-radius: 50%;
+        }
+
+        .notification-item.sent {
+            background: #fff7ed;
+            border-left: 4px solid #f97316;
+        }
+
+        .notif-avatar {
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 20px;
+            font-weight: bold;
+            color: white;
+            flex-shrink: 0;
+        }
+
+        .notif-avatar.superadmin { background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); }
+        .notif-avatar.sent { background: linear-gradient(135deg, #f97316 0%, #fb923c 100%); }
+
+        .notif-content {
+            flex: 1;
+            min-width: 0;
+        }
+
+        .notif-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: start;
+            margin-bottom: 8px;
+        }
+
+        .notif-name {
+            font-weight: 600;
+            font-size: 16px;
+            color: #1f2937;
+            margin-bottom: 3px;
+        }
+
+        .notif-role {
+            display: inline-block;
+            padding: 3px 10px;
+            border-radius: 12px;
+            font-size: 11px;
+            font-weight: 600;
+            margin-left: 10px;
+        }
+
+        .notif-role.superadmin { background: #ede9fe; color: #5b21b6; }
+        .notif-role.sent { background: #ffedd5; color: #9a3412; }
+
+        .notif-time {
+            font-size: 13px;
+            color: #9ca3af;
+            white-space: nowrap;
+        }
+
+        .notif-message {
+            color: #4b5563;
+            font-size: 14px;
+            line-height: 1.5;
+            margin-bottom: 8px;
+            word-break: break-word;
+        }
+
+        .reply-message {
+            background: #f3f4f6;
+            padding: 10px;
+            border-radius: 8px;
+            margin-top: 10px;
+            font-size: 13px;
+            border-left: 3px solid #43e97b;
+        }
+
+        .reply-message i {
+            color: #43e97b;
+            margin-right: 5px;
+        }
+
+        .notif-meta {
+            display: flex;
+            gap: 20px;
+            font-size: 13px;
+            color: #6b7280;
+            flex-wrap: wrap;
+        }
+
+        .notif-meta span {
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+
+        .notif-actions {
+            display: flex;
+            gap: 10px;
+            margin-top: 12px;
+            flex-wrap: wrap;
+        }
+
+        .action-btn {
+            padding: 8px 16px;
+            border: none;
+            border-radius: 6px;
+            font-size: 13px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: transform 0.2s;
+        }
+
+        .action-btn:hover {
+            transform: translateY(-2px);
+        }
+
+        .action-btn.reply {
+            background: linear-gradient(135deg, #43e97b 0%, #38f9d7 100%);
+            color: white;
+        }
+
+        .action-btn.mark-read {
+            background: #f3f4f6;
+            color: #6b7280;
+        }
+
+        .action-btn.delete {
+            background: #fee2e2;
+            color: #dc2626;
+        }
+
+        .action-btn:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        .empty-state {
+            text-align: center;
+            padding: 60px 20px;
+            color: #9ca3af;
+        }
+
+        .empty-state i {
+            font-size: 80px;
+            margin-bottom: 20px;
+            color: #d1d5db;
+        }
+
+        .empty-state h3 {
+            font-size: 20px;
+            margin-bottom: 10px;
+            color: #6b7280;
+        }
+
+        .empty-state p {
+            font-size: 14px;
+        }
+
+        .loading-spinner {
+            text-align: center;
+            padding: 40px;
+        }
+
+        .loading-spinner i {
+            font-size: 40px;
+            color: #43e97b;
+            animation: spin 1s linear infinite;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0,0,0,0.5);
+            z-index: 1000;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .modal.show {
+            display: flex;
+        }
+
+        .modal-content {
+            background: white;
+            border-radius: 15px;
+            padding: 30px;
+            width: 90%;
+            max-width: 600px;
+            max-height: 80vh;
+            overflow-y: auto;
+        }
+
+        .modal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+            padding-bottom: 15px;
+            border-bottom: 2px solid #f3f4f6;
+        }
+
+        .modal-header h2 {
+            font-size: 24px;
+            color: #1f2937;
+        }
+
+        .close-btn {
+            width: 35px;
+            height: 35px;
+            border: none;
+            background: #f3f4f6;
+            border-radius: 50%;
+            cursor: pointer;
+            font-size: 20px;
+            color: #6b7280;
+            transition: all 0.3s;
+        }
+
+        .close-btn:hover {
+            background: #e5e7eb;
+        }
+
+        .message-bubble {
+            padding: 15px;
+            border-radius: 12px;
+            margin-bottom: 15px;
+        }
+
+        .message-bubble.incoming {
+            background: #f3f4f6;
+            margin-right: 50px;
+        }
+
+        .message-bubble.outgoing {
+            background: linear-gradient(135deg, #43e97b 0%, #38f9d7 100%);
+            color: white;
+            margin-left: 50px;
+        }
+
+        .message-sender {
+            font-weight: 600;
+            font-size: 13px;
+            margin-bottom: 5px;
+            opacity: 0.8;
+        }
+
+        .message-text {
+            font-size: 14px;
+            line-height: 1.5;
+            word-break: break-word;
+        }
+
+        .message-time {
+            font-size: 11px;
+            margin-top: 8px;
+            opacity: 0.7;
+        }
+
+        .reply-box {
+            margin-top: 20px;
+        }
+
+        .reply-box textarea {
+            width: 100%;
+            padding: 15px;
+            border: 2px solid #e5e7eb;
+            border-radius: 12px;
+            font-size: 14px;
+            resize: vertical;
+            min-height: 100px;
+            font-family: inherit;
+        }
+
+        .reply-box textarea:focus {
+            outline: none;
+            border-color: #43e97b;
+        }
+
+        .reply-actions {
+            display: flex;
+            gap: 10px;
+            margin-top: 15px;
+            justify-content: flex-end;
+        }
+
+        .btn {
+            padding: 12px 24px;
+            border: none;
+            border-radius: 8px;
+            font-size: 14px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .btn:hover {
+            transform: translateY(-2px);
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, #43e97b 0%, #38f9d7 100%);
+            color: white;
+        }
+
+        .btn-secondary {
+            background: #f3f4f6;
+            color: #6b7280;
+        }
+
+        .toast {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            background: white;
+            padding: 15px 25px;
+            border-radius: 8px;
+            box-shadow: 0 5px 20px rgba(0,0,0,0.2);
+            display: none;
+            align-items: center;
+            gap: 10px;
+            z-index: 1100;
+            animation: slideIn 0.3s ease;
+        }
+
+        .toast.show {
+            display: flex;
+        }
+
+        .toast.success {
+            border-left: 4px solid #43e97b;
+        }
+
+        .toast.error {
+            border-left: 4px solid #ef4444;
+        }
+
+        .toast i {
+            font-size: 20px;
+        }
+
+        .toast.success i {
+            color: #43e97b;
+        }
+
+        .toast.error i {
+            color: #ef4444;
+        }
+
+        @keyframes slideIn {
+            from {
+                transform: translateX(100%);
+                opacity: 0;
+            }
+            to {
+                transform: translateX(0);
+                opacity: 1;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .stats-row {
+                grid-template-columns: 1fr;
+            }
+
+            .filters-bar {
+                flex-direction: column;
+                align-items: stretch;
+            }
+
+            .filter-btn {
+                width: 100%;
+            }
+
+            .notification-item {
+                flex-direction: column;
+            }
+
+            .page-header {
+                flex-direction: column;
+                text-align: center;
+                gap: 15px;
+            }
+
+            .action-buttons {
+                flex-direction: column;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="notifications-container">
+        <div class="page-header">
+            <div>
+                <h1>
+                    <i class="fas fa-chalkboard-teacher"></i>
+                    Educator Notifications
+                </h1>
+                <p>Manage messages from Superadmin</p>
+            </div>
+            <div class="user-info">
+                <i class="fas fa-user-circle"></i>
+                <span><%= user.name || 'Educator' %> (educator)</span>
+            </div>
+        </div>
+
+        <div class="action-buttons">
+            <button class="primary-btn" onclick="openNewMessageModal()">
+                <i class="fas fa-plus-circle"></i>
+                New Message to Superadmin
+            </button>
+        </div>
+
+        <div class="stats-row">
+            <div class="stat-card active" onclick="setFilter('all')" id="stat-all">
+                <div class="stat-icon all">
+                    <i class="fas fa-envelope"></i>
+                </div>
+                <div class="stat-info">
+                    <h3>Total Messages</h3>
+                    <p id="totalCount">0</p>
+                </div>
+            </div>
+
+            <div class="stat-card" onclick="setFilter('unread')" id="stat-unread">
+                <div class="stat-icon unread">
+                    <i class="fas fa-envelope-open"></i>
+                </div>
+                <div class="stat-info">
+                    <h3>Unread Messages</h3>
+                    <p id="unreadCount">0</p>
+                </div>
+            </div>
+
+            <div class="stat-card" onclick="setFilter('superadmin')" id="stat-superadmin">
+                <div class="stat-icon superadmin">
+                    <i class="fas fa-shield-alt"></i>
+                </div>
+                <div class="stat-info">
+                    <h3>From Superadmin</h3>
+                    <p id="superadminCount">0</p>
+                </div>
+            </div>
+
+            <div class="stat-card" onclick="setFilter('sent')" id="stat-sent">
+                <div class="stat-icon sent">
+                    <i class="fas fa-paper-plane"></i>
+                </div>
+                <div class="stat-info">
+                    <h3>Sent Messages</h3>
+                    <p id="sentCount">0</p>
+                </div>
+            </div>
+        </div>
+
+        <div class="filters-bar">
+            <button class="filter-btn active" data-filter="all" onclick="setFilter('all')">
+                <i class="fas fa-list"></i> All Messages
+            </button>
+            <button class="filter-btn" data-filter="unread" onclick="setFilter('unread')">
+                <i class="fas fa-envelope"></i> Unread
+            </button>
+            <button class="filter-btn" data-filter="superadmin" onclick="setFilter('superadmin')">
+                <i class="fas fa-shield-alt"></i> From Superadmin
+            </button>
+            <button class="filter-btn" data-filter="sent" onclick="setFilter('sent')">
+                <i class="fas fa-paper-plane"></i> Sent Messages
+            </button>
+
+            <div class="search-box">
+                <i class="fas fa-search"></i>
+                <input type="text" id="searchInput" placeholder="Search messages..." onkeyup="handleSearch()">
+            </div>
+
+            <button class="filter-btn" onclick="markAllAsRead()">
+                <i class="fas fa-check-double"></i> Mark All Read
+            </button>
+        </div>
+
+        <div class="notifications-list" id="notificationsList">
+            <div class="loading-spinner" id="loadingSpinner">
+                <i class="fas fa-circle-notch"></i>
+                <p>Loading notifications...</p>
+            </div>
+        </div>
+    </div>
+
+    <div class="modal" id="replyModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2><i class="fas fa-reply"></i> Reply to Superadmin</h2>
+                <button class="close-btn" onclick="closeModal('replyModal')">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+
+            <div class="conversation-thread" id="conversationThread"></div>
+
+            <div class="reply-box">
+                <textarea id="replyMessage" placeholder="Type your reply to superadmin here..." rows="4"></textarea>
+                <div class="reply-actions">
+                    <button class="btn btn-secondary" onclick="closeModal('replyModal')">
+                        <i class="fas fa-times"></i> Cancel
+                    </button>
+                    <button class="btn btn-primary" onclick="sendReply()">
+                        <i class="fas fa-paper-plane"></i> Send Reply
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="modal" id="newMessageModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2><i class="fas fa-plus-circle"></i> New Message to Superadmin</h2>
+                <button class="close-btn" onclick="closeModal('newMessageModal')">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+
+            <div class="reply-box">
+                <textarea id="newMessage" placeholder="Type your message to superadmin here..." rows="6"></textarea>
+                <div class="reply-actions">
+                    <button class="btn btn-secondary" onclick="closeModal('newMessageModal')">
+                        <i class="fas fa-times"></i> Cancel
+                    </button>
+                    <button class="btn btn-primary" onclick="sendNewMessage()">
+                        <i class="fas fa-paper-plane"></i> Send to Superadmin
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="toast" id="toast">
+        <i class="fas" id="toastIcon"></i>
+        <span id="toastMessage"></span>
+    </div>
+
+    <script>
+        let currentFilter = 'all';
+        let notifications = [];
+        let selectedNotification = null;
+        let searchTimeout = null;
+        const userId = '<%= user._id || "67b8f8c8f8c8f8c8f8c8f8c9" %>';
+
+        document.addEventListener('DOMContentLoaded', function() {
+            fetchNotifications();
+            setInterval(fetchNotifications, 10000);
+        });
+
+        function showToast(message, type = 'success') {
+            const toast = document.getElementById('toast');
+            const toastIcon = document.getElementById('toastIcon');
+            const toastMessage = document.getElementById('toastMessage');
+            
+            toast.className = 'toast ' + type;
+            toastIcon.className = 'fas ' + (type === 'success' ? 'fa-check-circle' : 'fa-exclamation-circle');
+            toastMessage.textContent = message;
+            toast.classList.add('show');
+            setTimeout(() => toast.classList.remove('show'), 3000);
+        }
+
+        function setFilter(filter) {
+            currentFilter = filter;
+            document.querySelectorAll('.filter-btn[data-filter]').forEach(btn => {
+                btn.classList.toggle('active', btn.dataset.filter === filter);
+            });
+            document.querySelectorAll('.stat-card').forEach(card => {
+                card.classList.remove('active');
+            });
+            document.getElementById('stat-' + filter)?.classList.add('active');
+            fetchNotifications();
+        }
+
+        function handleSearch() {
+            clearTimeout(searchTimeout);
+            searchTimeout = setTimeout(fetchNotifications, 500);
+        }
+
+        async function fetchNotifications() {
+            try {
+                const search = document.getElementById('searchInput').value;
+                const url = `/api/educator/notifications?filter=${currentFilter}&search=${encodeURIComponent(search)}`;
+                const response = await fetch(url);
+                const data = await response.json();
+                
+                if (data.success) {
+                    notifications = data.notifications;
+                    updateStats(data.stats);
+                    renderNotifications();
+                }
+                document.getElementById('loadingSpinner').style.display = 'none';
+            } catch (error) {
+                showToast('Failed to load notifications', 'error');
+                document.getElementById('loadingSpinner').style.display = 'none';
+            }
+        }
+
+        function updateStats(stats) {
+            document.getElementById('totalCount').textContent = stats.total || 0;
+            document.getElementById('unreadCount').textContent = stats.unread || 0;
+            document.getElementById('superadminCount').textContent = stats.superadmin || 0;
+            document.getElementById('sentCount').textContent = stats.sent || 0;
+        }
+
+        function formatTime(dateString) {
+            const date = new Date(dateString);
+            const now = new Date();
+            const diff = (now - date) / 1000;
+
+            if (diff < 60) return 'just now';
+            if (diff < 3600) return Math.floor(diff / 60) + ' minutes ago';
+            if (diff < 86400) return Math.floor(diff / 3600) + ' hours ago';
+            if (diff < 604800) return Math.floor(diff / 86400) + ' days ago';
+            return date.toLocaleDateString();
+        }
+
+        function renderNotifications() {
+            const container = document.getElementById('notificationsList');
+
+            if (notifications.length === 0) {
+                container.innerHTML = `
+                    <div class="empty-state">
+                        <i class="fas fa-bell-slash"></i>
+                        <h3>No Messages Found</h3>
+                        <p>No messages to display at the moment.</p>
+                    </div>
+                `;
+                return;
+            }
+
+            container.innerHTML = notifications.map(notif => {
+                if (notif.type === 'sent') {
+                    return `
+                    <div class="notification-item sent" onclick="openSentMessage('${notif._id}')">
+                        <div class="notif-avatar sent">Y</div>
+                        <div class="notif-content">
+                            <div class="notif-header">
+                                <div>
+                                    <span class="notif-name">
+                                        You
+                                        <span class="notif-role sent">sent to superadmin</span>
+                                    </span>
+                                </div>
+                                <span class="notif-time">
+                                    <i class="far fa-clock"></i> ${formatTime(notif.createdAt)}
+                                </span>
+                            </div>
+                            <div class="notif-message">${notif.message}</div>
+                            <div class="notif-meta">
+                                <span><i class="fas fa-check-circle" style="color: #43e97b;"></i> Sent</span>
+                            </div>
+                            <div class="notif-actions" onclick="event.stopPropagation()">
+                                <button class="action-btn delete" onclick="deleteNotification('${notif._id}')">
+                                    <i class="fas fa-trash"></i> Delete
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                `;
+                } else {
+                    const hasReply = notif.reply && notif.reply.message;
+                    return `
+                    <div class="notification-item ${notif.isRead ? '' : 'unread'}" onclick="openNotification('${notif._id}')">
+                        <div class="notif-avatar superadmin">${notif.senderName ? notif.senderName.charAt(0) : 'A'}</div>
+                        <div class="notif-content">
+                            <div class="notif-header">
+                                <div>
+                                    <span class="notif-name">
+                                        ${notif.senderName || 'Super Admin'}
+                                        <span class="notif-role superadmin">superadmin</span>
+                                    </span>
+                                </div>
+                                <span class="notif-time">
+                                    <i class="far fa-clock"></i> ${formatTime(notif.createdAt)}
+                                </span>
+                            </div>
+                            <div class="notif-message">${notif.message}</div>
+                            ${hasReply ? `
+                                <div class="reply-message">
+                                    <i class="fas fa-reply"></i>
+                                    <strong>Your reply:</strong> ${notif.reply.message}
+                                    <br><small>${formatTime(notif.reply.repliedAt)}</small>
+                                </div>
+                            ` : ''}
+                            <div class="notif-meta">
+                                <span><i class="fas fa-phone"></i> ${notif.senderPhone || 'N/A'}</span>
+                            </div>
+                            <div class="notif-actions" onclick="event.stopPropagation()">
+                                <button class="action-btn reply" onclick="openReplyModal('${notif._id}')" ${hasReply ? 'disabled' : ''}>
+                                    <i class="fas fa-reply"></i> ${hasReply ? 'Replied' : 'Reply'}
+                                </button>
+                                ${!notif.isRead ? `
+                                    <button class="action-btn mark-read" onclick="markAsRead('${notif._id}')">
+                                        <i class="fas fa-check"></i> Mark Read
+                                    </button>
+                                ` : ''}
+                                <button class="action-btn delete" onclick="deleteNotification('${notif._id}')">
+                                    <i class="fas fa-trash"></i> Delete
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                `;
+                }
+            }).join('');
+        }
+
+        function openNewMessageModal() {
+            document.getElementById('newMessage').value = '';
+            document.getElementById('newMessageModal').classList.add('show');
+        }
+
+        function openNotification(id) {
+            const notif = notifications.find(n => n._id === id);
+            if (notif && !notif.isRead) markAsRead(id);
+            openReplyModal(id);
+        }
+
+        function openSentMessage(id) {
+            showToast('Message sent to superadmin', 'success');
+        }
+
+        function openReplyModal(id) {
+            selectedNotification = notifications.find(n => n._id === id);
+            if (!selectedNotification) return;
+
+            const conversationHTML = `
+                <div class="message-bubble incoming">
+                    <div class="message-sender">
+                        <i class="fas fa-shield-alt"></i> 
+                        ${selectedNotification.senderName || 'Super Admin'} (Superadmin)
+                    </div>
+                    <div class="message-text">${selectedNotification.message}</div>
+                    <div class="message-time">${formatTime(selectedNotification.createdAt)}</div>
+                </div>
+                ${selectedNotification.reply ? `
+                    <div class="message-bubble outgoing">
+                        <div class="message-sender">
+                            <i class="fas fa-chalkboard-teacher"></i> You (Educator)
+                        </div>
+                        <div class="message-text">${selectedNotification.reply.message}</div>
+                        <div class="message-time">${formatTime(selectedNotification.reply.repliedAt)}</div>
+                    </div>
+                ` : ''}
+            `;
+
+            document.getElementById('conversationThread').innerHTML = conversationHTML;
+            document.getElementById('replyMessage').value = '';
+            document.getElementById('replyModal').classList.add('show');
+        }
+
+        function closeModal(modalId) {
+            document.getElementById(modalId).classList.remove('show');
+            if (modalId === 'replyModal') {
+                document.getElementById('replyMessage').value = '';
+                selectedNotification = null;
+            } else if (modalId === 'newMessageModal') {
+                document.getElementById('newMessage').value = '';
+            }
+        }
+
+        async function sendNewMessage() {
+            const message = document.getElementById('newMessage').value.trim();
+            if (!message) {
+                showToast('Please enter a message', 'error');
+                return;
+            }
+
+            try {
+                const response = await fetch('/api/educator/notifications/new', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ message })
+                });
+
+                const data = await response.json();
+                if (data.success) {
+                    showToast('Message sent to superadmin successfully!');
+                    closeModal('newMessageModal');
+                    fetchNotifications();
+                } else {
+                    showToast(data.error || 'Failed to send message', 'error');
+                }
+            } catch (error) {
+                showToast('Failed to send message', 'error');
+            }
+        }
+
+        async function sendReply() {
+            const message = document.getElementById('replyMessage').value.trim();
+            if (!message) {
+                showToast('Please enter a reply message', 'error');
+                return;
+            }
+            if (!selectedNotification) {
+                showToast('No message selected', 'error');
+                return;
+            }
+
+            try {
+                const response = await fetch('/api/educator/notifications/reply', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        notificationId: selectedNotification._id,
+                        message
+                    })
+                });
+
+                const data = await response.json();
+                if (data.success) {
+                    showToast('Reply sent to superadmin successfully!');
+                    closeModal('replyModal');
+                    fetchNotifications();
+                } else {
+                    showToast(data.error || 'Failed to send reply', 'error');
+                }
+            } catch (error) {
+                showToast('Failed to send reply', 'error');
+            }
+        }
+
+        async function markAsRead(id) {
+            try {
+                await fetch(`/api/educator/notifications/${id}/read`, { method: 'PUT' });
+                const notif = notifications.find(n => n._id === id);
+                if (notif) notif.isRead = true;
+                renderNotifications();
+                showToast('Marked as read');
+            } catch (error) {
+                showToast('Failed to mark as read', 'error');
+            }
+        }
+
+        async function markAllAsRead() {
+            if (!confirm('Mark all messages as read?')) return;
+            try {
+                await fetch('/api/educator/notifications/read-all', { method: 'PUT' });
+                notifications.forEach(n => { if (n.type === 'received') n.isRead = true; });
+                renderNotifications();
+                showToast('All messages marked as read');
+            } catch (error) {
+                showToast('Failed to mark all as read', 'error');
+            }
+        }
+
+        async function deleteNotification(id) {
+            if (!confirm('Are you sure you want to delete this message?')) return;
+            try {
+                await fetch(`/api/educator/notifications/${id}`, { method: 'DELETE' });
+                notifications = notifications.filter(n => n._id !== id);
+                renderNotifications();
+                showToast('Message deleted');
+            } catch (error) {
+                showToast('Failed to delete message', 'error');
+            }
+        }
+    </script>
+</body>
+</html>

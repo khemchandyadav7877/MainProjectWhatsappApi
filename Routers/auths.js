@@ -1,29 +1,67 @@
+// ============================================
+// COMPLETE FIXED auths.js - WITH PROPER SESSION HANDLING
+// NO CRYPTO ADDED - USING BUILT-IN METHODS
+// ============================================
+
 const router = require('express').Router();
 const auth = require('../models/auth');
-const session = require('express-session');
 
-// Configure session middleware
-router.use(session({
-    secret: process.env.SESSION_SECRET || 'your_session_secret_key_12345',
-    resave: false,
-    saveUninitialized: false,
-    cookie: {
-        secure: process.env.NODE_ENV === 'production',
-        httpOnly: true,
-        maxAge: 24 * 60 * 60 * 1000 // 24 hours
+// ========== MIDDLEWARE ==========
+
+// Middleware to check if user is authenticated
+function isAuthenticated(req, res, next) {
+    if (req.session && req.session.isLoggedIn && req.session.userId) {
+        return next();
     }
-}));
+    res.redirect('/login?message=Please login first&messageType=error');
+}
+
+// Middleware to make user available to all views
+router.use(async (req, res, next) => {
+    if (req.session && req.session.isLoggedIn && req.session.userId) {
+        try {
+            const user = await auth.findById(req.session.userId).lean();
+            if (user) {
+                // Make user available to all templates
+                res.locals.user = user;
+                res.locals.isLoggedIn = true;
+                
+                // Also attach to req for route handlers
+                req.user = user;
+            } else {
+                // User not found in DB, clear session
+                req.session.destroy();
+                res.locals.user = null;
+                res.locals.isLoggedIn = false;
+                req.user = null;
+            }
+        } catch (error) {
+            console.error('Error fetching user:', error);
+            res.locals.user = null;
+            res.locals.isLoggedIn = false;
+            req.user = null;
+        }
+    } else {
+        res.locals.user = null;
+        res.locals.isLoggedIn = false;
+        req.user = null;
+    }
+    next();
+});
 
 // ========== HOME PAGE (Header.ejs for regular users) ==========
 router.get('/', async (req, res) => {
     try {
         // Agar user logged in hai toh
-        if (req.session.isLoggedIn) {
+        if (req.session.isLoggedIn && req.session.userId) {
             const user = await auth.findById(req.session.userId);
             if (!user) {
                 // User not found in DB, destroy session and show header
                 req.session.destroy();
-                return res.render('HeaderManagement/Header.ejs');
+                return res.render('HeaderManagement/Header.ejs', { 
+                    user: null,
+                    isLoggedIn: false 
+                });
             }
             
             // Role 'user' ke liye Header.ejs render karo
@@ -54,43 +92,63 @@ router.get('/', async (req, res) => {
     }
 });
 
-// Login page
+// ========== LOGIN PAGE ==========
 router.get('/login', async (req, res) => {
     // Agar user already logged in hai toh role-based redirect
-    if (req.session.isLoggedIn) {
-        if (req.session.role === 'user') {
-            return res.redirect('/'); // Header.ejs
-        } else {
-            return res.redirect('/dashboard');
+    if (req.session.isLoggedIn && req.session.userId) {
+        try {
+            const user = await auth.findById(req.session.userId);
+            if (user) {
+                if (user.role === 'user') {
+                    return res.redirect('/'); // Header.ejs
+                } else {
+                    return res.redirect('/dashboard');
+                }
+            }
+        } catch (error) {
+            console.error('Login redirect error:', error);
         }
     }
+    
     const message = req.query.message;
     const messageType = req.query.messageType;
     res.render('HeaderManagement/Login.ejs', { 
         message: message || null, 
-        messageType: messageType || null 
+        messageType: messageType || null,
+        user: null,
+        isLoggedIn: false
     });
 });
 
-// Signup page
+// ========== SIGNUP PAGE ==========
 router.get('/signup', async (req, res) => {
     // Agar user already logged in hai toh role-based redirect
-    if (req.session.isLoggedIn) {
-        if (req.session.role === 'user') {
-            return res.redirect('/'); // Header.ejs
-        } else {
-            return res.redirect('/dashboard');
+    if (req.session.isLoggedIn && req.session.userId) {
+        try {
+            const user = await auth.findById(req.session.userId);
+            if (user) {
+                if (user.role === 'user') {
+                    return res.redirect('/'); // Header.ejs
+                } else {
+                    return res.redirect('/dashboard');
+                }
+            }
+        } catch (error) {
+            console.error('Signup redirect error:', error);
         }
     }
+    
     const message = req.query.message;
     const messageType = req.query.messageType;
     res.render('HeaderManagement/Signup.ejs', { 
         message: message || null, 
-        messageType: messageType || null 
+        messageType: messageType || null,
+        user: null,
+        isLoggedIn: false
     });
 });
 
-// Dashboard - Role based access
+// ========== DASHBOARD - Role based access ==========
 router.get('/dashboard', isAuthenticated, async (req, res) => {
     try {
         const user = await auth.findById(req.session.userId);
@@ -107,7 +165,9 @@ router.get('/dashboard', isAuthenticated, async (req, res) => {
         // Role ke hisaab se different dashboard render karein
         res.render('dashboard', { 
             user: user,
-            role: user.role
+            role: user.role,
+            activeTab: 'dashboard',
+            isLoggedIn: true
         });
         
     } catch (error) {
@@ -116,7 +176,7 @@ router.get('/dashboard', isAuthenticated, async (req, res) => {
     }
 });
 
-// Signup POST route
+// ========== SIGNUP POST ROUTE ==========
 router.post('/signup', async (req, res) => {
     try {
         const { firstName, lastName, email, password, confirmPassword } = req.body;
@@ -153,7 +213,7 @@ router.post('/signup', async (req, res) => {
             firstName,
             lastName,
             email: email.toLowerCase(),
-            password: password,
+            password: password, // Note: You should hash passwords in production!
             role: 'user', // ✅ Default role always 'user'
             status: 'Active',
             activeStatus: 'Active',
@@ -166,7 +226,9 @@ router.post('/signup', async (req, res) => {
             company: "",
             technicalSkills: [],
             passwordHistory: [password],
-            passwordChangedAt: new Date()
+            passwordChangedAt: new Date(),
+            activityLog: [],
+            loginHistory: []
         });
 
         await newUser.save();
@@ -176,7 +238,8 @@ router.post('/signup', async (req, res) => {
             action: 'signup',
             ipAddress: req.ip,
             userAgent: req.get('User-Agent'),
-            details: { method: 'email' }
+            details: { method: 'email' },
+            timestamp: new Date()
         });
 
         await newUser.save();
@@ -190,7 +253,7 @@ router.post('/signup', async (req, res) => {
     }
 });
 
-// Login POST route with role-based redirect
+// ========== LOGIN POST ROUTE ==========
 router.post('/login', async (req, res) => {
     try {
         const { email, password, remember } = req.body;
@@ -207,7 +270,7 @@ router.post('/login', async (req, res) => {
             return res.redirect('/login?message=Invalid email or password&messageType=error');
         }
 
-        // Check password
+        // Check password (In production, use bcrypt.compare)
         if (user.password !== password) {
             return res.redirect('/login?message=Invalid email or password&messageType=error');
         }
@@ -217,20 +280,25 @@ router.post('/login', async (req, res) => {
             return res.redirect('/login?message=Account is inactive. Please contact support.&messageType=error');
         }
 
+        // Generate simple session ID (using Date.now() + random - NO CRYPTO)
+        const sessionId = Date.now().toString(36) + Math.random().toString(36).substring(2);
+
         // Create session
-        req.session.userId = user._id;
+        req.session.userId = user._id.toString();
         req.session.email = user.email;
         req.session.role = user.role;
         req.session.isLoggedIn = true;
-
-        // Generate session ID
-        const sessionId = require('crypto').randomBytes(16).toString('hex');
         req.session.sessionId = sessionId;
+        req.session.loginTime = new Date().toISOString();
 
         // Update user login info
         user.lastLogin = new Date();
-        user.loginCount += 1;
+        user.loginCount = (user.loginCount || 0) + 1;
         user.activeLevel = user.loginCount > 10 ? 'High' : user.loginCount > 5 ? 'Medium' : 'Low';
+
+        // Initialize arrays if they don't exist
+        if (!user.loginHistory) user.loginHistory = [];
+        if (!user.activityLog) user.activityLog = [];
 
         // Add to login history
         user.loginHistory.push({
@@ -247,7 +315,8 @@ router.post('/login', async (req, res) => {
             action: 'login',
             ipAddress: req.ip,
             userAgent: req.get('User-Agent'),
-            details: { method: 'email', remember: !!remember }
+            details: { method: 'email', remember: !!remember },
+            timestamp: new Date()
         });
 
         await user.save();
@@ -255,11 +324,9 @@ router.post('/login', async (req, res) => {
         // Set session cookie duration based on remember me
         if (remember) {
             req.session.cookie.maxAge = 7 * 24 * 60 * 60 * 1000; // 7 days
-        } else {
-            req.session.cookie.maxAge = 24 * 60 * 60 * 1000; // 24 hours
         }
 
-        // ✅ ROLE-BASED REDIRECT - FINAL FIX
+        // ✅ ROLE-BASED REDIRECT - FIXED
         // Default role 'user' → home page (Header.ejs)
         // SuperAdmin, Educator, Student, Trainer → dashboard
         if (user.role === 'user') {
@@ -276,32 +343,39 @@ router.post('/login', async (req, res) => {
     }
 });
 
-// Logout route
+// ========== LOGOUT ROUTE ==========
 router.get('/logout', isAuthenticated, async (req, res) => {
     try {
         const user = await auth.findById(req.session.userId);
         if (user) {
             // Find and update the current session logout time
-            const sessionIndex = user.loginHistory.findIndex(
-                session => session.sessionId === req.session.sessionId && !session.logoutTime
-            );
-            
-            if (sessionIndex !== -1) {
-                const logoutTime = new Date();
-                user.loginHistory[sessionIndex].logoutTime = logoutTime;
-                user.loginHistory[sessionIndex].duration = 
-                    (logoutTime - user.loginHistory[sessionIndex].loginTime) / 1000;
+            if (user.loginHistory && Array.isArray(user.loginHistory)) {
+                const sessionIndex = user.loginHistory.findIndex(
+                    session => session.sessionId === req.session.sessionId && !session.logoutTime
+                );
                 
-                user.currentSessionId = null;
-                
-                // Log activity
-                user.activityLog.push({
-                    action: 'logout',
-                    ipAddress: req.ip,
-                    userAgent: req.get('User-Agent')
-                });
+                if (sessionIndex !== -1) {
+                    const logoutTime = new Date();
+                    user.loginHistory[sessionIndex].logoutTime = logoutTime;
+                    
+                    if (user.loginHistory[sessionIndex].loginTime) {
+                        user.loginHistory[sessionIndex].duration = 
+                            (logoutTime - new Date(user.loginHistory[sessionIndex].loginTime)) / 1000;
+                    }
+                    
+                    user.currentSessionId = null;
+                    
+                    // Log activity
+                    if (!user.activityLog) user.activityLog = [];
+                    user.activityLog.push({
+                        action: 'logout',
+                        ipAddress: req.ip,
+                        userAgent: req.get('User-Agent'),
+                        timestamp: new Date()
+                    });
 
-                await user.save();
+                    await user.save();
+                }
             }
         }
 
@@ -309,77 +383,81 @@ router.get('/logout', isAuthenticated, async (req, res) => {
         req.session.destroy((err) => {
             if (err) {
                 console.error('Session destruction error:', err);
-                return res.redirect('/dashboard?message=Logout error&messageType=error');
+                return res.redirect('/login?message=Logout error&messageType=error');
             }
+            res.clearCookie('connect.sid'); // Clear session cookie
             res.redirect('/login?message=Logged out successfully&messageType=success');
         });
 
     } catch (error) {
         console.error('Logout error:', error);
         req.session.destroy(() => {
+            res.clearCookie('connect.sid');
             res.redirect('/login?message=Logout error&messageType=error');
         });
     }
 });
 
-// Middleware to check if user is authenticated
-function isAuthenticated(req, res, next) {
-    if (req.session && req.session.isLoggedIn) {
-        return next();
-    }
-    res.redirect('/login?message=Please login first&messageType=error');
-}
-
-router.get('/chats', (req, res) => {
-
-    res.render('Chats/newChats', {
-        activeTab: 'chats',
-        user: req.session.user || req.user || {
-            role: 'SuperAdmin',
-            firstName: 'Admin',
-            lastName: 'User',
-            email: 'admin@example.com'
+// ========== PROFILE ROUTE ==========
+router.get('/profile', isAuthenticated, async (req, res) => {
+    try {
+        const user = await auth.findById(req.session.userId);
+        if (!user) {
+            req.session.destroy();
+            return res.redirect('/login?message=User not found&messageType=error');
         }
+
+        res.render('profile', {
+            activeTab: 'profile',
+            user: user,
+            isLoggedIn: true
+        });
+    } catch (error) {
+        console.error('Profile error:', error);
+        res.redirect('/dashboard?message=Error loading profile&messageType=error');
+    }
+});
+
+// ========== CHATS ROUTE ==========
+router.get('/chats', isAuthenticated, async (req, res) => {
+    try {
+        const user = await auth.findById(req.session.userId);
+        if (!user) {
+            req.session.destroy();
+            return res.redirect('/login?message=User not found&messageType=error');
+        }
+
+        res.render('Chats/newChats', {
+            activeTab: 'chats',
+            user: user,
+            isLoggedIn: true
+        });
+    } catch (error) {
+        console.error('Chats error:', error);
+        res.redirect('/dashboard?message=Error loading chats&messageType=error');
+    }
+});
+
+// ========== OTHER ROUTES ==========
+router.get('/addnewfeature', isAuthenticated, (req, res) => {
+    res.render('AddNewFeature.ejs', {
+        user: req.user,
+        isLoggedIn: true
     });
-
 });
 
-// Other routes
-router.get('/addnewfeature', (req, res) => {
-    res.render('AddNewFeature.ejs');
+router.get('/add-new-feature', isAuthenticated, (req, res) => {
+    res.render('AddNewFeatureForm.ejs', {
+        user: req.user,
+        isLoggedIn: true
+    });
 });
 
-router.get('/add-new-feature', (req, res) => {
-    res.render('AddNewFeatureForm.ejs');
+router.get('/role-permissions', isAuthenticated, (req, res) => {
+    res.render('RolePermissions.ejs', {
+        user: req.user,
+        isLoggedIn: true
+    });
 });
-
-router.get('/role-permissions', (req, res) => {
-    res.render('RolePermissions.ejs');
-});
-
-// router.get('/add-new-feature', (req, res) => {
-//     res.render('AddNewFeatureForm.ejs', {
-//         activeTab: 'addFeature',   // sidebar highlight ke liye (optional)
-//         user: req.session.user || req.user || {
-//             role: 'SuperAdmin',
-//             firstName: 'Admin',
-//             lastName: 'User',
-//             email: 'admin@example.com'
-//         }
-//     });
-// });
-
-
-// router.get('/role-permissions', (req, res) => {
-//     res.render('RolePermissions.ejs', {
-//         activeTab: 'rolePermissions',   // optional (sidebar highlight)
-//         user: req.session.user || req.user || {
-//             role: 'SuperAdmin',
-//             firstName: 'Admin',
-//             lastName: 'User',
-//             email: 'admin@example.com'
-//         }
-//     });
-// });
 
 module.exports = router;

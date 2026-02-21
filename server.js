@@ -64,6 +64,7 @@ const settingRouter = require('./Routers/SettingRouter');
 const virtualNumberRouter = require('./Routers/virtualNumber');
 const emailRouter = require('./Routers/emailRouter');
 const profileRouter = require('./Routers/profile');
+const notificationRuter=require('./Routers/notifications')
 
 
 // ✅ Use routes
@@ -77,6 +78,7 @@ app.use('/', settingRouter);
 app.use('/', virtualNumberRouter);
 app.use('/', emailRouter);
 app.use('/', profileRouter);
+app.use('/',notificationRuter)
 
 /* =======================
    404 ERROR HANDLER

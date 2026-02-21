@@ -1,0 +1,937 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Contact Groups - WhatsApp Manager</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        body {
+            background: #f5f7fa;
+            min-height: 100vh;
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        /* Header */
+        .page-header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 30px;
+            border-radius: 15px;
+            margin-bottom: 30px;
+            box-shadow: 0 5px 20px rgba(102, 126, 234, 0.3);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .page-header h1 {
+            font-size: 32px;
+            margin-bottom: 10px;
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .page-header p {
+            opacity: 0.9;
+            font-size: 16px;
+        }
+
+        .user-info {
+            background: rgba(255,255,255,0.2);
+            padding: 10px 20px;
+            border-radius: 50px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        /* Main Content */
+        .main-content {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 30px;
+        }
+
+        /* Cards */
+        .card {
+            background: white;
+            border-radius: 15px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.08);
+            overflow: hidden;
+            margin-bottom: 30px;
+        }
+
+        .card-header {
+            padding: 20px;
+            border-bottom: 2px solid #f3f4f6;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .card-header h2 {
+            font-size: 20px;
+            color: #1f2937;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .card-header h2 i {
+            color: #667eea;
+        }
+
+        .card-body {
+            padding: 20px;
+        }
+
+        /* Search Box */
+        .search-box {
+            position: relative;
+            margin-bottom: 20px;
+        }
+
+        .search-box input {
+            width: 100%;
+            padding: 12px 15px 12px 45px;
+            border: 2px solid #e5e7eb;
+            border-radius: 8px;
+            font-size: 14px;
+            transition: border-color 0.3s;
+        }
+
+        .search-box input:focus {
+            outline: none;
+            border-color: #667eea;
+        }
+
+        .search-box i {
+            position: absolute;
+            left: 15px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: #9ca3af;
+        }
+
+        /* Contacts List */
+        .contacts-list {
+            max-height: 400px;
+            overflow-y: auto;
+            border: 1px solid #e5e7eb;
+            border-radius: 8px;
+        }
+
+        .contact-item {
+            display: flex;
+            align-items: center;
+            padding: 12px 15px;
+            border-bottom: 1px solid #f3f4f6;
+            transition: background 0.3s;
+        }
+
+        .contact-item:hover {
+            background: #f9fafb;
+        }
+
+        .contact-item:last-child {
+            border-bottom: none;
+        }
+
+        .contact-checkbox {
+            margin-right: 15px;
+            width: 18px;
+            height: 18px;
+            cursor: pointer;
+            accent-color: #667eea;
+        }
+
+        .contact-avatar {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 600;
+            margin-right: 15px;
+        }
+
+        .contact-info {
+            flex: 1;
+        }
+
+        .contact-name {
+            font-weight: 600;
+            color: #1f2937;
+            margin-bottom: 3px;
+        }
+
+        .contact-phone {
+            font-size: 13px;
+            color: #6b7280;
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+
+        .contact-status {
+            display: inline-block;
+            padding: 3px 8px;
+            border-radius: 12px;
+            font-size: 11px;
+            font-weight: 600;
+            margin-left: 10px;
+        }
+
+        .status-active {
+            background: #d1fae5;
+            color: #065f46;
+        }
+
+        .status-inactive {
+            background: #fee2e2;
+            color: #991b1b;
+        }
+
+        .status-badge {
+            padding: 3px 8px;
+            border-radius: 12px;
+            font-size: 11px;
+            font-weight: 600;
+        }
+
+        .badge-connected {
+            background: #d1fae5;
+            color: #065f46;
+        }
+
+        .badge-disconnected {
+            background: #f3f4f6;
+            color: #6b7280;
+        }
+
+        /* Selected Contacts */
+        .selected-contacts {
+            background: #f9fafb;
+            border-radius: 8px;
+            padding: 15px;
+            margin-bottom: 20px;
+        }
+
+        .selected-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 10px;
+        }
+
+        .selected-header h3 {
+            font-size: 16px;
+            color: #1f2937;
+        }
+
+        .selected-count {
+            background: #667eea;
+            color: white;
+            padding: 3px 10px;
+            border-radius: 15px;
+            font-size: 12px;
+            font-weight: 600;
+        }
+
+        .selected-list {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+        }
+
+        .selected-tag {
+            background: white;
+            border: 1px solid #e5e7eb;
+            border-radius: 20px;
+            padding: 5px 12px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 13px;
+        }
+
+        .selected-tag i {
+            color: #667eea;
+            cursor: pointer;
+        }
+
+        .selected-tag i:hover {
+            color: #ef4444;
+        }
+
+        /* Form */
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 600;
+            color: #1f2937;
+        }
+
+        .form-group input,
+        .form-group textarea {
+            width: 100%;
+            padding: 12px 15px;
+            border: 2px solid #e5e7eb;
+            border-radius: 8px;
+            font-size: 14px;
+            transition: border-color 0.3s;
+        }
+
+        .form-group input:focus,
+        .form-group textarea:focus {
+            outline: none;
+            border-color: #667eea;
+        }
+
+        .form-group textarea {
+            resize: vertical;
+            min-height: 100px;
+        }
+
+        /* Buttons */
+        .btn {
+            padding: 12px 24px;
+            border: none;
+            border-radius: 8px;
+            font-size: 14px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .btn:hover {
+            transform: translateY(-2px);
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            width: 100%;
+        }
+
+        .btn-secondary {
+            background: #f3f4f6;
+            color: #6b7280;
+        }
+
+        .btn-sm {
+            padding: 8px 16px;
+            font-size: 13px;
+        }
+
+        .btn-success {
+            background: #10b981;
+            color: white;
+        }
+
+        .btn-success:hover {
+            background: #059669;
+        }
+
+        /* Groups List */
+        .groups-list {
+            max-height: 400px;
+            overflow-y: auto;
+        }
+
+        .group-item {
+            padding: 15px;
+            border: 1px solid #e5e7eb;
+            border-radius: 8px;
+            margin-bottom: 10px;
+            transition: all 0.3s;
+        }
+
+        .group-item:hover {
+            border-color: #667eea;
+            box-shadow: 0 2px 10px rgba(102, 126, 234, 0.1);
+        }
+
+        .group-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 8px;
+        }
+
+        .group-name {
+            font-weight: 600;
+            color: #1f2937;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .group-name i {
+            color: #667eea;
+        }
+
+        .group-count {
+            background: #f3f4f6;
+            padding: 3px 8px;
+            border-radius: 12px;
+            font-size: 12px;
+            color: #6b7280;
+        }
+
+        .group-description {
+            font-size: 13px;
+            color: #6b7280;
+            margin-bottom: 8px;
+        }
+
+        .group-meta {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-size: 12px;
+            color: #9ca3af;
+        }
+
+        .group-actions {
+            display: flex;
+            gap: 8px;
+        }
+
+        .group-actions button {
+            padding: 4px 8px;
+            border: none;
+            border-radius: 4px;
+            font-size: 11px;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .group-actions .use-btn {
+            background: #667eea;
+            color: white;
+        }
+
+        .group-actions .use-btn:hover {
+            background: #5a67d8;
+        }
+
+        /* Toast */
+        .toast {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            background: white;
+            padding: 15px 25px;
+            border-radius: 8px;
+            box-shadow: 0 5px 20px rgba(0,0,0,0.2);
+            display: none;
+            align-items: center;
+            gap: 10px;
+            z-index: 1100;
+            animation: slideIn 0.3s ease;
+        }
+
+        .toast.show {
+            display: flex;
+        }
+
+        .toast.success {
+            border-left: 4px solid #10b981;
+        }
+
+        .toast.error {
+            border-left: 4px solid #ef4444;
+        }
+
+        .toast i {
+            font-size: 20px;
+        }
+
+        .toast.success i {
+            color: #10b981;
+        }
+
+        .toast.error i {
+            color: #ef4444;
+        }
+
+        @keyframes slideIn {
+            from {
+                transform: translateX(100%);
+                opacity: 0;
+            }
+            to {
+                transform: translateX(0);
+                opacity: 1;
+            }
+        }
+
+        /* Loading Spinner */
+        .loading-spinner {
+            text-align: center;
+            padding: 40px;
+        }
+
+        .spinner {
+            width: 40px;
+            height: 40px;
+            border: 3px solid #f3f4f6;
+            border-top-color: #667eea;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+            margin: 0 auto 10px;
+        }
+
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+
+        /* Empty State */
+        .empty-state {
+            text-align: center;
+            padding: 40px 20px;
+            color: #9ca3af;
+        }
+
+        .empty-state i {
+            font-size: 50px;
+            margin-bottom: 15px;
+            color: #d1d5db;
+        }
+
+        .empty-state h4 {
+            font-size: 18px;
+            margin-bottom: 5px;
+            color: #6b7280;
+        }
+
+        .empty-state p {
+            font-size: 14px;
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .main-content {
+                grid-template-columns: 1fr;
+            }
+
+            .page-header {
+                flex-direction: column;
+                text-align: center;
+                gap: 15px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- Page Header -->
+        <div class="page-header">
+            <div>
+                <h1>
+                    <i class="fas fa-users"></i>
+                    Contact Groups
+                </h1>
+                <p>Select contacts and create groups for campaigns</p>
+            </div>
+            <div class="user-info">
+                <i class="fas fa-user-circle"></i>
+                <span><%= user.firstName || 'Admin' %> <%= user.lastName || '' %> (<%= user.role || 'SuperAdmin' %>)</span>
+            </div>
+        </div>
+
+        <!-- Main Content -->
+        <div class="main-content">
+            <!-- Left Column - Contact Selection -->
+            <div class="card">
+                <div class="card-header">
+                    <h2><i class="fas fa-address-book"></i> Select Contacts</h2>
+                    <button class="btn btn-sm btn-secondary" onclick="refreshContacts()">
+                        <i class="fas fa-sync-alt"></i> Refresh
+                    </button>
+                </div>
+                <div class="card-body">
+                    <!-- Search -->
+                    <div class="search-box">
+                        <i class="fas fa-search"></i>
+                        <input type="text" id="searchInput" placeholder="Search contacts by name or phone..." onkeyup="searchContacts()">
+                    </div>
+
+                    <!-- Contacts List -->
+                    <div class="contacts-list" id="contactsList">
+                        <div class="loading-spinner">
+                            <div class="spinner"></div>
+                            <p>Loading contacts...</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Right Column - Group Creation -->
+            <div>
+                <!-- Selected Contacts Card -->
+                <div class="card">
+                    <div class="card-header">
+                        <h2><i class="fas fa-check-circle"></i> Selected Contacts</h2>
+                    </div>
+                    <div class="card-body">
+                        <div class="selected-contacts" id="selectedContactsSection">
+                            <div class="selected-header">
+                                <h3>Selected Contacts</h3>
+                                <span class="selected-count" id="selectedCount">0</span>
+                            </div>
+                            <div class="selected-list" id="selectedList">
+                                <p style="color: #9ca3af; text-align: center; width: 100%;">No contacts selected</p>
+                            </div>
+                            <button class="btn btn-sm btn-secondary" onclick="clearSelection()" style="margin-top: 10px; width: 100%;">
+                                <i class="fas fa-times"></i> Clear All
+                            </button>
+                        </div>
+
+                        <!-- Create Group Form -->
+                        <form id="groupForm" style="margin-top: 20px;">
+                            <div class="form-group">
+                                <label for="groupName">Group Name *</label>
+                                <input type="text" id="groupName" placeholder="e.g., VIP Customers, Test Group" required>
+                            </div>
+                            <div class="form-group">
+                                <label for="groupDescription">Description (Optional)</label>
+                                <textarea id="groupDescription" placeholder="Enter group description..."></textarea>
+                            </div>
+                            <button type="submit" class="btn btn-primary" id="createGroupBtn">
+                                <i class="fas fa-users"></i> Create Group
+                            </button>
+                        </form>
+                    </div>
+                </div>
+
+                <!-- Existing Groups Card -->
+                <div class="card">
+                    <div class="card-header">
+                        <h2><i class="fas fa-layer-group"></i> Your Groups</h2>
+                        <button class="btn btn-sm btn-secondary" onclick="loadGroups()">
+                            <i class="fas fa-sync-alt"></i> Refresh
+                        </button>
+                    </div>
+                    <div class="card-body">
+                        <div class="groups-list" id="groupsList">
+                            <div class="loading-spinner">
+                                <div class="spinner"></div>
+                                <p>Loading groups...</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Toast Notification -->
+    <div class="toast" id="toast">
+        <i class="fas" id="toastIcon"></i>
+        <span id="toastMessage"></span>
+    </div>
+
+    <script>
+        // State
+        let allContacts = [];
+        let selectedContacts = new Map(); // Using Map to store selected contacts
+        let searchTimeout = null;
+
+        // Initialize
+        document.addEventListener('DOMContentLoaded', function() {
+            loadContacts();
+            loadGroups();
+        });
+
+        // Show toast
+        function showToast(message, type = 'success') {
+            const toast = document.getElementById('toast');
+            const toastIcon = document.getElementById('toastIcon');
+            const toastMessage = document.getElementById('toastMessage');
+            
+            toast.className = 'toast ' + type;
+            toastIcon.className = 'fas ' + (type === 'success' ? 'fa-check-circle' : 'fa-exclamation-circle');
+            toastMessage.textContent = message;
+            toast.classList.add('show');
+            
+            setTimeout(() => toast.classList.remove('show'), 3000);
+        }
+
+        // Load contacts
+        async function loadContacts() {
+            try {
+                const search = document.getElementById('searchInput').value;
+                const url = search ? `/api/contacts/all?search=${encodeURIComponent(search)}` : '/api/contacts/all';
+                
+                const response = await fetch(url);
+                const data = await response.json();
+                
+                if (data.success) {
+                    allContacts = data.data;
+                    renderContacts();
+                } else {
+                    showToast('Failed to load contacts', 'error');
+                }
+            } catch (error) {
+                console.error('Error:', error);
+                showToast('Failed to load contacts', 'error');
+            }
+        }
+
+        // Render contacts
+        function renderContacts() {
+            const container = document.getElementById('contactsList');
+
+            if (allContacts.length === 0) {
+                container.innerHTML = `
+                    <div class="empty-state">
+                        <i class="fas fa-address-book"></i>
+                        <h4>No Contacts Found</h4>
+                        <p>Add devices with phone numbers first</p>
+                    </div>
+                `;
+                return;
+            }
+
+            container.innerHTML = allContacts.map(contact => {
+                const isSelected = selectedContacts.has(contact._id);
+                const statusClass = contact.status === 'active' ? 'status-active' : 'status-inactive';
+                const connectedClass = contact.isConnected ? 'badge-connected' : 'badge-disconnected';
+                
+                return `
+                <div class="contact-item">
+                    <input type="checkbox" 
+                           class="contact-checkbox" 
+                           value="${contact._id}"
+                           ${isSelected ? 'checked' : ''}
+                           onchange="toggleContact('${contact._id}', this.checked)">
+                    <div class="contact-avatar">${contact.name ? contact.name.charAt(0).toUpperCase() : '?'}</div>
+                    <div class="contact-info">
+                        <div class="contact-name">
+                            ${contact.name || 'Unnamed'}
+                            <span class="contact-status ${statusClass}">${contact.status || 'inactive'}</span>
+                        </div>
+                        <div class="contact-phone">
+                            <i class="fas fa-phone"></i> ${contact.phoneNumber}
+                            <span class="status-badge ${connectedClass}">
+                                ${contact.isConnected ? 'Connected' : 'Disconnected'}
+                            </span>
+                        </div>
+                    </div>
+                </div>
+            `}).join('');
+        }
+
+        // Search contacts
+        function searchContacts() {
+            clearTimeout(searchTimeout);
+            searchTimeout = setTimeout(() => {
+                loadContacts();
+            }, 500);
+        }
+
+        // Refresh contacts
+        function refreshContacts() {
+            document.getElementById('searchInput').value = '';
+            loadContacts();
+        }
+
+        // Toggle contact selection
+        function toggleContact(id, checked) {
+            const contact = allContacts.find(c => c._id === id);
+            if (!contact) return;
+
+            if (checked) {
+                selectedContacts.set(id, contact);
+            } else {
+                selectedContacts.delete(id);
+            }
+
+            updateSelectedUI();
+        }
+
+        // Update selected contacts UI
+        function updateSelectedUI() {
+            const selectedList = document.getElementById('selectedList');
+            const selectedCount = document.getElementById('selectedCount');
+            
+            const contacts = Array.from(selectedContacts.values());
+            selectedCount.textContent = contacts.length;
+
+            if (contacts.length === 0) {
+                selectedList.innerHTML = '<p style="color: #9ca3af; text-align: center; width: 100%;">No contacts selected</p>';
+                return;
+            }
+
+            selectedList.innerHTML = contacts.map(contact => `
+                <div class="selected-tag">
+                    <span>${contact.name || contact.phoneNumber}</span>
+                    <i class="fas fa-times" onclick="removeContact('${contact._id}')"></i>
+                </div>
+            `).join('');
+        }
+
+        // Remove individual contact
+        function removeContact(id) {
+            selectedContacts.delete(id);
+            
+            // Uncheck checkbox
+            const checkbox = document.querySelector(`.contact-checkbox[value="${id}"]`);
+            if (checkbox) checkbox.checked = false;
+            
+            updateSelectedUI();
+        }
+
+        // Clear all selection
+        function clearSelection() {
+            selectedContacts.clear();
+            
+            // Uncheck all checkboxes
+            document.querySelectorAll('.contact-checkbox').forEach(cb => {
+                cb.checked = false;
+            });
+            
+            updateSelectedUI();
+        }
+
+        // Create group
+        document.getElementById('groupForm').addEventListener('submit', async function(e) {
+            e.preventDefault();
+
+            const groupName = document.getElementById('groupName').value.trim();
+            const description = document.getElementById('groupDescription').value.trim();
+            const contactIds = Array.from(selectedContacts.keys());
+
+            if (!groupName) {
+                showToast('Please enter a group name', 'error');
+                return;
+            }
+
+            if (contactIds.length === 0) {
+                showToast('Please select at least one contact', 'error');
+                return;
+            }
+
+            const btn = document.getElementById('createGroupBtn');
+            btn.disabled = true;
+            btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Creating...';
+
+            try {
+                const response = await fetch('/api/groups/create', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        groupName,
+                        description,
+                        contactIds
+                    })
+                });
+
+                const data = await response.json();
+
+                if (data.success) {
+                    showToast('Group created successfully!');
+                    
+                    // Clear form
+                    document.getElementById('groupName').value = '';
+                    document.getElementById('groupDescription').value = '';
+                    clearSelection();
+                    
+                    // Reload groups
+                    loadGroups();
+                } else {
+                    showToast(data.message || 'Failed to create group', 'error');
+                }
+            } catch (error) {
+                showToast('Failed to create group', 'error');
+            } finally {
+                btn.disabled = false;
+                btn.innerHTML = '<i class="fas fa-users"></i> Create Group';
+            }
+        });
+
+        // Load groups
+        async function loadGroups() {
+            try {
+                const response = await fetch('/api/groups');
+                const data = await response.json();
+                
+                const container = document.getElementById('groupsList');
+
+                if (!data.success || data.count === 0) {
+                    container.innerHTML = `
+                        <div class="empty-state">
+                            <i class="fas fa-layer-group"></i>
+                            <h4>No Groups Yet</h4>
+                            <p>Create your first group by selecting contacts</p>
+                        </div>
+                    `;
+                    return;
+                }
+
+                container.innerHTML = data.data.map(group => `
+                    <div class="group-item">
+                        <div class="group-header">
+                            <div class="group-name">
+                                <i class="fas fa-users"></i>
+                                ${group.name}
+                            </div>
+                            <span class="group-count">${group.totalContacts} contacts</span>
+                        </div>
+                        <div class="group-description">
+                            ${group.description || 'No description'}
+                        </div>
+                        <div class="group-meta">
+                            <span><i class="far fa-clock"></i> ${new Date(group.createdAt).toLocaleDateString()}</span>
+                            <div class="group-actions">
+                                <button class="use-btn" onclick="useGroup('${group.id}')">
+                                    <i class="fas fa-check"></i> Use
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                `).join('');
+
+            } catch (error) {
+                console.error('Error loading groups:', error);
+                document.getElementById('groupsList').innerHTML = `
+                    <div class="empty-state">
+                        <i class="fas fa-exclamation-circle"></i>
+                        <h4>Failed to load groups</h4>
+                        <p>Please try again</p>
+                    </div>
+                `;
+            }
+        }
+
+        // Use group (select all contacts from group)
+        function useGroup(groupId) {
+            // This would fetch group details and select all contacts
+            showToast('Group selected! You can now use it in campaigns', 'success');
+        }
+    </script>
+</body>
+</html>

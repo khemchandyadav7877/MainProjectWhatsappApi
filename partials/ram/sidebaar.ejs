@@ -1,4 +1,4 @@
-<!-- views/partials/sidebar.ejs - FINAL FIXED VERSION -->
+<!-- views/partials/sidebar.ejs - FINAL FIXED VERSION WITH ROLE-SPECIFIC FILTERING -->
 
 <%
 // Get user role color
@@ -581,11 +581,11 @@ const roleColor = getRoleColor(user.role);
 
 @keyframes slideOut {
     from { 
-        transform: translateX(0); 
+        transform: translateX(100%); 
         opacity: 1; 
     }
     to { 
-        transform: translateX(100%); 
+        transform: translateX(0); 
         opacity: 0; 
     }
 }
@@ -697,10 +697,16 @@ const pathMappings = {
     'Dashboard': '/dashboard',
     'Notifications': '/notifications',
 
+      // notifications
+    'SuperAdmin Notifications': '/superadmin/notifications',
+    'Educator Notifications': '/educator/notifications',
+    'Trainer Notifications': '/trainer/notifications',
+    'Student Notifications': '/student/notifications',
+
     // Reports
     'Web Report': '/reports/web',
     'API Reports': '/reports/api',
-
+     
     // Chats
     'New Chat': '/chats/new',
 
@@ -714,6 +720,8 @@ const pathMappings = {
     'Add Device': '/devices/add',
     'All Devices': '/devices',
     'Campaign': '/devices/campaign',
+    'Contact Group': '/contactgroup',
+
 
     // RCS
     'RCS Campaign': '/devices/campaign',
@@ -731,6 +739,8 @@ const pathMappings = {
     'All Clients': '/clients',
     'Add Client': '/clients/add',
 
+    // Group
+
     // Administration
     'Role Permissions': '/role-permissions',
     'Add New Feature': '/add-new-feature'
@@ -739,6 +749,7 @@ const pathMappings = {
 // Section icons mapping
 const sectionIcons = {
     'Dashboard': 'tachometer-alt',
+    'Notifications': 'bell',
     'Reports': 'chart-bar',
     'Chats': 'comments',
     'Virtual Numbers': 'phone',
@@ -754,6 +765,10 @@ const sectionIcons = {
 const featureIcons = {
     'Dashboard': 'tachometer-alt',
     'Notifications': 'bell',
+    'SuperAdmin Notifications': 'bell',
+    'Educator Notifications': 'bell',
+    'Trainer Notifications': 'bell',
+    'Student Notifications': 'bell',
     'Web Report': 'chart-line',
     'API Reports': 'chart-pie',
     'New Chat': 'comment',
@@ -764,6 +779,7 @@ const featureIcons = {
     'Add Device': 'plus-circle',
     'All Devices': 'mobile-alt',
     'Campaign': 'bullhorn',
+    'Contact Group': 'bullhorn',
     'RCS Campaign': 'envelope-open',
     'RCS Reports': 'chart-bar',
     'RCS Templates': 'file-alt',
@@ -814,7 +830,7 @@ document.addEventListener('DOMContentLoaded', function() {
     });
 });
 
-// ✅ LOAD FEATURES FROM LOCALSTORAGE
+// ✅ LOAD FEATURES FROM LOCALSTORAGE - WITH PROPER ROLE FILTERING
 function loadSidebarFeatures(silent = false) {
     const container = document.getElementById('featuresContainer');
     
@@ -840,23 +856,27 @@ function loadSidebarFeatures(silent = false) {
         
         // Parse features
         const allFeatures = JSON.parse(savedFeatures);
-        console.log('✅ All features:', allFeatures.length);
+        console.log('✅ All features in storage:', allFeatures.length);
         
-        // ✅ FIX: SuperAdmin sees ALL features, others see their role features
+        // CRITICAL FIX: Filter features based on role
+        // SuperAdmin should ONLY see features with role = 'SuperAdmin'
+        // Educator should ONLY see features with role = 'Educator'
+        // Student should ONLY see features with role = 'Student'
+        
         let userFeatures = [];
         
-        if (userRole === 'SuperAdmin') {
-            // SuperAdmin ko saare features dikhao
-            userFeatures = allFeatures.filter(f => f.isActive !== false);
-            console.log('👑 SuperAdmin: showing all features');
-        } else {
-            // Others ko sirf unke role ke features dikhao
-            userFeatures = allFeatures.filter(f => 
-                f.role === userRole && f.isActive !== false
-            );
-            console.log(`👤 ${userRole}: showing ${userFeatures.length} features`);
-        }
+        // Filter by exact role match - NO CROSS-ROLE FEATURES
+        userFeatures = allFeatures.filter(f => {
+            // Skip inactive features
+            if (f.isActive === false) return false;
+            
+            // Match exactly by role - this prevents feature duplication across roles
+            return f.role === userRole;
+        });
         
+        console.log(`👤 ${userRole}: showing ${userFeatures.length} role-specific features`);
+        
+        // Optional: If no features for current role, show empty state
         if (userFeatures.length === 0) {
             showEmptyState(
                 container, 
@@ -1215,5 +1235,5 @@ new MutationObserver(() => {
     }
 }).observe(document, {subtree: true, childList: true});
 
-console.log('✅ Sidebar script loaded successfully');
+console.log('✅ Sidebar script loaded successfully - ROLE FILTERING ENABLED');
 </script>

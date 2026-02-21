@@ -660,3 +660,31 @@ router.get('/email/templates',(req,res)=>{
     </script>
 </body>
 </html>
+
+
+
+
+// router.get('/add-new-feature', (req, res) => {
+//     res.render('AddNewFeatureForm.ejs', {
+//         activeTab: 'addFeature',   // sidebar highlight ke liye (optional)
+//         user: req.session.user || req.user || {
+//             role: 'SuperAdmin',
+//             firstName: 'Admin',
+//             lastName: 'User',
+//             email: 'admin@example.com'
+//         }
+//     });
+// });
+
+
+// router.get('/role-permissions', (req, res) => {
+//     res.render('RolePermissions.ejs', {
+//         activeTab: 'rolePermissions',   // optional (sidebar highlight)
+//         user: req.session.user || req.user || {
+//             role: 'SuperAdmin',
+//             firstName: 'Admin',
+//             lastName: 'User',
+//             email: 'admin@example.com'
+//         }
+//     });
+// });

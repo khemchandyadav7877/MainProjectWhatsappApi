@@ -6,8 +6,17 @@ router.get('/dashboard', async (req, res) => {
 });
 
 router.get('/profile', async (req, res) => {
-        res.render('profile');
+    res.render('profile', {
+        activeTab: 'profile',
+        user: req.session.user || req.user || {
+            role: 'SuperAdmin',
+            firstName: 'Admin',
+            lastName: 'User',
+            email: 'admin@example.com'
+        }
+    });
 });
+
 
 router.get('/', async (req, res) => {
         res.render('Login/login');

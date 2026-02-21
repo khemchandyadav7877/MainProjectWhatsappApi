@@ -1,4 +1,5 @@
 const router = require('express').Router();
+const mongoose = require('mongoose');  // ✅ ADD THIS LINE - MISSING IMPORT
 const Condevice = require('../models/Condevice');
 
 /* ===============================
@@ -425,6 +426,153 @@ router.get('/campaign', async (req, res) => {
     } catch (err) {
         console.error(err);
         res.status(500).send('Server Error');
+    }       
+});
+
+/* ===============================
+   CONTACT GROUP PAGE
+================================ */
+router.get('/contactgroup', async (req, res) => {
+    try {
+        // Fetch all devices for selection
+        const devices = await Condevice.find({ 
+            phoneNumber: { $exists: true, $ne: '' } 
+        }).sort({ name: 1 });
+
+        res.render("Devices/ContactGroup", {
+            devices,
+            activeTab: 'devices',
+            user: req.session.user || req.user || {
+                role: 'SuperAdmin',
+                firstName: 'Admin',
+                lastName: 'User',
+                email: 'admin@example.com'
+            }
+        });
+    } catch (err) {
+        console.error(err);
+        res.status(500).send('Server Error');
+    }
+});
+
+/* ===============================
+   API: GET ALL CONTACTS FOR GROUPING
+================================ */
+router.get('/api/contacts/all', async (req, res) => {
+    try {
+        const { search } = req.query;
+        let query = { 
+            phoneNumber: { $exists: true, $ne: '' } 
+        };
+
+        if (search) {
+            query.$or = [
+                { name: { $regex: search, $options: 'i' } },
+                { phoneNumber: { $regex: search, $options: 'i' } }
+            ];
+        }
+
+        const contacts = await Condevice.find(query)
+            .select('name phoneNumber deviceType status isConnected')
+            .sort({ name: 1 });
+
+        res.json({
+            success: true,
+            count: contacts.length,
+            data: contacts
+        });
+    } catch (err) {
+        console.error(err);
+        res.status(500).json({ 
+            success: false, 
+            message: 'Error fetching contacts' 
+        });
+    }
+});
+
+/* ===============================
+   API: CREATE GROUP FROM SELECTED CONTACTS
+================================ */
+router.post('/api/groups/create', async (req, res) => {
+    try {
+        const { groupName, description, contactIds } = req.body;
+
+        if (!groupName || !contactIds || contactIds.length === 0) {
+            return res.status(400).json({
+                success: false,
+                message: 'Group name and at least one contact are required'
+            });
+        }
+
+        // Get full contact details
+        const contacts = await Condevice.find({
+            _id: { $in: contactIds }
+        }).select('name phoneNumber deviceType status');
+
+        // ✅ FIXED: Now mongoose is defined because we imported it at the top
+        const group = {
+            id: new mongoose.Types.ObjectId(),
+            name: groupName,
+            description: description || '',
+            contacts: contacts,
+            totalContacts: contacts.length,
+            createdAt: new Date(),
+            createdBy: req.session?.userId || 'system'
+        };
+
+        // Here you can save group to database if you have a Group model
+        // await Group.create(group);
+
+        res.json({
+            success: true,
+            message: 'Group created successfully',
+            data: group
+        });
+
+    } catch (err) {
+        console.error(err);
+        res.status(500).json({
+            success: false,
+            message: 'Error creating group: ' + err.message
+        });
+    }
+});
+
+/* ===============================
+   API: GET ALL GROUPS
+================================ */
+router.get('/api/groups', async (req, res) => {
+    try {
+        // If you have Group model, fetch from there
+        // For now, return sample data
+        const groups = [
+            {
+                id: '1',
+                name: 'VIP Customers',
+                description: 'Important customers',
+                totalContacts: 5,
+                createdAt: new Date()
+            },
+            {
+                id: '2',
+                name: 'Test Group',
+                description: 'Testing contacts',
+                totalContacts: 3,
+                createdAt: new Date()
+            }
+        ];
+
+        res.json({
+            success: true,
+            count: groups.length,
+            data: groups
+        });
+    } catch (err) {
+        console.error(err);
+        res.status(500).json({
+            success: false,
+            message: 'Error fetching groups'
+        });
     }
 });
 

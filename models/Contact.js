@@ -1,24 +1,29 @@
-// models/Contact.js
 const mongoose = require('mongoose');
 
 const contactSchema = new mongoose.Schema({
     deviceId: {
         type: String,
-        required: true,
-        index: true
+        required: true
     },
-    phone: {
+    contactNumber: {
         type: String,
         required: true
     },
-    name: {
-        type: String
+    contactName: {
+        type: String,
+        default: 'Unknown'
+    },
+    profilePic: {
+        type: String,
+        default: null
     },
     lastMessage: {
-        type: String
+        type: String,
+        default: ''
     },
     lastMessageTime: {
-        type: Date
+        type: Date,
+        default: Date.now
     },
     unreadCount: {
         type: Number,
@@ -27,18 +32,13 @@ const contactSchema = new mongoose.Schema({
     isBlocked: {
         type: Boolean,
         default: false
-    },
-    createdAt: {
-        type: Date,
-        default: Date.now
-    },
-    updatedAt: {
-        type: Date,
-        default: Date.now
     }
+    // ⚠️ phoneNumber field completely hata di
+}, {
+    timestamps: true
 });
 
-// Ensure unique contact per device
-contactSchema.index({ deviceId: 1, phone: 1 }, { unique: true });
+// Sirf ye ek unique index hona chahiye
+contactSchema.index({ deviceId: 1, contactNumber: 1 }, { unique: true });
 
 module.exports = mongoose.model('Contact', contactSchema);

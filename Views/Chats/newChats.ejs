@@ -3,71 +3,82 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>WhatsApp Chat System</title>
+    <title>WhatsApp Chats - Two Way Messaging</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
         * {
             margin: 0;
             padding: 0;
             box-sizing: border-box;
-            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, sans-serif;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
         }
 
         body {
-            background: linear-gradient(135deg, #00a884 0%, #1e2a3a 100%);
-            min-height: 100vh;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            padding: 20px;
-        }
-
-        .container {
-            display: flex;
-            width: 100%;
-            max-width: 1200px;
-            height: 90vh;
-            background: white;
-            border-radius: 20px;
-            overflow: hidden;
-            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
-        }
-
-        /* Left Panel - Contacts */
-        .contacts-panel {
-            width: 30%;
             background: #f0f2f5;
+            height: 100vh;
+            overflow: hidden;
+        }
+
+        .chat-container {
+            display: flex;
+            height: 100vh;
+            max-width: 1800px;
+            margin: 0 auto;
+            background: white;
+        }
+
+        /* ========== SIDEBAR ========== */
+        .chat-sidebar {
+            width: 400px;
             border-right: 1px solid #e0e0e0;
             display: flex;
             flex-direction: column;
+            background: white;
         }
 
-        .panel-header {
+        .sidebar-header {
             padding: 20px;
             background: #00a884;
             color: white;
         }
 
-        .panel-header h2 {
+        .sidebar-header h2 {
             font-size: 20px;
-            font-weight: 600;
+            margin-bottom: 10px;
+        }
+
+        .device-selector {
+            margin-top: 10px;
+        }
+
+        .device-selector select {
+            width: 100%;
+            padding: 10px;
+            border: none;
+            border-radius: 8px;
+            font-size: 14px;
+            background: white;
+            cursor: pointer;
         }
 
         .search-box {
-            margin: 15px;
-            padding: 12px 15px;
+            padding: 10px 15px;
             background: white;
-            border-radius: 8px;
-            border: 1px solid #ddd;
-            display: flex;
-            align-items: center;
+            border-bottom: 1px solid #e0e0e0;
         }
 
         .search-box input {
-            border: none;
-            outline: none;
-            margin-left: 10px;
             width: 100%;
+            padding: 10px 15px;
+            border: 1px solid #ddd;
+            border-radius: 25px;
             font-size: 14px;
+            background: #f0f2f5;
+        }
+
+        .search-box input:focus {
+            outline: none;
+            border-color: #00a884;
         }
 
         .contacts-list {
@@ -77,452 +88,989 @@
 
         .contact-item {
             padding: 15px;
-            display: flex;
-            align-items: center;
             border-bottom: 1px solid #f0f0f0;
             cursor: pointer;
             transition: background 0.2s;
+            display: flex;
+            gap: 12px;
+            align-items: center;
         }
 
         .contact-item:hover {
-            background: #e8e8e8;
+            background: #f5f5f5;
         }
 
         .contact-item.active {
-            background: #d9fdd3;
+            background: #e9f7f4;
         }
 
-        .avatar {
-            width: 45px;
-            height: 45px;
-            background: #00a884;
+        .contact-avatar {
+            width: 50px;
+            height: 50px;
             border-radius: 50%;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
             display: flex;
             align-items: center;
             justify-content: center;
             color: white;
             font-weight: bold;
-            font-size: 18px;
-            margin-right: 15px;
+            font-size: 20px;
+            flex-shrink: 0;
         }
 
-        .contact-info h4 {
+        .contact-info {
+            flex: 1;
+            min-width: 0;
+        }
+
+        .contact-name {
+            font-weight: 600;
             font-size: 16px;
-            color: #111b21;
-            margin-bottom: 3px;
+            margin-bottom: 4px;
+            color: #111;
         }
 
-        .contact-info p {
-            font-size: 13px;
+        .contact-last-message {
+            font-size: 14px;
+            color: #667781;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        .contact-meta {
+            display: flex;
+            flex-direction: column;
+            align-items: flex-end;
+            gap: 4px;
+        }
+
+        .contact-time {
+            font-size: 12px;
             color: #667781;
         }
 
-        /* Chat Panel */
-        .chat-panel {
-            width: 70%;
+        .unread-badge {
+            background: #00a884;
+            color: white;
+            border-radius: 50%;
+            width: 20px;
+            height: 20px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 11px;
+            font-weight: bold;
+        }
+
+        .add-contact-btn {
+            position: fixed;
+            bottom: 80px;
+            left: 340px;
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            background: #00a884;
+            color: white;
+            border: none;
+            cursor: pointer;
+            box-shadow: 0 4px 12px rgba(0,168,132,0.4);
+            font-size: 24px;
+            transition: transform 0.2s;
+            z-index: 100;
+        }
+
+        .add-contact-btn:hover {
+            transform: scale(1.1);
+        }
+
+        /* ========== CHAT AREA ========== */
+        .chat-area {
+            flex: 1;
             display: flex;
             flex-direction: column;
+            background: #efeae2;
         }
 
         .chat-header {
             padding: 15px 20px;
             background: #f0f2f5;
-            border-bottom: 1px solid #e0e0e0;
+            border-bottom: 1px solid #d1d7db;
             display: flex;
             align-items: center;
+            gap: 15px;
         }
 
-        .chat-header-info {
-            margin-left: 15px;
+        .chat-header-avatar {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #00a884 0%, #008069 100%);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: bold;
         }
 
         .chat-header-info h3 {
-            font-size: 17px;
-            color: #111b21;
+            font-size: 16px;
+            color: #111;
         }
 
         .chat-header-info p {
             font-size: 13px;
             color: #667781;
-            margin-top: 2px;
         }
 
-        .messages-container {
+        .chat-messages {
             flex: 1;
-            padding: 20px;
-            background-image: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" width="400" height="400" opacity="0.05"><path d="M0 200L200 0L400 200L200 400Z" fill="%2300a884"/></svg>');
-            background-size: 400px;
             overflow-y: auto;
-            display: flex;
-            flex-direction: column;
+            padding: 20px;
+            background-image: url('data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAoAAAAKCAYAAACNMs+9AAAAPklEQVQYV2NkYGD4z4AFMEG5jAyoYBQWOxgZ/zMyQQV//2dkYmJkhLH//4OKMoL5MPEfQGqU68gyYBQOFgAAqZ4Nezu9VhwAAAAASUVORK5CYII=');
         }
 
         .message {
+            margin-bottom: 12px;
+            display: flex;
+            animation: messageSlide 0.3s ease;
+        }
+
+        @keyframes messageSlide {
+            from {
+                opacity: 0;
+                transform: translateY(10px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .message.incoming {
+            justify-content: flex-start;
+        }
+
+        .message.outgoing {
+            justify-content: flex-end;
+        }
+
+        .message-bubble {
             max-width: 65%;
             padding: 8px 12px;
             border-radius: 8px;
-            margin-bottom: 10px;
-            position: relative;
             word-wrap: break-word;
+            position: relative;
         }
 
-        .incoming {
-            align-self: flex-start;
+        .message.incoming .message-bubble {
             background: white;
-            border: 1px solid #e0e0e0;
-            border-top-left-radius: 0;
+            border-radius: 0 8px 8px 8px;
         }
 
-        .outgoing {
-            align-self: flex-end;
+        .message.outgoing .message-bubble {
             background: #d9fdd3;
-            border-top-right-radius: 0;
+            border-radius: 8px 0 8px 8px;
+        }
+
+        .message-text {
+            font-size: 14px;
+            line-height: 1.5;
+            color: #111;
+            margin-bottom: 2px;
         }
 
         .message-time {
             font-size: 11px;
             color: #667781;
             text-align: right;
-            margin-top: 5px;
+            margin-top: 4px;
         }
 
-        .input-area {
-            padding: 15px 20px;
+        .message-status {
+            display: inline-block;
+            margin-left: 4px;
+            font-size: 14px;
+        }
+
+        .status-sent { color: #667781; }
+        .status-delivered { color: #53bdeb; }
+        .status-read { color: #53bdeb; }
+
+        .message-media {
+            margin-bottom: 8px;
+            border-radius: 8px;
+            overflow: hidden;
+        }
+
+        .message-media img {
+            max-width: 300px;
+            width: 100%;
+            display: block;
+        }
+
+        .message-media video {
+            max-width: 300px;
+            width: 100%;
+            display: block;
+        }
+
+        /* ========== MESSAGE INPUT ========== */
+        .message-input-container {
+            padding: 10px 15px;
             background: #f0f2f5;
-            border-top: 1px solid #e0e0e0;
             display: flex;
+            gap: 10px;
             align-items: center;
         }
 
         .message-input {
             flex: 1;
-            padding: 12px 20px;
+            padding: 12px 15px;
             border: none;
-            border-radius: 24px;
-            background: white;
-            outline: none;
+            border-radius: 25px;
             font-size: 15px;
-            margin-right: 15px;
+            background: white;
+            resize: none;
+            max-height: 100px;
+            font-family: inherit;
+        }
+
+        .message-input:focus {
+            outline: none;
         }
 
         .send-btn {
+            width: 45px;
+            height: 45px;
+            border-radius: 50%;
+            border: none;
             background: #00a884;
             color: white;
-            border: none;
-            width: 50px;
-            height: 50px;
-            border-radius: 50%;
             cursor: pointer;
+            font-size: 18px;
             display: flex;
             align-items: center;
             justify-content: center;
-            transition: background 0.3s;
+            transition: transform 0.2s;
         }
 
         .send-btn:hover {
-            background: #008f71;
+            transform: scale(1.1);
         }
 
-        /* Status Indicators */
-        .status-indicator {
-            width: 10px;
-            height: 10px;
-            border-radius: 50%;
-            margin-left: 8px;
-        }
-
-        .online {
-            background: #4caf50;
-        }
-
-        .offline {
+        .send-btn:disabled {
             background: #ccc;
+            cursor: not-allowed;
         }
 
-        /* System Messages */
-        .system-message {
-            align-self: center;
-            background: rgba(0, 168, 132, 0.1);
-            padding: 8px 15px;
+        /* ========== EMPTY STATE ========== */
+        .empty-state {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            height: 100%;
+            color: #667781;
+        }
+
+        .empty-state i {
+            font-size: 120px;
+            margin-bottom: 30px;
+            color: #d1d7db;
+        }
+
+        .empty-state h2 {
+            font-size: 32px;
+            margin-bottom: 15px;
+        }
+
+        .empty-state p {
+            font-size: 16px;
+            max-width: 500px;
+            text-align: center;
+            line-height: 1.6;
+        }
+
+        /* ========== MODAL ========== */
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0,0,0,0.5);
+            z-index: 1000;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .modal.show {
+            display: flex;
+        }
+
+        .modal-content {
+            background: white;
             border-radius: 15px;
-            font-size: 13px;
-            color: #00a884;
-            margin: 10px 0;
+            padding: 30px;
+            width: 90%;
+            max-width: 500px;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.3);
         }
 
-        /* Responsive */
+        .modal-header {
+            margin-bottom: 25px;
+        }
+
+        .modal-header h3 {
+            font-size: 24px;
+            color: #111;
+        }
+
+        .modal-body {
+            margin-bottom: 25px;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 8px;
+            color: #111;
+            font-weight: 600;
+        }
+
+        .form-group input {
+            width: 100%;
+            padding: 12px 15px;
+            border: 2px solid #e0e0e0;
+            border-radius: 8px;
+            font-size: 15px;
+        }
+
+        .form-group input:focus {
+            outline: none;
+            border-color: #00a884;
+        }
+
+        .modal-footer {
+            display: flex;
+            gap: 10px;
+            justify-content: flex-end;
+        }
+
+        .btn {
+            padding: 12px 25px;
+            border: none;
+            border-radius: 8px;
+            font-size: 15px;
+            cursor: pointer;
+            font-weight: 600;
+            transition: transform 0.2s;
+        }
+
+        .btn:hover {
+            transform: translateY(-2px);
+        }
+
+        .btn-primary {
+            background: #00a884;
+            color: white;
+        }
+
+        .btn-secondary {
+            background: #f0f2f5;
+            color: #111;
+        }
+
+        /* ========== LOADING ========== */
+        .loading {
+            text-align: center;
+            padding: 30px;
+            color: #667781;
+        }
+
+        .loading i {
+            font-size: 40px;
+            animation: spin 1s linear infinite;
+        }
+
+        @keyframes spin {
+            from { transform: rotate(0deg); }
+            to { transform: rotate(360deg); }
+        }
+
+        /* ========== RESPONSIVE ========== */
         @media (max-width: 768px) {
-            .container {
-                flex-direction: column;
-                height: 95vh;
-            }
-            
-            .contacts-panel {
+            .chat-sidebar {
                 width: 100%;
-                height: 40%;
+                max-width: none;
             }
-            
-            .chat-panel {
-                width: 100%;
-                height: 60%;
+
+            .chat-area {
+                position: fixed;
+                top: 0;
+                left: 0;
+                right: 0;
+                bottom: 0;
+                z-index: 10;
+                display: none;
+            }
+
+            .chat-area.active {
+                display: flex;
+            }
+
+            .add-contact-btn {
+                left: auto;
+                right: 20px;
             }
         }
     </style>
 </head>
 <body>
-    <%- include('../../partials/ram/sidebaar') %>
-    <div class="container">
-        <!-- Contacts Panel -->
-        <div class="contacts-panel">
-            <div class="panel-header">
-                <h2>WhatsApp Messages</h2>
+    <% if (typeof includeHeader !== 'undefined' && includeHeader) { %>
+        <%- include('../../partials/ram/header') %>
+        <%- include('../../partials/ram/sidebaar') %>
+    <% } %>
+
+    <div class="chat-container">
+        <!-- SIDEBAR -->
+        <div class="chat-sidebar">
+            <div class="sidebar-header">
+                <h2><i class="fab fa-whatsapp"></i> WhatsApp Chats</h2>
+                <div class="device-selector">
+                    <select id="deviceSelector">
+                        <option value="">Select Device</option>
+                        <!-- FIXED: Check if devices exists and has items -->
+                        <% if (typeof devices !== 'undefined' && devices && devices.length > 0) { %>
+                            <% devices.forEach(device => { %>
+                                <option value="<%= device.deviceId %>">
+                                    <%= device.whatsappName || 'Unnamed' %> - <%= device.phone || 'No phone' %>
+                                </option>
+                            <% }) %>
+                        <% } else { %>
+                            <option value="" disabled>No connected devices found</option>
+                        <% } %>
+                    </select>
+                </div>
             </div>
-            
+
             <div class="search-box">
-                <span>🔍</span>
-                <input type="text" placeholder="Search contacts..." id="searchInput">
+                <input type="text" id="searchContacts" placeholder="Search contacts...">
             </div>
-            
+
             <div class="contacts-list" id="contactsList">
-                <!-- Contacts will be loaded here -->
+                <div class="loading">
+                    <i class="fas fa-spinner"></i>
+                    <p>Select a device to view contacts</p>
+                </div>
             </div>
+
+            <button class="add-contact-btn" id="addContactBtn">
+                <i class="fas fa-plus"></i>
+            </button>
         </div>
 
-        <!-- Chat Panel -->
-        <div class="chat-panel">
-            <div class="chat-header">
-                <div class="avatar" id="currentAvatar">WA</div>
-                <div class="chat-header-info">
-                    <h3 id="currentContact">Select a contact</h3>
-                    <p id="currentStatus">Click on a contact to start chatting</p>
-                </div>
-                <div class="status-indicator offline" id="statusIndicator"></div>
+        <!-- CHAT AREA -->
+        <div class="chat-area" id="chatArea">
+            <div class="empty-state">
+                <i class="fab fa-whatsapp"></i>
+                <h2>WhatsApp Chat</h2>
+                <p>Select a contact from the sidebar to start chatting. Send and receive messages in real-time!</p>
             </div>
-            
-            <div class="messages-container" id="messagesContainer">
-                <div class="system-message">
-                    Welcome to WhatsApp Web Clone. Select a contact to start messaging.
+        </div>
+    </div>
+
+    <!-- ADD CONTACT MODAL -->
+    <div class="modal" id="addContactModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3>Add New Contact</h3>
+            </div>
+            <div class="modal-body">
+                <div class="form-group">
+                    <label>Contact Number</label>
+                    <input type="text" id="newContactNumber" placeholder="Enter 10-digit number">
+                </div>
+                <div class="form-group">
+                    <label>Contact Name (Optional)</label>
+                    <input type="text" id="newContactName" placeholder="Enter contact name">
                 </div>
             </div>
-            
-            <div class="input-area">
-                <input type="text" 
-                       class="message-input" 
-                       id="messageInput" 
-                       placeholder="Type a message..." 
-                       disabled>
-                <button class="send-btn" id="sendBtn" disabled>
-                    <span style="font-size: 20px;">➤</span>
-                </button>
+            <div class="modal-footer">
+                <button class="btn btn-secondary" onclick="closeAddContactModal()">Cancel</button>
+                <button class="btn btn-primary" onclick="addNewContact()">Add Contact</button>
             </div>
         </div>
     </div>
 
     <script>
-        // Sample Contacts Data
-        const contacts = [
-            { id: 1, name: "John Business", number: "+1234567890", status: "online", lastMessage: "See you tomorrow!", unread: 2, avatarText: "JB" },
-            { id: 2, name: "Sarah Client", number: "+9876543210", status: "online", lastMessage: "Thanks for the update!", unread: 0, avatarText: "SC" },
-            { id: 3, name: "Mike Support", number: "+1122334455", status: "offline", lastMessage: "Issue resolved", unread: 5, avatarText: "MS" },
-            { id: 4, name: "Anna Customer", number: "+9988776655", status: "online", lastMessage: "Where is my order?", unread: 0, avatarText: "AC" },
-            { id: 5, name: "David Partner", number: "+5544332211", status: "offline", lastMessage: "Meeting at 3 PM", unread: 1, avatarText: "DP" }
-        ];
+        // ========== GLOBALS ==========
+        let currentDevice = null;
+        let currentContact = null;
+        let currentContactName = '';
+        let contacts = [];
+        let messages = [];
+        let messageRefreshInterval = null;
 
-        // Sample Messages Data
-        const messages = {
-            1: [
-                { id: 1, text: "Hello! I need help with my order.", time: "10:30 AM", type: "incoming" },
-                { id: 2, text: "Sure, I'd be happy to help. What's your order number?", time: "10:31 AM", type: "outgoing" },
-                { id: 3, text: "It's ORD-2024-5678", time: "10:32 AM", type: "incoming" },
-                { id: 4, text: "Thanks! Let me check that for you.", time: "10:33 AM", type: "outgoing" }
-            ],
-            2: [
-                { id: 1, text: "Hi Sarah! Your payment was received.", time: "Yesterday", type: "outgoing" },
-                { id: 2, text: "Great! When will it be shipped?", time: "Yesterday", type: "incoming" },
-                { id: 3, text: "Tomorrow morning. Tracking will be sent.", time: "Yesterday", type: "outgoing" }
-            ],
-            3: [
-                { id: 1, text: "System update scheduled for tonight.", time: "2 days ago", type: "outgoing" }
-            ],
-            4: [
-                { id: 1, text: "Where is my order? It's delayed!", time: "1 hour ago", type: "incoming" }
-            ],
-            5: [
-                { id: 1, text: "Meeting rescheduled to 4 PM.", time: "3 days ago", type: "incoming" },
-                { id: 2, text: "Noted. See you then.", time: "3 days ago", type: "outgoing" }
-            ]
-        };
-
-        // DOM Elements
-        const contactsList = document.getElementById('contactsList');
-        const messagesContainer = document.getElementById('messagesContainer');
-        const messageInput = document.getElementById('messageInput');
-        const sendBtn = document.getElementById('sendBtn');
-        const searchInput = document.getElementById('searchInput');
-        const currentContact = document.getElementById('currentContact');
-        const currentStatus = document.getElementById('currentStatus');
-        const currentAvatar = document.getElementById('currentAvatar');
-        const statusIndicator = document.getElementById('statusIndicator');
-
-        let selectedContactId = null;
-
-        // Initialize Contacts
-        function loadContacts() {
-            contactsList.innerHTML = '';
-            contacts.forEach(contact => {
-                const contactItem = document.createElement('div');
-                contactItem.className = 'contact-item';
-                contactItem.dataset.id = contact.id;
-                
-                contactItem.innerHTML = `
-                    <div class="avatar" style="background: ${getAvatarColor(contact.name)};">${contact.avatarText}</div>
-                    <div class="contact-info">
-                        <h4>${contact.name}</h4>
-                        <p>${contact.lastMessage}</p>
+        // ========== DEVICE SELECTOR ==========
+        document.getElementById('deviceSelector').addEventListener('change', function() {
+            currentDevice = this.value;
+            currentContact = null; // Reset contact when device changes
+            if (currentDevice) {
+                loadContacts();
+                // Start auto-refresh
+                startAutoRefresh();
+            } else {
+                clearInterval(messageRefreshInterval);
+                document.getElementById('contactsList').innerHTML = `
+                    <div class="loading">
+                        <i class="fas fa-spinner"></i>
+                        <p>Select a device to view contacts</p>
                     </div>
-                    ${contact.unread > 0 ? `<span style="margin-left: auto; background: #00a884; color: white; width: 20px; height: 20px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 12px;">${contact.unread}</span>` : ''}
                 `;
+                // Reset chat area
+                document.getElementById('chatArea').innerHTML = `
+                    <div class="empty-state">
+                        <i class="fab fa-whatsapp"></i>
+                        <h2>WhatsApp Chat</h2>
+                        <p>Select a device and contact to start chatting</p>
+                    </div>
+                `;
+            }
+        });
+
+        // ========== LOAD DEVICES FROM API ==========
+        async function loadDevicesFromAPI() {
+            try {
+                const response = await fetch('/api/chats/devices');
+                const data = await response.json();
                 
-                contactItem.addEventListener('click', () => selectContact(contact.id));
-                contactsList.appendChild(contactItem);
+                if (data.status && data.devices.length > 0) {
+                    const selector = document.getElementById('deviceSelector');
+                    
+                    // Clear existing options except first
+                    while (selector.options.length > 1) {
+                        selector.remove(1);
+                    }
+                    
+                    // Add devices from API
+                    data.devices.forEach(device => {
+                        const option = document.createElement('option');
+                        option.value = device.deviceId;
+                        option.textContent = `${device.whatsappName || 'Unnamed'} - ${device.phone || 'No phone'}`;
+                        selector.appendChild(option);
+                    });
+
+                    // Auto-select first device if available and no device selected
+                    if (!currentDevice && selector.options.length > 1) {
+                        selector.selectedIndex = 1;
+                        selector.dispatchEvent(new Event('change'));
+                    }
+                }
+            } catch (error) {
+                console.error('Error loading devices from API:', error);
+            }
+        }
+
+        // ========== LOAD CONTACTS ==========
+        async function loadContacts() {
+            if (!currentDevice) return;
+
+            try {
+                const response = await fetch(`/api/chats/contacts/${currentDevice}`);
+                const data = await response.json();
+
+                if (data.status) {
+                    contacts = data.contacts;
+                    renderContacts(contacts);
+                }
+            } catch (error) {
+                console.error('Error loading contacts:', error);
+            }
+        }
+
+        // ========== RENDER CONTACTS ==========
+        function renderContacts(contactsList) {
+            const container = document.getElementById('contactsList');
+
+            if (contactsList.length === 0) {
+                container.innerHTML = `
+                    <div class="loading">
+                        <p>No contacts yet</p>
+                        <p style="margin-top: 10px;">Click + to add a new contact</p>
+                    </div>
+                `;
+                return;
+            }
+
+            container.innerHTML = '';
+            contactsList.forEach(contact => {
+                const contactEl = document.createElement('div');
+                contactEl.className = 'contact-item';
+                if (currentContact === contact.contactNumber) {
+                    contactEl.classList.add('active');
+                }
+
+                const initial = contact.contactName ? contact.contactName.charAt(0).toUpperCase() : '?';
+                const time = contact.lastMessageTime ? new Date(contact.lastMessageTime).toLocaleTimeString('en-US', {
+                    hour: '2-digit',
+                    minute: '2-digit'
+                }) : '';
+
+                contactEl.innerHTML = `
+                    <div class="contact-avatar">${initial}</div>
+                    <div class="contact-info">
+                        <div class="contact-name">${contact.contactName || 'Unknown'}</div>
+                        <div class="contact-last-message">${contact.lastMessage || 'No messages yet'}</div>
+                    </div>
+                    <div class="contact-meta">
+                        <div class="contact-time">${time}</div>
+                        ${contact.unreadCount > 0 ? `<div class="unread-badge">${contact.unreadCount}</div>` : ''}
+                    </div>
+                `;
+
+                contactEl.onclick = (e) => selectContact(contact.contactNumber, contact.contactName || contact.contactNumber, e);
+                container.appendChild(contactEl);
             });
         }
 
-        // Select Contact
-        function selectContact(contactId) {
-            selectedContactId = contactId;
+        // ========== SELECT CONTACT ==========
+        async function selectContact(contactNumber, contactName, event) {
+            currentContact = contactNumber;
+            currentContactName = contactName;
             
-            // Update contact list UI
+            // Update UI
             document.querySelectorAll('.contact-item').forEach(item => {
                 item.classList.remove('active');
-                if (item.dataset.id == contactId) {
-                    item.classList.add('active');
+            });
+            if (event && event.currentTarget) {
+                event.currentTarget.classList.add('active');
+            }
+
+            // Load messages
+            await loadMessages();
+            
+            // Show chat area
+            document.getElementById('chatArea').innerHTML = `
+                <div class="chat-header">
+                    <div class="chat-header-avatar">${contactName.charAt(0).toUpperCase()}</div>
+                    <div class="chat-header-info">
+                        <h3>${contactName}</h3>
+                        <p>${contactNumber}</p>
+                    </div>
+                </div>
+                <div class="chat-messages" id="chatMessages"></div>
+                <div class="message-input-container">
+                    <textarea class="message-input" id="messageInput" placeholder="Type a message" rows="1"></textarea>
+                    <button class="send-btn" id="sendBtn" onclick="sendMessage()">
+                        <i class="fas fa-paper-plane"></i>
+                    </button>
+                </div>
+            `;
+
+            // Auto-resize textarea
+            const textarea = document.getElementById('messageInput');
+            textarea.addEventListener('input', function() {
+                this.style.height = 'auto';
+                this.style.height = this.scrollHeight + 'px';
+            });
+
+            // Send on Enter
+            textarea.addEventListener('keydown', function(e) {
+                if (e.key === 'Enter' && !e.shiftKey) {
+                    e.preventDefault();
+                    sendMessage();
                 }
             });
-            
-            // Update chat header
-            const contact = contacts.find(c => c.id == contactId);
-            currentContact.textContent = contact.name;
-            currentStatus.textContent = contact.status === 'online' ? 'Online' : 'Last seen recently';
-            currentAvatar.textContent = contact.avatarText;
-            currentAvatar.style.background = getAvatarColor(contact.name);
-            
-            // Update status indicator
-            statusIndicator.className = `status-indicator ${contact.status}`;
-            
-            // Load messages
-            loadMessages(contactId);
-            
-            // Enable input
-            messageInput.disabled = false;
-            sendBtn.disabled = false;
-            messageInput.focus();
+
+            renderMessages();
         }
 
-        // Load Messages
-        function loadMessages(contactId) {
-            messagesContainer.innerHTML = '';
-            const contactMessages = messages[contactId] || [];
-            
-            if (contactMessages.length === 0) {
-                const systemMsg = document.createElement('div');
-                systemMsg.className = 'system-message';
-                systemMsg.textContent = 'No messages yet. Start the conversation!';
-                messagesContainer.appendChild(systemMsg);
+        // ========== LOAD MESSAGES ==========
+        async function loadMessages() {
+            if (!currentDevice || !currentContact) return;
+
+            try {
+                const response = await fetch(`/api/chats/messages/${currentDevice}/${currentContact}`);
+                const data = await response.json();
+
+                if (data.status) {
+                    messages = data.messages;
+                    renderMessages();
+                }
+            } catch (error) {
+                console.error('Error loading messages:', error);
             }
-            
-            contactMessages.forEach(msg => {
-                const messageDiv = document.createElement('div');
-                messageDiv.className = `message ${msg.type}`;
-                messageDiv.innerHTML = `
-                    <div>${msg.text}</div>
-                    <div class="message-time">${msg.time}</div>
-                `;
-                messagesContainer.appendChild(messageDiv);
-            });
-            
-            // Scroll to bottom
-            messagesContainer.scrollTop = messagesContainer.scrollHeight;
         }
 
-        // Send Message
-        function sendMessage() {
-            const text = messageInput.value.trim();
-            if (!text || !selectedContactId) return;
+        // ========== RENDER MESSAGES ==========
+        function renderMessages() {
+            const container = document.getElementById('chatMessages');
+            if (!container) return;
+
+            if (messages.length === 0) {
+                container.innerHTML = `
+                    <div class="empty-state" style="height: 100%;">
+                        <p>No messages yet. Start a conversation!</p>
+                    </div>
+                `;
+                return;
+            }
+
+            container.innerHTML = '';
+            messages.forEach(msg => {
+                const messageEl = document.createElement('div');
+                messageEl.className = `message ${msg.direction}`;
+
+                const time = msg.timestamp ? new Date(msg.timestamp).toLocaleTimeString('en-US', {
+                    hour: '2-digit',
+                    minute: '2-digit'
+                }) : '';
+
+                let statusIcon = '';
+                if (msg.direction === 'outgoing') {
+                    if (msg.status === 'sent') statusIcon = '<i class="fas fa-check status-sent"></i>';
+                    else if (msg.status === 'delivered') statusIcon = '<i class="fas fa-check-double status-delivered"></i>';
+                    else if (msg.status === 'read') statusIcon = '<i class="fas fa-check-double status-read"></i>';
+                }
+
+                let mediaContent = '';
+                if (msg.mediaUrl) {
+                    if (msg.messageType === 'image') {
+                        mediaContent = `<div class="message-media"><img src="${msg.mediaUrl}" alt="Image" style="max-width: 100%;"></div>`;
+                    } else if (msg.messageType === 'video') {
+                        mediaContent = `<div class="message-media"><video controls src="${msg.mediaUrl}" style="max-width: 100%;"></video></div>`;
+                    } else if (msg.messageType === 'audio') {
+                        mediaContent = `<div class="message-media"><audio controls src="${msg.mediaUrl}" style="width: 100%;"></audio></div>`;
+                    }
+                }
+
+                messageEl.innerHTML = `
+                    <div class="message-bubble">
+                        ${mediaContent}
+                        ${msg.message ? `<div class="message-text">${msg.message}</div>` : ''}
+                        <div class="message-time">${time} ${statusIcon}</div>
+                    </div>
+                `;
+
+                container.appendChild(messageEl);
+            });
+
+            // Scroll to bottom
+            container.scrollTop = container.scrollHeight;
+        }
+
+        // ========== SEND MESSAGE - IMPROVED VERSION ==========
+async function sendMessage() {
+    const input = document.getElementById('messageInput');
+    const message = input.value.trim();
+
+    if (!message || !currentDevice || !currentContact) return;
+
+    // Disable send button temporarily
+    const sendBtn = document.getElementById('sendBtn');
+    sendBtn.disabled = true;
+    
+    // Show sending indicator
+    const originalHtml = sendBtn.innerHTML;
+    sendBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i>';
+
+    try {
+        const response = await fetch('/api/chats/send', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+                deviceId: currentDevice,
+                contactNumber: currentContact,
+                message: message
+            })
+        });
+
+        const data = await response.json();
+
+        if (data.status) {
+            // Add message to UI immediately for better UX
+            const tempMessage = {
+                messageId: 'temp_' + Date.now(),
+                deviceId: currentDevice,
+                contactNumber: currentContact,
+                contactName: currentContactName,
+                message: message,
+                messageType: 'text',
+                direction: 'outgoing',
+                timestamp: new Date().toISOString(),
+                status: 'sent'
+            };
             
-            // Add outgoing message
-            const messageDiv = document.createElement('div');
-            messageDiv.className = 'message outgoing';
-            const time = new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
-            messageDiv.innerHTML = `
-                <div>${text}</div>
-                <div class="message-time">${time}</div>
-            `;
-            messagesContainer.appendChild(messageDiv);
-            
+            messages.push(tempMessage);
+            renderMessages();
+
             // Clear input
-            messageInput.value = '';
-            
-            // Simulate auto-reply after 1 second
-            setTimeout(() => {
-                const replies = [
-                    "Thanks for your message!",
-                    "We've received your query.",
-                    "Our team will respond shortly.",
-                    "Can you provide more details?",
-                    "Thank you for contacting us."
-                ];
-                const reply = replies[Math.floor(Math.random() * replies.length)];
-                
-                const replyDiv = document.createElement('div');
-                replyDiv.className = 'message incoming';
-                replyDiv.innerHTML = `
-                    <div>${reply}</div>
-                    <div class="message-time">${new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}</div>
-                `;
-                messagesContainer.appendChild(replyDiv);
-                
-                // Scroll to bottom
-                messagesContainer.scrollTop = messagesContainer.scrollHeight;
-            }, 1000);
-            
-            // Scroll to bottom
-            messagesContainer.scrollTop = messagesContainer.scrollHeight;
-        }
+            input.value = '';
+            input.style.height = 'auto';
 
-        // Search Contacts
-        searchInput.addEventListener('input', (e) => {
-            const searchTerm = e.target.value.toLowerCase();
-            document.querySelectorAll('.contact-item').forEach(item => {
-                const name = item.querySelector('h4').textContent.toLowerCase();
-                item.style.display = name.includes(searchTerm) ? 'flex' : 'none';
-            });
+            // Reload contacts to update last message
+            loadContacts();
+            
+            // Show success notification (optional)
+            showNotification('Message sent', 'success');
+        } else {
+            // Handle specific markedUnread error
+            if (data.error === 'markedUnread_error') {
+                showNotification('WhatsApp client error. Refreshing device...', 'warning');
+                
+                // Try to send again after 2 seconds
+                setTimeout(() => {
+                    sendBtn.disabled = false;
+                    sendMessage(); // Retry
+                }, 2000);
+                return;
+            } else {
+                alert('Failed to send message: ' + (data.msg || 'Unknown error'));
+            }
+        }
+    } catch (error) {
+        console.error('Error sending message:', error);
+        showNotification('Network error. Please try again.', 'error');
+    } finally {
+        // Restore button
+        sendBtn.innerHTML = originalHtml;
+        sendBtn.disabled = false;
+    }
+}
+
+// ========== SHOW NOTIFICATION FUNCTION ==========
+function showNotification(message, type = 'info') {
+    // Remove existing notification
+    const existingNotification = document.querySelector('.custom-notification');
+    if (existingNotification) {
+        existingNotification.remove();
+    }
+    
+    // Create notification element
+    const notification = document.createElement('div');
+    notification.className = `custom-notification ${type}`;
+    notification.innerHTML = `
+        <i class="fas ${type === 'success' ? 'fa-check-circle' : type === 'error' ? 'fa-exclamation-circle' : 'fa-info-circle'}"></i>
+        <span>${message}</span>
+    `;
+    
+    // Add styles
+    notification.style.cssText = `
+        position: fixed;
+        top: 20px;
+        right: 20px;
+        background: ${type === 'success' ? '#00a884' : type === 'error' ? '#f44336' : type === 'warning' ? '#ff9800' : '#2196f3'};
+        color: white;
+        padding: 12px 24px;
+        border-radius: 8px;
+        box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        z-index: 9999;
+        animation: slideIn 0.3s ease;
+    `;
+    
+    document.body.appendChild(notification);
+    
+    // Auto remove after 3 seconds
+    setTimeout(() => {
+        notification.style.animation = 'slideOut 0.3s ease';
+        setTimeout(() => notification.remove(), 300);
+    }, 3000);
+}
+
+        // ========== ADD CONTACT ==========
+        document.getElementById('addContactBtn').addEventListener('click', function() {
+            if (!currentDevice) {
+                alert('Please select a device first');
+                return;
+            }
+            document.getElementById('addContactModal').classList.add('show');
         });
 
-        // Event Listeners
-        sendBtn.addEventListener('click', sendMessage);
-        messageInput.addEventListener('keypress', (e) => {
-            if (e.key === 'Enter') {
-                sendMessage();
+        function closeAddContactModal() {
+            document.getElementById('addContactModal').classList.remove('show');
+            document.getElementById('newContactNumber').value = '';
+            document.getElementById('newContactName').value = '';
+        }
+
+        async function addNewContact() {
+            const number = document.getElementById('newContactNumber').value.trim();
+            const name = document.getElementById('newContactName').value.trim();
+
+            if (!number) {
+                alert('Please enter a contact number');
+                return;
+            }
+
+            if (!/^\d{10}$/.test(number)) {
+                alert('Please enter a valid 10-digit number');
+                return;
+            }
+
+            try {
+                const response = await fetch('/api/chats/add-contact', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        deviceId: currentDevice,
+                        contactNumber: number,
+                        contactName: name || number
+                    })
+                });
+
+                const data = await response.json();
+
+                if (data.status) {
+                    closeAddContactModal();
+                    loadContacts();
+                    alert('Contact added successfully!');
+                } else {
+                    alert('Failed to add contact: ' + (data.msg || 'Unknown error'));
+                }
+            } catch (error) {
+                console.error('Error adding contact:', error);
+                alert('Failed to add contact. Please try again.');
+            }
+        }
+
+        // ========== SEARCH ==========
+        document.getElementById('searchContacts').addEventListener('input', function() {
+            const query = this.value.toLowerCase();
+            const filtered = contacts.filter(c => 
+                (c.contactName && c.contactName.toLowerCase().includes(query)) || 
+                (c.contactNumber && c.contactNumber.includes(query))
+            );
+            renderContacts(filtered);
+        });
+
+        // ========== ON LOAD ==========
+        window.addEventListener('DOMContentLoaded', function() {
+            // Load devices from API as backup
+            loadDevicesFromAPI();
+            
+            // Check if devices were passed from server
+            const deviceSelector = document.getElementById('deviceSelector');
+            if (deviceSelector.options.length > 1) {
+                // Auto-select first device
+                deviceSelector.selectedIndex = 1;
+                deviceSelector.dispatchEvent(new Event('change'));
             }
         });
 
-        // Utility: Generate consistent avatar color
-        function getAvatarColor(name) {
-            const colors = ['#00a884', '#FF6B6B', '#4ECDC4', '#FFD166', '#06D6A0', '#118AB2', '#EF476F'];
-            const index = name.charCodeAt(0) % colors.length;
-            return colors[index];
-        }
-
-        // Initialize
-        loadContacts();
-        
-        // Auto-select first contact
-        setTimeout(() => {
-            if (contacts.length > 0) {
-                selectContact(contacts[0].id);
+        // ========== CLEANUP ON UNLOAD ==========
+        window.addEventListener('beforeunload', function() {
+            if (messageRefreshInterval) {
+                clearInterval(messageRefreshInterval);
             }
-        }, 100);
+        });
     </script>
 </body>
 </html>
