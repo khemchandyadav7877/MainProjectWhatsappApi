@@ -1,76 +1,73 @@
 const mongoose = require('mongoose');
 
-const deviceSchema = new mongoose.Schema(
-{
-    // Device Basic Info
+const condeviceSchema = new mongoose.Schema({
     name: {
         type: String,
         required: true,
         trim: true
     },
-
     phoneNumber: {
         type: String,
         required: true,
-        unique: true,
         trim: true
+        // REMOVED unique: true - because different users can have same phone number
     },
-
-    deviceType: {
+    whatsappNumber: {
         type: String,
-        enum: ['android', 'iphone', 'tablet', 'other'],
-        required: true
+        trim: true,
+        default: null
     },
-
-    carrier: {
+    email: {
         type: String,
-        enum: ['jio', 'airtel', 'vi', 'bsnl', 'other', 'unknown'],
-        default: 'unknown'
+        trim: true,
+        lowercase: true,
+        default: null
     },
-
     notes: {
         type: String,
         default: ''
     },
-
-    // WhatsApp / Device Status
     status: {
         type: String,
-        enum: ['active', 'inactive', 'disconnected'],
+        enum: ['active', 'inactive'],
         default: 'inactive'
     },
-
-    // WhatsApp Session / Token (future use)
-    sessionId: {
-        type: String,
-        default: null
-    },
-
-    qrCode: {
-        type: String,   // QR image / base64 / path
-        default: null
-    },
-
     isConnected: {
         type: Boolean,
         default: false
     },
-
-    lastSeen: {
+    lastConnected: {
         type: Date,
         default: null
     },
-
-    // Audit
-    addedBy: {
+    // ===== CRITICAL: User identification fields =====
+    createdBy: {
         type: mongoose.Schema.Types.ObjectId,
         ref: 'User',
-        default: null
+        required: true  // Every contact MUST belong to someone
+    },
+    createdByRole: {
+        type: String,
+        enum: ["user", "Student", "SuperAdmin", "Educator", "Trainer"],
+        required: true
+    },
+    createdByEmail: {
+        type: String,
+        required: true
     }
-
-},
-{
-    timestamps: true   // createdAt & updatedAt
+}, {
+    timestamps: true
 });
 
-module.exports = mongoose.model('Condevice', deviceSchema);
+// ===== COMPOUND UNIQUE: Each user can have unique phone numbers =====
+// This allows different users to have same phone number,
+// but same user cannot have duplicate phone numbers
+condeviceSchema.index({ phoneNumber: 1, createdBy: 1 }, { unique: true });
+
+// Indexes for performance
+condeviceSchema.index({ email: 1 });
+condeviceSchema.index({ status: 1 });
+condeviceSchema.index({ createdBy: 1 }); // CRITICAL for role-based queries
+condeviceSchema.index({ createdAt: -1 });
+
+module.exports = mongoose.model('Condevice', condeviceSchema);

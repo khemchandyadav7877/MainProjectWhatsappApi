@@ -1,4 +1,3 @@
-// models/Campaign.js
 const mongoose = require('mongoose');
 
 const campaignSchema = new mongoose.Schema({
@@ -62,9 +61,34 @@ const campaignSchema = new mongoose.Schema({
     }],
     completedAt: {
         type: Date
+    },
+    campaignName: {
+        type: String,
+        default: ''
+    },
+    createdBy: {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'User',
+        required: true
+    },
+    createdByRole: {
+        type: String,
+        enum: ["user", "Student", "SuperAdmin", "Educator", "Trainer"],
+        required: true
+    },
+    createdByEmail: {
+        type: String,
+        required: true
     }
 }, {
     timestamps: true
 });
+
+campaignSchema.index({ campaignId: 1 });
+campaignSchema.index({ deviceId: 1 });
+campaignSchema.index({ status: 1 });
+campaignSchema.index({ scheduledAt: 1 });
+campaignSchema.index({ createdBy: 1 });
+campaignSchema.index({ createdByRole: 1 });
 
 module.exports = mongoose.model('Campaign', campaignSchema);

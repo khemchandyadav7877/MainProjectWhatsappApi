@@ -481,58 +481,238 @@
         
         const roles = ['SuperAdmin', 'Educator', 'Trainer', 'Student'];
         
+        // IMPORTANT: Ye sections EXACTLY is order mein dikhenge
         const sectionOptions = [
             '*** Dashboard',
+            '*** Subscription Management',
+            '*** Frontend Management',
+            '*** CRM',
             '*** Notifications',
-            '*** Reports',
             '*** Chats',
-            '*** Virtual Numbers',
-            '*** Contact',
+            '*** Bulk Messaging',
             '*** RCS',
-            '*** Scan device',
+            '*** Campaign Management',
+            '*** AI Chatbot',
+            '*** Ads Management',
+            '*** VOIP Service',
+            '*** IVR Service',
+            '*** Support Desk',
             '*** API',
-            '*** Administration'
+            '*** Reports',
+            '*** Settings'
         ];
 
         const allFeatureLabels = {
-            '*** Dashboard': ['1. Dashboard', '2. Notifications'],
-            '*** Notifications': ['1. SuperAdmin Notifications', '2. Educator Notifications','3. Trainer Notifications','4. Student Notifications'],
-            '*** Reports': ['1. Web Report', '2. API Reports'],
+            '*** Dashboard': ['1. Dashboard', '2. Notification Center'],
+            
+            '*** Notifications': [
+                '1. SuperAdmin Notifications',
+                '2. Educator Notifications',
+                '3. Trainer Notifications',
+                '4. Student Notifications'
+            ],
+
+            '*** Subscription Management': [
+                '1. All Subscriptions',
+                '2. Plans / Packages',
+                '3. Add Plan',
+                '4. Transactions',
+                '5. Payment History',
+                '6. Invoice'
+            ],
+
+            '*** Frontend Management': [
+                '1. Website Settings',
+                '2. Landing Page',
+                '3. Banner / Slider',
+                '4. FAQs',
+                '5. Contact Page',
+                '6. Footer Settings'
+            ],
+
+            '*** CRM': [
+                '1. Add Contact',
+                '2. All Contact',
+                '3. Campaign',
+                '4. Contact Group'
+            ],
+
             '*** Chats': ['1. New Chat'],
-            '*** Virtual Numbers': ['1. My Numbers', '2. Buy Number', '3. Call Logs', '4. SMS Logs'],
-            '*** Contact': ['1. Add Contact', '2. All Contact', '3. Campaign', '4. Contact Group'],
-            '*** RCS': ['1. RCS Campaign', '2. RCS Reports', '3. RCS Templates'],
-            '*** Scan device': ['1. Whatsapp Scan'],
-            '*** API': ['1. API Document', '2. File Upload'],
-            '*** Administration': ['1. Role Permissions', '2. Add New Feature']
+
+            '*** Bulk Messaging': [
+                '1. Send Bulk Message',
+                '2. Templates',
+                '3. Reports'
+            ],
+
+            '*** RCS': [
+                '1. RCS Campaign',
+                '2. RCS Reports',
+                '3. RCS Templates'
+            ],
+
+            '*** Campaign Management': [
+                '1. WhatsApp Campaign',
+                '2. Official WhatsApp API Campaign',
+                '3. Social Media Campaign'
+            ],
+
+            '*** AI Chatbot': [
+                '1. Bot Flow Builder',
+                '2. Auto Replies'
+            ],
+
+            '*** Ads Management': [
+                '1. Create Ad Campaign',
+                '2. Ad Reports',
+                '3. Ad Budget'
+            ],
+
+            '*** VOIP Service': [
+                '1. Virtual Number (V Number)',
+                '2. Call Logs',
+                '3. Call Routing'
+            ],
+
+            '*** IVR Service': [
+                '1. IVR Setup',
+                '2. Call Flow Management',
+                '3. Voice Greetings'
+            ],
+
+            '*** Support Desk': [
+                '1. All Tickets',
+                '2. Create Ticket',
+                '3. Ticket Replies'
+            ],
+
+            '*** Reports': [
+                '1. Web Report',
+                '2. API Reports'
+            ],
+
+            '*** Settings': [
+                '1. Frontend Settings',
+                '2. Custom Roles',
+                '3. Role Management',
+                '4. Add To Dashboard',
+                '5. Payment Settings',
+                '6. Message Settings',
+                '7. API Settings',
+                '8. Security Settings',
+                '9. SMTP Settings',
+                '10. User Logs'
+            ],
+            
+            '*** Virtual Numbers': [
+                '1. My Numbers',
+                '2. Buy Number',
+                '3. Call Logs',
+                '4. SMS Logs'
+            ],
+
+            '*** API': [
+                '1. API Keys',
+                '2. API Documentation',
+                '3. Webhook Settings'
+            ]
         };
 
         const featurePaths = {
+            // Dashboard
             '1. Dashboard': '/dashboard',
-            '2. Notifications': '/notifications',
+
+             // Subscription Management
+            '1. All Subscriptions': '/profile',
+            '2. Plans / Packages': '/CustomRoles',
+            '3. Add Plan': '/signup',
+            '4. Transactions': '/subscriptions/transactions',
+            '5. Payment History': '/subscriptions/payment-history',
+            '6. Invoice': '/subscriptions/invoice',
+
+            // Notifications
             '1. SuperAdmin Notifications': '/superadmin/notifications',
             '2. Educator Notifications': '/educator/notifications',
             '3. Trainer Notifications': '/trainer/notifications',
             '4. Student Notifications': '/student/notifications',
+
+            // Reports
             '1. Web Report': '/reports/web',
             '2. API Reports': '/reports/api',
+
+            // Chats
             '1. New Chat': '/chats',
+
+            // Virtual Numbers
             '1. My Numbers': '/virtual-numbers',
             '2. Buy Number': '/virtual-numbers/buy',
             '3. Call Logs': '/virtual-numbers/call-logs',
             '4. SMS Logs': '/virtual-numbers/sms-logs',
+
+            // CRM
             '1. Add Contact': '/devices/add',
             '2. All Contact': '/devices',
             '3. Campaign': '/devices/campaign',
-            '4. Contact Group':'/contactgroup',
+            '4. Contact Group': '/contactgroup',
+
+            // RCS
             '1. RCS Campaign': '/rcs/campaign',
             '2. RCS Reports': '/rcs/reports',
             '3. RCS Templates': '/rcs/templates',
-            '1. Whatsapp Scan': '/scan/whatsapp',
-            '1. API Document': '/api/document',
-            '2. File Upload': '/api/file-upload',
-            '1. Role Permissions': '/role-permissions',
-            '2. Add New Feature': '/add-new-feature'
+
+            // Campaign Management
+            '1. WhatsApp Campaign': '/scan/whatsapp',
+            '2. Official WhatsApp API Campaign': '/campaign/official-api',
+            '3. Social Media Campaign': '/campaign/social-media',
+
+            // Frontend Management
+            '1. Website Settings': '/frontend/settings',
+            '2. Landing Page': '/frontend/landing-page',
+            '3. Banner / Slider': '/frontend/banner',
+            '4. FAQs': '/frontend/faqs',
+            '5. Contact Page': '/frontend/contact',
+            '6. Footer Settings': '/frontend/footer',
+
+            // Bulk Messaging
+            '1. Send Bulk Message': '/bulk/send',
+            '2. Templates': '/bulk/templates',
+            '3. Reports': '/bulk/reports',
+
+            // AI Chatbot
+            '1. Bot Flow Builder': '/chatbot/flow-builder',
+            '2. Auto Replies': '/chatbot/auto-replies',
+
+            // Ads Management
+            '1. Create Ad Campaign': '/ads/create',
+            '2. Ad Reports': '/ads/reports',
+            '3. Ad Budget': '/ads/budget',
+
+            // VOIP
+            '1. Virtual Number (V Number)': '/voip/virtual-number',
+            '2. Call Logs': '/voip/call-logs',
+            '3. Call Routing': '/voip/call-routing',
+
+            // IVR
+            '1. IVR Setup': '/ivr/setup',
+            '2. Call Flow Management': '/ivr/call-flow',
+            '3. Voice Greetings': '/ivr/voice-greetings',
+
+            // Support Desk
+            '1. All Tickets': '/support/tickets',
+            '2. Create Ticket': '/support/create',
+            '3. Ticket Replies': '/support/replies',
+
+            // Settings
+            '1. Frontend Settings': '/settings/frontend',
+            '2. Custom Roles': '/CustomRoles',
+            '3. Role Management': '/role-permissions',
+            '4. Add To Dashboard': '/add-new-feature',
+            '5. Payment Settings': '/settings/payment',
+            '6. Message Settings': '/settings/message',
+            '7. API Settings': '/settings/api',
+            '8. Security Settings': '/settings/security',
+            '9. SMTP Settings': '/settings/smtp',
+            '10. User Logs': '/settings/user-logs',
         };
 
         // ========================================
@@ -609,6 +789,17 @@
             }
         }
 
+        // Clear all features from localStorage (useful for testing)
+        function clearAllFeatures() {
+            if (confirm('Are you sure you want to clear all features?')) {
+                localStorage.removeItem('sidebarFeatures');
+                features = [];
+                updateStats();
+                renderForm();
+                showToast('All features cleared!', 'info');
+            }
+        }
+
         // ========================================
         // DATA MANAGEMENT
         // ========================================
@@ -664,6 +855,12 @@
         }
 
         function getAvailableLabels(role, section) {
+            // Check if section exists in allFeatureLabels
+            if (!allFeatureLabels[section]) {
+                console.warn(`⚠️ Section "${section}" not found in allFeatureLabels`);
+                return [];
+            }
+            
             const all = allFeatureLabels[section] || [];
             return all.filter(label => !checkFeatureExists(role, section, label));
         }
@@ -727,10 +924,13 @@
 
         function renderSections() {
             let html = '<option value="">Choose section...</option>';
+            
+            // Yeh important part hai - sections EXACT order mein render honge
             sectionOptions.forEach(section => {
-                const name = section.replace('*** ', '');
-                html += `<option value="${section}">${name}</option>`;
+                const displayName = section.replace('*** ', '');
+                html += `<option value="${section}">${displayName}</option>`;
             });
+            
             elements.sectionSelect.innerHTML = html;
             elements.sectionSelect.value = currentSection;
         }
@@ -742,6 +942,13 @@
                 elements.availableCountBadge.textContent = `${available.length} available`;
                 elements.availableCountBadge.style.display = 'inline-block';
                 elements.noFeaturesAlert.style.display = 'none';
+                
+                // Features ko alphabetical order mein sort karo (number ke hisaab se)
+                available.sort((a, b) => {
+                    const numA = parseInt(a.split('.')[0]) || 0;
+                    const numB = parseInt(b.split('.')[0]) || 0;
+                    return numA - numB;
+                });
                 
                 let html = '<option value="">Choose feature...</option>';
                 available.forEach(label => {
@@ -771,10 +978,13 @@
             const added = getAlreadyAddedFeatures(currentRole, currentSection);
             
             if (added.length > 0) {
+                // Sort added features by order
+                added.sort((a, b) => a.order - b.order);
+                
                 elements.alreadyAddedTitle.textContent = `${currentRole} - ${currentSection.replace('*** ', '')}:`;
                 let html = added.map(f => {
                     const name = f.label.replace(/^\d+\.\s*/, '');
-                    return `<span class="badge bg-secondary">${name}</span>`;
+                    return `<span class="badge bg-secondary">${name} (Order: ${f.order})</span>`;
                 }).join('');
                 elements.alreadyAddedFeatures.innerHTML = html;
                 elements.alreadyAddedSection.style.display = 'block';
@@ -785,7 +995,7 @@
 
         function updateSubmitButton() {
             const available = getAvailableLabels(currentRole, currentSection);
-            const exists = checkFeatureExists(currentRole, currentSection, currentFeature);
+            const exists = currentFeature ? checkFeatureExists(currentRole, currentSection, currentFeature) : false;
             
             if (available.length === 0 || !currentFeature || exists || isSubmitting) {
                 elements.submitBtn.disabled = true;

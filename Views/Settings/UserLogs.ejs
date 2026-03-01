@@ -1,0 +1,1566 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>User Logs - Complete Activity Timeline</title>
+    
+    <!-- Bootstrap 5 CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Font Awesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <!-- Chart.js for graphs -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <!-- Moment.js for date formatting -->
+    <script src="https://cdn.jsdelivr.net/npm/moment@2.29.4/moment.min.js"></script>
+    
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background: #f8fafc;
+            color: #1e293b;
+        }
+
+        /* Main Container */
+        .logs-container {
+            min-height: 100vh;
+            padding: 2rem;
+        }
+
+        /* Header Section */
+        .logs-header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            border-radius: 20px;
+            padding: 2rem;
+            margin-bottom: 2rem;
+            color: white;
+            box-shadow: 0 10px 30px rgba(102, 126, 234, 0.3);
+        }
+
+        .header-title {
+            font-size: 2.5rem;
+            font-weight: 700;
+            margin-bottom: 0.5rem;
+        }
+
+        .header-subtitle {
+            font-size: 1rem;
+            opacity: 0.9;
+            margin-bottom: 1.5rem;
+        }
+
+        /* Stats Cards */
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 1rem;
+            margin-bottom: 2rem;
+        }
+
+        .stat-card {
+            background: white;
+            border-radius: 16px;
+            padding: 1.5rem;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+            transition: all 0.3s ease;
+            border: 1px solid #e2e8f0;
+            cursor: pointer;
+        }
+
+        .stat-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1);
+        }
+
+        .stat-card.active {
+            border: 2px solid #667eea;
+            background: #f5f3ff;
+        }
+
+        .stat-icon {
+            width: 48px;
+            height: 48px;
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.5rem;
+            margin-bottom: 1rem;
+        }
+
+        .stat-icon.blue { background: #eef2ff; color: #4f46e5; }
+        .stat-icon.green { background: #ecfdf5; color: #10b981; }
+        .stat-icon.purple { background: #f5f3ff; color: #8b5cf6; }
+        .stat-icon.orange { background: #fff7ed; color: #f97316; }
+        .stat-icon.superadmin { background: #eef2ff; color: #4f46e5; }
+        .stat-icon.educator { background: #dbeafe; color: #3b82f6; }
+        .stat-icon.trainer { background: #ecfdf5; color: #10b981; }
+        .stat-icon.student { background: #fff7ed; color: #f59e0b; }
+
+        .stat-value {
+            font-size: 2rem;
+            font-weight: 700;
+            color: #1e293b;
+            margin-bottom: 0.25rem;
+        }
+
+        .stat-label {
+            font-size: 0.875rem;
+            color: #64748b;
+        }
+
+        /* Role Filter Tabs */
+        .role-tabs {
+            display: flex;
+            gap: 1rem;
+            margin-bottom: 2rem;
+            flex-wrap: wrap;
+        }
+
+        .role-tab {
+            padding: 0.75rem 1.5rem;
+            border-radius: 50px;
+            font-weight: 600;
+            font-size: 0.875rem;
+            cursor: pointer;
+            transition: all 0.3s;
+            border: 2px solid transparent;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .role-tab.superadmin {
+            background: #eef2ff;
+            color: #4f46e5;
+        }
+
+        .role-tab.superadmin:hover, .role-tab.superadmin.active {
+            background: #4f46e5;
+            color: white;
+        }
+
+        .role-tab.educator {
+            background: #dbeafe;
+            color: #3b82f6;
+        }
+
+        .role-tab.educator:hover, .role-tab.educator.active {
+            background: #3b82f6;
+            color: white;
+        }
+
+        .role-tab.trainer {
+            background: #ecfdf5;
+            color: #10b981;
+        }
+
+        .role-tab.trainer:hover, .role-tab.trainer.active {
+            background: #10b981;
+            color: white;
+        }
+
+        .role-tab.student {
+            background: #fff7ed;
+            color: #f59e0b;
+        }
+
+        .role-tab.student:hover, .role-tab.student.active {
+            background: #f59e0b;
+            color: white;
+        }
+
+        .role-tab.all {
+            background: #f1f5f9;
+            color: #64748b;
+        }
+
+        .role-tab.all:hover, .role-tab.all.active {
+            background: #64748b;
+            color: white;
+        }
+
+        /* Filter Section */
+        .filter-section {
+            background: white;
+            border-radius: 16px;
+            padding: 1.5rem;
+            margin-bottom: 2rem;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+            border: 1px solid #e2e8f0;
+        }
+
+        .filter-title {
+            font-size: 1.125rem;
+            font-weight: 600;
+            margin-bottom: 1rem;
+            color: #1e293b;
+        }
+
+        .filter-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 1rem;
+        }
+
+        .filter-input {
+            padding: 0.75rem 1rem;
+            border: 1px solid #e2e8f0;
+            border-radius: 10px;
+            font-size: 0.875rem;
+            transition: all 0.2s;
+        }
+
+        .filter-input:focus {
+            outline: none;
+            border-color: #667eea;
+            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+        }
+
+        .filter-button {
+            padding: 0.75rem 1.5rem;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            border-radius: 10px;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .filter-button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 20px rgba(102, 126, 234, 0.3);
+        }
+
+        /* Active Filter Badge */
+        .active-filter {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            padding: 0.5rem 1rem;
+            background: #f1f5f9;
+            border-radius: 50px;
+            font-size: 0.875rem;
+            margin-right: 0.5rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .active-filter .remove {
+            cursor: pointer;
+            color: #ef4444;
+        }
+
+        .active-filter .remove:hover {
+            color: #dc2626;
+        }
+
+        /* Charts Section */
+        .charts-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(400px, 1fr));
+            gap: 1.5rem;
+            margin-bottom: 2rem;
+        }
+
+        .chart-card {
+            background: white;
+            border-radius: 16px;
+            padding: 1.5rem;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+            border: 1px solid #e2e8f0;
+        }
+
+        .chart-title {
+            font-size: 1rem;
+            font-weight: 600;
+            color: #64748b;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            margin-bottom: 1rem;
+        }
+
+        .chart-container {
+            position: relative;
+            height: 250px;
+            width: 100%;
+        }
+
+        /* Timeline Section */
+        .timeline-section {
+            background: white;
+            border-radius: 16px;
+            padding: 1.5rem;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+            border: 1px solid #e2e8f0;
+            margin-bottom: 2rem;
+        }
+
+        .timeline-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1.5rem;
+        }
+
+        .timeline-title {
+            font-size: 1.25rem;
+            font-weight: 600;
+            color: #1e293b;
+        }
+
+        .timeline-export {
+            padding: 0.5rem 1rem;
+            background: #10b981;
+            color: white;
+            border: none;
+            border-radius: 8px;
+            font-size: 0.875rem;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .timeline-export:hover {
+            background: #059669;
+            transform: translateY(-2px);
+        }
+
+        /* Table Styles */
+        .table-responsive {
+            overflow-x: auto;
+        }
+
+        .logs-table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        .logs-table th {
+            text-align: left;
+            padding: 1rem;
+            background: #f8fafc;
+            color: #64748b;
+            font-weight: 600;
+            font-size: 0.875rem;
+            border-bottom: 2px solid #e2e8f0;
+        }
+
+        .logs-table td {
+            padding: 1rem;
+            border-bottom: 1px solid #e2e8f0;
+            color: #334155;
+            font-size: 0.875rem;
+        }
+
+        .logs-table tr:hover {
+            background: #f8fafc;
+        }
+
+        /* User Info Badge */
+        .user-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            padding: 0.25rem 0.75rem;
+            background: #eef2ff;
+            border-radius: 20px;
+            color: #4f46e5;
+            font-weight: 500;
+        }
+
+        .user-badge i {
+            font-size: 0.875rem;
+        }
+
+        /* Status Badges */
+        .status-badge {
+            display: inline-block;
+            padding: 0.25rem 0.75rem;
+            border-radius: 20px;
+            font-size: 0.75rem;
+            font-weight: 600;
+        }
+
+        .status-login {
+            background: #ecfdf5;
+            color: #10b981;
+        }
+
+        .status-logout {
+            background: #fef2f2;
+            color: #ef4444;
+        }
+
+        .status-active {
+            background: #e0f2fe;
+            color: #0284c7;
+        }
+
+        /* Device Icon */
+        .device-icon {
+            font-size: 1.25rem;
+            color: #64748b;
+        }
+
+        /* IP Address */
+        .ip-address {
+            font-family: monospace;
+            background: #f1f5f9;
+            padding: 0.25rem 0.5rem;
+            border-radius: 6px;
+            font-size: 0.75rem;
+        }
+
+        /* Duration */
+        .duration {
+            font-weight: 600;
+            color: #4f46e5;
+        }
+
+        /* Location */
+        .location {
+            display: flex;
+            align-items: center;
+            gap: 0.25rem;
+            color: #64748b;
+        }
+
+        .location i {
+            font-size: 0.75rem;
+        }
+
+        /* Pagination */
+        .pagination {
+            display: flex;
+            justify-content: flex-end;
+            align-items: center;
+            gap: 0.5rem;
+            margin-top: 1.5rem;
+        }
+
+        .page-btn {
+            width: 36px;
+            height: 36px;
+            border: 1px solid #e2e8f0;
+            background: white;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .page-btn:hover:not(:disabled) {
+            background: #667eea;
+            color: white;
+            border-color: #667eea;
+        }
+
+        .page-btn.active {
+            background: #667eea;
+            color: white;
+            border-color: #667eea;
+        }
+
+        .page-btn:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+
+        /* Loading State */
+        .loading-overlay {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(255, 255, 255, 0.9);
+            z-index: 9999;
+            justify-content: center;
+            align-items: center;
+            flex-direction: column;
+        }
+
+        .loading-spinner {
+            width: 50px;
+            height: 50px;
+            border: 4px solid #e2e8f0;
+            border-top-color: #667eea;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+            margin-bottom: 1rem;
+        }
+
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+
+        /* Empty State */
+        .empty-state {
+            text-align: center;
+            padding: 3rem;
+            color: #94a3b8;
+        }
+
+        .empty-icon {
+            font-size: 3rem;
+            margin-bottom: 1rem;
+        }
+
+        /* Toast Notification */
+        .toast-notification {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            padding: 1rem 1.5rem;
+            background: white;
+            border-radius: 10px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            z-index: 10000;
+            animation: slideIn 0.3s ease;
+        }
+
+        @keyframes slideIn {
+            from {
+                transform: translateX(100%);
+                opacity: 0;
+            }
+            to {
+                transform: translateX(0);
+                opacity: 1;
+            }
+        }
+
+        .toast-success {
+            border-left: 4px solid #10b981;
+        }
+
+        .toast-error {
+            border-left: 4px solid #ef4444;
+        }
+
+        .toast-icon {
+            font-size: 1.25rem;
+        }
+
+        .toast-success .toast-icon {
+            color: #10b981;
+        }
+
+        .toast-error .toast-icon {
+            color: #ef4444;
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .logs-container {
+                padding: 1rem;
+            }
+
+            .logs-header {
+                padding: 1.5rem;
+            }
+
+            .header-title {
+                font-size: 1.75rem;
+            }
+
+            .charts-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .filter-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Loading Overlay -->
+    <div class="loading-overlay" id="loadingOverlay">
+        <div class="loading-spinner"></div>
+        <p style="color: #667eea; font-weight: 500;">Loading logs...</p>
+    </div>
+
+    <div class="logs-container">
+        <!-- Header Section -->
+        <div class="logs-header">
+            <div class="d-flex justify-content-between align-items-start">
+                <div>
+                    <h1 class="header-title">
+                        <i class="fas fa-history me-3"></i>User Activity Logs
+                    </h1>
+                    <p class="header-subtitle">
+                        Track complete user activity - logins, logouts, sessions and more
+                    </p>
+                </div>
+                <div class="d-flex gap-2">
+                    <button class="btn btn-light" onclick="refreshLogs()">
+                        <i class="fas fa-sync-alt me-2"></i>Refresh
+                    </button>
+                    <button class="btn btn-light" onclick="exportLogs()">
+                        <i class="fas fa-download me-2"></i>Export
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Stats Cards - Click to filter by role -->
+        <div class="stats-grid">
+            <div class="stat-card" onclick="filterByRole('all')" id="statAll">
+                <div class="stat-icon blue">
+                    <i class="fas fa-users"></i>
+                </div>
+                <div class="stat-value" id="totalUsers">156</div>
+                <div class="stat-label">All Users</div>
+            </div>
+            
+            <div class="stat-card" onclick="filterByRole('SuperAdmin')" id="statSuperAdmin">
+                <div class="stat-icon superadmin">
+                    <i class="fas fa-user-shield"></i>
+                </div>
+                <div class="stat-value" id="superadminCount">25</div>
+                <div class="stat-label">SuperAdmin</div>
+            </div>
+            
+            <div class="stat-card" onclick="filterByRole('Educator')" id="statEducator">
+                <div class="stat-icon educator">
+                    <i class="fas fa-chalkboard-teacher"></i>
+                </div>
+                <div class="stat-value" id="educatorCount">35</div>
+                <div class="stat-label">Educator</div>
+            </div>
+            
+            <div class="stat-card" onclick="filterByRole('Trainer')" id="statTrainer">
+                <div class="stat-icon trainer">
+                    <i class="fas fa-dumbbell"></i>
+                </div>
+                <div class="stat-value" id="trainerCount">20</div>
+                <div class="stat-label">Trainer</div>
+            </div>
+            
+            <div class="stat-card" onclick="filterByRole('Student')" id="statStudent">
+                <div class="stat-icon student">
+                    <i class="fas fa-user-graduate"></i>
+                </div>
+                <div class="stat-value" id="studentCount">40</div>
+                <div class="stat-label">Student</div>
+            </div>
+        </div>
+
+        <!-- Role Filter Tabs -->
+        <div class="role-tabs">
+            <div class="role-tab all active" onclick="filterByRole('all')">
+                <i class="fas fa-users"></i> All Users
+            </div>
+            <div class="role-tab superadmin" onclick="filterByRole('SuperAdmin')">
+                <i class="fas fa-user-shield"></i> SuperAdmin
+            </div>
+            <div class="role-tab educator" onclick="filterByRole('Educator')">
+                <i class="fas fa-chalkboard-teacher"></i> Educator
+            </div>
+            <div class="role-tab trainer" onclick="filterByRole('Trainer')">
+                <i class="fas fa-dumbbell"></i> Trainer
+            </div>
+            <div class="role-tab student" onclick="filterByRole('Student')">
+                <i class="fas fa-user-graduate"></i> Student
+            </div>
+        </div>
+
+        <!-- Active Filters Display -->
+        <div id="activeFilters" style="margin-bottom: 1rem;">
+            <!-- Active filters will be displayed here -->
+        </div>
+
+        <!-- Filter Section -->
+        <div class="filter-section">
+            <div class="filter-title">
+                <i class="fas fa-filter me-2"></i>Filter Logs
+            </div>
+            
+            <div class="filter-grid">
+                <select class="filter-input" id="userSelect">
+                    <option value="">All Users</option>
+                    <option value="john@example.com">John Doe (SuperAdmin)</option>
+                    <option value="jane@example.com">Jane Smith (Educator)</option>
+                    <option value="mike@example.com">Mike Johnson (Trainer)</option>
+                    <option value="sarah@example.com">Sarah Wilson (Student)</option>
+                    <option value="robert@example.com">Robert Brown (Student)</option>
+                    <option value="emily@example.com">Emily Davis (Trainer)</option>
+                </select>
+                
+                <select class="filter-input" id="actionSelect">
+                    <option value="">All Actions</option>
+                    <option value="login">Login</option>
+                    <option value="logout">Logout</option>
+                    <option value="session">Session Active</option>
+                </select>
+                
+                <input type="date" class="filter-input" id="dateFrom" value="2024-01-01">
+                
+                <input type="date" class="filter-input" id="dateTo" value="2024-12-31">
+                
+                <button class="filter-button" onclick="applyFilters()">
+                    <i class="fas fa-search me-2"></i>Apply Filters
+                </button>
+                
+                <button class="btn btn-outline-secondary" onclick="resetFilters()">
+                    <i class="fas fa-undo me-2"></i>Reset
+                </button>
+            </div>
+        </div>
+
+        <!-- Charts Section -->
+        <div class="charts-grid">
+            <!-- Login Activity Chart -->
+            <div class="chart-card">
+                <div class="chart-title">
+                    <i class="fas fa-chart-line me-2"></i>Login Activity (Last 7 Days)
+                </div>
+                <div class="chart-container">
+                    <canvas id="loginChart"></canvas>
+                </div>
+            </div>
+            
+            <!-- User Activity Chart -->
+            <div class="chart-card">
+                <div class="chart-title">
+                    <i class="fas fa-chart-pie me-2"></i>User Activity Distribution
+                </div>
+                <div class="chart-container">
+                    <canvas id="activityChart"></canvas>
+                </div>
+            </div>
+        </div>
+
+        <!-- Timeline Section -->
+        <div class="timeline-section">
+            <div class="timeline-header">
+                <div class="timeline-title">
+                    <i class="fas fa-list-ul me-2 text-primary"></i>Detailed Activity Timeline
+                    <span id="activeRoleLabel" class="badge bg-primary ms-2">All Users</span>
+                </div>
+                <button class="timeline-export" onclick="exportToCSV()">
+                    <i class="fas fa-file-csv me-2"></i>Export to CSV
+                </button>
+            </div>
+
+            <!-- Logs Table -->
+            <div class="table-responsive">
+                <table class="logs-table">
+                    <thead>
+                        <tr>
+                            <th>Timestamp</th>
+                            <th>User</th>
+                            <th>Role</th>
+                            <th>Action</th>
+                            <th>IP Address</th>
+                            <th>Device/Browser</th>
+                            <th>Location</th>
+                            <th>Duration</th>
+                            <th>Status</th>
+                        </tr>
+                    </thead>
+                    <tbody id="logsTableBody">
+                        <!-- Logs will be populated here by JavaScript -->
+                    </tbody>
+                </table>
+            </div>
+
+            <!-- Pagination -->
+            <div class="pagination">
+                <button class="page-btn" onclick="changePage('prev')" id="prevPage">
+                    <i class="fas fa-chevron-left"></i>
+                </button>
+                
+                <div id="pageNumbers">
+                    <button class="page-btn active">1</button>
+                    <button class="page-btn">2</button>
+                    <button class="page-btn">3</button>
+                    <span>...</span>
+                    <button class="page-btn">10</button>
+                </div>
+                
+                <button class="page-btn" onclick="changePage('next')" id="nextPage">
+                    <i class="fas fa-chevron-right"></i>
+                </button>
+            </div>
+        </div>
+
+        <!-- Summary Card -->
+        <div class="filter-section">
+            <div class="row">
+                <div class="col-md-6">
+                    <h6 class="fw-bold mb-3">
+                        <i class="fas fa-chart-simple me-2 text-primary"></i>Session Summary
+                    </h6>
+                    <div class="d-flex gap-4">
+                        <div>
+                            <small class="text-muted">Total Sessions</small>
+                            <h4 id="totalSessions">1,234</h4>
+                        </div>
+                        <div>
+                            <small class="text-muted">Avg. Session Time</small>
+                            <h4 id="avgSessionTime">45m 30s</h4>
+                        </div>
+                        <div>
+                            <small class="text-muted">Peak Hour</small>
+                            <h4 id="peakHour">10:00 AM</h4>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="col-md-6">
+                    <h6 class="fw-bold mb-3">
+                        <i class="fas fa-globe me-2 text-primary"></i>Geographic Distribution
+                    </h6>
+                    <div class="d-flex flex-wrap gap-3">
+                        <span class="badge bg-light text-dark p-2">
+                            🇮🇳 India: 45%
+                        </span>
+                        <span class="badge bg-light text-dark p-2">
+                            🇺🇸 USA: 25%
+                        </span>
+                        <span class="badge bg-light text-dark p-2">
+                            🇬🇧 UK: 15%
+                        </span>
+                        <span class="badge bg-light text-dark p-2">
+                            🇨🇦 Canada: 10%
+                        </span>
+                        <span class="badge bg-light text-dark p-2">
+                            🇦🇺 Australia: 5%
+                        </span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Toast Notification -->
+    <div id="toast" style="display: none;"></div>
+
+    <script>
+        // ============================================
+        // USER LOGS PAGE - ROLE-BASED FILTERING
+        // ============================================
+
+        // Sample data for demo
+        const sampleLogs = [
+            {
+                id: 1,
+                timestamp: '2024-02-24 09:15:23',
+                user: 'John Doe',
+                email: 'john@example.com',
+                role: 'SuperAdmin',
+                action: 'login',
+                ip: '192.168.1.105',
+                device: 'Chrome 121 / Windows 11',
+                location: 'Mumbai, India',
+                duration: '2h 15m',
+                status: 'active'
+            },
+            {
+                id: 2,
+                timestamp: '2024-02-24 10:30:45',
+                user: 'Jane Smith',
+                email: 'jane@example.com',
+                role: 'Educator',
+                action: 'login',
+                ip: '203.45.67.89',
+                device: 'Safari / macOS',
+                location: 'Delhi, India',
+                duration: '1h 30m',
+                status: 'active'
+            },
+            {
+                id: 3,
+                timestamp: '2024-02-24 08:45:12',
+                user: 'Mike Johnson',
+                email: 'mike@example.com',
+                role: 'Trainer',
+                action: 'logout',
+                ip: '156.34.21.78',
+                device: 'Firefox / Ubuntu',
+                location: 'Bangalore, India',
+                duration: '3h 20m',
+                status: 'completed'
+            },
+            {
+                id: 4,
+                timestamp: '2024-02-23 22:15:33',
+                user: 'Sarah Wilson',
+                email: 'sarah@example.com',
+                role: 'Student',
+                action: 'login',
+                ip: '45.67.89.123',
+                device: 'Chrome / Android',
+                location: 'Pune, India',
+                duration: '45m',
+                status: 'active'
+            },
+            {
+                id: 5,
+                timestamp: '2024-02-23 18:30:00',
+                user: 'John Doe',
+                email: 'john@example.com',
+                role: 'SuperAdmin',
+                action: 'logout',
+                ip: '192.168.1.105',
+                device: 'Chrome / Windows',
+                location: 'Mumbai, India',
+                duration: '4h 15m',
+                status: 'completed'
+            },
+            {
+                id: 6,
+                timestamp: '2024-02-23 15:20:10',
+                user: 'Jane Smith',
+                email: 'jane@example.com',
+                role: 'Educator',
+                action: 'login',
+                ip: '203.45.67.89',
+                device: 'Edge / Windows',
+                location: 'Delhi, India',
+                duration: '2h 10m',
+                status: 'active'
+            },
+            {
+                id: 7,
+                timestamp: '2024-02-23 11:05:45',
+                user: 'Robert Brown',
+                email: 'robert@example.com',
+                role: 'Student',
+                action: 'login',
+                ip: '67.89.123.45',
+                device: 'Firefox / Android',
+                location: 'Chennai, India',
+                duration: '1h 15m',
+                status: 'active'
+            },
+            {
+                id: 8,
+                timestamp: '2024-02-23 09:30:22',
+                user: 'Emily Davis',
+                email: 'emily@example.com',
+                role: 'Trainer',
+                action: 'login',
+                ip: '89.123.45.67',
+                device: 'Chrome / macOS',
+                location: 'Hyderabad, India',
+                duration: '3h 45m',
+                status: 'active'
+            },
+            {
+                id: 9,
+                timestamp: '2024-02-22 20:45:00',
+                user: 'Mike Johnson',
+                email: 'mike@example.com',
+                role: 'Trainer',
+                action: 'logout',
+                ip: '156.34.21.78',
+                device: 'Firefox / Ubuntu',
+                location: 'Bangalore, India',
+                duration: '5h 30m',
+                status: 'completed'
+            },
+            {
+                id: 10,
+                timestamp: '2024-02-22 16:10:15',
+                user: 'Sarah Wilson',
+                email: 'sarah@example.com',
+                role: 'Student',
+                action: 'logout',
+                ip: '45.67.89.123',
+                device: 'Chrome / Android',
+                location: 'Pune, India',
+                duration: '2h 25m',
+                status: 'completed'
+            },
+            {
+                id: 11,
+                timestamp: '2024-02-22 14:30:00',
+                user: 'John Doe',
+                email: 'john@example.com',
+                role: 'SuperAdmin',
+                action: 'login',
+                ip: '192.168.1.105',
+                device: 'Chrome / Windows',
+                location: 'Mumbai, India',
+                duration: '1h 40m',
+                status: 'active'
+            },
+            {
+                id: 12,
+                timestamp: '2024-02-22 10:00:00',
+                user: 'Jane Smith',
+                email: 'jane@example.com',
+                role: 'Educator',
+                action: 'logout',
+                ip: '203.45.67.89',
+                device: 'Safari / macOS',
+                location: 'Delhi, India',
+                duration: '3h 15m',
+                status: 'completed'
+            },
+            {
+                id: 13,
+                timestamp: '2024-02-21 16:30:00',
+                user: 'Emily Davis',
+                email: 'emily@example.com',
+                role: 'Trainer',
+                action: 'logout',
+                ip: '89.123.45.67',
+                device: 'Chrome / macOS',
+                location: 'Hyderabad, India',
+                duration: '2h 30m',
+                status: 'completed'
+            },
+            {
+                id: 14,
+                timestamp: '2024-02-21 14:00:00',
+                user: 'Robert Brown',
+                email: 'robert@example.com',
+                role: 'Student',
+                action: 'logout',
+                ip: '67.89.123.45',
+                device: 'Firefox / Android',
+                location: 'Chennai, India',
+                duration: '1h 45m',
+                status: 'completed'
+            },
+            {
+                id: 15,
+                timestamp: '2024-02-21 11:30:00',
+                user: 'Mike Johnson',
+                email: 'mike@example.com',
+                role: 'Trainer',
+                action: 'login',
+                ip: '156.34.21.78',
+                device: 'Firefox / Ubuntu',
+                location: 'Bangalore, India',
+                duration: '4h 15m',
+                status: 'active'
+            }
+        ];
+
+        // State
+        let currentLogs = [...sampleLogs];
+        let currentPage = 1;
+        let currentRoleFilter = 'all';
+        const rowsPerPage = 5;
+        let charts = {};
+
+        // Initialize on page load
+        document.addEventListener('DOMContentLoaded', function() {
+            console.log('🚀 User Logs page initializing...');
+            initializeCharts();
+            updateRoleCounts();
+            renderTable();
+            updateStats();
+            showToast('Logs loaded successfully!', 'success');
+        });
+
+        // Initialize Charts
+        function initializeCharts() {
+            // Login Activity Chart (Line Chart)
+            const loginCtx = document.getElementById('loginChart').getContext('2d');
+            charts.login = new Chart(loginCtx, {
+                type: 'line',
+                data: {
+                    labels: ['Day 1', 'Day 2', 'Day 3', 'Day 4', 'Day 5', 'Day 6', 'Today'],
+                    datasets: [{
+                        label: 'Logins',
+                        data: [12, 19, 15, 17, 24, 22, 24],
+                        borderColor: '#667eea',
+                        backgroundColor: 'rgba(102, 126, 234, 0.1)',
+                        tension: 0.4,
+                        fill: true
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: {
+                            display: false
+                        }
+                    }
+                }
+            });
+
+            // Activity Distribution Chart (Pie Chart)
+            const activityCtx = document.getElementById('activityChart').getContext('2d');
+            charts.activity = new Chart(activityCtx, {
+                type: 'doughnut',
+                data: {
+                    labels: ['SuperAdmin', 'Educator', 'Trainer', 'Student'],
+                    datasets: [{
+                        data: [25, 35, 20, 40],
+                        backgroundColor: ['#4f46e5', '#3b82f6', '#10b981', '#f59e0b'],
+                        borderWidth: 0
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    cutout: '60%',
+                    plugins: {
+                        legend: {
+                            position: 'bottom'
+                        }
+                    }
+                }
+            });
+        }
+
+        // Update role counts
+        function updateRoleCounts() {
+            const superadminCount = sampleLogs.filter(log => log.role === 'SuperAdmin').length;
+            const educatorCount = sampleLogs.filter(log => log.role === 'Educator').length;
+            const trainerCount = sampleLogs.filter(log => log.role === 'Trainer').length;
+            const studentCount = sampleLogs.filter(log => log.role === 'Student').length;
+            
+            document.getElementById('superadminCount').textContent = superadminCount;
+            document.getElementById('educatorCount').textContent = educatorCount;
+            document.getElementById('trainerCount').textContent = trainerCount;
+            document.getElementById('studentCount').textContent = studentCount;
+            document.getElementById('totalUsers').textContent = sampleLogs.length;
+        }
+
+        // Filter by role
+        function filterByRole(role) {
+            currentRoleFilter = role;
+            currentPage = 1;
+            
+            // Update active class on stat cards
+            document.querySelectorAll('.stat-card').forEach(card => {
+                card.classList.remove('active');
+            });
+            document.getElementById(`stat${role === 'all' ? 'All' : role}`).classList.add('active');
+            
+            // Update role tabs
+            document.querySelectorAll('.role-tab').forEach(tab => {
+                tab.classList.remove('active');
+            });
+            if (role === 'all') {
+                document.querySelector('.role-tab.all').classList.add('active');
+            } else {
+                document.querySelector(`.role-tab.${role.toLowerCase()}`).classList.add('active');
+            }
+            
+            // Update active role label
+            const roleLabel = document.getElementById('activeRoleLabel');
+            if (role === 'all') {
+                roleLabel.textContent = 'All Users';
+                roleLabel.className = 'badge bg-primary ms-2';
+            } else {
+                roleLabel.textContent = role;
+                roleLabel.className = `badge ms-2 bg-${getRoleColorClass(role)}`;
+            }
+            
+            // Filter logs
+            if (role === 'all') {
+                currentLogs = [...sampleLogs];
+            } else {
+                currentLogs = sampleLogs.filter(log => log.role === role);
+            }
+            
+            renderTable();
+            showToast(`Showing ${role === 'all' ? 'all users' : role} logs`, 'success');
+        }
+
+        // Get role color class
+        function getRoleColorClass(role) {
+            switch(role) {
+                case 'SuperAdmin': return 'primary';
+                case 'Educator': return 'info';
+                case 'Trainer': return 'success';
+                case 'Student': return 'warning';
+                default: return 'secondary';
+            }
+        }
+
+        // Render Table
+        function renderTable() {
+            const tbody = document.getElementById('logsTableBody');
+            const start = (currentPage - 1) * rowsPerPage;
+            const end = start + rowsPerPage;
+            const pageLogs = currentLogs.slice(start, end);
+
+            if (pageLogs.length === 0) {
+                tbody.innerHTML = `
+                    <tr>
+                        <td colspan="9" class="empty-state">
+                            <i class="fas fa-history empty-icon"></i>
+                            <p>No logs found for ${currentRoleFilter === 'all' ? 'any user' : currentRoleFilter}</p>
+                        </td>
+                    </tr>
+                `;
+                return;
+            }
+
+            let html = '';
+            pageLogs.forEach(log => {
+                const actionIcon = log.action === 'login' ? 'fa-sign-in-alt' : 
+                                 log.action === 'logout' ? 'fa-sign-out-alt' : 'fa-clock';
+                
+                const statusClass = log.status === 'active' ? 'status-active' : 
+                                   log.status === 'completed' ? 'status-logout' : 'status-login';
+                
+                const statusText = log.status === 'active' ? 'Active Session' :
+                                  log.status === 'completed' ? 'Completed' : 'Logged In';
+
+                html += `
+                    <tr>
+                        <td>
+                            <div class="fw-semibold">${moment(log.timestamp).format('MMM DD, YYYY')}</div>
+                            <small class="text-muted">${moment(log.timestamp).format('hh:mm:ss A')}</small>
+                        </td>
+                        <td>
+                            <div class="d-flex align-items-center gap-2">
+                                <div class="user-badge">
+                                    <i class="fas fa-user-circle"></i>
+                                    ${log.user}
+                                </div>
+                                <div>
+                                    <small class="text-muted">${log.email}</small>
+                                </div>
+                            </div>
+                        </td>
+                        <td>
+                            <span class="badge" style="background: ${getRoleColor(log.role)}; color: white;">
+                                ${log.role}
+                            </span>
+                        </td>
+                        <td>
+                            <span class="status-badge ${log.action === 'login' ? 'status-login' : 'status-logout'}">
+                                <i class="fas ${actionIcon} me-1"></i>
+                                ${log.action === 'login' ? 'Login' : log.action === 'logout' ? 'Logout' : 'Session'}
+                            </span>
+                        </td>
+                        <td>
+                            <span class="ip-address">
+                                <i class="fas fa-network-wired me-1"></i>${log.ip}
+                            </span>
+                        </td>
+                        <td>
+                            <div class="d-flex align-items-center gap-2">
+                                <i class="fas ${getDeviceIcon(log.device)} device-icon"></i>
+                                <span>${log.device}</span>
+                            </div>
+                        </td>
+                        <td>
+                            <div class="location">
+                                <i class="fas fa-map-marker-alt"></i>
+                                ${log.location}
+                            </div>
+                        </td>
+                        <td>
+                            <span class="duration">
+                                <i class="fas fa-hourglass-half me-1"></i>${log.duration}
+                            </span>
+                        </td>
+                        <td>
+                            <span class="status-badge ${statusClass}">
+                                <i class="fas ${log.status === 'active' ? 'fa-circle' : 'fa-check-circle'} me-1"></i>
+                                ${statusText}
+                            </span>
+                        </td>
+                    </tr>
+                `;
+            });
+
+            tbody.innerHTML = html;
+            renderPagination();
+        }
+
+        // Get role color
+        function getRoleColor(role) {
+            switch(role) {
+                case 'SuperAdmin': return '#4f46e5';
+                case 'Educator': return '#3b82f6';
+                case 'Trainer': return '#10b981';
+                case 'Student': return '#f59e0b';
+                default: return '#6b7280';
+            }
+        }
+
+        // Get device icon
+        function getDeviceIcon(device) {
+            if (device.includes('Windows')) return 'fa-windows';
+            if (device.includes('macOS')) return 'fa-apple';
+            if (device.includes('Linux') || device.includes('Ubuntu')) return 'fa-linux';
+            if (device.includes('Android')) return 'fa-android';
+            if (device.includes('iOS') || device.includes('iPhone')) return 'fa-apple';
+            return 'fa-desktop';
+        }
+
+        // Render Pagination
+        function renderPagination() {
+            const totalPages = Math.ceil(currentLogs.length / rowsPerPage);
+            const pageNumbers = document.getElementById('pageNumbers');
+            
+            if (totalPages <= 1) {
+                document.querySelector('.pagination').style.display = 'none';
+                return;
+            }
+            
+            document.querySelector('.pagination').style.display = 'flex';
+            
+            let html = '';
+            
+            if (totalPages <= 5) {
+                for (let i = 1; i <= totalPages; i++) {
+                    html += `<button class="page-btn ${currentPage === i ? 'active' : ''}" onclick="goToPage(${i})">${i}</button>`;
+                }
+            } else {
+                if (currentPage <= 3) {
+                    for (let i = 1; i <= 4; i++) {
+                        html += `<button class="page-btn ${currentPage === i ? 'active' : ''}" onclick="goToPage(${i})">${i}</button>`;
+                    }
+                    html += `<span>...</span>`;
+                    html += `<button class="page-btn" onclick="goToPage(${totalPages})">${totalPages}</button>`;
+                } else if (currentPage >= totalPages - 2) {
+                    html += `<button class="page-btn" onclick="goToPage(1)">1</button>`;
+                    html += `<span>...</span>`;
+                    for (let i = totalPages - 3; i <= totalPages; i++) {
+                        html += `<button class="page-btn ${currentPage === i ? 'active' : ''}" onclick="goToPage(${i})">${i}</button>`;
+                    }
+                } else {
+                    html += `<button class="page-btn" onclick="goToPage(1)">1</button>`;
+                    html += `<span>...</span>`;
+                    for (let i = currentPage - 1; i <= currentPage + 1; i++) {
+                        html += `<button class="page-btn ${currentPage === i ? 'active' : ''}" onclick="goToPage(${i})">${i}</button>`;
+                    }
+                    html += `<span>...</span>`;
+                    html += `<button class="page-btn" onclick="goToPage(${totalPages})">${totalPages}</button>`;
+                }
+            }
+            
+            pageNumbers.innerHTML = html;
+            
+            document.getElementById('prevPage').disabled = currentPage === 1;
+            document.getElementById('nextPage').disabled = currentPage === totalPages;
+        }
+
+        // Page navigation
+        function goToPage(page) {
+            currentPage = page;
+            renderTable();
+        }
+
+        function changePage(direction) {
+            if (direction === 'prev' && currentPage > 1) {
+                currentPage--;
+            } else if (direction === 'next' && currentPage < Math.ceil(currentLogs.length / rowsPerPage)) {
+                currentPage++;
+            }
+            renderTable();
+        }
+
+        // Update stats
+        function updateStats() {
+            document.getElementById('totalSessions').textContent = '1,234';
+            document.getElementById('avgSessionTime').textContent = '45m 30s';
+            document.getElementById('peakHour').textContent = '10:00 AM';
+        }
+
+        // Apply filters
+        function applyFilters() {
+            showLoading();
+            
+            const user = document.getElementById('userSelect').value;
+            const action = document.getElementById('actionSelect').value;
+            const dateFrom = document.getElementById('dateFrom').value;
+            const dateTo = document.getElementById('dateTo').value;
+            
+            // Start with role-filtered logs
+            let filtered = currentRoleFilter === 'all' ? [...sampleLogs] : 
+                          sampleLogs.filter(log => log.role === currentRoleFilter);
+            
+            // Apply additional filters
+            filtered = filtered.filter(log => {
+                if (user && !log.email.includes(user)) return false;
+                if (action && log.action !== action) return false;
+                
+                const logDate = moment(log.timestamp).format('YYYY-MM-DD');
+                if (dateFrom && logDate < dateFrom) return false;
+                if (dateTo && logDate > dateTo) return false;
+                
+                return true;
+            });
+            
+            currentLogs = filtered;
+            currentPage = 1;
+            renderTable();
+            
+            setTimeout(hideLoading, 500);
+            
+            // Show active filters
+            showActiveFilters(user, action, dateFrom, dateTo);
+            
+            showToast(`Found ${filtered.length} logs`, 'success');
+        }
+
+        // Show active filters
+        function showActiveFilters(user, action, dateFrom, dateTo) {
+            const container = document.getElementById('activeFilters');
+            let html = '';
+            
+            if (currentRoleFilter !== 'all') {
+                html += `
+                    <span class="active-filter">
+                        <i class="fas fa-user-tag"></i> Role: ${currentRoleFilter}
+                        <span class="remove" onclick="filterByRole('all')">&times;</span>
+                    </span>
+                `;
+            }
+            
+            if (user) {
+                const userName = user.split('@')[0];
+                html += `
+                    <span class="active-filter">
+                        <i class="fas fa-user"></i> User: ${userName}
+                        <span class="remove" onclick="document.getElementById('userSelect').value=''; applyFilters();">&times;</span>
+                    </span>
+                `;
+            }
+            
+            if (action) {
+                html += `
+                    <span class="active-filter">
+                        <i class="fas fa-${action === 'login' ? 'sign-in-alt' : action === 'logout' ? 'sign-out-alt' : 'clock'}"></i> 
+                        Action: ${action}
+                        <span class="remove" onclick="document.getElementById('actionSelect').value=''; applyFilters();">&times;</span>
+                    </span>
+                `;
+            }
+            
+            if (dateFrom && dateFrom !== '2024-01-01') {
+                html += `
+                    <span class="active-filter">
+                        <i class="fas fa-calendar"></i> From: ${dateFrom}
+                        <span class="remove" onclick="document.getElementById('dateFrom').value='2024-01-01'; applyFilters();">&times;</span>
+                    </span>
+                `;
+            }
+            
+            if (dateTo && dateTo !== '2024-12-31') {
+                html += `
+                    <span class="active-filter">
+                        <i class="fas fa-calendar"></i> To: ${dateTo}
+                        <span class="remove" onclick="document.getElementById('dateTo').value='2024-12-31'; applyFilters();">&times;</span>
+                    </span>
+                `;
+            }
+            
+            container.innerHTML = html;
+        }
+
+        // Reset filters
+        function resetFilters() {
+            document.getElementById('userSelect').value = '';
+            document.getElementById('actionSelect').value = '';
+            document.getElementById('dateFrom').value = '2024-01-01';
+            document.getElementById('dateTo').value = '2024-12-31';
+            document.getElementById('activeFilters').innerHTML = '';
+            
+            filterByRole('all');
+        }
+
+        // Refresh logs
+        function refreshLogs() {
+            showLoading();
+            
+            setTimeout(() => {
+                filterByRole(currentRoleFilter);
+                hideLoading();
+                showToast('Logs refreshed!', 'success');
+            }, 1000);
+        }
+
+        // Export to CSV
+        function exportToCSV() {
+            const headers = ['Timestamp', 'User', 'Email', 'Role', 'Action', 'IP Address', 'Device', 'Location', 'Duration', 'Status'];
+            
+            const rows = currentLogs.map(log => [
+                log.timestamp,
+                log.user,
+                log.email,
+                log.role,
+                log.action,
+                log.ip,
+                log.device,
+                log.location,
+                log.duration,
+                log.status
+            ]);
+            
+            let csvContent = headers.join(',') + '\n' + 
+                rows.map(row => row.map(cell => `"${cell}"`).join(',')).join('\n');
+            
+            const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+            const url = URL.createObjectURL(blob);
+            const link = document.createElement('a');
+            link.href = url;
+            link.setAttribute('download', `user_logs_${currentRoleFilter}_${moment().format('YYYY-MM-DD')}.csv`);
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
+            
+            showToast('CSV exported successfully!', 'success');
+        }
+
+        // Export logs
+        function exportLogs() {
+            exportToCSV();
+        }
+
+        // Loading functions
+        function showLoading() {
+            document.getElementById('loadingOverlay').style.display = 'flex';
+        }
+
+        function hideLoading() {
+            document.getElementById('loadingOverlay').style.display = 'none';
+        }
+
+        // Toast notification
+        function showToast(message, type = 'success') {
+            const toast = document.getElementById('toast');
+            
+            toast.style.display = 'block';
+            toast.className = `toast-notification toast-${type}`;
+            toast.innerHTML = `
+                <div class="toast-icon">
+                    <i class="fas fa-${type === 'success' ? 'check-circle' : 'exclamation-circle'}"></i>
+                </div>
+                <div>
+                    <div class="fw-semibold">${type === 'success' ? 'Success' : 'Info'}</div>
+                    <small>${message}</small>
+                </div>
+            `;
+            
+            setTimeout(() => {
+                toast.style.display = 'none';
+            }, 3000);
+        }
+
+        // Auto-refresh every 30 seconds (demo)
+        setInterval(() => {
+            console.log('🔄 Auto-refreshing logs...');
+            // In real app, you would fetch new data here
+        }, 30000);
+    </script>
+</body>
+</html>

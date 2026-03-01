@@ -4,31 +4,88 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Contact Groups - WhatsApp Manager</title>
+    
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Font Awesome -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
     <style>
+        /* RESET */
         * {
             margin: 0;
             padding: 0;
             box-sizing: border-box;
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
         }
 
         body {
-            background: #f5f7fa;
-            min-height: 100vh;
+            overflow-x: hidden;
+            background: #f3f4f6;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
         }
 
-        .container {
-            max-width: 1400px;
-            margin: 0 auto;
+        /* HEADER FIXED */
+        .header-wrapper {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            z-index: 1030;
+            background: white;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+        }
+
+        /* MAIN LAYOUT */
+        .main-wrapper {
+            margin-top: 70px;
+            display: flex;
+            width: 100%;
+            min-height: calc(100vh - 70px);
+        }
+
+        /* SIDEBAR WRAPPER */
+        .sidebar-wrapper {
+            width: 280px;
+            flex-shrink: 0;
+            position: fixed;
+            left: 0;
+            top: 70px;
+            bottom: 0;
+            z-index: 1020;
+            transition: width 0.3s ease;
+        }
+
+        .sidebar-wrapper.collapsed {
+            width: 80px;
+        }
+
+        /* CONTENT WRAPPER */
+        .content-wrapper {
+            flex: 1;
+            margin-left: 280px;
             padding: 20px;
+            transition: margin-left 0.3s ease;
+            background: #f3f4f6;
+            min-height: calc(100vh - 70px);
         }
 
-        /* Header */
+        .sidebar-wrapper.collapsed + .content-wrapper {
+            margin-left: 80px;
+        }
+
+        /* MAIN CONTENT CARD */
+        .main-content-card {
+            background: white;
+            border-radius: 12px;
+            padding: 24px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+        }
+
+        /* Page Header */
         .page-header {
             background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
             color: white;
-            padding: 30px;
+            padding: 25px 30px;
             border-radius: 15px;
             margin-bottom: 30px;
             box-shadow: 0 5px 20px rgba(102, 126, 234, 0.3);
@@ -38,16 +95,17 @@
         }
 
         .page-header h1 {
-            font-size: 32px;
-            margin-bottom: 10px;
+            font-size: 28px;
+            margin: 0;
             display: flex;
             align-items: center;
             gap: 15px;
         }
 
         .page-header p {
+            margin: 5px 0 0;
             opacity: 0.9;
-            font-size: 16px;
+            font-size: 14px;
         }
 
         .user-info {
@@ -57,13 +115,6 @@
             display: flex;
             align-items: center;
             gap: 10px;
-        }
-
-        /* Main Content */
-        .main-content {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 30px;
         }
 
         /* Cards */
@@ -84,8 +135,9 @@
         }
 
         .card-header h2 {
-            font-size: 20px;
+            font-size: 18px;
             color: #1f2937;
+            margin: 0;
             display: flex;
             align-items: center;
             gap: 10px;
@@ -128,7 +180,7 @@
         }
 
         /* Contacts List */
-        .contacts-list {
+        .contacts-list, .group-contacts-list {
             max-height: 400px;
             overflow-y: auto;
             border: 1px solid #e5e7eb;
@@ -141,6 +193,7 @@
             padding: 12px 15px;
             border-bottom: 1px solid #f3f4f6;
             transition: background 0.3s;
+            cursor: pointer;
         }
 
         .contact-item:hover {
@@ -163,23 +216,38 @@
             width: 40px;
             height: 40px;
             border-radius: 50%;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            background: linear-gradient(135deg, #25D366 0%, #128C7E 100%);
             color: white;
             display: flex;
             align-items: center;
             justify-content: center;
             font-weight: 600;
             margin-right: 15px;
+            flex-shrink: 0;
         }
 
         .contact-info {
             flex: 1;
+            min-width: 0;
         }
 
         .contact-name {
             font-weight: 600;
             color: #1f2937;
             margin-bottom: 3px;
+            display: flex;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 5px;
+        }
+
+        .contact-number {
+            font-size: 14px;
+            color: #25D366;
+            display: flex;
+            align-items: center;
+            gap: 5px;
+            flex-wrap: wrap;
         }
 
         .contact-phone {
@@ -187,7 +255,11 @@
             color: #6b7280;
             display: flex;
             align-items: center;
-            gap: 5px;
+            gap: 8px;
+            flex-wrap: wrap;
+            margin-top: 2px;
+            text-decoration: line-through;
+            opacity: 0.6;
         }
 
         .contact-status {
@@ -196,7 +268,6 @@
             border-radius: 12px;
             font-size: 11px;
             font-weight: 600;
-            margin-left: 10px;
         }
 
         .status-active {
@@ -226,6 +297,21 @@
             color: #6b7280;
         }
 
+        .whatsapp-badge {
+            background: #25D366;
+            color: white;
+            padding: 2px 8px;
+            border-radius: 12px;
+            font-size: 11px;
+            font-weight: 600;
+            margin-left: 5px;
+        }
+
+        .no-whatsapp {
+            opacity: 0.5;
+            background: #f3f4f6;
+        }
+
         /* Selected Contacts */
         .selected-contacts {
             background: #f9fafb;
@@ -244,6 +330,7 @@
         .selected-header h3 {
             font-size: 16px;
             color: #1f2937;
+            margin: 0;
         }
 
         .selected-count {
@@ -263,13 +350,14 @@
 
         .selected-tag {
             background: white;
-            border: 1px solid #e5e7eb;
+            border: 1px solid #25D366;
             border-radius: 20px;
             padding: 5px 12px;
             display: flex;
             align-items: center;
             gap: 8px;
             font-size: 13px;
+            color: #25D366;
         }
 
         .selected-tag i {
@@ -311,12 +399,12 @@
 
         .form-group textarea {
             resize: vertical;
-            min-height: 100px;
+            min-height: 80px;
         }
 
         /* Buttons */
         .btn {
-            padding: 12px 24px;
+            padding: 10px 20px;
             border: none;
             border-radius: 8px;
             font-size: 14px;
@@ -340,18 +428,34 @@
             color: #6b7280;
         }
 
+        .btn-secondary:hover {
+            background: #e5e7eb;
+        }
+
         .btn-sm {
-            padding: 8px 16px;
+            padding: 6px 12px;
             font-size: 13px;
         }
 
-        .btn-success {
-            background: #10b981;
+        .btn-danger {
+            background: #ef4444;
             color: white;
         }
 
-        .btn-success:hover {
-            background: #059669;
+        .btn-danger:hover {
+            background: #dc2626;
+        }
+
+        .btn-outline-secondary {
+            background: transparent;
+            border: 2px solid #6c757d;
+            color: #6c757d;
+            padding: 8px 16px;
+        }
+
+        .btn-outline-secondary:hover {
+            background: #6c757d;
+            color: white;
         }
 
         /* Groups List */
@@ -366,11 +470,13 @@
             border-radius: 8px;
             margin-bottom: 10px;
             transition: all 0.3s;
+            cursor: pointer;
         }
 
         .group-item:hover {
             border-color: #667eea;
             box-shadow: 0 2px 10px rgba(102, 126, 234, 0.1);
+            transform: translateY(-2px);
         }
 
         .group-header {
@@ -428,64 +534,234 @@
             transition: all 0.2s;
         }
 
-        .group-actions .use-btn {
+        .group-actions .view-btn {
             background: #667eea;
             color: white;
         }
 
-        .group-actions .use-btn:hover {
+        .group-actions .view-btn:hover {
             background: #5a67d8;
         }
 
-        /* Toast */
-        .toast {
+        .group-actions .delete-btn {
+            background: #ef4444;
+            color: white;
+        }
+
+        .group-actions .delete-btn:hover {
+            background: #dc2626;
+        }
+
+        /* MODERN TOAST STYLES */
+        #toast {
             position: fixed;
-            bottom: 20px;
-            right: 20px;
-            background: white;
-            padding: 15px 25px;
-            border-radius: 8px;
-            box-shadow: 0 5px 20px rgba(0,0,0,0.2);
+            top: 24px;
+            right: 24px;
+            width: 320px;
+            padding: 14px 16px;
+            border-radius: 12px;
+            box-shadow: 0 15px 30px rgba(0,0,0,.2);
+            opacity: 0;
+            transform: translateY(-15px);
+            transition: .3s ease;
+            color: #fff;
+            z-index: 9999;
+        }
+
+        #toast.show {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        .toast-row {
+            display: flex;
+            gap: 12px;
+            align-items: flex-start;
+        }
+
+        .toast-icon {
+            width: 34px;
+            height: 34px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 16px;
+            background: rgba(0,0,0,.25);
+        }
+
+        .toast-text h4 {
+            margin: 0;
+            font-size: 14px;
+            font-weight: 600;
+        }
+
+        .toast-text p {
+            margin: 4px 0 0;
+            font-size: 13px;
+            opacity: .9;
+        }
+
+        .toast-success { background: #16a34a; }
+        .toast-error { background: #dc2626; }
+        .toast-info { background: #2563eb; }
+        .toast-warning { background: #facc15; color: #1f2937; }
+
+        .toast-progress {
+            height: 3px;
+            border-radius: 4px;
+            margin-top: 10px;
+            background: rgba(255,255,255,.6);
+            animation: toast-load 3s linear forwards;
+        }
+
+        @keyframes toast-load {
+            from { width: 100%; }
+            to { width: 0%; }
+        }
+
+        /* Delete Confirmation Modal */
+        .delete-modal {
             display: none;
+            position: fixed;
+            z-index: 2000;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0,0,0,0.5);
+            animation: fadeIn 0.3s ease;
+        }
+
+        .delete-modal-content {
+            background-color: white;
+            margin: 200px auto;
+            padding: 0;
+            width: 90%;
+            max-width: 400px;
+            border-radius: 15px;
+            box-shadow: 0 5px 30px rgba(0,0,0,0.3);
+            animation: slideDown 0.3s ease;
+            overflow: hidden;
+        }
+
+        .delete-modal-header {
+            padding: 20px;
+            background: #ef4444;
+            color: white;
+            display: flex;
             align-items: center;
             gap: 10px;
-            z-index: 1100;
-            animation: slideIn 0.3s ease;
         }
 
-        .toast.show {
-            display: flex;
+        .delete-modal-header i {
+            font-size: 24px;
         }
 
-        .toast.success {
-            border-left: 4px solid #10b981;
-        }
-
-        .toast.error {
-            border-left: 4px solid #ef4444;
-        }
-
-        .toast i {
+        .delete-modal-header h3 {
             font-size: 20px;
+            margin: 0;
         }
 
-        .toast.success i {
-            color: #10b981;
+        .delete-modal-body {
+            padding: 20px;
+            text-align: center;
         }
 
-        .toast.error i {
+        .delete-modal-body p {
+            margin-bottom: 10px;
+            color: #4b5563;
+        }
+
+        .delete-modal-body strong {
             color: #ef4444;
+            font-size: 18px;
         }
 
-        @keyframes slideIn {
-            from {
-                transform: translateX(100%);
-                opacity: 0;
-            }
-            to {
-                transform: translateX(0);
-                opacity: 1;
-            }
+        .delete-modal-footer {
+            padding: 20px;
+            display: flex;
+            gap: 10px;
+            justify-content: flex-end;
+            border-top: 1px solid #e5e7eb;
+        }
+
+        /* Group Details Modal */
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 1500;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0,0,0,0.5);
+            animation: fadeIn 0.3s ease;
+        }
+
+        .modal-content {
+            background-color: white;
+            margin: 50px auto;
+            padding: 0;
+            width: 90%;
+            max-width: 700px;
+            border-radius: 15px;
+            box-shadow: 0 5px 30px rgba(0,0,0,0.3);
+            animation: slideDown 0.3s ease;
+            max-height: 80vh;
+            overflow-y: auto;
+        }
+
+        .modal-header {
+            padding: 20px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border-radius: 15px 15px 0 0;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            position: sticky;
+            top: 0;
+        }
+
+        .modal-header h2 {
+            font-size: 22px;
+            margin: 0;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .modal-header .close {
+            color: white;
+            font-size: 28px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: opacity 0.3s;
+        }
+
+        .modal-header .close:hover {
+            opacity: 0.8;
+        }
+
+        .modal-body {
+            padding: 20px;
+        }
+
+        .group-info {
+            background: #f9fafb;
+            padding: 15px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+        }
+
+        .group-info p {
+            margin: 5px 0;
+            color: #4b5563;
+        }
+
+        .group-info strong {
+            color: #1f2937;
         }
 
         /* Loading Spinner */
@@ -531,115 +807,180 @@
             font-size: 14px;
         }
 
-        /* Responsive */
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+
+        @keyframes slideDown {
+            from {
+                transform: translateY(-50px);
+                opacity: 0;
+            }
+            to {
+                transform: translateY(0);
+                opacity: 1;
+            }
+        }
+
+        /* Grid Layout */
+        .content-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 30px;
+        }
+
+        /* Mobile */
         @media (max-width: 768px) {
-            .main-content {
+            .sidebar-wrapper {
+                transform: translateX(-100%);
+                width: 280px !important;
+            }
+            
+            .sidebar-wrapper.mobile-open {
+                transform: translateX(0);
+            }
+            
+            .content-wrapper {
+                margin-left: 0 !important;
+                padding: 15px;
+            }
+            
+            .content-grid {
                 grid-template-columns: 1fr;
             }
-
+            
             .page-header {
                 flex-direction: column;
                 text-align: center;
                 gap: 15px;
             }
+            
+            .modal-content {
+                width: 95%;
+                margin: 20px auto;
+            }
+            
+            .group-actions {
+                flex-direction: column;
+            }
         }
     </style>
 </head>
 <body>
-    <div class="container">
-        <!-- Page Header -->
-        <div class="page-header">
-            <div>
-                <h1>
-                    <i class="fas fa-users"></i>
-                    Contact Groups
-                </h1>
-                <p>Select contacts and create groups for campaigns</p>
-            </div>
-            <div class="user-info">
-                <i class="fas fa-user-circle"></i>
-                <span><%= user.firstName || 'Admin' %> <%= user.lastName || '' %> (<%= user.role || 'SuperAdmin' %>)</span>
-            </div>
+    <!-- HEADER -->
+    <div class="header-wrapper">
+        <%- include('../../partials/ram/header') %>
+    </div>
+
+    <!-- MAIN LAYOUT -->
+    <div class="main-wrapper">
+        <!-- SIDEBAR -->
+        <div class="sidebar-wrapper" id="sidebarWrapper">
+            <%- include('../../partials/ram/sidebaar') %>
         </div>
 
-        <!-- Main Content -->
-        <div class="main-content">
-            <!-- Left Column - Contact Selection -->
-            <div class="card">
-                <div class="card-header">
-                    <h2><i class="fas fa-address-book"></i> Select Contacts</h2>
-                    <button class="btn btn-sm btn-secondary" onclick="refreshContacts()">
-                        <i class="fas fa-sync-alt"></i> Refresh
-                    </button>
-                </div>
-                <div class="card-body">
-                    <!-- Search -->
-                    <div class="search-box">
-                        <i class="fas fa-search"></i>
-                        <input type="text" id="searchInput" placeholder="Search contacts by name or phone..." onkeyup="searchContacts()">
-                    </div>
+        <!-- CONTENT -->
+        <div class="content-wrapper" id="contentWrapper">
+            <!-- Toast Container -->
+            <div id="toast"></div>
 
-                    <!-- Contacts List -->
-                    <div class="contacts-list" id="contactsList">
-                        <div class="loading-spinner">
-                            <div class="spinner"></div>
-                            <p>Loading contacts...</p>
-                        </div>
-                    </div>
+            <!-- Page Header -->
+            <div class="page-header">
+                <div>
+                    <h1>
+                        <i class="fas fa-users"></i>
+                        Contact Groups
+                    </h1>
+                    <p>Select WhatsApp contacts and create groups for campaigns</p>
+                </div>
+                <div class="user-info">
+                    <i class="fas fa-user-circle"></i>
+                    <span><%= user?.firstName || 'Admin' %> <%= user?.lastName || '' %> (<%= user?.role || 'SuperAdmin' %>)</span>
                 </div>
             </div>
 
-            <!-- Right Column - Group Creation -->
-            <div>
-                <!-- Selected Contacts Card -->
+            <!-- Main Content Grid -->
+            <div class="content-grid">
+                <!-- Left Column - Contact Selection -->
                 <div class="card">
                     <div class="card-header">
-                        <h2><i class="fas fa-check-circle"></i> Selected Contacts</h2>
-                    </div>
-                    <div class="card-body">
-                        <div class="selected-contacts" id="selectedContactsSection">
-                            <div class="selected-header">
-                                <h3>Selected Contacts</h3>
-                                <span class="selected-count" id="selectedCount">0</span>
-                            </div>
-                            <div class="selected-list" id="selectedList">
-                                <p style="color: #9ca3af; text-align: center; width: 100%;">No contacts selected</p>
-                            </div>
-                            <button class="btn btn-sm btn-secondary" onclick="clearSelection()" style="margin-top: 10px; width: 100%;">
-                                <i class="fas fa-times"></i> Clear All
+                        <h2><i class="fab fa-whatsapp" style="color: #25D366;"></i> WhatsApp Contacts</h2>
+                        <div>
+                            <button class="btn btn-sm btn-secondary" onclick="refreshContacts()">
+                                <i class="fas fa-sync-alt"></i>
                             </button>
                         </div>
-
-                        <!-- Create Group Form -->
-                        <form id="groupForm" style="margin-top: 20px;">
-                            <div class="form-group">
-                                <label for="groupName">Group Name *</label>
-                                <input type="text" id="groupName" placeholder="e.g., VIP Customers, Test Group" required>
-                            </div>
-                            <div class="form-group">
-                                <label for="groupDescription">Description (Optional)</label>
-                                <textarea id="groupDescription" placeholder="Enter group description..."></textarea>
-                            </div>
-                            <button type="submit" class="btn btn-primary" id="createGroupBtn">
-                                <i class="fas fa-users"></i> Create Group
-                            </button>
-                        </form>
-                    </div>
-                </div>
-
-                <!-- Existing Groups Card -->
-                <div class="card">
-                    <div class="card-header">
-                        <h2><i class="fas fa-layer-group"></i> Your Groups</h2>
-                        <button class="btn btn-sm btn-secondary" onclick="loadGroups()">
-                            <i class="fas fa-sync-alt"></i> Refresh
-                        </button>
                     </div>
                     <div class="card-body">
-                        <div class="groups-list" id="groupsList">
+                        <!-- Search -->
+                        <div class="search-box">
+                            <i class="fas fa-search"></i>
+                            <input type="text" id="searchInput" placeholder="Search WhatsApp contacts by name or number..." onkeyup="searchContacts()">
+                        </div>
+
+                        <!-- Contacts List -->
+                        <div class="contacts-list" id="contactsList">
                             <div class="loading-spinner">
                                 <div class="spinner"></div>
-                                <p>Loading groups...</p>
+                                <p>Loading contacts...</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Right Column - Group Creation -->
+                <div>
+                    <!-- Selected Contacts Card -->
+                    <div class="card">
+                        <div class="card-header">
+                            <h2><i class="fas fa-check-circle"></i> Selected Contacts</h2>
+                        </div>
+                        <div class="card-body">
+                            <div class="selected-contacts" id="selectedContactsSection">
+                                <div class="selected-header">
+                                    <h3>Selected Contacts</h3>
+                                    <span class="selected-count" id="selectedCount">0</span>
+                                </div>
+                                <div class="selected-list" id="selectedList">
+                                    <p style="color: #9ca3af; text-align: center; width: 100%;">No contacts selected</p>
+                                </div>
+                                <button class="btn btn-sm btn-secondary" onclick="clearSelection()" style="margin-top: 10px; width: 100%;">
+                                    <i class="fas fa-times"></i> Clear All
+                                </button>
+                            </div>
+
+                            <!-- Create Group Form -->
+                            <form id="groupForm" style="margin-top: 20px;">
+                                <div class="form-group">
+                                    <label for="groupName">Group Name *</label>
+                                    <input type="text" id="groupName" placeholder="e.g., VIP Customers, WhatsApp Group" required>
+                                </div>
+                                <div class="form-group">
+                                    <label for="groupDescription">Description (Optional)</label>
+                                    <textarea id="groupDescription" placeholder="Enter group description..."></textarea>
+                                </div>
+                                <button type="submit" class="btn btn-primary" id="createGroupBtn">
+                                    <i class="fas fa-users"></i> Create WhatsApp Group
+                                </button>
+                            </form>
+                        </div>
+                    </div>
+
+                    <!-- Existing Groups Card -->
+                    <div class="card">
+                        <div class="card-header">
+                            <h2><i class="fas fa-layer-group"></i> Your Groups</h2>
+                            <button class="btn btn-sm btn-secondary" onclick="loadGroups()">
+                                <i class="fas fa-sync-alt"></i>
+                            </button>
+                        </div>
+                        <div class="card-body">
+                            <div class="groups-list" id="groupsList">
+                                <div class="loading-spinner">
+                                    <div class="spinner"></div>
+                                    <p>Loading groups...</p>
+                                </div>
                             </div>
                         </div>
                     </div>
@@ -648,39 +989,163 @@
         </div>
     </div>
 
-    <!-- Toast Notification -->
-    <div class="toast" id="toast">
-        <i class="fas" id="toastIcon"></i>
-        <span id="toastMessage"></span>
+    <!-- Group Details Modal -->
+    <div id="groupModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2><i class="fas fa-users"></i> <span id="modalGroupName"></span></h2>
+                <span class="close" onclick="closeModal()">&times;</span>
+            </div>
+            <div class="modal-body">
+                <div class="group-info" id="groupInfo">
+                    <p><strong>Description:</strong> <span id="modalGroupDescription"></span></p>
+                    <p><strong>Total Contacts:</strong> <span id="modalTotalContacts"></span></p>
+                    <p><strong>Created:</strong> <span id="modalCreatedAt"></span></p>
+                </div>
+                <h3 style="margin-bottom: 15px; color: #1f2937;">WhatsApp Contacts in this Group</h3>
+                <div class="group-contacts-list" id="groupContactsList">
+                    <div class="loading-spinner">
+                        <div class="spinner"></div>
+                        <p>Loading contacts...</p>
+                    </div>
+                </div>
+            </div>
+        </div>
     </div>
 
-    <script>
-        // State
-        let allContacts = [];
-        let selectedContacts = new Map(); // Using Map to store selected contacts
-        let searchTimeout = null;
+    <!-- Delete Confirmation Modal -->
+    <div id="deleteModal" class="delete-modal">
+        <div class="delete-modal-content">
+            <div class="delete-modal-header">
+                <i class="fas fa-exclamation-triangle"></i>
+                <h3>Delete Group</h3>
+            </div>
+            <div class="delete-modal-body">
+                <p>Are you sure you want to delete this group?</p>
+                <p><strong id="deleteGroupName"></strong></p>
+                <p style="font-size: 14px; color: #6b7280;">This action cannot be undone.</p>
+            </div>
+            <div class="delete-modal-footer">
+                <button class="btn btn-secondary" onclick="closeDeleteModal()">Cancel</button>
+                <button class="btn btn-danger" id="confirmDeleteBtn">Delete</button>
+            </div>
+        </div>
+    </div>
 
-        // Initialize
+    <!-- Bootstrap JS -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
+
+    <script>
+        // ======================
+        // SIDEBAR SYNC
+        // ======================
         document.addEventListener('DOMContentLoaded', function() {
+            const sidebar = document.getElementById('mainSidebar');
+            const sidebarWrapper = document.getElementById('sidebarWrapper');
+            
+            if (sidebar && sidebarWrapper) {
+                if (sidebar.classList.contains('collapsed')) {
+                    sidebarWrapper.classList.add('collapsed');
+                }
+                
+                const originalToggleCollapse = window.toggleCollapse;
+                
+                window.toggleCollapse = function() {
+                    if (originalToggleCollapse) {
+                        originalToggleCollapse();
+                    }
+                    
+                    setTimeout(() => {
+                        if (sidebar.classList.contains('collapsed')) {
+                            sidebarWrapper.classList.add('collapsed');
+                        } else {
+                            sidebarWrapper.classList.remove('collapsed');
+                        }
+                    }, 10);
+                };
+                
+                const originalToggleMobile = window.toggleMobileSidebar;
+                
+                window.toggleMobileSidebar = function() {
+                    if (originalToggleMobile) {
+                        originalToggleMobile();
+                    }
+                    
+                    setTimeout(() => {
+                        if (sidebar.classList.contains('open')) {
+                            sidebarWrapper.classList.add('mobile-open');
+                        } else {
+                            sidebarWrapper.classList.remove('mobile-open');
+                        }
+                    }, 10);
+                };
+                
+                const originalCloseMobile = window.closeMobileSidebar;
+                
+                window.closeMobileSidebar = function() {
+                    if (originalCloseMobile) {
+                        originalCloseMobile();
+                    }
+                    
+                    sidebarWrapper.classList.remove('mobile-open');
+                };
+            }
+
+            // Initialize page
             loadContacts();
             loadGroups();
+            
+            // Show welcome toast
+            setTimeout(() => {
+                showToast('WhatsApp Groups', 'Select WhatsApp contacts to create groups', 'info');
+            }, 500);
         });
 
-        // Show toast
-        function showToast(message, type = 'success') {
+        // ======================
+        // TOAST FUNCTION
+        // ======================
+        let toastTimer;
+        function showToast(title, message, type = 'success') {
             const toast = document.getElementById('toast');
-            const toastIcon = document.getElementById('toastIcon');
-            const toastMessage = document.getElementById('toastMessage');
             
-            toast.className = 'toast ' + type;
-            toastIcon.className = 'fas ' + (type === 'success' ? 'fa-check-circle' : 'fa-exclamation-circle');
-            toastMessage.textContent = message;
-            toast.classList.add('show');
+            clearTimeout(toastTimer);
             
-            setTimeout(() => toast.classList.remove('show'), 3000);
+            const icons = {
+                'success': '✅',
+                'error': '❌',
+                'warning': '⚠️',
+                'info': 'ℹ️'
+            };
+            
+            const icon = icons[type] || 'ℹ️';
+            
+            toast.className = '';
+            toast.innerHTML = `
+                <div class="toast-row">
+                    <div class="toast-icon">${icon}</div>
+                    <div class="toast-text">
+                        <h4>${title}</h4>
+                        <p>${message}</p>
+                    </div>
+                </div>
+                <div class="toast-progress"></div>
+            `;
+            
+            toast.classList.add(`toast-${type}`, 'show');
+            
+            toastTimer = setTimeout(() => {
+                toast.classList.remove('show');
+            }, 3000);
         }
 
-        // Load contacts
+        // State
+        let allContacts = [];
+        let selectedContacts = new Map();
+        let searchTimeout = null;
+        let currentGroupId = null;
+        let groupToDelete = null;
+
+        // Load contacts - WhatsApp numbers only
         async function loadContacts() {
             try {
                 const search = document.getElementById('searchInput').value;
@@ -693,15 +1158,22 @@
                     allContacts = data.data;
                     renderContacts();
                 } else {
-                    showToast('Failed to load contacts', 'error');
+                    showToast('Error', 'Failed to load contacts', 'error');
                 }
             } catch (error) {
                 console.error('Error:', error);
-                showToast('Failed to load contacts', 'error');
+                showToast('Error', 'Failed to load contacts', 'error');
+                document.getElementById('contactsList').innerHTML = `
+                    <div class="empty-state">
+                        <i class="fas fa-exclamation-circle"></i>
+                        <h4>Failed to load contacts</h4>
+                        <p>Please try again</p>
+                    </div>
+                `;
             }
         }
 
-        // Render contacts
+        // Render contacts - Always show WhatsApp numbers
         function renderContacts() {
             const container = document.getElementById('contactsList');
 
@@ -710,7 +1182,7 @@
                     <div class="empty-state">
                         <i class="fas fa-address-book"></i>
                         <h4>No Contacts Found</h4>
-                        <p>Add devices with phone numbers first</p>
+                        <p>Add contacts with phone numbers first</p>
                     </div>
                 `;
                 return;
@@ -721,25 +1193,42 @@
                 const statusClass = contact.status === 'active' ? 'status-active' : 'status-inactive';
                 const connectedClass = contact.isConnected ? 'badge-connected' : 'badge-disconnected';
                 
+                // Check if contact has WhatsApp number
+                const hasWhatsApp = contact.whatsappNumber ? true : false;
+                const displayNumber = hasWhatsApp ? contact.whatsappNumber : contact.phoneNumber;
+                const itemClass = !hasWhatsApp ? 'no-whatsapp' : '';
+                
                 return `
-                <div class="contact-item">
+                <div class="contact-item ${itemClass}">
                     <input type="checkbox" 
                            class="contact-checkbox" 
                            value="${contact._id}"
                            ${isSelected ? 'checked' : ''}
+                           ${!hasWhatsApp ? 'disabled' : ''}
                            onchange="toggleContact('${contact._id}', this.checked)">
                     <div class="contact-avatar">${contact.name ? contact.name.charAt(0).toUpperCase() : '?'}</div>
                     <div class="contact-info">
                         <div class="contact-name">
                             ${contact.name || 'Unnamed'}
-                            <span class="contact-status ${statusClass}">${contact.status || 'inactive'}</span>
+                            ${hasWhatsApp ? '<span class="whatsapp-badge"><i class="fab fa-whatsapp"></i> WhatsApp</span>' : ''}
                         </div>
-                        <div class="contact-phone">
-                            <i class="fas fa-phone"></i> ${contact.phoneNumber}
-                            <span class="status-badge ${connectedClass}">
-                                ${contact.isConnected ? 'Connected' : 'Disconnected'}
-                            </span>
-                        </div>
+                        ${hasWhatsApp ? `
+                            <div class="contact-number">
+                                <i class="fab fa-whatsapp" style="color: #25D366;"></i> ${displayNumber}
+                                <span class="status-badge ${connectedClass}">
+                                </span>
+                            </div>
+                        ` : `
+                            <div class="contact-number" style="color: #6b7280;">
+                                <i class="fas fa-phone"></i> ${contact.phoneNumber}
+                                <span class="status-badge ${connectedClass}">
+                                    ${contact.isConnected ? 'Connected' : 'Disconnected'}
+                                </span>
+                            </div>
+                            <div class="contact-phone">
+                                <i class="fas fa-exclamation-triangle" style="color: #ef4444;"></i> No WhatsApp number
+                            </div>
+                        `}
                     </div>
                 </div>
             `}).join('');
@@ -757,6 +1246,7 @@
         function refreshContacts() {
             document.getElementById('searchInput').value = '';
             loadContacts();
+            showToast('Refreshing', 'Loading latest contacts...', 'info');
         }
 
         // Toggle contact selection
@@ -764,8 +1254,15 @@
             const contact = allContacts.find(c => c._id === id);
             if (!contact) return;
 
+            // Don't allow selection if no WhatsApp number
+            if (!contact.whatsappNumber) {
+                showToast('Cannot Select', 'This contact has no WhatsApp number', 'warning');
+                return;
+            }
+
             if (checked) {
                 selectedContacts.set(id, contact);
+                showToast('Selected', `${contact.name || contact.phoneNumber} added`, 'success');
             } else {
                 selectedContacts.delete(id);
             }
@@ -786,12 +1283,14 @@
                 return;
             }
 
-            selectedList.innerHTML = contacts.map(contact => `
+            selectedList.innerHTML = contacts.map(contact => {
+                return `
                 <div class="selected-tag">
-                    <span>${contact.name || contact.phoneNumber}</span>
+                    <i class="fab fa-whatsapp"></i>
+                    <span>${contact.name || contact.whatsappNumber || contact.phoneNumber}</span>
                     <i class="fas fa-times" onclick="removeContact('${contact._id}')"></i>
                 </div>
-            `).join('');
+            `}).join('');
         }
 
         // Remove individual contact
@@ -807,6 +1306,8 @@
 
         // Clear all selection
         function clearSelection() {
+            if (selectedContacts.size === 0) return;
+            
             selectedContacts.clear();
             
             // Uncheck all checkboxes
@@ -815,6 +1316,7 @@
             });
             
             updateSelectedUI();
+            showToast('Cleared', 'All contacts deselected', 'info');
         }
 
         // Create group
@@ -826,16 +1328,17 @@
             const contactIds = Array.from(selectedContacts.keys());
 
             if (!groupName) {
-                showToast('Please enter a group name', 'error');
+                showToast('Error', 'Please enter a group name', 'error');
                 return;
             }
 
             if (contactIds.length === 0) {
-                showToast('Please select at least one contact', 'error');
+                showToast('Error', 'Please select at least one WhatsApp contact', 'error');
                 return;
             }
 
             const btn = document.getElementById('createGroupBtn');
+            const originalText = btn.innerHTML;
             btn.disabled = true;
             btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Creating...';
 
@@ -853,7 +1356,7 @@
                 const data = await response.json();
 
                 if (data.success) {
-                    showToast('Group created successfully!');
+                    showToast('Success!', 'WhatsApp group created successfully!', 'success');
                     
                     // Clear form
                     document.getElementById('groupName').value = '';
@@ -863,13 +1366,13 @@
                     // Reload groups
                     loadGroups();
                 } else {
-                    showToast(data.message || 'Failed to create group', 'error');
+                    showToast('Error', data.message || 'Failed to create group', 'error');
                 }
             } catch (error) {
-                showToast('Failed to create group', 'error');
+                showToast('Error', 'Failed to create group', 'error');
             } finally {
                 btn.disabled = false;
-                btn.innerHTML = '<i class="fas fa-users"></i> Create Group';
+                btn.innerHTML = originalText;
             }
         });
 
@@ -886,7 +1389,7 @@
                         <div class="empty-state">
                             <i class="fas fa-layer-group"></i>
                             <h4>No Groups Yet</h4>
-                            <p>Create your first group by selecting contacts</p>
+                            <p>Create your first WhatsApp group by selecting contacts</p>
                         </div>
                     `;
                     return;
@@ -899,7 +1402,7 @@
                                 <i class="fas fa-users"></i>
                                 ${group.name}
                             </div>
-                            <span class="group-count">${group.totalContacts} contacts</span>
+                            <span class="group-count">${group.totalContacts} WhatsApp contacts</span>
                         </div>
                         <div class="group-description">
                             ${group.description || 'No description'}
@@ -907,8 +1410,11 @@
                         <div class="group-meta">
                             <span><i class="far fa-clock"></i> ${new Date(group.createdAt).toLocaleDateString()}</span>
                             <div class="group-actions">
-                                <button class="use-btn" onclick="useGroup('${group.id}')">
-                                    <i class="fas fa-check"></i> Use
+                                <button class="view-btn" onclick="viewGroupDetails('${group.id}')">
+                                    <i class="fas fa-eye"></i> View
+                                </button>
+                                <button class="delete-btn" onclick="showDeleteModal('${group.id}', '${group.name}')">
+                                    <i class="fas fa-trash"></i> Delete
                                 </button>
                             </div>
                         </div>
@@ -927,10 +1433,154 @@
             }
         }
 
-        // Use group (select all contacts from group)
-        function useGroup(groupId) {
-            // This would fetch group details and select all contacts
-            showToast('Group selected! You can now use it in campaigns', 'success');
+        // View group details
+        async function viewGroupDetails(groupId) {
+            try {
+                currentGroupId = groupId;
+                
+                // Show modal with loading
+                document.getElementById('groupModal').style.display = 'block';
+                document.getElementById('modalGroupName').textContent = 'Loading...';
+                document.getElementById('groupContactsList').innerHTML = `
+                    <div class="loading-spinner">
+                        <div class="spinner"></div>
+                        <p>Loading contacts...</p>
+                    </div>
+                `;
+
+                // Fetch group details
+                const response = await fetch(`/api/groups/${groupId}`);
+                const data = await response.json();
+
+                if (data.success) {
+                    const group = data.data;
+                    
+                    // Update modal header
+                    document.getElementById('modalGroupName').textContent = group.name;
+                    
+                    // Update group info
+                    document.getElementById('modalGroupDescription').textContent = group.description || 'No description';
+                    document.getElementById('modalTotalContacts').textContent = group.totalContacts;
+                    document.getElementById('modalCreatedAt').textContent = new Date(group.createdAt).toLocaleString();
+                    
+                    // Render contacts
+                    renderGroupContacts(group.contacts);
+                } else {
+                    showToast('Error', 'Failed to load group details', 'error');
+                    closeModal();
+                }
+            } catch (error) {
+                console.error('Error loading group details:', error);
+                showToast('Error', 'Failed to load group details', 'error');
+                closeModal();
+            }
+        }
+
+        // Render group contacts with WhatsApp numbers
+        function renderGroupContacts(contacts) {
+            const container = document.getElementById('groupContactsList');
+
+            if (!contacts || contacts.length === 0) {
+                container.innerHTML = `
+                    <div class="empty-state">
+                        <i class="fas fa-address-book"></i>
+                        <h4>No Contacts in this Group</h4>
+                        <p>This group has no contacts</p>
+                    </div>
+                `;
+                return;
+            }
+
+            container.innerHTML = contacts.map(contact => {
+                const statusClass = contact.status === 'active' ? 'status-active' : 'status-inactive';
+                const connectedClass = contact.isConnected ? 'badge-connected' : 'badge-disconnected';
+                const hasWhatsApp = contact.whatsappNumber ? true : false;
+                const displayNumber = hasWhatsApp ? contact.whatsappNumber : contact.phoneNumber;
+                
+                return `
+                <div class="contact-item">
+                    <div class="contact-avatar">${contact.name ? contact.name.charAt(0).toUpperCase() : '?'}</div>
+                    <div class="contact-info">
+                        <div class="contact-name">
+                            ${contact.name || 'Unnamed'}
+                            ${hasWhatsApp ? '<span class="whatsapp-badge"><i class="fab fa-whatsapp"></i> WhatsApp</span>' : ''}
+                        </div>
+                        <div class="contact-number">
+                            <i class="fab fa-whatsapp" style="color: #25D366;"></i> ${displayNumber}
+                            <span class="status-badge ${connectedClass}">
+                            </span>
+                        </div>
+                        <div class="contact-phone">
+                            <i class="fas fa-phone"></i> Phone: ${contact.phoneNumber}
+                        </div>
+                    </div>
+                </div>
+            `}).join('');
+        }
+
+        // Close modal
+        function closeModal() {
+            document.getElementById('groupModal').style.display = 'none';
+            currentGroupId = null;
+        }
+
+        // Show delete confirmation modal
+        function showDeleteModal(groupId, groupName) {
+            groupToDelete = groupId;
+            document.getElementById('deleteGroupName').textContent = groupName;
+            document.getElementById('deleteModal').style.display = 'block';
+        }
+
+        // Close delete modal
+        function closeDeleteModal() {
+            document.getElementById('deleteModal').style.display = 'none';
+            groupToDelete = null;
+        }
+
+        // Delete group
+        document.getElementById('confirmDeleteBtn').addEventListener('click', async function() {
+            if (!groupToDelete) return;
+
+            const btn = this;
+            const originalText = btn.innerHTML;
+            btn.disabled = true;
+            btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Deleting...';
+
+            try {
+                const response = await fetch(`/api/groups/${groupToDelete}`, {
+                    method: 'DELETE',
+                    headers: { 'Content-Type': 'application/json' }
+                });
+
+                const data = await response.json();
+
+                if (data.success) {
+                    showToast('Deleted!', 'Group deleted successfully!', 'success');
+                    closeDeleteModal();
+                    loadGroups(); // Reload groups list
+                } else {
+                    showToast('Error', data.message || 'Failed to delete group', 'error');
+                }
+            } catch (error) {
+                console.error('Error deleting group:', error);
+                showToast('Error', 'Failed to delete group', 'error');
+            } finally {
+                btn.disabled = false;
+                btn.innerHTML = originalText;
+            }
+        });
+
+        // Close modal when clicking outside
+        window.onclick = function(event) {
+            const modal = document.getElementById('groupModal');
+            const deleteModal = document.getElementById('deleteModal');
+            
+            if (event.target === modal) {
+                closeModal();
+            }
+            if (event.target === deleteModal) {
+                closeDeleteModal();
+            }
         }
     </script>
 </body>

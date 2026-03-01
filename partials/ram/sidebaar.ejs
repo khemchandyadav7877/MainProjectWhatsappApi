@@ -1,4 +1,4 @@
-<!-- views/partials/sidebar.ejs - FINAL FIXED VERSION WITH ROLE-SPECIFIC FILTERING -->
+<!-- views/partials/sidebar.ejs - USER CARD HIDE/UNHIDE ON CLICK - FIXED -->
 
 <%
 // Get user role color
@@ -146,13 +146,89 @@ const roleColor = getRoleColor(user.role);
     background: var(--text-secondary);
 }
 
-/* User Card */
+/* User Card - ENTIRE CARD WILL HIDE/SHOW */
 .user-card {
     background: linear-gradient(135deg, <%= roleColor %>10, transparent);
     border: 1px solid var(--border-color);
     border-radius: var(--radius);
     padding: 1rem;
     margin-bottom: 1.5rem;
+    transition: all 0.3s ease;
+    cursor: pointer;
+    position: relative;
+}
+
+.user-card:hover {
+    background: linear-gradient(135deg, <%= roleColor %>15, transparent);
+    border-color: <%= roleColor %>40;
+}
+
+.user-card.hidden {
+    display: none;
+}
+
+/* Double arrow icon for hide/show */
+.user-card-toggle {
+    position: absolute;
+    top: 5px;
+    right: 5px;
+    width: 24px;
+    height: 24px;
+    background: white;
+    border: 1px solid var(--border-color);
+    border-radius: 50%;
+    color: var(--primary-color);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 12px;
+    opacity: 0;
+    transition: opacity 0.2s;
+    box-shadow: var(--shadow-sm);
+}
+
+.user-card:hover .user-card-toggle {
+    opacity: 1;
+}
+
+.user-card-toggle i {
+    transition: transform 0.3s;
+}
+
+.user-card-toggle.hidden i {
+    transform: rotate(180deg);
+}
+
+/* When card is hidden, show a small bar to toggle back */
+.user-card-minimized {
+    display: none;
+    background: linear-gradient(135deg, <%= roleColor %>10, transparent);
+    border: 1px solid var(--border-color);
+    border-radius: var(--radius);
+    padding: 0.5rem;
+    margin-bottom: 1.5rem;
+    cursor: pointer;
+    text-align: center;
+    color: var(--primary-color);
+    font-size: 12px;
+    font-weight: 500;
+    transition: all 0.2s;
+}
+
+.user-card-minimized:hover {
+    background: linear-gradient(135deg, <%= roleColor %>15, transparent);
+    border-color: <%= roleColor %>40;
+}
+
+.user-card-minimized.show {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+}
+
+.user-card-minimized i {
+    font-size: 14px;
 }
 
 .user-avatar-wrapper {
@@ -235,6 +311,7 @@ const roleColor = getRoleColor(user.role);
     gap: 0.75rem;
     padding-top: 0.75rem;
     border-top: 1px solid var(--border-color);
+    margin-top: 0.25rem;
 }
 
 .stat-item {
@@ -256,7 +333,7 @@ const roleColor = getRoleColor(user.role);
     text-transform: uppercase;
 }
 
-/* Navigation */
+/* Navigation - THESE WILL ALWAYS BE VISIBLE */
 .nav-sections {
     flex: 1;
     display: flex;
@@ -384,7 +461,7 @@ const roleColor = getRoleColor(user.role);
     opacity: 1;
 }
 
-.action-btn {
+.action-btns {
     width: 24px;
     height: 24px;
     border-radius: 4px;
@@ -399,7 +476,7 @@ const roleColor = getRoleColor(user.role);
     transition: all 0.2s;
 }
 
-.action-btn:hover {
+.action-btns:hover {
     transform: scale(1.1);
 }
 
@@ -468,6 +545,8 @@ const roleColor = getRoleColor(user.role);
 .sidebar.collapsed .logo-text,
 .sidebar.collapsed .user-details,
 .sidebar.collapsed .user-stats,
+.sidebar.collapsed .user-card-toggle,
+.sidebar.collapsed .user-card-minimized,
 .sidebar.collapsed .section-title span:not(.section-icon),
 .sidebar.collapsed .arrow-icon,
 .sidebar.collapsed .section-links,
@@ -641,8 +720,20 @@ const roleColor = getRoleColor(user.role);
 
     <!-- Content -->
     <div class="sidebar-content">
-        <!-- User Card -->
-        <div class="user-card">
+        <!-- MINIMIZED USER CARD (shown when main card is hidden) -->
+        <div class="user-card-minimized" id="userCardMinimized" onclick="toggleUserCard(event)">
+            <i class="fas fa-user-circle"></i>
+            <span>Show Profile</span>
+            <i class="fas fa-chevron-down"></i>
+        </div>
+        
+        <!-- MAIN USER CARD - Ye pura card hide/unhide hoga -->
+        <div class="user-card" id="userCard" onclick="toggleUserCard(event)">
+            <!-- Double arrow icon -->
+            <div class="user-card-toggle" id="userCardToggle">
+                <i class="fas fa-chevron-up"></i>
+            </div>
+            
             <div class="user-avatar-wrapper">
                 <div class="avatar">
                     <%= (user.firstName || user.email || 'U').charAt(0).toUpperCase() %>
@@ -660,21 +751,21 @@ const roleColor = getRoleColor(user.role);
                 </div>
             </div>
             
+            <!-- Stats - 12 FEATURES, 5 SECTIONS -->
             <div class="user-stats">
                 <div class="stat-item">
                     <span class="stat-value" id="featuresCount">0</span>
-                    <span class="stat-label">Features</span>
+                    <span class="stat-label">FEATURES</span>
                 </div>
                 <div class="stat-item">
                     <span class="stat-value" id="sectionsCount">0</span>
-                    <span class="stat-label">Sections</span>
+                    <span class="stat-label">SECTIONS</span>
                 </div>
             </div>
         </div>
 
-        <!-- Navigation -->
+        <!-- Navigation - YEH HAMESHA DIKHEGA, KABHI HIDE NAHI HOGA -->
         <div class="nav-sections" id="navContainer">
-            <!-- Dynamic Features Container -->
             <div id="featuresContainer"></div>
         </div>
 
@@ -688,16 +779,17 @@ const roleColor = getRoleColor(user.role);
 
 <script>
 // ============================================
-// SIDEBAR JAVASCRIPT - FINAL FIXED VERSION
+// SIDEBAR JAVASCRIPT - USER CARD HIDE/UNHIDE - FIXED
 // ============================================
 
 // ✅ COMPLETE Path Mappings for ALL features
 const pathMappings = {
     // Dashboard
     'Dashboard': '/dashboard',
-    'Notifications': '/notifications',
+    'Notification Center': '/notifications',
 
-      // notifications
+    // Notifications
+    'Notifications': '/notifications',
     'SuperAdmin Notifications': '/superadmin/notifications',
     'Educator Notifications': '/educator/notifications',
     'Trainer Notifications': '/trainer/notifications',
@@ -706,7 +798,7 @@ const pathMappings = {
     // Reports
     'Web Report': '/reports/web',
     'API Reports': '/reports/api',
-     
+
     // Chats
     'New Chat': '/chats/new',
 
@@ -716,30 +808,87 @@ const pathMappings = {
     'Call Logs': '/virtual-numbers/call-logs',
     'SMS Logs': '/virtual-numbers/sms-logs',
 
-    // Devices
-    'Add Device': '/devices/add',
-    'All Devices': '/devices',
+    // CRM / Devices (unchanged)
+    'Add Contact': '/devices/add',
+    'All Contact': '/devices',
     'Campaign': '/devices/campaign',
     'Contact Group': '/contactgroup',
 
-
     // RCS
-    'RCS Campaign': '/devices/campaign',
+    'RCS Campaign': '/rcs/campaign',
     'RCS Reports': '/rcs/reports',
     'RCS Templates': '/rcs/templates',
 
     // Scan device
-    'Whatsapp Scan': '/scan/whatsapp',
+    'Scan QR Code': '/scan/whatsapp',
+    'Connected Devices': '/scan/devices',
 
     // API
-    'API Document': '/api/document',
-    'File Upload': '/api/file-upload',
+    'API Keys': '/api/keys',
+    'API Documentation': '/api/document',
+    'Webhook Settings': '/api/webhooks',
 
-    // Client Management
-    'All Clients': '/clients',
-    'Add Client': '/clients/add',
+    // Subscription Management
+    'All Subscriptions': '/profile',
+    'Plans / Packages': '/CustomRoles',
+    'Add Plan': '/signup',
+    'Transactions': '/subscriptions/transactions',
+    'Payment History': '/subscriptions/payments',
+    'Invoice': '/subscriptions/invoice',
 
-    // Group
+    // Frontend Management
+    'Website Settings': '/frontend/settings',
+    'Landing Page': '/frontend/landing',
+    'Banner / Slider': '/frontend/banner',
+    'FAQs': '/frontend/faqs',
+    'Contact Page': '/frontend/contact',
+    'Footer Settings': '/frontend/footer',
+
+    // Bulk Messaging
+    'Send Bulk Message': '/bulk/send',
+    'Templates': '/bulk/templates',
+    'Reports': '/bulk/reports',
+
+    // Campaign Management
+    'WhatsApp Campaign': '/campaign/whatsapp',
+    'Official WhatsApp API Campaign': '/campaign/official',
+    'Social Media Campaign': '/campaign/social',
+
+    // AI Chatbot
+    'Bot Flow Builder': '/chatbot/flow',
+    'Auto Replies': '/chatbot/replies',
+
+    // Ads
+    'Create Ad Campaign': '/ads/create',
+    'Ad Reports': '/ads/reports',
+    'Ad Budget': '/ads/budget',
+
+    // VOIP
+    'Virtual Number (V Number)': '/voip/numbers',
+    'Call Logs': '/voip/call-logs',
+    'Call Routing': '/voip/routing',
+
+    // IVR
+    'IVR Setup': '/ivr/setup',
+    'Call Flow Management': '/ivr/flow',
+    'Voice Greetings': '/ivr/greetings',
+
+    // Support
+    'All Tickets': '/support',
+    'Create Ticket': '/support/create',
+    'Ticket Replies': '/support/replies',
+
+    // Settings
+    'Frontend Settings': '/settings/frontend',
+    'Custom Roles': '/CustomRoles',
+    'Role Management': '/role-permissions',
+    'Add To Dashboard': '/add-new-feature',
+    'Payment Settings': '/settings/payment',
+    'Message Settings': '/settings/message',
+    'API Settings': '/settings/api',
+    'Security Settings': '/settings/security',
+    'SMTP Settings': '/settings/smtp',
+    'User Logs': '/settings/logs',
 
     // Administration
     'Role Permissions': '/role-permissions',
@@ -749,45 +898,134 @@ const pathMappings = {
 // Section icons mapping
 const sectionIcons = {
     'Dashboard': 'tachometer-alt',
+    'Subscription Management': 'credit-card',
+    'Frontend Management': 'desktop',
+    'CRM': 'address-book',
     'Notifications': 'bell',
-    'Reports': 'chart-bar',
     'Chats': 'comments',
-    'Virtual Numbers': 'phone',
-    'Devices': 'mobile-alt',
+    'Bulk Messaging': 'paper-plane',
     'RCS': 'envelope',
-    'Scan device': 'qrcode',
+    'Campaign Management': 'bullhorn',
+    'AI Chatbot': 'robot',
+    'Ads Management': 'ad',
+    'VOIP Service': 'phone',
+    'IVR Service': 'phone-volume',
+    'Support Desk': 'headset',
     'API': 'code',
-    'Client Management': 'users-cog',
+    'Reports': 'chart-bar',
+    'Settings': 'sliders-h',
+    'Virtual Numbers': 'phone-alt',
     'Administration': 'shield-alt'
 };
 
 // Feature icons mapping
 const featureIcons = {
+    // Dashboard
     'Dashboard': 'tachometer-alt',
-    'Notifications': 'bell',
+    'Notification Center': 'bell',
+
+    // Notifications
     'SuperAdmin Notifications': 'bell',
     'Educator Notifications': 'bell',
     'Trainer Notifications': 'bell',
     'Student Notifications': 'bell',
+
+    // Reports
     'Web Report': 'chart-line',
     'API Reports': 'chart-pie',
+
+    // Chats
     'New Chat': 'comment',
+
+    // Virtual Numbers
     'My Numbers': 'phone-alt',
     'Buy Number': 'shopping-cart',
     'Call Logs': 'phone',
     'SMS Logs': 'sms',
-    'Add Device': 'plus-circle',
-    'All Devices': 'mobile-alt',
+
+    // CRM
+    'Add Contact': 'user-plus',
+    'All Contact': 'address-book',
     'Campaign': 'bullhorn',
-    'Contact Group': 'bullhorn',
+    'Contact Group': 'users',
+
+    // RCS
     'RCS Campaign': 'envelope-open',
     'RCS Reports': 'chart-bar',
     'RCS Templates': 'file-alt',
-    'Whatsapp Scan': 'qrcode',
-    'API Document': 'file-code',
-    'File Upload': 'upload',
-    'All Clients': 'users',
-    'Add Client': 'user-plus',
+
+    // Scan device
+    'Scan QR Code': 'qrcode',
+    'Connected Devices': 'mobile-alt',
+
+    // API
+    'API Keys': 'key',
+    'API Documentation': 'book',
+    'Webhook Settings': 'globe',
+
+    // Campaign Management
+    'WhatsApp Campaign': 'whatsapp',
+    'Official WhatsApp API Campaign': 'robot',
+    'Social Media Campaign': 'share-alt',
+
+    // Subscription
+    'All Subscriptions': 'list',
+    'Plans / Packages': 'box',
+    'Add Plan': 'plus',
+    'Transactions': 'money-bill',
+    'Payment History': 'receipt',
+    'Invoice': 'file-invoice',
+
+    // Frontend
+    'Website Settings': 'globe',
+    'Landing Page': 'home',
+    'Banner / Slider': 'images',
+    'FAQs': 'question-circle',
+    'Contact Page': 'envelope',
+    'Footer Settings': 'window-minimize',
+
+    // Bulk Messaging
+    'Send Bulk Message': 'paper-plane',
+    'Templates': 'file',
+    'Reports': 'chart-bar',
+
+    // AI Chatbot
+    'Bot Flow Builder': 'project-diagram',
+    'Auto Replies': 'reply',
+
+    // Ads
+    'Create Ad Campaign': 'bullhorn',
+    'Ad Reports': 'chart-line',
+    'Ad Budget': 'money-bill-wave',
+
+    // VOIP
+    'Virtual Number (V Number)': 'phone-alt',
+    'Call Logs': 'phone',
+    'Call Routing': 'random',
+
+    // IVR
+    'IVR Setup': 'cog',
+    'Call Flow Management': 'sitemap',
+    'Voice Greetings': 'microphone',
+
+    // Support Desk
+    'All Tickets': 'ticket-alt',
+    'Create Ticket': 'plus-circle',
+    'Ticket Replies': 'reply',
+
+    // Settings
+    'Frontend Settings': 'desktop',
+    'Custom Roles': 'user-tag',
+    'Role Management': 'user-cog',
+    'Add To Dashboard': 'plus-square',
+    'Payment Settings': 'credit-card',
+    'Message Settings': 'envelope',
+    'API Settings': 'code',
+    'Security Settings': 'shield-alt',
+    'SMTP Settings': 'server',
+    'User Logs': 'history',
+
+    // Administration
     'Role Permissions': 'user-shield',
     'Add New Feature': 'plus-circle'
 };
@@ -797,6 +1035,7 @@ let features = [];
 let openSections = {};
 let isCollapsed = localStorage.getItem('sidebarCollapsed') === 'true';
 let userRole = '<%= user.role || "" %>';
+let userCardVisible = true; // Initially visible
 
 // ✅ Initialize on page load
 document.addEventListener('DOMContentLoaded', function() {
@@ -811,6 +1050,15 @@ document.addEventListener('DOMContentLoaded', function() {
         console.error('Error parsing saved sections:', e);
         openSections = {};
     }
+    
+    // Load saved user card visibility
+    try {
+        const savedVisibility = localStorage.getItem('userCardVisible');
+        if (savedVisibility !== null) {
+            userCardVisible = savedVisibility === 'true';
+            updateUserCardVisibility();
+        }
+    } catch(e) {}
     
     // Apply collapsed state
     if (isCollapsed) {
@@ -830,9 +1078,57 @@ document.addEventListener('DOMContentLoaded', function() {
     });
 });
 
-// ✅ LOAD FEATURES FROM LOCALSTORAGE - WITH PROPER ROLE FILTERING
+// ✅ TOGGLE USER CARD VISIBILITY - FIXED: Added event.stopPropagation()
+function toggleUserCard(event) {
+    if (event) {
+        event.stopPropagation();
+    }
+    userCardVisible = !userCardVisible;
+    updateUserCardVisibility();
+    
+    // Save state
+    try {
+        localStorage.setItem('userCardVisible', userCardVisible);
+        console.log('💾 Saved user card visibility:', userCardVisible);
+    } catch(e) {}
+}
+
+// ✅ UPDATE USER CARD VISIBILITY UI
+function updateUserCardVisibility() {
+    const userCard = document.getElementById('userCard');
+    const minimizedCard = document.getElementById('userCardMinimized');
+    const toggleIcon = document.querySelector('.user-card-toggle i');
+    
+    if (!userCard || !minimizedCard) {
+        console.error('❌ User card elements not found!');
+        return;
+    }
+    
+    if (userCardVisible) {
+        userCard.classList.remove('hidden');
+        minimizedCard.classList.remove('show');
+        if (toggleIcon) {
+            toggleIcon.className = 'fas fa-chevron-up';
+        }
+        console.log('👤 User card: VISIBLE');
+    } else {
+        userCard.classList.add('hidden');
+        minimizedCard.classList.add('show');
+        if (toggleIcon) {
+            toggleIcon.className = 'fas fa-chevron-down';
+        }
+        console.log('👤 User card: HIDDEN');
+    }
+}
+
+// ✅ LOAD FEATURES FROM LOCALSTORAGE
 function loadSidebarFeatures(silent = false) {
     const container = document.getElementById('featuresContainer');
+    
+    if (!container) {
+        console.error('❌ Features container not found!');
+        return;
+    }
     
     if (!silent) {
         container.innerHTML = `
@@ -844,7 +1140,6 @@ function loadSidebarFeatures(silent = false) {
     }
     
     try {
-        // Get features from localStorage
         const savedFeatures = localStorage.getItem('sidebarFeatures');
         
         if (!savedFeatures) {
@@ -854,29 +1149,16 @@ function loadSidebarFeatures(silent = false) {
             return;
         }
         
-        // Parse features
         const allFeatures = JSON.parse(savedFeatures);
         console.log('✅ All features in storage:', allFeatures.length);
         
-        // CRITICAL FIX: Filter features based on role
-        // SuperAdmin should ONLY see features with role = 'SuperAdmin'
-        // Educator should ONLY see features with role = 'Educator'
-        // Student should ONLY see features with role = 'Student'
-        
-        let userFeatures = [];
-        
-        // Filter by exact role match - NO CROSS-ROLE FEATURES
-        userFeatures = allFeatures.filter(f => {
-            // Skip inactive features
+        let userFeatures = allFeatures.filter(f => {
             if (f.isActive === false) return false;
-            
-            // Match exactly by role - this prevents feature duplication across roles
             return f.role === userRole;
         });
         
         console.log(`👤 ${userRole}: showing ${userFeatures.length} role-specific features`);
         
-        // Optional: If no features for current role, show empty state
         if (userFeatures.length === 0) {
             showEmptyState(
                 container, 
@@ -888,12 +1170,8 @@ function loadSidebarFeatures(silent = false) {
             return;
         }
         
-        // Add paths to features
         const featuresWithPaths = userFeatures.map(feature => {
-            // Clean label (remove numbers)
             const cleanLabel = feature.label.replace(/^\d+\.\s*/, '');
-            
-            // Get path from mapping or use existing
             let path = feature.path || pathMappings[cleanLabel] || '#';
             
             return {
@@ -903,7 +1181,6 @@ function loadSidebarFeatures(silent = false) {
             };
         });
         
-        // Update state and render
         features = featuresWithPaths;
         renderFeatures(features);
         updateStats(features);
@@ -914,16 +1191,33 @@ function loadSidebarFeatures(silent = false) {
     }
 }
 
-// ✅ RENDER FEATURES
+// ✅ UPDATE STATS
+function updateStats(featuresList) {
+    const activeFeatures = featuresList.filter(f => f.isActive !== false);
+    const sections = new Set(activeFeatures.map(f => f.section.replace('*** ', '')));
+    
+    const featuresCountEl = document.getElementById('featuresCount');
+    const sectionsCountEl = document.getElementById('sectionsCount');
+    
+    if (featuresCountEl) featuresCountEl.textContent = activeFeatures.length;
+    if (sectionsCountEl) sectionsCountEl.textContent = sections.size;
+}
+
+// ✅ RENDER FEATURES - FIXED: Proper section order
 function renderFeatures(featuresList) {
     const container = document.getElementById('featuresContainer');
+    
+    if (!container) {
+        console.error('❌ Features container not found!');
+        return;
+    }
     
     if (!featuresList || featuresList.length === 0) {
         showEmptyState(container, 'No features available', 'Contact SuperAdmin for access');
         return;
     }
     
-    // Group features by section (clean section names)
+    // Group features by section
     const grouped = {};
     featuresList.forEach(f => {
         const cleanSection = f.section.replace('*** ', '');
@@ -931,24 +1225,45 @@ function renderFeatures(featuresList) {
         grouped[cleanSection].push(f);
     });
     
-    // Sort sections
+    // Define exact section order
+    const sectionOrder = [
+        'Dashboard',
+        'Subscription Management',
+        'Frontend Management',
+        'CRM',
+        'Notifications',
+        'Chats',
+        'Bulk Messaging',
+        'RCS',
+        'Campaign Management',
+        'AI Chatbot',
+        'Ads Management',
+        'VOIP Service',
+        'IVR Service',
+        'Support Desk',
+        'API',
+        'Reports',
+        'Settings',
+        'Virtual Numbers',
+        'Administration'
+    ];
+    
+    // Sort sections according to defined order
     const sections = Object.keys(grouped).sort((a, b) => {
-        const order = { 
-            'Dashboard': 1, 
-            'Reports': 2,
-            'Chats': 3,
-            'Virtual Numbers': 4,
-            'Devices': 5,
-            'RCS': 6,
-            'Scan device': 7,
-            'API': 8,
-            'Client Management': 9,
-            'Administration': 10
-        };
-        return (order[a] || 99) - (order[b] || 99);
+        const indexA = sectionOrder.indexOf(a);
+        const indexB = sectionOrder.indexOf(b);
+        
+        // If both are in the order array, sort by index
+        if (indexA !== -1 && indexB !== -1) {
+            return indexA - indexB;
+        }
+        // If only one is in the array, prioritize the one in array
+        if (indexA !== -1) return -1;
+        if (indexB !== -1) return 1;
+        // If neither is in array, sort alphabetically
+        return a.localeCompare(b);
     });
     
-    // Build HTML
     let html = '';
     const currentPath = window.location.pathname;
     
@@ -963,7 +1278,7 @@ function renderFeatures(featuresList) {
         html += `
             <div class="nav-section">
                 <div class="section-title ${isOpen ? 'open' : ''}" 
-                     onclick="toggleSection('${escapeString(section)}')">
+                     onclick="toggleSection('${escapeString(section)}', event)">
                     <div class="section-left">
                         <span class="section-icon">
                             <i class="fas fa-${sectionIcon}"></i>
@@ -1006,13 +1321,13 @@ function renderFeature(feature, currentPath) {
             
             ${userRole === 'SuperAdmin' && !isCollapsed ? `
                 <div class="feature-actions">
-                    <button onclick="toggleFeatureStatus('${feature.id}', ${feature.isActive})" 
-                            class="action-btn toggle-btn"
+                    <button onclick="toggleFeatureStatus('${feature.id}', ${feature.isActive}, event)" 
+                            class="action-btns toggle-btn"
                             title="${feature.isActive ? 'Disable' : 'Enable'}">
                         <i class="fas fa-toggle-${feature.isActive ? 'on' : 'off'}"></i>
                     </button>
-                    <button onclick="deleteFeature('${feature.id}', '${escapeString(displayName)}')" 
-                            class="action-btn delete-btn"
+                    <button onclick="deleteFeature('${feature.id}', '${escapeString(displayName)}', event)" 
+                            class="action-btns delete-btn"
                             title="Delete">
                         <i class="fas fa-trash"></i>
                     </button>
@@ -1039,17 +1354,11 @@ function showEmptyState(container, title, message, addLink = null) {
     container.innerHTML = html;
 }
 
-// ✅ UPDATE STATS
-function updateStats(featuresList) {
-    const activeFeatures = featuresList.filter(f => f.isActive !== false);
-    const sections = new Set(activeFeatures.map(f => f.section.replace('*** ', '')));
-    
-    document.getElementById('featuresCount').textContent = activeFeatures.length;
-    document.getElementById('sectionsCount').textContent = sections.size;
-}
-
-// ✅ TOGGLE SECTION
-function toggleSection(section) {
+// ✅ TOGGLE SECTION - FIXED: Added event.stopPropagation()
+function toggleSection(section, event) {
+    if (event) {
+        event.stopPropagation();
+    }
     openSections[section] = !openSections[section];
     
     try {
@@ -1111,8 +1420,12 @@ function closeMobileSidebar() {
     overlay.classList.remove('active');
 }
 
-// ✅ TOGGLE FEATURE STATUS (SuperAdmin only)
-function toggleFeatureStatus(id, currentStatus) {
+// ✅ TOGGLE FEATURE STATUS - FIXED: Added event parameter
+function toggleFeatureStatus(id, currentStatus, event) {
+    if (event) {
+        event.stopPropagation();
+    }
+    
     if (userRole !== 'SuperAdmin') {
         showToast('Permission denied', 'error');
         return;
@@ -1139,10 +1452,8 @@ function toggleFeatureStatus(id, currentStatus) {
         
         showToast(`Feature ${allFeatures[featureIndex].isActive ? 'enabled' : 'disabled'}`, 'success');
         
-        // Update localStorage timestamp for other tabs
         localStorage.setItem('sidebar-update-time', Date.now().toString());
         
-        // Reload features
         loadSidebarFeatures();
         
     } catch (err) {
@@ -1151,8 +1462,12 @@ function toggleFeatureStatus(id, currentStatus) {
     }
 }
 
-// ✅ DELETE FEATURE (SuperAdmin only)
-function deleteFeature(id, name) {
+// ✅ DELETE FEATURE - FIXED: Added event parameter
+function deleteFeature(id, name, event) {
+    if (event) {
+        event.stopPropagation();
+    }
+    
     if (userRole !== 'SuperAdmin') {
         showToast('Permission denied', 'error');
         return;
@@ -1177,10 +1492,8 @@ function deleteFeature(id, name) {
         
         showToast('Feature deleted successfully', 'success');
         
-        // Update localStorage timestamp for other tabs
         localStorage.setItem('sidebar-update-time', Date.now().toString());
         
-        // Reload features
         loadSidebarFeatures();
         
     } catch (err) {
@@ -1196,7 +1509,6 @@ function escapeString(str) {
 }
 
 function showToast(message, type = 'success') {
-    // Remove existing toast
     document.querySelectorAll('.toast-notification').forEach(t => t.remove());
     
     const toast = document.createElement('div');
@@ -1223,17 +1535,16 @@ window.refreshSidebar = function() {
     loadSidebarFeatures();
 };
 
-// ✅ Observe URL changes for active link tracking
+// ✅ Observe URL changes
 let lastUrl = location.href;
 new MutationObserver(() => {
     const url = location.href;
     if (url !== lastUrl) {
         lastUrl = url;
         console.log('📍 URL changed to:', url);
-        // Re-render to update active state
         renderFeatures(features);
     }
 }).observe(document, {subtree: true, childList: true});
 
-console.log('✅ Sidebar script loaded successfully - ROLE FILTERING ENABLED');
+console.log('✅ Sidebar script loaded successfully - USER CARD HIDE/SHOW FIXED');
 </script>

@@ -307,7 +307,6 @@
 </head>
 <body>
 
-
     <div class="role-permissions-container">
         <div class="main-content">
             
@@ -695,73 +694,285 @@
 
         const roles = ['SuperAdmin', 'Educator', 'Trainer', 'Student'];
         
-        // Updated sections to match Add New Feature page
+        // FIXED: Saare sections EXACT order mein jo Add New Feature page mein hain
         const sectionOptions = [
             '*** Dashboard',
+            '*** Subscription Management',
+            '*** Frontend Management',
+            '*** CRM',
             '*** Notifications',
-            '*** Reports',
             '*** Chats',
-            '*** Virtual Numbers',
-            '*** Devices',
+            '*** Bulk Messaging',
             '*** RCS',
-            '*** Scan device',
+            '*** Campaign Management',
+            '*** AI Chatbot',
+            '*** Ads Management',
+            '*** VOIP Service',
+            '*** IVR Service',
+            '*** Support Desk',
             '*** API',
-            '*** Client Management',
-            '*** Administration'
+            '*** Reports',
+            '*** Settings'
         ];
 
-        // Updated feature labels to match Add New Feature page
+        // FIXED: allFeatureLabels complete kiya with all sections (exact same as Add New Feature page)
         const allFeatureLabels = {
-            '*** Dashboard': ['1. Dashboard', '2. Notifications'],
-            '*** Notifications': ['1. SuperAdmin Notifications', '2. Educator Notifications','3. Trainer Notifications','4. Student Notifications'],
-            '*** Reports': ['1. Web Report', '2. API Reports'],
+            '*** Dashboard': ['1. Dashboard', '2. Notification Center'],
+            
+            '*** Notifications': [
+                '1. SuperAdmin Notifications',
+                '2. Educator Notifications',
+                '3. Trainer Notifications',
+                '4. Student Notifications'
+            ],
+
+            '*** Subscription Management': [
+                '1. All Subscriptions',
+                '2. Plans / Packages',
+                '3. Add Plan',
+                '4. Transactions',
+                '5. Payment History',
+                '6. Invoice'
+            ],
+
+            '*** Frontend Management': [
+                '1. Website Settings',
+                '2. Landing Page',
+                '3. Banner / Slider',
+                '4. FAQs',
+                '5. Contact Page',
+                '6. Footer Settings'
+            ],
+
+            '*** CRM': [
+                '1. Add Contact',
+                '2. All Contact',
+                '3. Campaign',
+                '4. Contact Group'
+            ],
+
             '*** Chats': ['1. New Chat'],
-            '*** Virtual Numbers': ['1. My Numbers', '2. Buy Number', '3. Call Logs', '4. SMS Logs'],
-            '*** Contact': ['1.Add Contact', '2. All Contact', '3. Campaign' ,'4. Contact Group'],
-            '*** RCS': ['1. RCS Campaign', '2. RCS Reports', '3. RCS Templates'],
-            '*** Scan device': ['1. Whatsapp Scan'],
-            '*** API': ['1. API Document', '2. File Upload'],
-            '*** Client Management': ['1. All Clients', '2. Add Client'],
-            '*** Administration': ['1. Role Permissions', '2. Add New Feature']
+
+            '*** Bulk Messaging': [
+                '1. Send Bulk Message',
+                '2. Templates',
+                '3. Reports'
+            ],
+
+            '*** RCS': [
+                '1. RCS Campaign',
+                '2. RCS Reports',
+                '3. RCS Templates'
+            ],
+
+            '*** Campaign Management': [
+                '1. WhatsApp Campaign',
+                '2. Official WhatsApp API Campaign',
+                '3. Social Media Campaign'
+            ],
+
+            '*** AI Chatbot': [
+                '1. Bot Flow Builder',
+                '2. Auto Replies'
+            ],
+
+            '*** Ads Management': [
+                '1. Create Ad Campaign',
+                '2. Ad Reports',
+                '3. Ad Budget'
+            ],
+
+            '*** VOIP Service': [
+                '1. Virtual Number (V Number)',
+                '2. Call Logs',
+                '3. Call Routing'
+            ],
+
+            '*** IVR Service': [
+                '1. IVR Setup',
+                '2. Call Flow Management',
+                '3. Voice Greetings'
+            ],
+
+            '*** Support Desk': [
+                '1. All Tickets',
+                '2. Create Ticket',
+                '3. Ticket Replies'
+            ],
+
+            '*** Reports': [
+                '1. Web Report',
+                '2. API Reports'
+            ],
+
+            '*** Settings': [
+                '1. Frontend Settings',
+                '2. Custom Roles',
+                '3. Role Management',
+                '4. Add To Dashboard',
+                '5. Payment Settings',
+                '6. Message Settings',
+                '7. API Settings',
+                '8. Security Settings',
+                '9. SMTP Settings',
+                '10. User Logs'
+            ],
+            
+            '*** Virtual Numbers': [
+                '1. My Numbers',
+                '2. Buy Number',
+                '3. Call Logs',
+                '4. SMS Logs'
+            ],
+
+            '*** Scan device': [
+                '1. Scan QR Code',
+                '2. Connected Devices'
+            ],
+
+            '*** API': [
+                '1. API Keys',
+                '2. API Documentation',
+                '3. Webhook Settings'
+            ],
+
+            '*** Administration': [
+                '1. Role Permissions',
+                '2. Add New Feature'
+            ]
         };
 
         const sectionIcons = {
             '*** Dashboard': '<i class="fas fa-chart-line"></i>',
-            '*** Notifications': '<i class="fas fa-envelope"></i>',
+            '*** Notifications': '<i class="fas fa-bell"></i>',
             '*** Reports': '<i class="fas fa-file-alt"></i>',
             '*** Chats': '<i class="fas fa-comment-dots"></i>',
             '*** Virtual Numbers': '<i class="fas fa-phone-alt"></i>',
-            '*** Devices': '<i class="fas fa-mobile-alt"></i>',
-            '*** RCS': '<i class="fas fa-envelope"></i>',
+            '*** CRM': '<i class="fas fa-address-book"></i>',
+            '*** RCS': '<i class="fas fa-envelope-open-text"></i>',
             '*** Scan device': '<i class="fas fa-qrcode"></i>',
             '*** API': '<i class="fas fa-code"></i>',
-            '*** Client Management': '<i class="fas fa-users"></i>',
-            '*** Administration': '<i class="fas fa-cog"></i>'
+            '*** Administration': '<i class="fas fa-cog"></i>',
+            '*** Subscription Management': '<i class="fas fa-credit-card"></i>',
+            '*** Frontend Management': '<i class="fas fa-desktop"></i>',
+            '*** Bulk Messaging': '<i class="fas fa-paper-plane"></i>',
+            '*** Campaign Management': '<i class="fas fa-bullhorn"></i>',
+            '*** AI Chatbot': '<i class="fas fa-robot"></i>',
+            '*** Ads Management': '<i class="fas fa-ad"></i>',
+            '*** VOIP Service': '<i class="fas fa-phone"></i>',
+            '*** IVR Service': '<i class="fas fa-phone-volume"></i>',
+            '*** Support Desk': '<i class="fas fa-headset"></i>',
+            '*** Settings': '<i class="fas fa-sliders-h"></i>'
         };
 
         const featureIcons = {
+            // Dashboard
             '1. Dashboard': '<i class="fas fa-chart-line"></i>',
-            '2. Notifications': '<i class="fas fa-bell"></i>',
-            '1. Web Report': '<i class="fas fa-file-alt"></i>',
-            '2. API Reports': '<i class="fas fa-code"></i>',
-            '1. New Chat': '<i class="fas fa-comment-dots"></i>',
-            '1. My Numbers': '<i class="fas fa-phone-alt"></i>',
-            '2. Buy Number': '<i class="fas fa-shopping-cart"></i>',
-            '3. Call Logs': '<i class="fas fa-phone"></i>',
-            '4. SMS Logs': '<i class="fas fa-sms"></i>',
-            '1. Add Contact': '<i class="fas fa-plus-circle"></i>',
-            '2. All Contact': '<i class="fas fa-mobile-alt"></i>',
+            '2. Notification Center': '<i class="fas fa-bell"></i>',
+
+            // Notifications
+            '1. SuperAdmin Notifications': '<i class="fas fa-bell"></i>',
+            '2. Educator Notifications': '<i class="fas fa-bell"></i>',
+            '3. Trainer Notifications': '<i class="fas fa-bell"></i>',
+            '4. Student Notifications': '<i class="fas fa-bell"></i>',
+
+            // Subscription
+            '1. All Subscriptions': '<i class="fas fa-list"></i>',
+            '2. Plans / Packages': '<i class="fas fa-box"></i>',
+            '3. Add Plan': '<i class="fas fa-plus"></i>',
+            '4. Transactions': '<i class="fas fa-money-bill"></i>',
+            '5. Payment History': '<i class="fas fa-receipt"></i>',
+            '6. Invoice': '<i class="fas fa-file-invoice"></i>',
+
+            // Frontend
+            '1. Website Settings': '<i class="fas fa-globe"></i>',
+            '2. Landing Page': '<i class="fas fa-home"></i>',
+            '3. Banner / Slider': '<i class="fas fa-images"></i>',
+            '4. FAQs': '<i class="fas fa-question-circle"></i>',
+            '5. Contact Page': '<i class="fas fa-envelope"></i>',
+            '6. Footer Settings': '<i class="fas fa-window-minimize"></i>',
+
+            // CRM
+            '1. Add Contact': '<i class="fas fa-user-plus"></i>',
+            '2. All Contact': '<i class="fas fa-address-book"></i>',
             '3. Campaign': '<i class="fas fa-bullhorn"></i>',
-            '4. Contact Group': '<i class="fas fa-mobile-alt"></i>',
+            '4. Contact Group': '<i class="fas fa-users"></i>',
+
+            // Chats
+            '1. New Chat': '<i class="fas fa-comment-dots"></i>',
+
+            // Bulk Messaging
+            '1. Send Bulk Message': '<i class="fas fa-paper-plane"></i>',
+            '2. Templates': '<i class="fas fa-file"></i>',
+            '3. Reports': '<i class="fas fa-chart-bar"></i>',
+
+            // RCS
             '1. RCS Campaign': '<i class="fas fa-bullhorn"></i>',
             '2. RCS Reports': '<i class="fas fa-file-alt"></i>',
             '3. RCS Templates': '<i class="fas fa-file"></i>',
-            '1. Whatsapp Scan': '<i class="fab fa-whatsapp"></i>',
-            '1. API Document': '<i class="fas fa-file-code"></i>',
-            '2. File Upload': '<i class="fas fa-upload"></i>',
-            '1. All Clients': '<i class="fas fa-list"></i>',      // <-- list of clients
-            '2. Add Client': '<i class="fas fa-user-plus"></i>',
-            '1. Role Permissions': '<i class="fas fa-user-shield"></i>',
+
+            // Campaign Management
+            '1. WhatsApp Campaign': '<i class="fab fa-whatsapp"></i>',
+            '2. Official WhatsApp API Campaign': '<i class="fas fa-robot"></i>',
+            '3. Social Media Campaign': '<i class="fas fa-share-alt"></i>',
+
+            // AI Chatbot
+            '1. Bot Flow Builder': '<i class="fas fa-project-diagram"></i>',
+            '2. Auto Replies': '<i class="fas fa-reply"></i>',
+
+            // Ads
+            '1. Create Ad Campaign': '<i class="fas fa-bullhorn"></i>',
+            '2. Ad Reports': '<i class="fas fa-chart-line"></i>',
+            '3. Ad Budget': '<i class="fas fa-money-bill-wave"></i>',
+
+            // VOIP
+            '1. Virtual Number (V Number)': '<i class="fas fa-phone-alt"></i>',
+            '2. Call Logs': '<i class="fas fa-phone"></i>',
+            '3. Call Routing': '<i class="fas fa-random"></i>',
+
+            // IVR
+            '1. IVR Setup': '<i class="fas fa-cog"></i>',
+            '2. Call Flow Management': '<i class="fas fa-sitemap"></i>',
+            '3. Voice Greetings': '<i class="fas fa-microphone"></i>',
+
+            // Support
+            '1. All Tickets': '<i class="fas fa-ticket-alt"></i>',
+            '2. Create Ticket': '<i class="fas fa-plus-circle"></i>',
+            '3. Ticket Replies': '<i class="fas fa-reply"></i>',
+
+            // Reports
+            '1. Web Report': '<i class="fas fa-file-alt"></i>',
+            '2. API Reports': '<i class="fas fa-code"></i>',
+
+            // Settings
+            '1. Frontend Settings': '<i class="fas fa-desktop"></i>',
+            '2. Custom Roles': '<i class="fas fa-user-tag"></i>',
+            '3. Role Management': '<i class="fas fa-user-cog"></i>',
+            '4. Add To Dashboard': '<i class="fas fa-plus-square"></i>',
+            '5. Payment Settings': '<i class="fas fa-credit-card"></i>',
+            '6. Message Settings': '<i class="fas fa-envelope"></i>',
+            '7. API Settings': '<i class="fas fa-code"></i>',
+            '8. Security Settings': '<i class="fas fa-shield-alt"></i>',
+            '9. SMTP Settings': '<i class="fas fa-server"></i>',
+            '10. User Logs': '<i class="fas fa-history"></i>',
+
+            // Virtual Numbers
+            '1. My Numbers': '<i class="fas fa-phone"></i>',
+            '2. Buy Number': '<i class="fas fa-shopping-cart"></i>',
+            '3. Call Logs': '<i class="fas fa-phone"></i>',
+            '4. SMS Logs': '<i class="fas fa-sms"></i>',
+
+            // Scan device
+            '1. Scan QR Code': '<i class="fas fa-qrcode"></i>',
+            '2. Connected Devices': '<i class="fas fa-mobile-alt"></i>',
+
+            // API
+            '1. API Keys': '<i class="fas fa-key"></i>',
+            '2. API Documentation': '<i class="fas fa-book"></i>',
+            '3. Webhook Settings': '<i class="fas fa-globe"></i>',
+
+            // Administration
+            '1. Role Permissions': '<i class="fas fa-lock"></i>',
             '2. Add New Feature': '<i class="fas fa-plus"></i>'
         };
 
@@ -850,24 +1061,25 @@
                     console.log("✅ Loaded features from localStorage:", parsedFeatures.length);
                     features = parsedFeatures;
                 } else {
-                    // Create default features for SuperAdmin using the updated sections
+                    // Create default features for SuperAdmin using all sections
                     features = [];
                     let idCounter = 1;
                     
-                    // Only add features for SuperAdmin by default
-                    // Other roles can be added via the Add New Feature page
-                    Object.keys(allFeatureLabels).forEach(section => {
-                        allFeatureLabels[section].forEach((label, index) => {
-                            features.push({
-                                id: idCounter++,
-                                role: 'SuperAdmin',
-                                section: section,
-                                label: label,
-                                isActive: true,
-                                order: index + 1,
-                                createdAt: new Date().toISOString()
+                    // Saare sections ke saare features add karo SuperAdmin ke liye (exact order mein)
+                    sectionOptions.forEach(section => {
+                        if (allFeatureLabels[section]) {
+                            allFeatureLabels[section].forEach((label, index) => {
+                                features.push({
+                                    id: idCounter++,
+                                    role: 'SuperAdmin',
+                                    section: section,
+                                    label: label,
+                                    isActive: true,
+                                    order: index + 1,
+                                    createdAt: new Date().toISOString()
+                                });
                             });
-                        });
+                        }
                     });
                     
                     console.log("✅ Created default SuperAdmin features:", features.length);
@@ -963,11 +1175,19 @@
                 .sort((a, b) => {
                     switch(sortBy) {
                         case "order":
+                            // Sort by section order first, then by feature order
+                            const sectionIndexA = sectionOptions.indexOf(a.section);
+                            const sectionIndexB = sectionOptions.indexOf(b.section);
+                            if (sectionIndexA !== sectionIndexB) {
+                                return sectionIndexA - sectionIndexB;
+                            }
                             return a.order - b.order;
                         case "name":
                             return a.label.localeCompare(b.label);
                         case "section":
-                            return a.section.localeCompare(b.section);
+                            const indexA = sectionOptions.indexOf(a.section);
+                            const indexB = sectionOptions.indexOf(b.section);
+                            return indexA - indexB;
                         case "newest":
                             return new Date(b.createdAt || 0) - new Date(a.createdAt || 0);
                         case "oldest":
@@ -998,13 +1218,13 @@
             
             // Update sort text
             const sortTexts = {
-                'order': 'Sorted: Order',
+                'order': 'Sorted: Section Order',
                 'name': 'Sorted: Name A-Z',
                 'section': 'Sorted: Section',
                 'newest': 'Sorted: Newest',
                 'oldest': 'Sorted: Oldest'
             };
-            elements.sortText.textContent = sortTexts[sortBy] || 'Sorted: Order';
+            elements.sortText.textContent = sortTexts[sortBy] || 'Sorted: Section Order';
 
             // Show/hide states
             if (isLoading) {
@@ -1362,18 +1582,21 @@
                 const defaultFeatures = [];
                 let idCounter = 1;
                 
-                Object.keys(allFeatureLabels).forEach(section => {
-                    allFeatureLabels[section].forEach((label, index) => {
-                        defaultFeatures.push({
-                            id: idCounter++,
-                            role: 'SuperAdmin',
-                            section: section,
-                            label: label,
-                            isActive: true,
-                            order: index + 1,
-                            createdAt: new Date().toISOString()
+                // Saare sections ke saare features add karo SuperAdmin ke liye (exact order mein)
+                sectionOptions.forEach(section => {
+                    if (allFeatureLabels[section]) {
+                        allFeatureLabels[section].forEach((label, index) => {
+                            defaultFeatures.push({
+                                id: idCounter++,
+                                role: 'SuperAdmin',
+                                section: section,
+                                label: label,
+                                isActive: true,
+                                order: index + 1,
+                                createdAt: new Date().toISOString()
+                            });
                         });
-                    });
+                    }
                 });
                 
                 saveFeatures(defaultFeatures);

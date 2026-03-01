@@ -1,64 +1,28 @@
 const mongoose = require('mongoose');
 
 const messageSchema = new mongoose.Schema({
-    messageId: { 
-        type: String, 
-        required: true, 
-        unique: true 
-    },
-    deviceId: { 
-        type: String, 
-        required: true 
-    },
-    chatId: { 
-        type: String, 
-        required: true 
-    },
-    contactNumber: { 
-        type: String, 
-        required: true 
-    },
-    contactName: { 
-        type: String 
-    },
-    message: { 
-        type: String 
-    },
-    messageType: { 
-        type: String, 
-        enum: ['text', 'image', 'video', 'audio', 'document'],
-        default: 'text'
-    },
-    mediaUrl: { 
-        type: String 
-    },
-    fileName: { 
-        type: String 
-    },
-    direction: { 
-        type: String, 
-        enum: ['incoming', 'outgoing'],
-        required: true 
-    },
-    timestamp: { 
-        type: Date, 
-        default: Date.now 
-    },
-    isRead: { 
-        type: Boolean, 
-        default: false 
-    },
-    status: { 
-        type: String, 
-        enum: ['sent', 'delivered', 'read', 'failed'],
-        default: 'sent'
-    }
-    // ⚠️ jobId field completely hata di
-}, { 
-    timestamps: true 
-});
+    jobId: { type: String, required: true, unique: true },
+    channel: { type: String, default: 'whatsapp' },
+    bill: { type: Number, default: 1 },
+    message: { type: String, default: '' },
+    messageType: { type: String, default: 'text' },
+    mediaUrl: { type: String, default: '' },
+    fileName: { type: String, default: '' },
+    fileSize: { type: Number, default: 0 },
+    sentTime: { type: Date, default: Date.now },
+    status: { type: String, default: 'Pending' },
+    deviceId: { type: String, default: '' },
+    whatsappNumber: { type: String, default: '' },
+    campaignId: { type: String, default: null, index: true },
+    campaignName: { type: String, default: '' },
+    recipient: { type: String, default: '' },
+    direction: { type: String, default: 'outgoing' },
+    error: { type: String, default: null },
+    isDeleted: { type: Boolean, default: false }
+}, { timestamps: true });
 
-// Index for better performance
-messageSchema.index({ deviceId: 1, contactNumber: 1, timestamp: -1 });
+messageSchema.index({ campaignId: 1, sentTime: -1 });
+messageSchema.index({ recipient: 1 });
+messageSchema.index({ status: 1 });
 
 module.exports = mongoose.model('Message', messageSchema);

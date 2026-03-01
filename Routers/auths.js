@@ -1,8 +1,3 @@
-// ============================================
-// COMPLETE FIXED auths.js - WITH PROPER SESSION HANDLING
-// NO CRYPTO ADDED - USING BUILT-IN METHODS
-// ============================================
-
 const router = require('express').Router();
 const auth = require('../models/auth');
 
@@ -458,6 +453,32 @@ router.get('/role-permissions', isAuthenticated, (req, res) => {
         user: req.user,
         isLoggedIn: true
     });
+});
+
+
+router.get('/settings/user-logs',(req,res)=>{
+    res.render("Settings/UserLogs.ejs")
+})
+
+router.get('/reports/web', isAuthenticated, async (req, res) => {
+    try {
+        const user = await auth.findById(req.session.userId);
+
+        if (!user) {
+            req.session.destroy();
+            return res.redirect('/login?message=User not found&messageType=error');
+        }
+
+        res.render('WebReport', {   // .ejs likhne ki zarurat nahi hoti
+            activeTab: 'reports',
+            user: user,
+            isLoggedIn: true
+        });
+
+    } catch (error) {
+        console.error('Web Report error:', error);
+        res.redirect('/dashboard?message=Error loading report&messageType=error');
+    }
 });
 
 module.exports = router;

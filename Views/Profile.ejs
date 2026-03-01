@@ -3,15 +3,14 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Update Profile</title>
-
+    <title>My Profile - <%= user?.firstName || 'User' %></title>
+    
     <!-- Bootstrap CSS -->
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
     <!-- Font Awesome -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-
+    
     <style>
-        /* RESET */
         * {
             margin: 0;
             padding: 0;
@@ -20,11 +19,10 @@
 
         body {
             overflow-x: hidden;
-            background: #eef3f8;
-            font-family: system-ui;
+            background: #f3f4f6;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
         }
 
-        /* HEADER FIXED */
         .header-wrapper {
             position: fixed;
             top: 0;
@@ -35,7 +33,6 @@
             box-shadow: 0 2px 10px rgba(0,0,0,0.05);
         }
 
-        /* MAIN LAYOUT */
         .main-wrapper {
             margin-top: 70px;
             display: flex;
@@ -43,7 +40,6 @@
             min-height: calc(100vh - 70px);
         }
 
-        /* SIDEBAR WRAPPER */
         .sidebar-wrapper {
             width: 280px;
             flex-shrink: 0;
@@ -53,19 +49,20 @@
             bottom: 0;
             z-index: 1020;
             transition: width 0.3s ease;
+            background: white;
+            border-right: 1px solid #eef2f6;
         }
 
         .sidebar-wrapper.collapsed {
             width: 80px;
         }
 
-        /* CONTENT WRAPPER */
         .content-wrapper {
             flex: 1;
             margin-left: 280px;
-            padding: 30px;
+            padding: 20px 15px; /* Reduced padding */
             transition: margin-left 0.3s ease;
-            background: #eef3f8;
+            background: #f8fafc;
             min-height: calc(100vh - 70px);
         }
 
@@ -73,100 +70,6 @@
             margin-left: 80px;
         }
 
-        /* PROFILE CARD */
-        .profile-card {
-            background: #fff;
-            border-radius: 12px;
-            padding: 30px 35px 40px;
-            box-shadow: 0 8px 20px rgba(0,0,0,.06);
-            max-width: 900px;
-            margin: 0 auto;
-        }
-
-        .profile-header {
-            text-align: center;
-            margin-bottom: 25px;
-        }
-
-        .profile-header .icon {
-            width: 60px;
-            height: 60px;
-            background: #3b82f6;
-            color: #fff;
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 26px;
-            margin: 0 auto 10px;
-        }
-
-        .profile-header h5 {
-            margin: 0;
-            font-weight: 700;
-            color: #1f2937;
-        }
-
-        .profile-sub {
-            text-align: center;
-            color: #6b7280;
-            margin-bottom: 10px;
-        }
-
-        .profile-line {
-            height: 3px;
-            background: #3b82f6;
-            width: 100%;
-            margin-bottom: 25px;
-        }
-
-        .form-label {
-            font-weight: 600;
-            color: #374151;
-        }
-
-        .form-control {
-            border-radius: 25px;
-            padding: 12px 18px;
-            border: 1px solid #e5e7eb;
-        }
-
-        .form-control:focus {
-            border-color: #3b82f6;
-            box-shadow: 0 0 0 0.2rem rgba(59, 130, 246, 0.25);
-        }
-
-        .password-box {
-            position: relative;
-        }
-
-        .password-box i {
-            position: absolute;
-            right: 18px;
-            top: 50%;
-            transform: translateY(-50%);
-            color: #6b7280;
-            cursor: pointer;
-        }
-
-        .submit-btn {
-            display: block;
-            margin: 30px auto 0;
-            padding: 10px 40px;
-            border-radius: 25px;
-            border: 1px solid #22c55e;
-            background: #fff;
-            color: #22c55e;
-            font-weight: 700;
-            transition: all 0.3s ease;
-        }
-
-        .submit-btn:hover {
-            background: #22c55e;
-            color: white;
-        }
-
-        /* MOBILE */
         @media (max-width: 768px) {
             .sidebar-wrapper {
                 transform: translateX(-100%);
@@ -179,12 +82,504 @@
             
             .content-wrapper {
                 margin-left: 0 !important;
-                padding: 15px;
+                padding: 15px 10px;
             }
-            
-            .profile-card {
-                padding: 20px;
+        }
+
+        /* Profile Card Styles */
+        .profile-container {
+            max-width: 700px; /* Reduced from 800px */
+            margin: 0 auto;
+        }
+
+        .profile-card {
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 5px 20px rgba(0,0,0,0.03);
+            border: 1px solid #eef2f6;
+            overflow: hidden;
+            animation: slideUp 0.5s ease-out;
+        }
+
+        @keyframes slideUp {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
             }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .profile-header {
+            background: linear-gradient(135deg, #3b82f6 0%, #2563eb 100%);
+            padding: 35px 25px;
+            position: relative;
+            display: flex;
+            align-items: center;
+            gap: 25px;
+            flex-wrap: wrap;
+        }
+
+        @media (max-width: 640px) {
+            .profile-header {
+                flex-direction: column;
+                text-align: center;
+                padding: 25px 20px;
+            }
+        }
+
+        .profile-avatar-wrapper {
+            position: relative;
+            display: inline-block;
+        }
+
+        .profile-avatar {
+            width: 100px; /* Slightly smaller */
+            height: 100px;
+            background: white;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 42px;
+            font-weight: bold;
+            color: #3b82f6;
+            border: 4px solid rgba(255,255,255,0.3);
+            box-shadow: 0 8px 16px rgba(0,0,0,0.15);
+            transition: all 0.3s ease;
+            background-size: cover;
+            background-position: center;
+        }
+
+        .profile-avatar:hover {
+            transform: scale(1.03);
+        }
+
+        .avatar-upload-btn {
+            position: absolute;
+            bottom: 5px;
+            right: 5px;
+            width: 32px;
+            height: 32px;
+            background: white;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #3b82f6;
+            border: 2px solid #3b82f6;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+        }
+
+        .avatar-upload-btn:hover {
+            background: #3b82f6;
+            color: white;
+        }
+
+        .profile-title h1 {
+            margin: 0;
+            font-size: 28px;
+            font-weight: 700;
+            color: white;
+        }
+
+        .profile-title p {
+            margin: 5px 0 0;
+            opacity: 0.9;
+            font-size: 15px;
+            color: white;
+        }
+
+        .role-badge {
+            display: inline-block;
+            padding: 6px 16px;
+            background: rgba(255,255,255,0.2);
+            border-radius: 30px;
+            font-size: 13px;
+            font-weight: 600;
+            margin-top: 12px;
+            color: white;
+            backdrop-filter: blur(5px);
+            border: 1px solid rgba(255,255,255,0.3);
+        }
+
+        .profile-body {
+            padding: 30px 25px;
+        }
+
+        .info-section {
+            margin-bottom: 30px;
+        }
+
+        .info-section:last-child {
+            margin-bottom: 0;
+        }
+
+        .info-title {
+            font-size: 17px;
+            font-weight: 600;
+            color: #1e293b;
+            margin-bottom: 15px;
+            padding-bottom: 8px;
+            border-bottom: 2px solid #eef2f6;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .info-title i {
+            color: #3b82f6;
+            font-size: 18px;
+        }
+
+        .info-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 15px;
+        }
+
+        @media (max-width: 640px) {
+            .info-grid {
+                grid-template-columns: 1fr;
+                gap: 12px;
+            }
+        }
+
+        .info-item {
+            display: flex;
+            align-items: flex-start;
+            gap: 12px;
+            padding: 12px;
+            background: #f8fafc;
+            border-radius: 14px;
+            transition: all 0.2s ease;
+            border: 1px solid #eef2f6;
+        }
+
+        .info-item:hover {
+            border-color: #3b82f6;
+        }
+
+        .info-icon {
+            width: 40px;
+            height: 40px;
+            background: white;
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 18px;
+            color: #3b82f6;
+            border: 1px solid #e2e8f0;
+            flex-shrink: 0;
+        }
+
+        .info-content {
+            flex: 1;
+        }
+
+        .info-label {
+            font-size: 11px;
+            color: #64748b;
+            margin-bottom: 2px;
+            text-transform: uppercase;
+            letter-spacing: 0.3px;
+            font-weight: 600;
+        }
+
+        .info-value {
+            font-size: 15px;
+            font-weight: 500;
+            color: #1e293b;
+            word-break: break-word;
+            line-height: 1.4;
+        }
+
+        .info-value.email {
+            color: #3b82f6;
+        }
+
+        .status-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 4px;
+            padding: 3px 8px;
+            border-radius: 30px;
+            font-size: 10px;
+            font-weight: 600;
+            margin-left: 6px;
+        }
+
+        .status-active {
+            background: #e6f7ee;
+            color: #10b981;
+        }
+
+        .profile-footer {
+            padding: 20px 25px;
+            background: #f8fafc;
+            border-top: 1px solid #eef2f6;
+            display: flex;
+            justify-content: flex-end;
+            gap: 12px;
+            flex-wrap: wrap;
+        }
+
+        .btn-edit, .btn-back {
+            padding: 10px 22px;
+            border-radius: 10px;
+            font-weight: 600;
+            font-size: 14px;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            cursor: pointer;
+            transition: all 0.3s;
+            border: none;
+            text-decoration: none;
+        }
+
+        .btn-edit {
+            background: white;
+            color: #3b82f6;
+            border: 1px solid #3b82f6;
+        }
+
+        .btn-edit:hover {
+            background: #3b82f6;
+            color: white;
+            transform: translateY(-2px);
+            box-shadow: 0 5px 12px rgba(59, 130, 246, 0.3);
+        }
+
+        .btn-back {
+            background: linear-gradient(135deg, #3b82f6, #2563eb);
+            color: white;
+        }
+
+        .btn-back:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 16px rgba(59, 130, 246, 0.3);
+        }
+
+        /* Modal Styles */
+        .modal-content {
+            border-radius: 18px;
+            border: none;
+            box-shadow: 0 20px 35px rgba(0,0,0,0.15);
+        }
+
+        .modal-header {
+            background: linear-gradient(135deg, #3b82f6, #2563eb);
+            color: white;
+            border-radius: 18px 18px 0 0;
+            padding: 18px 22px;
+            border-bottom: none;
+        }
+
+        .modal-header .btn-close {
+            background: white;
+            opacity: 1;
+            box-shadow: none;
+        }
+
+        .modal-title {
+            font-weight: 600;
+            font-size: 18px;
+        }
+
+        .modal-body {
+            padding: 25px;
+            max-height: 70vh;
+            overflow-y: auto;
+        }
+
+        .modal-footer {
+            padding: 18px 22px;
+            border-top: 1px solid #eef2f6;
+            background: #f8fafc;
+            border-radius: 0 0 18px 18px;
+        }
+
+        .form-label {
+            font-weight: 600;
+            color: #334155;
+            font-size: 12px;
+            margin-bottom: 4px;
+        }
+
+        .form-control, .form-select {
+            border: 1px solid #e2e8f0;
+            border-radius: 8px;
+            padding: 9px 14px;
+            font-size: 14px;
+            transition: all 0.2s;
+        }
+
+        .form-control:focus, .form-select:focus {
+            border-color: #3b82f6;
+            box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+        }
+
+        .btn-save {
+            background: linear-gradient(135deg, #3b82f6, #2563eb);
+            color: white;
+            border: none;
+            padding: 9px 22px;
+            border-radius: 8px;
+            font-weight: 600;
+            font-size: 14px;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .btn-save:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(59, 130, 246, 0.3);
+        }
+
+        .btn-cancel {
+            background: white;
+            color: #64748b;
+            border: 1px solid #e2e8f0;
+            padding: 9px 22px;
+            border-radius: 8px;
+            font-weight: 600;
+            font-size: 14px;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .btn-cancel:hover {
+            background: #f1f5f9;
+        }
+
+        /* Avatar upload in modal */
+        .modal-avatar-section {
+            display: flex;
+            align-items: center;
+            gap: 18px;
+            margin-bottom: 22px;
+            padding: 14px;
+            background: #f8fafc;
+            border-radius: 14px;
+            border: 1px solid #eef2f6;
+        }
+
+        .modal-avatar-preview {
+            width: 70px;
+            height: 70px;
+            background: linear-gradient(135deg, #3b82f6, #2563eb);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 28px;
+            font-weight: bold;
+            color: white;
+            border: 3px solid white;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+            background-size: cover;
+            background-position: center;
+        }
+
+        .modal-avatar-upload .btn-upload {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            padding: 7px 16px;
+            background: white;
+            color: #3b82f6;
+            border: 1px solid #3b82f6;
+            border-radius: 6px;
+            font-size: 12px;
+            font-weight: 500;
+            cursor: pointer;
+        }
+
+        .modal-avatar-upload .btn-upload:hover {
+            background: #3b82f6;
+            color: white;
+        }
+
+        .modal-avatar-upload small {
+            display: block;
+            margin-top: 5px;
+            color: #64748b;
+            font-size: 10px;
+        }
+
+        /* Toast */
+        #toast {
+            position: fixed;
+            top: 84px;
+            right: 20px;
+            width: 300px;
+            padding: 12px 16px;
+            border-radius: 10px;
+            box-shadow: 0 12px 25px rgba(0,0,0,0.15);
+            opacity: 0;
+            transform: translateY(-15px);
+            transition: .3s ease;
+            color: #fff;
+            z-index: 9999;
+        }
+
+        #toast.show {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        .toast-row {
+            display: flex;
+            gap: 10px;
+            align-items: flex-start;
+        }
+
+        .toast-icon {
+            width: 30px;
+            height: 30px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 14px;
+            background: rgba(0,0,0,.2);
+        }
+
+        .toast-text h4 {
+            margin: 0;
+            font-size: 13px;
+            font-weight: 600;
+        }
+
+        .toast-text p {
+            margin: 3px 0 0;
+            font-size: 12px;
+            opacity: .9;
+        }
+
+        .toast-success { background: #16a34a; }
+        .toast-error { background: #dc2626; }
+        .toast-info { background: #2563eb; }
+
+        .toast-progress {
+            height: 3px;
+            border-radius: 4px;
+            margin-top: 8px;
+            background: rgba(255,255,255,.6);
+            animation: toast-load 3s linear forwards;
+        }
+
+        @keyframes toast-load {
+            from { width: 100%; }
+            to { width: 0%; }
         }
     </style>
 </head>
@@ -203,172 +598,438 @@
 
         <!-- CONTENT -->
         <div class="content-wrapper" id="contentWrapper">
-            <div class="profile-card">
-                <!-- TOP -->
-                <div class="profile-header">
-                    <div class="icon">
-                        <i class="fa-solid fa-user"></i>
+            <!-- Toast Container -->
+            <div id="toast"></div>
+
+            <div class="profile-container">
+                <!-- Profile Card -->
+                <div class="profile-card">
+                    <!-- Profile Header with Avatar -->
+                    <div class="profile-header">
+                        <div class="profile-avatar-wrapper">
+                            <div class="profile-avatar" id="profileAvatar"
+                                style="<%= user.avatar ? `background-image: url('${user.avatar}'); background-size: cover; background-position: center;` : '' %>">
+                                <% if (!user.avatar) { %>
+                                    <%= (user?.firstName || user?.email || 'U').charAt(0).toUpperCase() %>
+                                <% } %>
+                            </div>
+                            <div class="avatar-upload-btn" onclick="openEditModal()">
+                                <i class="fas fa-camera"></i>
+                            </div>
+                        </div>
+                        <div class="profile-title">
+                            <h1><%= user?.firstName || '' %> <%= user?.lastName || '' %></h1>
+                            <p><%= user?.email || '' %></p>
+                            <span class="role-badge">
+                                <i class="fas fa-user-tag"></i> <%= user?.role || 'User' %>
+                            </span>
+                        </div>
                     </div>
-                    <h5>Update User</h5>
-                </div>
 
-                <div class="profile-sub">Update Profile</div>
-                <div class="profile-line"></div>
-
-                <!-- FORM -->
-                <form method="POST" action="/update-profile">
-                    <div class="row g-4">
-                        <div class="col-md-6">
-                            <label class="form-label">Full Name</label>
-                            <input type="text" class="form-control" name="fullName" value="SMS Link">
+                    <!-- Profile Body -->
+                    <div class="profile-body">
+                        <!-- Personal Information -->
+                        <div class="info-section">
+                            <div class="info-title"><i class="fas fa-user-circle"></i> Personal Information</div>
+                            <div class="info-grid">
+                                <div class="info-item">
+                                    <div class="info-icon"><i class="fas fa-user"></i></div>
+                                    <div class="info-content">
+                                        <div class="info-label">Full Name</div>
+                                        <div class="info-value" id="displayName"><%= user?.firstName || 'Not set' %> <%= user?.lastName || '' %></div>
+                                    </div>
+                                </div>
+                                <div class="info-item">
+                                    <div class="info-icon"><i class="fas fa-phone-alt"></i></div>
+                                    <div class="info-content">
+                                        <div class="info-label">Contact</div>
+                                        <div class="info-value" id="displayPhone"><%= user?.contactNumber || 'Not provided' %></div>
+                                    </div>
+                                </div>
+                                <div class="info-item">
+                                    <div class="info-icon"><i class="fas fa-birthday-cake"></i></div>
+                                    <div class="info-content">
+                                        <div class="info-label">Date of Birth</div>
+                                        <div class="info-value" id="displayDob"><%= user?.dob ? new Date(user.dob).toLocaleDateString() : 'Not provided' %></div>
+                                    </div>
+                                </div>
+                                <div class="info-item">
+                                    <div class="info-icon"><i class="fas fa-venus-mars"></i></div>
+                                    <div class="info-content">
+                                        <div class="info-label">Gender</div>
+                                        <div class="info-value" id="displayGender"><%= user?.gender || 'Not specified' %></div>
+                                    </div>
+                                </div>
+                            </div>
                         </div>
 
-                        <div class="col-md-6">
-                            <label class="form-label">Company Name</label>
-                            <input type="text" class="form-control" name="companyName" value="SMS Link">
+                        <!-- Contact Information -->
+                        <div class="info-section">
+                            <div class="info-title"><i class="fas fa-envelope"></i> Contact Information</div>
+                            <div class="info-grid">
+                                <div class="info-item">
+                                    <div class="info-icon"><i class="fas fa-envelope"></i></div>
+                                    <div class="info-content">
+                                        <div class="info-label">Email</div>
+                                        <div class="info-value email" id="displayEmail">
+                                            <%= user?.email || 'Not set' %>
+                                            <span class="status-badge status-active"><i class="fas fa-check-circle"></i> Verified</span>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="info-item">
+                                    <div class="info-icon"><i class="fas fa-map-marker-alt"></i></div>
+                                    <div class="info-content">
+                                        <div class="info-label">Address</div>
+                                        <div class="info-value" id="displayAddress"><%= user?.address || 'Not provided' %></div>
+                                    </div>
+                                </div>
+                            </div>
                         </div>
 
-                        <div class="col-md-6">
-                            <label class="form-label">Email*</label>
-                            <input type="email" class="form-control" name="email" value="afsanabulksmslink366@gmail.com">
-                        </div>
-
-                        <div class="col-md-6">
-                            <label class="form-label">Mobile</label>
-                            <input type="text" class="form-control" name="mobile" value="7045420530">
-                        </div>
-
-                        <div class="col-md-6">
-                            <label class="form-label">New Password *</label>
-                            <div class="password-box">
-                                <input type="password" class="form-control" name="password" placeholder="Enter Your New Password" id="passwordField">
-                                <i class="fa-solid fa-eye" onclick="togglePassword()"></i>
+                        <!-- Account Information -->
+                        <div class="info-section">
+                            <div class="info-title"><i class="fas fa-shield-alt"></i> Account Information</div>
+                            <div class="info-grid">
+                                <div class="info-item">
+                                    <div class="info-icon"><i class="fas fa-clock"></i></div>
+                                    <div class="info-content">
+                                        <div class="info-label">Member Since</div>
+                                        <div class="info-value"><%= user?.createdAt ? new Date(user.createdAt).toLocaleDateString() : 'Recent' %></div>
+                                    </div>
+                                </div>
+                                <div class="info-item">
+                                    <div class="info-icon"><i class="fas fa-history"></i></div>
+                                    <div class="info-content">
+                                        <div class="info-label">Last Updated</div>
+                                        <div class="info-value"><%= user?.updatedAt ? new Date(user.updatedAt).toLocaleDateString() : 'Never' %></div>
+                                    </div>
+                                </div>
+                                <div class="info-item">
+                                    <div class="info-icon"><i class="fas fa-globe"></i></div>
+                                    <div class="info-content">
+                                        <div class="info-label">Last Login</div>
+                                        <div class="info-value"><%= user?.lastLogin ? new Date(user.lastLogin).toLocaleString() : 'Just now' %></div>
+                                    </div>
+                                </div>
+                                <div class="info-item">
+                                    <div class="info-icon"><i class="fas fa-fingerprint"></i></div>
+                                    <div class="info-content">
+                                        <div class="info-label">User ID</div>
+                                        <div class="info-value"><small><%= user?._id || 'N/A' %></small></div>
+                                    </div>
+                                </div>
                             </div>
                         </div>
                     </div>
 
-                    <button type="submit" class="submit-btn">Submit</button>
+                    <!-- Footer -->
+                    <div class="profile-footer">
+                        <button class="btn-edit" onclick="openEditModal()"><i class="fas fa-edit"></i> Edit Profile</button>
+                        <button class="btn-back" onclick="goBack()"><i class="fas fa-arrow-left"></i> Back to Dashboard</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Edit Profile Modal -->
+    <div class="modal fade" id="editProfileModal" tabindex="-1" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title"><i class="fas fa-edit me-2"></i> Edit Profile</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <form id="editProfileForm" onsubmit="saveProfileChanges(event)">
+                    <div class="modal-body">
+                        <!-- Avatar Upload Section -->
+                        <div class="modal-avatar-section">
+                            <div class="modal-avatar-preview" id="modalAvatarPreview"
+                                style="<%= user.avatar ? `background-image: url('${user.avatar}'); background-size: cover; background-position: center;` : '' %>">
+                                <% if (!user.avatar) { %>
+                                    <%= (user?.firstName || user?.email || 'U').charAt(0).toUpperCase() %>
+                                <% } %>
+                            </div>
+                            <div class="modal-avatar-upload">
+                                <label for="avatarUpload" class="btn-upload"><i class="fas fa-camera"></i> Change Photo</label>
+                                <input type="file" id="avatarUpload" accept="image/*" style="display: none;" onchange="previewAvatar(this)">
+                                <small>JPG, PNG or GIF (Max 2MB)</small>
+                            </div>
+                        </div>
+
+                        <h6 class="mb-3 text-primary">Personal Information</h6>
+                        <div class="row g-3 mb-4">
+                            <div class="col-md-6">
+                                <label class="form-label">First Name</label>
+                                <input type="text" class="form-control" id="editFirstName" value="<%= user?.firstName || '' %>" required>
+                            </div>
+                            <div class="col-md-6">
+                                <label class="form-label">Last Name</label>
+                                <input type="text" class="form-control" id="editLastName" value="<%= user?.lastName || '' %>">
+                            </div>
+                            <div class="col-md-6">
+                                <label class="form-label">Contact Number</label>
+                                <input type="tel" class="form-control" id="editPhone" value="<%= user?.contactNumber || '' %>">
+                            </div>
+                            <div class="col-md-6">
+                                <label class="form-label">Date of Birth</label>
+                                <input type="date" class="form-control" id="editDob" value="<%= user?.dob ? new Date(user.dob).toISOString().split('T')[0] : '' %>">
+                            </div>
+                            <div class="col-md-6">
+                                <label class="form-label">Gender</label>
+                                <select class="form-select" id="editGender">
+                                    <option value="">Select</option>
+                                    <option value="Male" <%= user?.gender === 'Male' ? 'selected' : '' %>>Male</option>
+                                    <option value="Female" <%= user?.gender === 'Female' ? 'selected' : '' %>>Female</option>
+                                    <option value="Other" <%= user?.gender === 'Other' ? 'selected' : '' %>>Other</option>
+                                </select>
+                            </div>
+                        </div>
+
+                        <h6 class="mb-3 text-primary">Contact Information</h6>
+                        <div class="row g-3">
+                            <div class="col-12">
+                                <label class="form-label">Email Address</label>
+                                <input type="email" class="form-control" value="<%= user?.email || '' %>" readonly>
+                                <small class="text-muted">Email cannot be changed</small>
+                            </div>
+                            <div class="col-12">
+                                <label class="form-label">Address</label>
+                                <textarea class="form-control" id="editAddress" rows="2"><%= user?.address || '' %></textarea>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn-cancel" data-bs-dismiss="modal"><i class="fas fa-times"></i> Cancel</button>
+                        <button type="submit" class="btn-save"><i class="fas fa-save"></i> Save Changes</button>
+                    </div>
                 </form>
             </div>
         </div>
     </div>
 
     <!-- Bootstrap JS -->
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
-    
-    <script>
-        // Password toggle
-        function togglePassword() {
-            const passwordField = document.getElementById('passwordField');
-            const icon = event.currentTarget;
-            
-            if (passwordField.type === 'password') {
-                passwordField.type = 'text';
-                icon.classList.remove('fa-eye');
-                icon.classList.add('fa-eye-slash');
-            } else {
-                passwordField.type = 'password';
-                icon.classList.remove('fa-eye-slash');
-                icon.classList.add('fa-eye');
-            }
-        }
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
 
-        // Sidebar sync - Yeh important hai!
+    <script>
+        // ======================
+        // GLOBAL VARIABLES
+        // ======================
+        let editModal;
+        let selectedAvatarFile = null;
+
+        // ======================
+        // INITIALIZATION
+        // ======================
         document.addEventListener('DOMContentLoaded', function() {
+            editModal = new bootstrap.Modal(document.getElementById('editProfileModal'));
+
             const sidebar = document.getElementById('mainSidebar');
             const sidebarWrapper = document.getElementById('sidebarWrapper');
-            
-            // Agar sidebar hai to state sync karo
             if (sidebar && sidebarWrapper) {
-                // Initial state
                 if (sidebar.classList.contains('collapsed')) {
                     sidebarWrapper.classList.add('collapsed');
                 }
-                
-                // Toggle collapse function override
-                const originalToggleCollapse = window.toggleCollapse;
-                
                 window.toggleCollapse = function() {
-                    if (originalToggleCollapse) {
-                        originalToggleCollapse();
+                    if (sidebar.classList.contains('collapsed')) {
+                        sidebar.classList.remove('collapsed');
+                        sidebarWrapper.classList.remove('collapsed');
+                    } else {
+                        sidebar.classList.add('collapsed');
+                        sidebarWrapper.classList.add('collapsed');
                     }
-                    
-                    setTimeout(() => {
-                        if (sidebar.classList.contains('collapsed')) {
-                            sidebarWrapper.classList.add('collapsed');
-                        } else {
-                            sidebarWrapper.classList.remove('collapsed');
-                        }
-                    }, 10);
                 };
-                
-                // Mobile toggle override
-                const originalToggleMobile = window.toggleMobileSidebar;
-                
                 window.toggleMobileSidebar = function() {
-                    if (originalToggleMobile) {
-                        originalToggleMobile();
+                    if (sidebar.classList.contains('open')) {
+                        sidebar.classList.remove('open');
+                        sidebarWrapper.classList.remove('mobile-open');
+                    } else {
+                        sidebar.classList.add('open');
+                        sidebarWrapper.classList.add('mobile-open');
                     }
-                    
-                    setTimeout(() => {
-                        if (sidebar.classList.contains('open')) {
-                            sidebarWrapper.classList.add('mobile-open');
-                        } else {
-                            sidebarWrapper.classList.remove('mobile-open');
-                        }
-                    }, 10);
                 };
-                
-                const originalCloseMobile = window.closeMobileSidebar;
-                
                 window.closeMobileSidebar = function() {
-                    if (originalCloseMobile) {
-                        originalCloseMobile();
-                    }
-                    
+                    sidebar.classList.remove('open');
                     sidebarWrapper.classList.remove('mobile-open');
                 };
             }
-            
-            // Check localStorage for user role
-            const savedFeatures = localStorage.getItem('sidebarFeatures');
-            if (!savedFeatures) {
-                console.log('No features found, adding defaults for SuperAdmin');
-                
-                // Default features for SuperAdmin
-                const defaultFeatures = [];
-                let id = 1;
-                
-                const sections = {
-                    '*** Dashboard': ['1. Dashboard', '2. Notifications'],
-                    '*** Reports': ['1. Web Report', '2. API Reports'],
-                    '*** Chats': ['1. New Chat'],
-                    '*** Virtual Numbers': ['1. My Numbers', '2. Buy Number', '3. Call Logs', '4. SMS Logs'],
-                    '*** Devices': ['1. Add Device', '2. All Devices', '3. Campaign'],
-                    '*** RCS': ['1. RCS Campaign', '2. RCS Reports', '3. RCS Templates'],
-                    '*** Scan device': ['1. Whatsapp Scan'],
-                    '*** API': ['1. API Document', '2. File Upload'],
-                    '*** Client Management': ['1. All Clients', '2. Add Client'],
-                    '*** Administration': ['1. Role Permissions', '2. Add New Feature']
-                };
-                
-                Object.keys(sections).forEach(section => {
-                    sections[section].forEach((label, index) => {
-                        defaultFeatures.push({
-                            id: id++,
-                            role: 'SuperAdmin',
-                            section: section,
-                            label: label,
-                            isActive: true,
-                            order: index + 1
-                        });
-                    });
-                });
-                
-                localStorage.setItem('sidebarFeatures', JSON.stringify(defaultFeatures));
-                console.log('✅ Default SuperAdmin features added');
+
+            // URL messages
+            const urlParams = new URLSearchParams(window.location.search);
+            const message = urlParams.get('message');
+            const messageType = urlParams.get('messageType');
+            if (message) {
+                showToast(messageType === 'success' ? 'Success' : 'Notification', message, messageType || 'info');
+                const url = new URL(window.location);
+                url.searchParams.delete('message');
+                url.searchParams.delete('messageType');
+                window.history.replaceState({}, document.title, url);
+            }
+
+            showToast('Welcome', 'Welcome to your profile, <%= user?.firstName || 'User' %>!', 'info');
+        });
+
+        function goBack() {
+            window.location.href = '/dashboard';
+        }
+
+        document.addEventListener('keydown', function(e) {
+            if (e.key === 'Escape' && !document.getElementById('editProfileModal').classList.contains('show')) {
+                goBack();
             }
         });
+
+        function openEditModal() {
+            selectedAvatarFile = null;
+            const modalAvatar = document.getElementById('modalAvatarPreview');
+            // Reset to initial state
+            <% if (user.avatar) { %>
+                modalAvatar.style.backgroundImage = `url('<%= user.avatar %>')`;
+                modalAvatar.style.backgroundSize = 'cover';
+                modalAvatar.style.backgroundPosition = 'center';
+                modalAvatar.textContent = '';
+            <% } else { %>
+                modalAvatar.style.backgroundImage = '';
+                modalAvatar.textContent = '<%= (user?.firstName || user?.email || 'U').charAt(0).toUpperCase() %>';
+                modalAvatar.style.background = 'linear-gradient(135deg, #3b82f6, #2563eb)';
+            <% } %>
+            editModal.show();
+        }
+
+        function previewAvatar(input) {
+            if (input.files && input.files[0]) {
+                const file = input.files[0];
+                if (file.size > 2 * 1024 * 1024) {
+                    showToast('Error', 'File size must be less than 2MB', 'error');
+                    input.value = '';
+                    return;
+                }
+                if (!file.type.startsWith('image/')) {
+                    showToast('Error', 'Please select an image file', 'error');
+                    input.value = '';
+                    return;
+                }
+                selectedAvatarFile = file;
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    const modalAvatar = document.getElementById('modalAvatarPreview');
+                    modalAvatar.style.backgroundImage = `url('${e.target.result}')`;
+                    modalAvatar.style.backgroundSize = 'cover';
+                    modalAvatar.style.backgroundPosition = 'center';
+                    modalAvatar.textContent = '';
+                };
+                reader.readAsDataURL(file);
+            }
+        }
+
+        function saveProfileChanges(event) {
+            event.preventDefault();
+            
+            const firstName = document.getElementById('editFirstName').value.trim();
+            const lastName = document.getElementById('editLastName').value.trim();
+            const phone = document.getElementById('editPhone').value.trim();
+            const dob = document.getElementById('editDob').value;
+            const gender = document.getElementById('editGender').value;
+            const address = document.getElementById('editAddress').value.trim();
+            
+            if (!firstName) {
+                showToast('Error', 'First name is required', 'error');
+                return;
+            }
+            
+            showToast('Updating', 'Saving your changes...', 'info');
+            
+            const formData = new FormData();
+            formData.append('firstName', firstName);
+            formData.append('lastName', lastName);
+            formData.append('contactNumber', phone);
+            formData.append('dob', dob);
+            formData.append('gender', gender);
+            formData.append('address', address);
+            if (selectedAvatarFile) {
+                formData.append('avatar', selectedAvatarFile);
+            }
+            
+            fetch('/profile/update', {
+                method: 'POST',
+                body: formData
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.status) {
+                    // Update displayed values
+                    document.getElementById('displayName').textContent = firstName + ' ' + (lastName || '');
+                    document.querySelector('.profile-title h1').textContent = firstName + ' ' + (lastName || '');
+                    document.getElementById('displayPhone').textContent = phone || 'Not provided';
+                    document.getElementById('displayAddress').textContent = address || 'Not provided';
+                    document.getElementById('displayGender').textContent = gender || 'Not specified';
+                    if (dob) {
+                        document.getElementById('displayDob').textContent = new Date(dob).toLocaleDateString();
+                    } else {
+                        document.getElementById('displayDob').textContent = 'Not provided';
+                    }
+                    
+                    // Update avatar if changed
+                    if (selectedAvatarFile) {
+                        const reader = new FileReader();
+                        reader.onload = function(e) {
+                            const avatar = document.getElementById('profileAvatar');
+                            avatar.style.backgroundImage = `url('${e.target.result}')`;
+                            avatar.style.backgroundSize = 'cover';
+                            avatar.style.backgroundPosition = 'center';
+                            avatar.textContent = '';
+                        };
+                        reader.readAsDataURL(selectedAvatarFile);
+                    }
+                    
+                    editModal.hide();
+                    showToast('Success', 'Profile updated successfully!', 'success');
+                } else {
+                    showToast('Error', data.msg || 'Failed to update profile', 'error');
+                }
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                showToast('Error', 'Failed to update profile. Please try again.', 'error');
+            });
+        }
+
+        function showToast(title, message, type = 'info') {
+            const toast = document.getElementById('toast');
+            if (window.toastTimeout) clearTimeout(window.toastTimeout);
+            
+            const icons = { success: '✅', error: '❌', warning: '⚠️', info: 'ℹ️' };
+            const icon = icons[type] || 'ℹ️';
+            
+            toast.className = '';
+            toast.innerHTML = `
+                <div class="toast-row">
+                    <div class="toast-icon">${icon}</div>
+                    <div class="toast-text">
+                        <h4>${title}</h4>
+                        <p>${message}</p>
+                    </div>
+                </div>
+                <div class="toast-progress"></div>
+            `;
+            toast.classList.add(`toast-${type}`, 'show');
+            
+            window.toastTimeout = setTimeout(() => toast.classList.remove('show'), 3000);
+        }
+
+        // Avatar color fallback
+        (function setAvatarColor() {
+            const avatar = document.getElementById('profileAvatar');
+            if (avatar && avatar.textContent && !avatar.style.backgroundImage) {
+                const name = avatar.textContent.trim();
+                let hash = 0;
+                for (let i = 0; i < name.length; i++) hash = name.charCodeAt(i) + ((hash << 5) - hash);
+                const hue = hash % 360;
+                avatar.style.background = `hsl(${hue}, 70%, 50%)`;
+                avatar.style.color = 'white';
+            }
+        })();
     </script>
 </body>
 </html>

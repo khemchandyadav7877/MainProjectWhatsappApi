@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>All Devices - SSPAR Cloud</title>
+<title>All Contacts - SSPAR Cloud</title>
 
 <!-- Bootstrap -->
 <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
@@ -285,6 +285,31 @@ body {
 .badge-connected { background: #dbeafe; color: #1d4ed8; }
 .badge-disconnected { background: #f3f4f6; color: #6b7280; }
 
+/* WhatsApp badge */
+.whatsapp-badge {
+    background: #25D366;
+    color: white;
+    padding: 4px 8px;
+    border-radius: 20px;
+    font-size: 11px;
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    margin-left: 6px;
+}
+
+/* Email badge */
+.email-badge {
+    background: #f3f4f6;
+    color: #4b5563;
+    padding: 4px 8px;
+    border-radius: 20px;
+    font-size: 11px;
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+}
+
 /* ACTION BUTTONS */
 .action-btn {
     width: 34px;
@@ -398,7 +423,7 @@ body {
         overflow-x: auto;
     }
     .table {
-        min-width: 800px;
+        min-width: 900px;
     }
 }
 </style>
@@ -434,9 +459,9 @@ body {
                     <div>
                         <div class="page-title">
                             <i class="fa-solid fa-mobile-screen-button text-primary me-2"></i>
-                            All Devices
+                            All Contacts
                         </div>
-                        <div class="sub-title">Manage all WhatsApp devices</div>
+                        <div class="sub-title">Manage all contacts and devices</div>
                     </div>
                     <div class="mt-3 mt-md-0 d-flex flex-wrap gap-2">
                         <button onclick="selectAllDevices()" class="btn btn-outline-primary rounded-pill me-2">
@@ -446,7 +471,7 @@ body {
                             <i class="fa fa-square me-1"></i> Deselect All
                         </button>
                         <a href="/devices/add" class="btn btn-primary rounded-pill me-2">
-                            <i class="fa fa-plus me-1"></i> Add Device
+                            <i class="fa fa-plus me-1"></i> Add Contact
                         </a>
                         <button onclick="location.reload()" class="btn btn-outline-secondary rounded-pill me-2">
                             <i class="fa fa-rotate"></i>
@@ -461,7 +486,7 @@ body {
                             <div class="stat-icon icon-blue"><i class="fa fa-mobile"></i></div>
                             <div>
                                 <h4 class="mb-0"><%= stats?.total || 0 %></h4>
-                                <small>Total Devices</small>
+                                <small>Total Contacts</small>
                             </div>
                         </div>
                     </div>
@@ -498,7 +523,7 @@ body {
                 <div class="filter-box mb-4">
                     <form method="get" id="filterForm">
                         <!-- Active Filters -->
-                        <% if(filters && (filters.search || filters.status !== 'all' || filters.type !== 'all' || filters.carrier !== 'all')) { %>
+                        <% if(filters && (filters.search || filters.status !== 'all')) { %>
                         <div class="mb-3">
                             <small class="text-muted d-block mb-2">Active Filters:</small>
                             <% if(filters.search) { %>
@@ -517,22 +542,6 @@ body {
                                 </a>
                             </span>
                             <% } %>
-                            <% if(filters.type && filters.type !== 'all') { %>
-                            <span class="filter-tag">
-                                Type: <%= filters.type %>
-                                <a href="javascript:void(0)" onclick="removeFilter('type')" class="text-danger ms-1">
-                                    <i class="fa fa-times"></i>
-                                </a>
-                            </span>
-                            <% } %>
-                            <% if(filters.carrier && filters.carrier !== 'all') { %>
-                            <span class="filter-tag">
-                                Carrier: <%= filters.carrier %>
-                                <a href="javascript:void(0)" onclick="removeFilter('carrier')" class="text-danger ms-1">
-                                    <i class="fa fa-times"></i>
-                                </a>
-                            </span>
-                            <% } %>
                             <a href="/devices" class="btn btn-sm btn-outline-danger">Clear All</a>
                         </div>
                         <% } %>
@@ -540,58 +549,41 @@ body {
                         <input type="text" 
                                name="search" 
                                class="form-control mb-3" 
-                               placeholder="Search by name or phone number..." 
+                               placeholder="Search by name, phone, email or WhatsApp number..." 
                                value="<%= filters?.search || '' %>"
                                onkeyup="debounceSearch()">
 
                         <div class="row g-3">
-                            <div class="col-md-3">
+                            <div class="col-md-4">
                                 <select name="status" class="form-select rounded-pill" onchange="this.form.submit()">
                                     <option value="all" <%= (!filters?.status || filters.status==='all') ? 'selected' : '' %>>All Status</option>
                                     <option value="active" <%= filters?.status==='active' ? 'selected' : '' %>>Active</option>
                                     <option value="inactive" <%= filters?.status==='inactive' ? 'selected' : '' %>>Inactive</option>
                                 </select>
                             </div>
-                            <div class="col-md-3">
-                                <select name="type" class="form-select rounded-pill" onchange="this.form.submit()">
-                                    <option value="all" <%= (!filters?.type || filters.type==='all') ? 'selected' : '' %>>All Types</option>
-                                    <option value="android" <%= filters?.type==='android' ? 'selected' : '' %>>Android</option>
-                                    <option value="iphone" <%= filters?.type==='iphone' ? 'selected' : '' %>>iPhone</option>
-                                    <option value="tablet" <%= filters?.type==='tablet' ? 'selected' : '' %>>Tablet</option>
-                                    <option value="other" <%= filters?.type==='other' ? 'selected' : '' %>>Other</option>
-                                </select>
-                            </div>
-                            <div class="col-md-3">
-                                <select name="carrier" class="form-select rounded-pill" onchange="this.form.submit()">
-                                    <option value="all" <%= (!filters?.carrier || filters.carrier==='all') ? 'selected' : '' %>>All Carriers</option>
-                                    <option value="airtel" <%= filters?.carrier==='airtel' ? 'selected' : '' %>>Airtel</option>
-                                    <option value="jio" <%= filters?.carrier==='jio' ? 'selected' : '' %>>Jio</option>
-                                    <option value="vi" <%= filters?.carrier==='vi' ? 'selected' : '' %>>Vi</option>
-                                    <option value="bsnl" <%= filters?.carrier==='bsnl' ? 'selected' : '' %>>BSNL</option>
-                                    <option value="other" <%= filters?.carrier==='other' ? 'selected' : '' %>>Other</option>
-                                    <option value="unknown" <%= filters?.carrier==='unknown' ? 'selected' : '' %>>Unknown</option>
-                                </select>
-                            </div>
-                            <div class="col-md-3">
+                            <div class="col-md-4">
                                 <select name="sort" class="form-select rounded-pill" onchange="this.form.submit()">
                                     <option value="newest" <%= (!filters?.sort || filters.sort==='newest') ? 'selected' : '' %>>Newest First</option>
                                     <option value="oldest" <%= filters?.sort==='oldest' ? 'selected' : '' %>>Oldest First</option>
                                     <option value="name" <%= filters?.sort==='name' ? 'selected' : '' %>>By Name (A-Z)</option>
                                 </select>
                             </div>
+                            <div class="col-md-4">
+                                <button type="submit" class="btn btn-primary rounded-pill w-100">
+                                    <i class="fa fa-filter me-1"></i> Apply Filters
+                                </button>
+                            </div>
                         </div>
-                        <div class="d-flex justify-content-between mt-3">
-                            <button type="submit" class="btn btn-primary rounded-pill">
-                                <i class="fa fa-filter me-1"></i> Apply Filters
-                            </button>
+                        
+                        <div class="d-flex justify-content-end mt-3">
                             <div class="text-muted">
-                                <small><%= devices.length %> device(s) found</small>
+                                <small><%= devices.length %> contact(s) found</small>
                             </div>
                         </div>
                     </form>
                 </div>
 
-                <!-- DEVICE TABLE -->
+                <!-- DEVICE TABLE - UPDATED with WhatsApp Number and Email -->
                 <div class="device-table">
                     <table class="table align-middle mb-0">
                         <thead>
@@ -599,9 +591,10 @@ body {
                                 <th style="width:40px;">
                                     <input type="checkbox" class="device-checkbox" id="selectAllCheckbox" onchange="toggleSelectAll(this)">
                                 </th>
-                                <th>Device</th>
+                                <th>Contact</th>
                                 <th>Phone Number</th>
-                                <th>Type</th>
+                                <th>WhatsApp</th>
+                                <th>Email</th>
                                 <th>Status</th>
                                 <th>Added</th>
                                 <th>Actions</th>
@@ -618,15 +611,7 @@ body {
                                 <td>
                                     <div class="d-flex align-items-center">
                                         <div class="me-3">
-                                            <% if(device.deviceType === 'iphone') { %>
-                                            <i class="fa fa-mobile text-primary fs-4"></i>
-                                            <% } else if(device.deviceType === 'android') { %>
-                                            <i class="fa fa-mobile-android text-success fs-4"></i>
-                                            <% } else if(device.deviceType === 'tablet') { %>
-                                            <i class="fa fa-tablet-alt text-info fs-4"></i>
-                                            <% } else { %>
-                                            <i class="fa fa-mobile-alt text-secondary fs-4"></i>
-                                            <% } %>
+                                            <i class="fa fa-user-circle text-primary fs-4"></i>
                                         </div>
                                         <div>
                                             <strong><%= device.name %></strong>
@@ -637,10 +622,30 @@ body {
                                     </div>
                                 </td>
                                 <td>
-                                    <div class="fw-medium">+91 <%= device.phoneNumber %></div>
+                                    <div class="fw-medium">
+                                        <i class="fa fa-phone-alt text-secondary me-1"></i>
+                                        +91 <%= device.phoneNumber %>
+                                    </div>
                                 </td>
                                 <td>
-                                    <span class="text-capitalize"><%= device.deviceType %></span>
+                                    <% if(device.whatsappNumber) { %>
+                                        <span class="whatsapp-badge">
+                                            <i class="fab fa-whatsapp"></i> +91 <%= device.whatsappNumber %>
+                                        </span>
+                                    <% } else { %>
+                                        <span class="email-badge">
+                                            <i class="fa fa-times"></i> Not set
+                                        </span>
+                                    <% } %>
+                                </td>
+                                <td>
+                                    <% if(device.email) { %>
+                                        <span class="email-badge">
+                                            <i class="fa fa-envelope"></i> <%= device.email %>
+                                        </span>
+                                    <% } else { %>
+                                        <span class="text-muted">—</span>
+                                    <% } %>
                                 </td>
 
                                 <!-- STATUS -->
@@ -671,18 +676,18 @@ body {
                             <% }) %>
                         <% } else { %>
                             <tr>
-                                <td colspan="7" class="text-center py-5">
+                                <td colspan="8" class="text-center py-5">
                                     <div class="text-muted mb-3">
-                                        <i class="fa fa-mobile-alt fa-3x opacity-25"></i>
+                                        <i class="fa fa-address-book fa-3x opacity-25"></i>
                                     </div>
-                                    <h5 class="text-muted">No devices found</h5>
-                                    <% if(filters && (filters.search || filters.status !== 'all' || filters.type !== 'all' || filters.carrier !== 'all')) { %>
+                                    <h5 class="text-muted">No contacts found</h5>
+                                    <% if(filters && (filters.search || filters.status !== 'all')) { %>
                                     <p class="text-muted">Try changing your filters</p>
                                     <a href="/devices" class="btn btn-sm btn-primary">Clear Filters</a>
                                     <% } else { %>
-                                    <p class="text-muted">Add your first device to get started</p>
+                                    <p class="text-muted">Add your first contact to get started</p>
                                     <a href="/devices/add" class="btn btn-primary">
-                                        <i class="fa fa-plus me-1"></i> Add Device
+                                        <i class="fa fa-plus me-1"></i> Add Contact
                                     </a>
                                     <% } %>
                                 </td>
@@ -697,7 +702,7 @@ body {
                 <% if(devices && devices.length > 0) { %>
                 <div class="d-flex justify-content-between align-items-center mt-4">
                     <div class="text-muted">
-                        Showing <%= devices.length %> of <%= stats.total %> devices
+                        Showing <%= devices.length %> of <%= stats.total %> contacts
                     </div>
                     <div class="btn-group">
                         <button class="btn btn-primary" onclick="useSelectedInCampaign()">
@@ -725,7 +730,7 @@ body {
 
     <script>
         // ======================
-        // SIDEBAR SYNC - EXACTLY LIKE DASHBOARD
+        // SIDEBAR SYNC
         // ======================
         document.addEventListener('DOMContentLoaded', function() {
             const sidebar = document.getElementById('mainSidebar');
@@ -790,12 +795,12 @@ body {
             
             // Show welcome toast
             setTimeout(() => {
-                showToast('Devices Loaded', `Found ${document.querySelectorAll('tbody tr').length} devices`, 'info');
+                showToast('Contacts Loaded', `Found ${document.querySelectorAll('tbody tr').length} contacts`, 'info');
             }, 1000);
         });
 
         // ======================
-        // TOAST FUNCTION - EXACT SAME AS OTHER PAGES
+        // TOAST FUNCTION
         // ======================
         let toastTimer;
         function showToast(title, message, type = 'info') {
@@ -832,11 +837,6 @@ body {
         }
 
         // ======================
-        // GLOBAL VARIABLES
-        // ======================
-        let selectedDevices = new Map(); // Map of deviceId -> {phoneNumber, name}
-
-        // ======================
         // ROW CLICK LISTENERS
         // ======================
         function addRowClickListeners() {
@@ -854,9 +854,9 @@ body {
                     const nameCell = this.cells[1];
                     
                     if (phoneCell && nameCell) {
-                        const phoneNumber = phoneCell.textContent.trim();
+                        const phoneNumber = phoneCell.textContent.trim().replace('+91 ', '');
                         const name = nameCell.querySelector('strong').textContent.trim();
-                        toggleDeviceSelection(checkbox, deviceId, phoneNumber.replace('+91 ', ''), name);
+                        toggleDeviceSelection(checkbox, deviceId, phoneNumber, name);
                     }
                 });
             });
@@ -877,7 +877,7 @@ body {
             const form = document.getElementById('filterForm');
             form.elements['status'].value = status;
             form.submit();
-            showToast('Filtering', `Showing ${status} devices`, 'info');
+            showToast('Filtering', `Showing ${status} contacts`, 'info');
         }
 
         function removeFilter(filterName) {
@@ -914,7 +914,7 @@ body {
             const rows = document.querySelectorAll('tbody tr');
             
             if (masterCheckbox.checked) {
-                showToast('Select All', 'Selecting all visible devices', 'info');
+                showToast('Select All', 'Selecting all visible contacts', 'info');
                 checkboxes.forEach((checkbox, index) => {
                     checkbox.classList.add('checked');
                     const row = rows[index];
@@ -923,10 +923,10 @@ body {
                     const nameCell = row.cells[1];
                     
                     if (phoneCell && nameCell) {
-                        const phoneNumber = phoneCell.textContent.trim();
+                        const phoneNumber = phoneCell.textContent.trim().replace('+91 ', '');
                         const name = nameCell.querySelector('strong').textContent.trim();
                         selectedDevices.set(deviceId, {
-                            phoneNumber: phoneNumber,
+                            phoneNumber: '+91' + phoneNumber,
                             name: name
                         });
                     }
@@ -957,10 +957,10 @@ body {
                 const nameCell = row.cells[1];
                 
                 if (phoneCell && nameCell) {
-                    const phoneNumber = phoneCell.textContent.trim();
+                    const phoneNumber = phoneCell.textContent.trim().replace('+91 ', '');
                     const name = nameCell.querySelector('strong').textContent.trim();
                     selectedDevices.set(deviceId, {
-                        phoneNumber: phoneNumber,
+                        phoneNumber: '+91' + phoneNumber,
                         name: name
                     });
                 }
@@ -970,7 +970,7 @@ body {
             updateSelectedCount();
             saveSelectionsToStorage();
             
-            showToast('Success', `Selected ${selectedDevices.size} devices`, 'success');
+            showToast('Success', `Selected ${selectedDevices.size} contacts`, 'success');
         }
 
         function deselectAllDevices() {
@@ -1009,11 +1009,11 @@ body {
         // ======================
         function useSelectedInCampaign() {
             if (selectedDevices.size === 0) {
-                showToast('Error', 'Please select at least one device first!', 'error');
+                showToast('Error', 'Please select at least one contact first!', 'error');
                 return;
             }
             
-            showToast('Processing', `Preparing ${selectedDevices.size} devices for campaign...`, 'info');
+            showToast('Processing', `Preparing ${selectedDevices.size} contacts for campaign...`, 'info');
             
             const selectedNumbers = Array.from(selectedDevices.values()).map(device => device.phoneNumber);
             const devicesData = Array.from(selectedDevices.entries()).map(([id, device]) => ({
@@ -1036,8 +1036,8 @@ body {
         // DELETE FUNCTION
         // ======================
         function deleteDevice(deviceId, deviceName) {
-            if (confirm(`Are you sure you want to delete device: ${deviceName}?`)) {
-                showToast('Deleting', `Removing device: ${deviceName}`, 'warning');
+            if (confirm(`Are you sure you want to delete contact: ${deviceName}?`)) {
+                showToast('Deleting', `Removing contact: ${deviceName}`, 'warning');
                 
                 // If device is selected, remove it from selection
                 if (selectedDevices.has(deviceId)) {
@@ -1087,6 +1087,11 @@ body {
                 console.error('Error loading saved selections:', e);
             }
         }
+
+        // ======================
+        // GLOBAL VARIABLES
+        // ======================
+        let selectedDevices = new Map(); // Map of deviceId -> {phoneNumber, name}
 
         // ======================
         // KEYBOARD SHORTCUTS

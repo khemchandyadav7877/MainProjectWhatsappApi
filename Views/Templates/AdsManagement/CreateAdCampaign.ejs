@@ -1,0 +1,1868 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Create Ad Campaign - SSPAR Cloud</title>
+
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Select2 CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet" />
+    <!-- Date Range Picker -->
+    <link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/npm/daterangepicker/daterangepicker.css" />
+    <!-- Toastr CSS -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.css">
+
+    <style>
+        /* RESET - Same as other pages */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            overflow-x: hidden;
+            background: #f3f4f6;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        /* HEADER FIXED */
+        .header-wrapper {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            z-index: 1030;
+            background: white;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+        }
+
+        /* MAIN LAYOUT */
+        .main-wrapper {
+            margin-top: 70px;
+            display: flex;
+            width: 100%;
+            min-height: calc(100vh - 70px);
+        }
+
+        /* SIDEBAR WRAPPER */
+        .sidebar-wrapper {
+            width: 280px;
+            flex-shrink: 0;
+            position: fixed;
+            left: 0;
+            top: 70px;
+            bottom: 0;
+            z-index: 1020;
+            transition: width 0.3s ease;
+        }
+
+        .sidebar-wrapper.collapsed {
+            width: 80px;
+        }
+
+        /* CONTENT WRAPPER */
+        .content-wrapper {
+            flex: 1;
+            margin-left: 280px;
+            padding: 20px;
+            transition: margin-left 0.3s ease;
+            background: #f3f4f6;
+            min-height: calc(100vh - 70px);
+        }
+
+        .sidebar-wrapper.collapsed + .content-wrapper {
+            margin-left: 80px;
+        }
+
+        /* MAIN CONTENT */
+        .main-content-card {
+            background: white;
+            border-radius: 12px;
+            padding: 24px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+        }
+
+        /* Page Header */
+        .page-header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 25px 30px;
+            border-radius: 15px;
+            margin-bottom: 30px;
+            box-shadow: 0 5px 20px rgba(102, 126, 234, 0.3);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .page-header h1 {
+            font-size: 28px;
+            margin: 0;
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .page-header p {
+            margin: 5px 0 0;
+            opacity: 0.9;
+            font-size: 14px;
+        }
+
+        .user-info {
+            background: rgba(255,255,255,0.2);
+            padding: 10px 20px;
+            border-radius: 50px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        /* Progress Steps */
+        .steps-container {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 40px;
+            position: relative;
+        }
+
+        .steps-container::before {
+            content: '';
+            position: absolute;
+            top: 25px;
+            left: 0;
+            right: 0;
+            height: 3px;
+            background: #e5e7eb;
+            z-index: 1;
+        }
+
+        .step {
+            text-align: center;
+            position: relative;
+            z-index: 2;
+            flex: 1;
+        }
+
+        .step-circle {
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            background: white;
+            border: 3px solid #e5e7eb;
+            color: #9ca3af;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 20px;
+            font-weight: 600;
+            margin: 0 auto 10px;
+            transition: all 0.3s;
+        }
+
+        .step.active .step-circle {
+            background: #667eea;
+            border-color: #667eea;
+            color: white;
+            box-shadow: 0 5px 15px rgba(102, 126, 234, 0.3);
+        }
+
+        .step.completed .step-circle {
+            background: #10b981;
+            border-color: #10b981;
+            color: white;
+        }
+
+        .step-label {
+            font-size: 14px;
+            font-weight: 600;
+            color: #6b7280;
+        }
+
+        .step.active .step-label {
+            color: #667eea;
+        }
+
+        /* Form Cards */
+        .form-card {
+            background: #f9fafb;
+            border-radius: 15px;
+            padding: 25px;
+            margin-bottom: 25px;
+            border: 2px solid #e5e7eb;
+            transition: all 0.3s;
+        }
+
+        .form-card:hover {
+            border-color: #667eea;
+            box-shadow: 0 5px 20px rgba(102, 126, 234, 0.1);
+        }
+
+        .card-title {
+            font-size: 18px;
+            font-weight: 600;
+            color: #1f2937;
+            margin-bottom: 20px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .card-title i {
+            color: #667eea;
+        }
+
+        /* Form Elements */
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 600;
+            color: #374151;
+            font-size: 14px;
+        }
+
+        .form-group label i {
+            margin-right: 8px;
+            color: #667eea;
+        }
+
+        .form-control, .form-select {
+            width: 100%;
+            padding: 12px 15px;
+            border: 2px solid #e5e7eb;
+            border-radius: 10px;
+            font-size: 14px;
+            transition: all 0.3s;
+            background: white;
+        }
+
+        .form-control:focus, .form-select:focus {
+            outline: none;
+            border-color: #667eea;
+            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+        }
+
+        .input-group {
+            display: flex;
+            align-items: center;
+        }
+
+        .input-group-text {
+            background: #f3f4f6;
+            border: 2px solid #e5e7eb;
+            border-right: none;
+            border-radius: 10px 0 0 10px;
+            padding: 12px 15px;
+            color: #6b7280;
+            font-weight: 600;
+        }
+
+        .input-group .form-control {
+            border-radius: 0 10px 10px 0;
+        }
+
+        /* Platform Cards */
+        .platform-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            gap: 15px;
+            margin-bottom: 20px;
+        }
+
+        .platform-card {
+            background: white;
+            border: 2px solid #e5e7eb;
+            border-radius: 12px;
+            padding: 20px;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .platform-card:hover {
+            border-color: #667eea;
+            transform: translateY(-5px);
+            box-shadow: 0 10px 25px rgba(102, 126, 234, 0.2);
+        }
+
+        .platform-card.selected {
+            border-color: #10b981;
+            background: #f0fdf4;
+        }
+
+        .platform-card i {
+            font-size: 40px;
+            margin-bottom: 10px;
+        }
+
+        .platform-card .fa-facebook { color: #1877f2; }
+        .platform-card .fa-instagram { color: #e4405f; }
+        .platform-card .fa-whatsapp { color: #25d366; }
+        .platform-card .fa-google { color: #4285f4; }
+        .platform-card .fa-linkedin { color: #0a66c2; }
+        .platform-card .fa-twitter { color: #1da1f2; }
+
+        .platform-card h4 {
+            font-size: 16px;
+            font-weight: 600;
+            margin: 10px 0 5px;
+        }
+
+        .platform-card p {
+            font-size: 12px;
+            color: #6b7280;
+            margin: 0;
+        }
+
+        /* Objective Cards */
+        .objective-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 15px;
+            margin-bottom: 20px;
+        }
+
+        .objective-card {
+            background: white;
+            border: 2px solid #e5e7eb;
+            border-radius: 12px;
+            padding: 20px;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .objective-card:hover {
+            border-color: #667eea;
+            transform: translateY(-5px);
+            box-shadow: 0 10px 25px rgba(102, 126, 234, 0.2);
+        }
+
+        .objective-card.selected {
+            border-color: #10b981;
+            background: #f0fdf4;
+        }
+
+        .objective-icon {
+            width: 50px;
+            height: 50px;
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 24px;
+            margin-bottom: 15px;
+        }
+
+        .objective-icon.awareness { background: #dbeafe; color: #2563eb; }
+        .objective-icon.consideration { background: #fed7aa; color: #c2410c; }
+        .objective-icon.conversion { background: #d1fae5; color: #059669; }
+
+        .objective-card h4 {
+            font-size: 16px;
+            font-weight: 600;
+            margin-bottom: 5px;
+        }
+
+        .objective-card p {
+            font-size: 12px;
+            color: #6b7280;
+            margin: 0;
+        }
+
+        /* Budget Slider */
+        .budget-slider {
+            padding: 20px 0;
+        }
+
+        .budget-range {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 10px;
+            font-size: 14px;
+            color: #6b7280;
+        }
+
+        .slider {
+            width: 100%;
+            height: 6px;
+            border-radius: 3px;
+            background: #e5e7eb;
+            outline: none;
+            -webkit-appearance: none;
+        }
+
+        .slider::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            width: 20px;
+            height: 20px;
+            border-radius: 50%;
+            background: #667eea;
+            cursor: pointer;
+            box-shadow: 0 2px 10px rgba(102, 126, 234, 0.3);
+        }
+
+        /* Targeting Options */
+        .targeting-section {
+            background: white;
+            border-radius: 12px;
+            padding: 20px;
+            margin-bottom: 20px;
+            border: 1px solid #e5e7eb;
+        }
+
+        .location-search {
+            position: relative;
+            margin-bottom: 15px;
+        }
+
+        .location-search i {
+            position: absolute;
+            left: 15px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: #9ca3af;
+        }
+
+        .location-search input {
+            padding-left: 45px;
+        }
+
+        .selected-locations {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            margin-top: 15px;
+        }
+
+        .location-tag {
+            background: #eef2ff;
+            color: #4f46e5;
+            padding: 6px 12px;
+            border-radius: 20px;
+            font-size: 13px;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .location-tag i {
+            cursor: pointer;
+        }
+
+        .location-tag i:hover {
+            color: #ef4444;
+        }
+
+        .age-range {
+            display: flex;
+            gap: 15px;
+            align-items: center;
+        }
+
+        .age-range input {
+            width: 100px;
+        }
+
+        /* Schedule Calendar */
+        .schedule-calendar {
+            background: white;
+            border-radius: 12px;
+            padding: 20px;
+            border: 1px solid #e5e7eb;
+        }
+
+        .time-slots {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            margin-top: 15px;
+        }
+
+        .time-slot {
+            background: #f3f4f6;
+            padding: 8px 15px;
+            border-radius: 20px;
+            font-size: 13px;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .time-slot:hover {
+            background: #667eea;
+            color: white;
+        }
+
+        .time-slot.selected {
+            background: #10b981;
+            color: white;
+        }
+
+        /* Ad Preview */
+        .ad-preview {
+            background: white;
+            border-radius: 15px;
+            padding: 25px;
+            border: 2px solid #e5e7eb;
+            position: sticky;
+            top: 90px;
+        }
+
+        .preview-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+
+        .preview-header h3 {
+            font-size: 18px;
+            font-weight: 600;
+            margin: 0;
+        }
+
+        .preview-device {
+            display: flex;
+            gap: 10px;
+        }
+
+        .device-btn {
+            width: 40px;
+            height: 40px;
+            border-radius: 8px;
+            border: 1px solid #e5e7eb;
+            background: white;
+            color: #6b7280;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .device-btn.active {
+            background: #667eea;
+            color: white;
+            border-color: #667eea;
+        }
+
+        .preview-frame {
+            background: #f9fafb;
+            border-radius: 12px;
+            padding: 20px;
+            min-height: 400px;
+        }
+
+        .preview-facebook {
+            background: white;
+            border-radius: 12px;
+            overflow: hidden;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+
+        .preview-header-fb {
+            padding: 15px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            border-bottom: 1px solid #e5e7eb;
+        }
+
+        .preview-avatar {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            color: white;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 600;
+        }
+
+        .preview-info h4 {
+            font-size: 14px;
+            font-weight: 600;
+            margin: 0;
+        }
+
+        .preview-info p {
+            font-size: 12px;
+            color: #6b7280;
+            margin: 0;
+        }
+
+        .preview-image {
+            width: 100%;
+            height: 200px;
+            background: #e5e7eb;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #9ca3af;
+        }
+
+        .preview-content {
+            padding: 15px;
+        }
+
+        .preview-title {
+            font-weight: 600;
+            margin-bottom: 5px;
+        }
+
+        .preview-description {
+            font-size: 13px;
+            color: #6b7280;
+            margin-bottom: 10px;
+        }
+
+        .preview-cta {
+            background: #1877f2;
+            color: white;
+            border: none;
+            padding: 8px 15px;
+            border-radius: 6px;
+            font-weight: 600;
+            font-size: 13px;
+            width: 100%;
+        }
+
+        /* Buttons */
+        .btn {
+            padding: 12px 25px;
+            border: none;
+            border-radius: 10px;
+            font-size: 14px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+        }
+
+        .btn-primary:hover:not(:disabled) {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 25px rgba(102, 126, 234, 0.3);
+        }
+
+        .btn-success {
+            background: #10b981;
+            color: white;
+        }
+
+        .btn-success:hover:not(:disabled) {
+            background: #059669;
+            transform: translateY(-2px);
+        }
+
+        .btn-outline {
+            background: white;
+            border: 2px solid #e5e7eb;
+            color: #6b7280;
+        }
+
+        .btn-outline:hover:not(:disabled) {
+            border-color: #667eea;
+            color: #667eea;
+        }
+
+        .btn-danger {
+            background: #ef4444;
+            color: white;
+        }
+
+        .btn-danger:hover:not(:disabled) {
+            background: #dc2626;
+        }
+
+        .action-buttons {
+            display: flex;
+            gap: 15px;
+            margin-top: 30px;
+        }
+
+        /* Campaign Summary */
+        .summary-card {
+            background: linear-gradient(135deg, #667eea10 0%, #764ba210 100%);
+            border: 2px solid #667eea30;
+            border-radius: 15px;
+            padding: 20px;
+            margin-top: 25px;
+        }
+
+        .summary-row {
+            display: flex;
+            justify-content: space-between;
+            padding: 10px 0;
+            border-bottom: 1px dashed #e5e7eb;
+        }
+
+        .summary-row:last-child {
+            border-bottom: none;
+        }
+
+        .summary-label {
+            color: #6b7280;
+            font-weight: 500;
+        }
+
+        .summary-value {
+            font-weight: 600;
+            color: #1f2937;
+        }
+
+        .budget-warning {
+            background: #fef3c7;
+            border-left: 4px solid #f59e0b;
+            padding: 12px 15px;
+            border-radius: 8px;
+            margin-top: 15px;
+            font-size: 13px;
+            color: #92400e;
+        }
+
+        /* Loading */
+        .loading-overlay {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(255,255,255,0.9);
+            z-index: 9999;
+            justify-content: center;
+            align-items: center;
+            flex-direction: column;
+        }
+
+        /* Mobile */
+        @media (max-width: 768px) {
+            .sidebar-wrapper {
+                transform: translateX(-100%);
+                width: 280px !important;
+            }
+            
+            .sidebar-wrapper.mobile-open {
+                transform: translateX(0);
+            }
+            
+            .content-wrapper {
+                margin-left: 0 !important;
+                padding: 15px;
+            }
+            
+            .main-content-card {
+                padding: 20px;
+            }
+            
+            .platform-grid,
+            .objective-grid {
+                grid-template-columns: 1fr 1fr;
+            }
+            
+            .action-buttons {
+                flex-direction: column;
+            }
+            
+            .steps-container::before {
+                display: none;
+            }
+            
+            .step {
+                margin-bottom: 20px;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .platform-grid,
+            .objective-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        /* Toast Styles */
+        #toast {
+            position: fixed;
+            top: 24px;
+            right: 24px;
+            width: 320px;
+            padding: 14px 16px;
+            border-radius: 12px;
+            box-shadow: 0 15px 30px rgba(0,0,0,.2);
+            opacity: 0;
+            transform: translateY(-15px);
+            transition: .3s ease;
+            color: #fff;
+            z-index: 9999;
+        }
+
+        #toast.show {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        .toast-row {
+            display: flex;
+            gap: 12px;
+            align-items: flex-start;
+        }
+
+        .toast-icon {
+            width: 34px;
+            height: 34px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 16px;
+            background: rgba(0,0,0,.25);
+        }
+
+        .toast-text h4 {
+            margin: 0;
+            font-size: 14px;
+            font-weight: 600;
+        }
+
+        .toast-text p {
+            margin: 4px 0 0;
+            font-size: 13px;
+            opacity: .9;
+        }
+
+        .toast-success { background: #16a34a; }
+        .toast-error { background: #dc2626; }
+        .toast-info { background: #2563eb; }
+        .toast-warning { background: #facc15; color: #1f2937; }
+
+        .toast-progress {
+            height: 3px;
+            border-radius: 4px;
+            margin-top: 10px;
+            background: rgba(255,255,255,.6);
+            animation: toast-load 3s linear forwards;
+        }
+
+        @keyframes toast-load {
+            from { width: 100%; }
+            to { width: 0%; }
+        }
+    </style>
+</head>
+<body>
+    <!-- HEADER -->
+    <div class="header-wrapper">
+        <%- include('../../../partials/ram/header') %>
+    </div>
+
+    <!-- MAIN LAYOUT -->
+    <div class="main-wrapper">
+        <!-- SIDEBAR -->
+        <div class="sidebar-wrapper" id="sidebarWrapper">
+            <%- include('../../../partials/ram/sidebaar') %>
+        </div>
+
+        <!-- CONTENT -->
+        <div class="content-wrapper" id="contentWrapper">
+            <!-- Toast Container -->
+            <div id="toast"></div>
+
+            <!-- LOADING OVERLAY -->
+            <div class="loading-overlay" id="loadingOverlay">
+                <div class="spinner-border text-primary mb-3" style="width:3rem;height:3rem;"></div>
+                <h5 id="loadingText">Creating Campaign...</h5>
+                <p class="text-muted" id="loadingSubtext">Please wait while we set up your ad campaign</p>
+            </div>
+
+            <!-- Page Header -->
+            <div class="page-header">
+                <div>
+                    <h1>
+                        <i class="fas fa-ad"></i>
+                        Create Ad Campaign
+                    </h1>
+                    <p>Create and manage your advertising campaigns across multiple platforms</p>
+                </div>
+                <div class="user-info">
+                    <i class="fas fa-user-circle"></i>
+                    <span><%= user?.firstName || 'Admin' %> <%= user?.lastName || '' %> (<%= user?.role || 'SuperAdmin' %>)</span>
+                </div>
+            </div>
+
+            <!-- Main Content -->
+            <div class="main-content-card">
+                <!-- Progress Steps -->
+                <div class="steps-container">
+                    <div class="step active" id="step1-indicator">
+                        <div class="step-circle">1</div>
+                        <div class="step-label">Campaign Details</div>
+                    </div>
+                    <div class="step" id="step2-indicator">
+                        <div class="step-circle">2</div>
+                        <div class="step-label">Targeting</div>
+                    </div>
+                    <div class="step" id="step3-indicator">
+                        <div class="step-circle">3</div>
+                        <div class="step-label">Budget & Schedule</div>
+                    </div>
+                    <div class="step" id="step4-indicator">
+                        <div class="step-circle">4</div>
+                        <div class="step-label">Creative</div>
+                    </div>
+                    <div class="step" id="step5-indicator">
+                        <div class="step-circle">5</div>
+                        <div class="step-label">Review & Launch</div>
+                    </div>
+                </div>
+
+                <div class="row">
+                    <!-- Main Form Column -->
+                    <div class="col-lg-8">
+                        <form id="campaignForm">
+                            <!-- Step 1: Campaign Details -->
+                            <div class="step-content" id="step1" style="display: block;">
+                                <!-- Platform Selection -->
+                                <div class="form-card">
+                                    <div class="card-title">
+                                        <i class="fas fa-flag"></i>
+                                        Select Platform
+                                    </div>
+                                    <div class="platform-grid">
+                                        <div class="platform-card selected" onclick="selectPlatform('facebook')">
+                                            <i class="fab fa-facebook fa-3x" style="color: #1877f2;"></i>
+                                            <h4>Facebook</h4>
+                                            <p>Reach 2.9B+ monthly users</p>
+                                        </div>
+                                        <div class="platform-card" onclick="selectPlatform('instagram')">
+                                            <i class="fab fa-instagram fa-3x" style="color: #e4405f;"></i>
+                                            <h4>Instagram</h4>
+                                            <p>Visual content, stories, reels</p>
+                                        </div>
+                                        <div class="platform-card" onclick="selectPlatform('whatsapp')">
+                                            <i class="fab fa-whatsapp fa-3x" style="color: #25d366;"></i>
+                                            <h4>WhatsApp</h4>
+                                            <p>Direct messaging ads</p>
+                                        </div>
+                                        <div class="platform-card" onclick="selectPlatform('google')">
+                                            <i class="fab fa-google fa-3x" style="color: #4285f4;"></i>
+                                            <h4>Google</h4>
+                                            <p>Search & display network</p>
+                                        </div>
+                                        <div class="platform-card" onclick="selectPlatform('linkedin')">
+                                            <i class="fab fa-linkedin fa-3x" style="color: #0a66c2;"></i>
+                                            <h4>LinkedIn</h4>
+                                            <p>B2B professional network</p>
+                                        </div>
+                                        <div class="platform-card" onclick="selectPlatform('twitter')">
+                                            <i class="fab fa-twitter fa-3x" style="color: #1da1f2;"></i>
+                                            <h4>Twitter</h4>
+                                            <p>Real-time conversations</p>
+                                        </div>
+                                    </div>
+                                    <input type="hidden" id="platform" name="platform" value="facebook">
+                                </div>
+
+                                <!-- Campaign Objective -->
+                                <div class="form-card">
+                                    <div class="card-title">
+                                        <i class="fas fa-bullseye"></i>
+                                        Campaign Objective
+                                    </div>
+                                    <div class="objective-grid">
+                                        <div class="objective-card selected" onclick="selectObjective('awareness')">
+                                            <div class="objective-icon awareness">
+                                                <i class="fas fa-eye"></i>
+                                            </div>
+                                            <h4>Brand Awareness</h4>
+                                            <p>Reach maximum people</p>
+                                        </div>
+                                        <div class="objective-card" onclick="selectObjective('traffic')">
+                                            <div class="objective-icon consideration">
+                                                <i class="fas fa-mouse-pointer"></i>
+                                            </div>
+                                            <h4>Website Traffic</h4>
+                                            <p>Drive visitors to website</p>
+                                        </div>
+                                        <div class="objective-card" onclick="selectObjective('engagement')">
+                                            <div class="objective-icon consideration">
+                                                <i class="fas fa-heart"></i>
+                                            </div>
+                                            <h4>Engagement</h4>
+                                            <p>Likes, comments, shares</p>
+                                        </div>
+                                        <div class="objective-card" onclick="selectObjective('leads')">
+                                            <div class="objective-icon conversion">
+                                                <i class="fas fa-users"></i>
+                                            </div>
+                                            <h4>Lead Generation</h4>
+                                            <p>Collect leads & inquiries</p>
+                                        </div>
+                                        <div class="objective-card" onclick="selectObjective('sales')">
+                                            <div class="objective-icon conversion">
+                                                <i class="fas fa-shopping-cart"></i>
+                                            </div>
+                                            <h4>Sales</h4>
+                                            <p>Drive conversions & sales</p>
+                                        </div>
+                                        <div class="objective-card" onclick="selectObjective('video')">
+                                            <div class="objective-icon awareness">
+                                                <i class="fas fa-video"></i>
+                                            </div>
+                                            <h4>Video Views</h4>
+                                            <p>Maximize video views</p>
+                                        </div>
+                                    </div>
+                                    <input type="hidden" id="objective" name="objective" value="awareness">
+                                </div>
+
+                                <!-- Campaign Name -->
+                                <div class="form-card">
+                                    <div class="row">
+                                        <div class="col-md-8">
+                                            <div class="form-group">
+                                                <label><i class="fas fa-tag"></i> Campaign Name</label>
+                                                <input type="text" class="form-control" id="campaignName" placeholder="e.g., Summer Sale 2024" required>
+                                            </div>
+                                        </div>
+                                        <div class="col-md-4">
+                                            <div class="form-group">
+                                                <label><i class="fas fa-hashtag"></i> Campaign ID</label>
+                                                <input type="text" class="form-control" id="campaignId" value="CAMP-<%= Date.now() %>" readonly>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <!-- Action Buttons -->
+                                <div class="action-buttons">
+                                    <button type="button" class="btn btn-outline" onclick="window.location.href='/ads'">
+                                        <i class="fas fa-times"></i> Cancel
+                                    </button>
+                                    <button type="button" class="btn btn-primary" onclick="nextStep(2)">
+                                        Next: Targeting <i class="fas fa-arrow-right"></i>
+                                    </button>
+                                </div>
+                            </div>
+
+                            <!-- Step 2: Targeting -->
+                            <div class="step-content" id="step2" style="display: none;">
+                                <!-- Location Targeting -->
+                                <div class="form-card">
+                                    <div class="card-title">
+                                        <i class="fas fa-map-marker-alt"></i>
+                                        Location Targeting
+                                    </div>
+                                    
+                                    <div class="location-search">
+                                        <i class="fas fa-search"></i>
+                                        <input type="text" class="form-control" id="locationSearch" placeholder="Search for cities, countries, or regions...">
+                                    </div>
+
+                                    <div class="selected-locations" id="selectedLocations">
+                                        <span class="location-tag">
+                                            India <i class="fas fa-times" onclick="removeLocation('India')"></i>
+                                        </span>
+                                        <span class="location-tag">
+                                            United States <i class="fas fa-times" onclick="removeLocation('United States')"></i>
+                                        </span>
+                                    </div>
+
+                                    <div class="row mt-3">
+                                        <div class="col-md-6">
+                                            <div class="form-group">
+                                                <label>Location Type</label>
+                                                <select class="form-select" id="locationType">
+                                                    <option value="everyone">Everyone in this location</option>
+                                                    <option value="recently">People recently in this location</option>
+                                                    <option value="traveling">People traveling in this location</option>
+                                                </select>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <!-- Demographics -->
+                                <div class="form-card">
+                                    <div class="card-title">
+                                        <i class="fas fa-users"></i>
+                                        Demographics
+                                    </div>
+
+                                    <div class="row">
+                                        <div class="col-md-6">
+                                            <div class="form-group">
+                                                <label>Age Range</label>
+                                                <div class="age-range">
+                                                    <input type="number" class="form-control" id="ageMin" value="18" min="13" max="65">
+                                                    <span>to</span>
+                                                    <input type="number" class="form-control" id="ageMax" value="65" min="13" max="65">
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="col-md-6">
+                                            <div class="form-group">
+                                                <label>Gender</label>
+                                                <select class="form-select" id="gender">
+                                                    <option value="all">All</option>
+                                                    <option value="male">Male</option>
+                                                    <option value="female">Female</option>
+                                                </select>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <div class="form-group">
+                                        <label>Language</label>
+                                        <select class="form-select" id="language">
+                                            <option value="all">All Languages</option>
+                                            <option value="en">English</option>
+                                            <option value="hi">Hindi</option>
+                                            <option value="es">Spanish</option>
+                                            <option value="fr">French</option>
+                                            <option value="ar">Arabic</option>
+                                        </select>
+                                    </div>
+                                </div>
+
+                                <!-- Interests -->
+                                <div class="form-card">
+                                    <div class="card-title">
+                                        <i class="fas fa-heart"></i>
+                                        Interests & Behaviors
+                                    </div>
+
+                                    <div class="form-group">
+                                        <label>Detailed Targeting</label>
+                                        <select class="form-select" id="interests" multiple style="height: 150px;">
+                                            <option value="technology">Technology</option>
+                                            <option value="business">Business & Finance</option>
+                                            <option value="education">Education</option>
+                                            <option value="fashion">Fashion & Beauty</option>
+                                            <option value="travel">Travel</option>
+                                            <option value="food">Food & Dining</option>
+                                            <option value="sports">Sports</option>
+                                            <option value="entertainment">Entertainment</option>
+                                            <option value="automotive">Automotive</option>
+                                            <option value="health">Health & Fitness</option>
+                                        </select>
+                                        <small class="text-muted">Hold Ctrl/Cmd to select multiple</small>
+                                    </div>
+                                </div>
+
+                                <!-- Action Buttons -->
+                                <div class="action-buttons">
+                                    <button type="button" class="btn btn-outline" onclick="prevStep(1)">
+                                        <i class="fas fa-arrow-left"></i> Previous
+                                    </button>
+                                    <button type="button" class="btn btn-primary" onclick="nextStep(3)">
+                                        Next: Budget & Schedule <i class="fas fa-arrow-right"></i>
+                                    </button>
+                                </div>
+                            </div>
+
+                            <!-- Step 3: Budget & Schedule -->
+                            <div class="step-content" id="step3" style="display: none;">
+                                <!-- Budget -->
+                                <div class="form-card">
+                                    <div class="card-title">
+                                        <i class="fas fa-wallet"></i>
+                                        Campaign Budget
+                                    </div>
+
+                                    <div class="row">
+                                        <div class="col-md-6">
+                                            <div class="form-group">
+                                                <label>Budget Type</label>
+                                                <select class="form-select" id="budgetType" onchange="toggleBudgetType()">
+                                                    <option value="daily">Daily Budget</option>
+                                                    <option value="lifetime">Lifetime Budget</option>
+                                                </select>
+                                            </div>
+                                        </div>
+                                        <div class="col-md-6">
+                                            <div class="form-group">
+                                                <label>Currency</label>
+                                                <select class="form-select" id="currency">
+                                                    <option value="INR">INR (₹)</option>
+                                                    <option value="USD">USD ($)</option>
+                                                    <option value="EUR">EUR (€)</option>
+                                                    <option value="GBP">GBP (£)</option>
+                                                    <option value="AED">AED (د.إ)</option>
+                                                </select>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <div class="row">
+                                        <div class="col-md-6">
+                                            <div class="form-group">
+                                                <label id="budgetLabel">Daily Budget (₹)</label>
+                                                <div class="input-group">
+                                                    <span class="input-group-text">₹</span>
+                                                    <input type="number" class="form-control" id="budgetAmount" value="1000" min="100" onchange="updateBudgetSummary()">
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="col-md-6">
+                                            <div class="form-group">
+                                                <label>Estimated Reach</label>
+                                                <input type="text" class="form-control" id="estimatedReach" value="12K - 45K people" readonly>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <div class="budget-slider">
+                                        <div class="budget-range">
+                                            <span>₹100</span>
+                                            <span>₹10,000</span>
+                                        </div>
+                                        <input type="range" class="slider" id="budgetSlider" min="100" max="10000" value="1000" step="100" oninput="updateBudgetFromSlider()">
+                                    </div>
+
+                                    <div class="budget-warning" id="budgetWarning" style="display: none;">
+                                        <i class="fas fa-exclamation-triangle me-2"></i>
+                                        Your daily budget is below the recommended minimum for your targeting.
+                                    </div>
+                                </div>
+
+                                <!-- Schedule -->
+                                <div class="form-card">
+                                    <div class="card-title">
+                                        <i class="fas fa-calendar-alt"></i>
+                                        Campaign Schedule
+                                    </div>
+
+                                    <div class="row">
+                                        <div class="col-md-6">
+                                            <div class="form-group">
+                                                <label>Start Date</label>
+                                                <input type="date" class="form-control" id="startDate" value="<%= new Date().toISOString().split('T')[0] %>">
+                                            </div>
+                                        </div>
+                                        <div class="col-md-6">
+                                            <div class="form-group">
+                                                <label>End Date</label>
+                                                <input type="date" class="form-control" id="endDate" value="<%= new Date(Date.now() + 30*24*60*60*1000).toISOString().split('T')[0] %>">
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <div class="form-group">
+                                        <label>Ad Scheduling</label>
+                                        <select class="form-select" id="adScheduling" onchange="toggleTimeSlots()">
+                                            <option value="always">Run all the time</option>
+                                            <option value="specific">Specific days and times</option>
+                                        </select>
+                                    </div>
+
+                                    <div id="timeSlots" style="display: none;">
+                                        <label class="mt-3">Select Time Slots</label>
+                                        <div class="time-slots">
+                                            <span class="time-slot" onclick="toggleTimeSlot(this)">Mon 9AM-12PM</span>
+                                            <span class="time-slot" onclick="toggleTimeSlot(this)">Mon 1PM-5PM</span>
+                                            <span class="time-slot" onclick="toggleTimeSlot(this)">Tue 9AM-12PM</span>
+                                            <span class="time-slot" onclick="toggleTimeSlot(this)">Tue 1PM-5PM</span>
+                                            <span class="time-slot" onclick="toggleTimeSlot(this)">Wed 9AM-12PM</span>
+                                            <span class="time-slot" onclick="toggleTimeSlot(this)">Wed 1PM-5PM</span>
+                                            <span class="time-slot" onclick="toggleTimeSlot(this)">Thu 9AM-12PM</span>
+                                            <span class="time-slot" onclick="toggleTimeSlot(this)">Thu 1PM-5PM</span>
+                                            <span class="time-slot" onclick="toggleTimeSlot(this)">Fri 9AM-12PM</span>
+                                            <span class="time-slot" onclick="toggleTimeSlot(this)">Fri 1PM-5PM</span>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <!-- Action Buttons -->
+                                <div class="action-buttons">
+                                    <button type="button" class="btn btn-outline" onclick="prevStep(2)">
+                                        <i class="fas fa-arrow-left"></i> Previous
+                                    </button>
+                                    <button type="button" class="btn btn-primary" onclick="nextStep(4)">
+                                        Next: Creative <i class="fas fa-arrow-right"></i>
+                                    </button>
+                                </div>
+                            </div>
+
+                            <!-- Step 4: Creative -->
+                            <div class="step-content" id="step4" style="display: none;">
+                                <!-- Ad Format -->
+                                <div class="form-card">
+                                    <div class="card-title">
+                                        <i class="fas fa-paint-brush"></i>
+                                        Ad Format
+                                    </div>
+
+                                    <div class="row">
+                                        <div class="col-md-4">
+                                            <div class="platform-card selected" style="padding: 15px;" onclick="selectAdFormat('single')">
+                                                <i class="fas fa-image fa-2x" style="color: #667eea;"></i>
+                                                <h4>Single Image</h4>
+                                                <p>Static image ad</p>
+                                            </div>
+                                        </div>
+                                        <div class="col-md-4">
+                                            <div class="platform-card" style="padding: 15px;" onclick="selectAdFormat('carousel')">
+                                                <i class="fas fa-images fa-2x" style="color: #667eea;"></i>
+                                                <h4>Carousel</h4>
+                                                <p>Multiple images</p>
+                                            </div>
+                                        </div>
+                                        <div class="col-md-4">
+                                            <div class="platform-card" style="padding: 15px;" onclick="selectAdFormat('video')">
+                                                <i class="fas fa-video fa-2x" style="color: #667eea;"></i>
+                                                <h4>Video</h4>
+                                                <p>Video advertisement</p>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <input type="hidden" id="adFormat" value="single">
+                                </div>
+
+                                <!-- Media Upload -->
+                                <div class="form-card">
+                                    <div class="card-title">
+                                        <i class="fas fa-cloud-upload-alt"></i>
+                                        Media Upload
+                                    </div>
+
+                                    <div class="upload-area" id="uploadArea" onclick="document.getElementById('mediaFile').click()" style="border: 2px dashed #e5e7eb; border-radius: 12px; padding: 40px; text-align: center; cursor: pointer;">
+                                        <i class="fas fa-cloud-upload-alt fa-3x" style="color: #9ca3af; margin-bottom: 15px;"></i>
+                                        <h5>Click to upload or drag and drop</h5>
+                                        <p class="text-muted">PNG, JPG, GIF up to 10MB</p>
+                                        <input type="file" id="mediaFile" style="display: none;" accept="image/*,video/*" onchange="handleMediaUpload(this)">
+                                    </div>
+
+                                    <div id="mediaPreview" style="display: none; margin-top: 20px;">
+                                        <img id="previewImage" src="" alt="Preview" style="max-width: 100%; max-height: 200px; border-radius: 8px;">
+                                    </div>
+                                </div>
+
+                                <!-- Ad Copy -->
+                                <div class="form-card">
+                                    <div class="card-title">
+                                        <i class="fas fa-pen"></i>
+                                        Ad Copy
+                                    </div>
+
+                                    <div class="form-group">
+                                        <label>Primary Text</label>
+                                        <textarea class="form-control" id="adPrimaryText" rows="3" placeholder="Enter your main ad message..." oninput="updatePreview()">Limited time offer! Get 50% off on all products. Shop now!</textarea>
+                                        <small class="text-muted" id="primaryTextCount">125 characters</small>
+                                    </div>
+
+                                    <div class="form-group">
+                                        <label>Headline</label>
+                                        <input type="text" class="form-control" id="adHeadline" value="Summer Sale 2024" oninput="updatePreview()">
+                                    </div>
+
+                                    <div class="form-group">
+                                        <label>Description</label>
+                                        <textarea class="form-control" id="adDescription" rows="2" oninput="updatePreview()">Shop the biggest sale of the year. Limited stock available!</textarea>
+                                    </div>
+
+                                    <div class="form-group">
+                                        <label>Call to Action</label>
+                                        <select class="form-select" id="adCTA" onchange="updatePreview()">
+                                            <option value="shop">Shop Now</option>
+                                            <option value="learn">Learn More</option>
+                                            <option value="signup">Sign Up</option>
+                                            <option value="contact">Contact Us</option>
+                                            <option value="download">Download</option>
+                                            <option value="book">Book Now</option>
+                                        </select>
+                                    </div>
+
+                                    <div class="form-group">
+                                        <label>Destination URL</label>
+                                        <input type="url" class="form-control" id="adUrl" value="https://example.com/summer-sale" placeholder="https://example.com">
+                                    </div>
+                                </div>
+
+                                <!-- Action Buttons -->
+                                <div class="action-buttons">
+                                    <button type="button" class="btn btn-outline" onclick="prevStep(3)">
+                                        <i class="fas fa-arrow-left"></i> Previous
+                                    </button>
+                                    <button type="button" class="btn btn-primary" onclick="nextStep(5)">
+                                        Next: Review <i class="fas fa-arrow-right"></i>
+                                    </button>
+                                </div>
+                            </div>
+
+                            <!-- Step 5: Review & Launch -->
+                            <div class="step-content" id="step5" style="display: none;">
+                                <!-- Campaign Summary -->
+                                <div class="summary-card">
+                                    <h5 class="mb-3">Campaign Summary</h5>
+                                    
+                                    <div class="summary-row">
+                                        <span class="summary-label">Campaign Name:</span>
+                                        <span class="summary-value" id="summaryName">Summer Sale 2024</span>
+                                    </div>
+                                    
+                                    <div class="summary-row">
+                                        <span class="summary-label">Platform:</span>
+                                        <span class="summary-value" id="summaryPlatform">Facebook</span>
+                                    </div>
+                                    
+                                    <div class="summary-row">
+                                        <span class="summary-label">Objective:</span>
+                                        <span class="summary-value" id="summaryObjective">Brand Awareness</span>
+                                    </div>
+                                    
+                                    <div class="summary-row">
+                                        <span class="summary-label">Target Audience:</span>
+                                        <span class="summary-value" id="summaryAudience">18-65, All genders</span>
+                                    </div>
+                                    
+                                    <div class="summary-row">
+                                        <span class="summary-label">Locations:</span>
+                                        <span class="summary-value" id="summaryLocations">India, United States</span>
+                                    </div>
+                                    
+                                    <div class="summary-row">
+                                        <span class="summary-label">Budget:</span>
+                                        <span class="summary-value" id="summaryBudget">₹1,000/day</span>
+                                    </div>
+                                    
+                                    <div class="summary-row">
+                                        <span class="summary-label">Schedule:</span>
+                                        <span class="summary-value" id="summarySchedule">Feb 24 - Mar 26, 2024</span>
+                                    </div>
+                                    
+                                    <div class="summary-row">
+                                        <span class="summary-label">Estimated Reach:</span>
+                                        <span class="summary-value" id="summaryReach">12K - 45K people</span>
+                                    </div>
+                                </div>
+
+                                <!-- Final Preview -->
+                                <div class="form-card">
+                                    <div class="card-title">
+                                        <i class="fas fa-eye"></i>
+                                        Final Ad Preview
+                                    </div>
+                                    
+                                    <div class="preview-frame" id="finalPreview">
+                                        <!-- Preview will be updated dynamically -->
+                                    </div>
+                                </div>
+
+                                <!-- Terms -->
+                                <div class="form-check mb-3">
+                                    <input class="form-check-input" type="checkbox" id="termsCheck">
+                                    <label class="form-check-label" for="termsCheck">
+                                        I agree to the <a href="#">Terms of Service</a> and confirm that my ad complies with all advertising policies.
+                                    </label>
+                                </div>
+
+                                <!-- Action Buttons -->
+                                <div class="action-buttons">
+                                    <button type="button" class="btn btn-outline" onclick="prevStep(4)">
+                                        <i class="fas fa-arrow-left"></i> Previous
+                                    </button>
+                                    <button type="button" class="btn btn-success" onclick="launchCampaign()" id="launchBtn">
+                                        <i class="fas fa-rocket"></i> Launch Campaign
+                                    </button>
+                                    <button type="button" class="btn btn-outline" onclick="saveAsDraft()">
+                                        <i class="fas fa-save"></i> Save as Draft
+                                    </button>
+                                </div>
+                            </div>
+                        </form>
+                    </div>
+
+                    <!-- Preview Column -->
+                    <div class="col-lg-4">
+                        <div class="ad-preview">
+                            <div class="preview-header">
+                                <h3>Ad Preview</h3>
+                                <div class="preview-device">
+                                    <button class="device-btn active" onclick="changePreviewDevice('desktop')">
+                                        <i class="fas fa-desktop"></i>
+                                    </button>
+                                    <button class="device-btn" onclick="changePreviewDevice('mobile')">
+                                        <i class="fas fa-mobile-alt"></i>
+                                    </button>
+                                </div>
+                            </div>
+
+                            <div class="preview-frame" id="livePreview">
+                                <div class="preview-facebook">
+                                    <div class="preview-header-fb">
+                                        <div class="preview-avatar">
+                                            <i class="fas fa-ad"></i>
+                                        </div>
+                                        <div class="preview-info">
+                                            <h4>Sponsored</h4>
+                                            <p>Your Business Name</p>
+                                        </div>
+                                    </div>
+                                    <div class="preview-image" id="previewMedia">
+                                        <i class="fas fa-image fa-3x"></i>
+                                    </div>
+                                    <div class="preview-content">
+                                        <div class="preview-title" id="previewTitle">Summer Sale 2024</div>
+                                        <div class="preview-description" id="previewDescription">Limited time offer! Get 50% off on all products. Shop now!</div>
+                                        <button class="preview-cta" id="previewCTA">Shop Now</button>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="text-center mt-3">
+                                <small class="text-muted">Preview updates in real-time</small>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Scripts -->
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/momentjs/latest/moment.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/daterangepicker/daterangepicker.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.js"></script>
+
+    <script>
+        // ======================
+        // SIDEBAR SYNC
+        // ======================
+        document.addEventListener('DOMContentLoaded', function() {
+            const sidebar = document.getElementById('mainSidebar');
+            const sidebarWrapper = document.getElementById('sidebarWrapper');
+            
+            if (sidebar && sidebarWrapper) {
+                if (sidebar.classList.contains('collapsed')) {
+                    sidebarWrapper.classList.add('collapsed');
+                }
+                
+                const originalToggleCollapse = window.toggleCollapse;
+                
+                window.toggleCollapse = function() {
+                    if (originalToggleCollapse) {
+                        originalToggleCollapse();
+                    }
+                    
+                    setTimeout(() => {
+                        if (sidebar.classList.contains('collapsed')) {
+                            sidebarWrapper.classList.add('collapsed');
+                        } else {
+                            sidebarWrapper.classList.remove('collapsed');
+                        }
+                    }, 10);
+                };
+                
+                const originalToggleMobile = window.toggleMobileSidebar;
+                
+                window.toggleMobileSidebar = function() {
+                    if (originalToggleMobile) {
+                        originalToggleMobile();
+                    }
+                    
+                    setTimeout(() => {
+                        if (sidebar.classList.contains('open')) {
+                            sidebarWrapper.classList.add('mobile-open');
+                        } else {
+                            sidebarWrapper.classList.remove('mobile-open');
+                        }
+                    }, 10);
+                };
+                
+                const originalCloseMobile = window.closeMobileSidebar;
+                
+                window.closeMobileSidebar = function() {
+                    if (originalCloseMobile) {
+                        originalCloseMobile();
+                    }
+                    
+                    sidebarWrapper.classList.remove('mobile-open');
+                };
+            }
+
+            // Initialize form
+            updatePreview();
+            updateSummary();
+        });
+
+        // ======================
+        // TOAST FUNCTION
+        // ======================
+        let toastTimer;
+        function showToast(title, message, type = 'success') {
+            const toast = document.getElementById('toast');
+            
+            clearTimeout(toastTimer);
+            
+            const icons = {
+                'success': '✅',
+                'error': '❌',
+                'warning': '⚠️',
+                'info': 'ℹ️'
+            };
+            
+            const icon = icons[type] || 'ℹ️';
+            
+            toast.className = '';
+            toast.innerHTML = `
+                <div class="toast-row">
+                    <div class="toast-icon">${icon}</div>
+                    <div class="toast-text">
+                        <h4>${title}</h4>
+                        <p>${message}</p>
+                    </div>
+                </div>
+                <div class="toast-progress"></div>
+            `;
+            
+            toast.classList.add(`toast-${type}`, 'show');
+            
+            toastTimer = setTimeout(() => {
+                toast.classList.remove('show');
+            }, 3000);
+        }
+
+        // ======================
+        // STEP NAVIGATION
+        // ======================
+        let currentStep = 1;
+
+        function showStep(step) {
+            for (let i = 1; i <= 5; i++) {
+                document.getElementById(`step${i}`).style.display = 'none';
+                document.getElementById(`step${i}-indicator`).classList.remove('active');
+                if (i < step) {
+                    document.getElementById(`step${i}-indicator`).classList.add('completed');
+                } else {
+                    document.getElementById(`step${i}-indicator`).classList.remove('completed');
+                }
+            }
+            
+            document.getElementById(`step${step}`).style.display = 'block';
+            document.getElementById(`step${step}-indicator`).classList.add('active');
+            currentStep = step;
+        }
+
+        function nextStep(step) {
+            if (validateStep(currentStep)) {
+                showStep(step);
+                window.scrollTo(0, 0);
+            }
+        }
+
+        function prevStep(step) {
+            showStep(step);
+            window.scrollTo(0, 0);
+        }
+
+        function validateStep(step) {
+            if (step === 1) {
+                if (!document.getElementById('campaignName').value) {
+                    showToast('Error', 'Please enter campaign name', 'error');
+                    return false;
+                }
+            }
+            return true;
+        }
+
+        // ======================
+        // PLATFORM SELECTION
+        // ======================
+        function selectPlatform(platform) {
+            document.querySelectorAll('.platform-card').forEach(card => {
+                card.classList.remove('selected');
+            });
+            event.currentTarget.classList.add('selected');
+            document.getElementById('platform').value = platform;
+            updateSummary();
+        }
+
+        function selectObjective(objective) {
+            document.querySelectorAll('.objective-card').forEach(card => {
+                card.classList.remove('selected');
+            });
+            event.currentTarget.classList.add('selected');
+            document.getElementById('objective').value = objective;
+            updateSummary();
+        }
+
+        function selectAdFormat(format) {
+            document.querySelectorAll('[onclick*="selectAdFormat"]').forEach(card => {
+                card.classList.remove('selected');
+            });
+            event.currentTarget.classList.add('selected');
+            document.getElementById('adFormat').value = format;
+        }
+
+        // ======================
+        // LOCATION TARGETING
+        // ======================
+        function removeLocation(location) {
+            // Remove location tag
+            showToast('Removed', `${location} removed from targeting`, 'info');
+        }
+
+        // ======================
+        // BUDGET
+        // ======================
+        function toggleBudgetType() {
+            const type = document.getElementById('budgetType').value;
+            document.getElementById('budgetLabel').textContent = type === 'daily' ? 'Daily Budget (₹)' : 'Lifetime Budget (₹)';
+            updateBudgetSummary();
+        }
+
+        function updateBudgetFromSlider() {
+            const value = document.getElementById('budgetSlider').value;
+            document.getElementById('budgetAmount').value = value;
+            updateBudgetSummary();
+        }
+
+        function updateBudgetSummary() {
+            const amount = document.getElementById('budgetAmount').value;
+            const type = document.getElementById('budgetType').value;
+            
+            // Show warning for low budget
+            if (amount < 500) {
+                document.getElementById('budgetWarning').style.display = 'block';
+            } else {
+                document.getElementById('budgetWarning').style.display = 'none';
+            }
+            
+            // Update estimated reach
+            const reach = Math.floor(amount * 12) + 'K - ' + Math.floor(amount * 45) + 'K people';
+            document.getElementById('estimatedReach').value = reach;
+            
+            updateSummary();
+        }
+
+        // ======================
+        // SCHEDULE
+        // ======================
+        function toggleTimeSlots() {
+            const value = document.getElementById('adScheduling').value;
+            document.getElementById('timeSlots').style.display = value === 'specific' ? 'block' : 'none';
+        }
+
+        function toggleTimeSlot(element) {
+            element.classList.toggle('selected');
+        }
+
+        // ======================
+        // MEDIA UPLOAD
+        // ======================
+        function handleMediaUpload(input) {
+            if (input.files && input.files[0]) {
+                const reader = new FileReader();
+                
+                reader.onload = function(e) {
+                    document.getElementById('previewImage').src = e.target.result;
+                    document.getElementById('mediaPreview').style.display = 'block';
+                    document.getElementById('previewMedia').innerHTML = `<img src="${e.target.result}" style="max-width: 100%; max-height: 200px;">`;
+                    document.getElementById('uploadArea').style.display = 'none';
+                };
+                
+                reader.readAsDataURL(input.files[0]);
+                showToast('Uploaded', 'File uploaded successfully', 'success');
+            }
+        }
+
+        // ======================
+        // PREVIEW
+        // ======================
+        function updatePreview() {
+            const title = document.getElementById('adHeadline').value;
+            const description = document.getElementById('adPrimaryText').value;
+            const cta = document.getElementById('adCTA').value;
+            
+            document.getElementById('previewTitle').textContent = title;
+            document.getElementById('previewDescription').textContent = description;
+            document.getElementById('previewCTA').textContent = cta.replace(/([A-Z])/g, ' $1').trim();
+            
+            // Update character count
+            document.getElementById('primaryTextCount').textContent = description.length + ' characters';
+        }
+
+        function changePreviewDevice(device) {
+            document.querySelectorAll('.device-btn').forEach(btn => {
+                btn.classList.remove('active');
+            });
+            event.currentTarget.classList.add('active');
+            
+            const preview = document.getElementById('livePreview');
+            if (device === 'mobile') {
+                preview.style.maxWidth = '320px';
+                preview.style.margin = '0 auto';
+            } else {
+                preview.style.maxWidth = '100%';
+            }
+        }
+
+        // ======================
+        // SUMMARY
+        // ======================
+        function updateSummary() {
+            document.getElementById('summaryName').textContent = document.getElementById('campaignName').value || 'Summer Sale 2024';
+            
+            const platform = document.getElementById('platform').value;
+            document.getElementById('summaryPlatform').textContent = platform.charAt(0).toUpperCase() + platform.slice(1);
+            
+            const objective = document.getElementById('objective').value;
+            document.getElementById('summaryObjective').textContent = objective.replace(/([A-Z])/g, ' $1').trim();
+            
+            const ageMin = document.getElementById('ageMin').value;
+            const ageMax = document.getElementById('ageMax').value;
+            document.getElementById('summaryAudience').textContent = `${ageMin}-${ageMax}, All genders`;
+            
+            const budget = document.getElementById('budgetAmount').value;
+            const budgetType = document.getElementById('budgetType').value;
+            document.getElementById('summaryBudget').textContent = `₹${budget}/${budgetType === 'daily' ? 'day' : 'total'}`;
+            
+            const startDate = new Date(document.getElementById('startDate').value).toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
+            const endDate = new Date(document.getElementById('endDate').value).toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
+            document.getElementById('summarySchedule').textContent = `${startDate} - ${endDate}`;
+        }
+
+        // ======================
+        // CAMPAIGN LAUNCH
+        // ======================
+        function launchCampaign() {
+            if (!document.getElementById('termsCheck').checked) {
+                showToast('Error', 'Please accept terms and conditions', 'error');
+                return;
+            }
+            
+            document.getElementById('loadingOverlay').style.display = 'flex';
+            
+            // Simulate API call
+            setTimeout(() => {
+                document.getElementById('loadingOverlay').style.display = 'none';
+                showToast('Success!', 'Campaign launched successfully!', 'success');
+                
+                setTimeout(() => {
+                    window.location.href = '/ads';
+                }, 2000);
+            }, 3000);
+        }
+
+        function saveAsDraft() {
+            showToast('Saved', 'Campaign saved as draft', 'success');
+        }
+    </script>
+</body>
+</html>

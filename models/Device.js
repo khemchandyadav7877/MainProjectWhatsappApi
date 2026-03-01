@@ -67,6 +67,21 @@ const deviceSchema = new mongoose.Schema({
     deviceAddedAt: {
         type: Date,
         default: Date.now
+    },
+    // ===== IMPORTANT: USER ID AND ROLE FIELDS =====
+    createdBy: {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'User',
+        required: true
+    },
+    createdByRole: {
+        type: String,
+        enum: ["user", "Student", "SuperAdmin", "Educator", "Trainer"],
+        required: true
+    },
+    createdByEmail: {
+        type: String,
+        required: true
     }
 }, {
     timestamps: true
@@ -77,5 +92,7 @@ deviceSchema.index({ deviceId: 1 });
 deviceSchema.index({ status: 1 });
 deviceSchema.index({ phone: 1 });
 deviceSchema.index({ connectionStatus: 1 });
+deviceSchema.index({ createdBy: 1 }); // Important for filtering by user
+deviceSchema.index({ createdByRole: 1 }); // Important for filtering by role
 
 module.exports = mongoose.model('Device', deviceSchema);

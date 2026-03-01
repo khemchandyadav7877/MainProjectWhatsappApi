@@ -29,7 +29,7 @@ app.use(express.json());
 /* =======================
    VIEW ENGINE SETUP
 ======================= */
-app.set('view engine', 'ejs');
+app.set('view engine', 'ejs');   
 app.set('views', path.join(__dirname, 'views'));
 app.use('/uploads', express.static(path.join(__dirname, 'public', 'uploads')));
 
@@ -58,13 +58,16 @@ const whatsappRouter = require('./Routers/WhtasappScane');
 const campaignRouter = require('./Routers/campaign');
 const ContentRouter = require('./Routers/ContentRouter');
 const AuthRouter = require('./Routers/auths');
-const { router: webReportRouter } = require('./Routers/webRouter');
 const chatsRouter = require('./Routers/Chats');
 const settingRouter = require('./Routers/SettingRouter');
 const virtualNumberRouter = require('./Routers/virtualNumber');
 const emailRouter = require('./Routers/emailRouter');
 const profileRouter = require('./Routers/profile');
 const notificationRuter=require('./Routers/notifications')
+const adsManagementRouter=require('./Routers/AdsManagement')
+const officialWhatsappApi=require('./Routers/officialWhatsApp.js')
+const dashboardRouter = require('./Routers/dashboard.js');
+const custorRouter=require('./Routers/CustomRoles.js')
 
 
 // ✅ Use routes
@@ -73,12 +76,15 @@ app.use('/', chatsRouter);
 app.use('/', whatsappRouter.router);
 app.use('/', campaignRouter);
 app.use('/', ContentRouter);
-app.use('/', webReportRouter);
 app.use('/', settingRouter);
 app.use('/', virtualNumberRouter);
 app.use('/', emailRouter);
 app.use('/', profileRouter);
 app.use('/',notificationRuter)
+app.use('/',adsManagementRouter)
+app.use('/',officialWhatsappApi)
+app.use('/', dashboardRouter);
+app.use('/',custorRouter)
 
 /* =======================
    404 ERROR HANDLER

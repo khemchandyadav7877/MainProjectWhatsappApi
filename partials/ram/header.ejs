@@ -23,7 +23,7 @@ const roleColor = getRoleColor(user.role);
 const userInitial = (user.firstName || user.email || 'U').charAt(0).toUpperCase();
 %>
 
-<!-- Font Awesome (if not already included) -->
+<!-- Font Awesome -->
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 
 <style>
@@ -133,6 +133,8 @@ body.dark-mode .welcome-text {
     display: flex;
     align-items: center;
     gap: 16px;
+    position: relative;
+    z-index: 9999;
 }
 
 /* Theme Toggle */
@@ -205,9 +207,10 @@ body.dark-mode .notification-badge {
     border-color: #111827;
 }
 
-/* User Dropdown */
+/* User Dropdown - FIXED */
 .user-dropdown {
     position: relative;
+    z-index: 10000;
 }
 
 .user-trigger {
@@ -220,6 +223,8 @@ body.dark-mode .notification-badge {
     transition: all 0.2s;
     border: 1px solid transparent;
     background: white;
+    position: relative;
+    z-index: 10001;
 }
 
 body.dark-mode .user-trigger {
@@ -275,24 +280,24 @@ body.dark-mode .user-trigger {
     transform: rotate(180deg);
 }
 
-/* Dropdown Menu */
+/* Dropdown Menu - FIXED */
 .dropdown-menu-custom {
     position: absolute;
     top: calc(100% + 5px);
     right: 0;
     background: white;
     border-radius: 12px;
-    box-shadow: 0 10px 25px rgba(0,0,0,0.1);
+    box-shadow: 0 10px 25px rgba(0,0,0,0.15);
     width: 280px;
-    z-index: 1040;
-    overflow: hidden;
+    z-index: 999999 !important; /* Super high z-index */
+    overflow: visible;
     border: 1px solid #e5e7eb;
     animation: fadeIn 0.2s ease;
     display: none;
 }
 
 .dropdown-menu-custom.show {
-    display: block;
+    display: block !important;
 }
 
 body.dark-mode .dropdown-menu-custom {
@@ -395,6 +400,7 @@ body.dark-mode .dropdown-divider {
     background: #374151;
 }
 
+/* FIXED: Dropdown items - now properly clickable */
 .dropdown-item {
     display: flex;
     align-items: center;
@@ -406,9 +412,12 @@ body.dark-mode .dropdown-divider {
     text-align: left;
     color: #4b5563;
     font-size: 14px;
-    cursor: pointer;
+    cursor: pointer !important;
     transition: background 0.2s;
     text-decoration: none;
+    position: relative;
+    z-index: 1000000 !important; /* Extremely high z-index */
+    pointer-events: auto !important;
 }
 
 body.dark-mode .dropdown-item {
@@ -423,6 +432,7 @@ body.dark-mode .dropdown-item {
 .dropdown-item i {
     color: #9ca3af;
     width: 16px;
+    pointer-events: none;
 }
 
 .dropdown-item.logout {
@@ -507,7 +517,7 @@ body.dark-mode .dropdown-item {
                 <span class="notification-badge">3</span>
             </button>
             
-            <!-- User Dropdown -->
+            <!-- User Dropdown - FIXED -->
             <div class="user-dropdown">
                 <div class="user-trigger" id="userTrigger">
                     <div class="profile-avatar">
@@ -532,17 +542,18 @@ body.dark-mode .dropdown-item {
                     
                     <div class="dropdown-divider"></div>
                     
-                    <a href="/profile" class="dropdown-item">
+                    <!-- FIXED: Direct links with proper href -->
+                    <a href="/profile" class="dropdown-item" onclick="window.location.href='/profile'; return false;">
                         <i class="fas fa-user-circle"></i> My Profile
                     </a>
                     
-                    <a href="/settings" class="dropdown-item">
+                    <a href="/settings" class="dropdown-item" onclick="window.location.href='/settings'; return false;">
                         <i class="fas fa-cog"></i> Settings
                     </a>
                     
                     <div class="dropdown-divider"></div>
                     
-                    <a href="/logout" class="dropdown-item logout">
+                    <a href="/logout" class="dropdown-item logout" onclick="window.location.href='/logout'; return false;">
                         <i class="fas fa-sign-out-alt"></i> Sign Out
                     </a>
                 </div>
@@ -552,12 +563,15 @@ body.dark-mode .dropdown-item {
 </header>
 
 <script>
-// Header JavaScript
+// Header JavaScript - FIXED
 document.addEventListener('DOMContentLoaded', function() {
+    console.log('Header loaded');
+    
     // Theme Toggle
     const themeToggle = document.getElementById('themeToggle');
     if (themeToggle) {
-        themeToggle.addEventListener('click', function() {
+        themeToggle.addEventListener('click', function(e) {
+            e.stopPropagation();
             const isDark = document.body.classList.toggle('dark-mode');
             const icon = this.querySelector('i');
             
@@ -582,37 +596,62 @@ document.addEventListener('DOMContentLoaded', function() {
         }
     }
     
-    // User Dropdown
+    // User Dropdown - FIXED
     const userTrigger = document.getElementById('userTrigger');
     const dropdownMenu = document.getElementById('dropdownMenu');
     const dropdownChevron = document.getElementById('dropdownChevron');
     
     if (userTrigger && dropdownMenu) {
+        // Toggle dropdown on click
         userTrigger.addEventListener('click', function(e) {
             e.stopPropagation();
+            e.preventDefault();
             dropdownMenu.classList.toggle('show');
             if (dropdownChevron) {
                 dropdownChevron.classList.toggle('rotate');
             }
+            console.log('Dropdown toggled');
         });
         
-        // Close on click outside
-        document.addEventListener('click', function() {
-            dropdownMenu.classList.remove('show');
-            if (dropdownChevron) {
-                dropdownChevron.classList.remove('rotate');
+        // Close on click outside - but not on dropdown items
+        document.addEventListener('click', function(e) {
+            // Don't close if clicking inside dropdown
+            if (dropdownMenu.contains(e.target)) {
+                return;
+            }
+            
+            // Close if clicking outside
+            if (!userTrigger.contains(e.target)) {
+                dropdownMenu.classList.remove('show');
+                if (dropdownChevron) {
+                    dropdownChevron.classList.remove('rotate');
+                }
             }
         });
         
+        // Prevent dropdown from closing when clicking inside
         dropdownMenu.addEventListener('click', function(e) {
-            e.stopPropagation();
+            e.stopPropagation(); // Stop propagation but allow link clicks
         });
     }
+    
+    // FIXED: Make sure dropdown items work
+    const dropdownItems = document.querySelectorAll('.dropdown-item');
+    dropdownItems.forEach(item => {
+        item.addEventListener('click', function(e) {
+            const href = this.getAttribute('href');
+            if (href && href !== '#') {
+                console.log('Navigating to:', href);
+                window.location.href = href;
+            }
+        });
+    });
     
     // Notifications
     const notificationBtn = document.getElementById('notificationBtn');
     if (notificationBtn) {
-        notificationBtn.addEventListener('click', function() {
+        notificationBtn.addEventListener('click', function(e) {
+            e.stopPropagation();
             alert('You have 3 unread notifications');
         });
     }

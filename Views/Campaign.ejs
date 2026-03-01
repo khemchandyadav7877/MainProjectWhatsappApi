@@ -11,7 +11,7 @@
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 
 <style>
-    /* RESET */
+    /* RESET - Same as before */
     * {
         margin: 0;
         padding: 0;
@@ -190,7 +190,7 @@
         to { width: 0%; }
     }
 
-    /* Header */
+    /* Header - Modified */
     .header {
         background: white;
         border-radius: 15px;
@@ -216,6 +216,55 @@
         color: #666;
         font-size: 16px;
         line-height: 1.6;
+    }
+
+    .role-badge {
+        font-size: 11px;
+        padding: 3px 8px;
+        border-radius: 12px;
+        font-weight: 600;
+        display: inline-block;
+    }
+    
+    .role-superadmin {
+        background: #8b5cf6;
+        color: white;
+    }
+    
+    .role-educator {
+        background: #3b82f6;
+        color: white;
+    }
+    
+    .role-trainer {
+        background: #f59e0b;
+        color: white;
+    }
+    
+    .role-student {
+        background: #10b981;
+        color: white;
+    }
+    
+    .role-user {
+        background: #6b7280;
+        color: white;
+    }
+
+    /* Device count info */
+    .device-info {
+        background: #f0f4ff;
+        padding: 8px 15px;
+        border-radius: 8px;
+        margin-bottom: 15px;
+        font-size: 13px;
+        display: flex;
+        align-items: center;
+        gap: 10px;
+    }
+
+    .device-info i {
+        color: #667eea;
     }
 
     /* Process Steps */
@@ -390,6 +439,199 @@
         gap: 20px;
     }
 
+    .number-hint {
+        display: inline-block;
+        padding: 5px 15px;
+        border-radius: 20px;
+        font-size: 13px;
+        font-weight: 600;
+        margin-top: 10px;
+    }
+
+    .hint-whatsapp {
+        background: #e8f5e9;
+        color: #25D366;
+        border-left: 3px solid #25D366;
+    }
+
+    .hint-phone {
+        background: #eef2ff;
+        color: #4f46e5;
+        border-left: 3px solid #4f46e5;
+    }
+
+    /* Groups Section - NEW */
+    .groups-section {
+        background: linear-gradient(135deg, #667eea10 0%, #764ba210 100%);
+        border-radius: 15px;
+        padding: 25px;
+        margin: 30px 0;
+        border: 2px solid #667eea30;
+    }
+
+    .groups-section h3 {
+        color: #333;
+        margin-bottom: 20px;
+        display: flex;
+        align-items: center;
+        gap: 10px;
+    }
+
+    .groups-section h3 i {
+        color: #667eea;
+    }
+
+    .groups-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+        gap: 15px;
+        max-height: 400px;
+        overflow-y: auto;
+        padding: 10px;
+    }
+
+    .group-card {
+        background: white;
+        border: 2px solid #e0e6ed;
+        border-radius: 12px;
+        padding: 20px;
+        cursor: pointer;
+        transition: all 0.3s;
+        position: relative;
+    }
+
+    .group-card:hover {
+        border-color: #667eea;
+        transform: translateY(-3px);
+        box-shadow: 0 10px 20px rgba(102, 126, 234, 0.2);
+    }
+
+    .group-card.selected {
+        border-color: #25D366;
+        background: #e8f5e9;
+    }
+
+    .group-card.selected::before {
+        content: '\f00c';
+        font-family: 'Font Awesome 6 Free';
+        font-weight: 900;
+        position: absolute;
+        top: -10px;
+        right: -10px;
+        background: #25D366;
+        color: white;
+        width: 30px;
+        height: 30px;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 14px;
+        box-shadow: 0 3px 10px rgba(37, 211, 102, 0.3);
+    }
+
+    .group-card h4 {
+        color: #333;
+        margin-bottom: 10px;
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        font-size: 18px;
+    }
+
+    .group-card h4 i {
+        color: #667eea;
+    }
+
+    .group-card p {
+        color: #666;
+        font-size: 14px;
+        margin-bottom: 15px;
+        line-height: 1.5;
+    }
+
+    .group-card .group-stats {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        font-size: 13px;
+    }
+
+    .group-card .badge {
+        background: #667eea;
+        color: white;
+        padding: 5px 10px;
+        border-radius: 20px;
+    }
+
+    .group-card .date {
+        color: #999;
+    }
+
+    /* Selected Group Info */
+    .selected-group-banner {
+        background: #e8f5e9;
+        border-radius: 10px;
+        padding: 15px;
+        margin-bottom: 20px;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        border-left: 4px solid #25D366;
+    }
+
+    .selected-group-banner.hidden {
+        display: none;
+    }
+
+    .selected-group-banner .group-info {
+        display: flex;
+        align-items: center;
+        gap: 15px;
+    }
+
+    .selected-group-banner .group-info i {
+        color: #25D366;
+        font-size: 24px;
+    }
+
+    .selected-group-banner .group-details h4 {
+        color: #333;
+        margin: 0;
+    }
+
+    .selected-group-banner .group-details p {
+        color: #666;
+        margin: 5px 0 0;
+        font-size: 14px;
+    }
+
+    .selected-group-banner .clear-btn {
+        background: transparent;
+        border: 2px solid #25D366;
+        color: #25D366;
+        padding: 8px 15px;
+        border-radius: 8px;
+        cursor: pointer;
+        transition: all 0.3s;
+        font-weight: 600;
+    }
+
+    .selected-group-banner .clear-btn:hover {
+        background: #25D366;
+        color: white;
+    }
+
+    /* Load More Button */
+    .load-more-btn {
+        text-align: center;
+        margin-top: 20px;
+    }
+
+    .load-more-btn .btn {
+        padding: 10px 25px;
+    }
+
     /* Excel Upload Specific Styles */
     .excel-upload-container {
         margin: 20px 0;
@@ -493,6 +735,19 @@
         background: #f5f5f5;
     }
 
+    /* Contact Control Buttons */
+    .contact-controls {
+        display: flex;
+        gap: 10px;
+        margin: 15px 0;
+        flex-wrap: wrap;
+    }
+
+    .contact-controls .btn {
+        padding: 8px 16px;
+        font-size: 13px;
+    }
+
     /* Media Upload */
     .media-upload {
         border: 2px dashed #e0e6ed;
@@ -516,36 +771,32 @@
         margin-bottom: 15px;
     }
 
-    /* Message Preview */
-    .message-preview {
-        background: #f8f9fa;
-        border-radius: 15px;
-        padding: 25px;
-        margin: 20px 0;
-        border: 2px solid #e0e6ed;
-    }
-
-    .message-header {
+    /* File Preview */
+    .file-preview {
+        background: #e8f5e9;
+        padding: 15px;
+        border-radius: 10px;
         display: flex;
         align-items: center;
-        gap: 10px;
-        margin-bottom: 20px;
-        padding-bottom: 15px;
-        border-bottom: 1px solid #e0e6ed;
+        gap: 15px;
+        margin-top: 15px;
     }
 
-    .whatsapp-icon {
-        width: 40px;
-        height: 40px;
-        background: #25D366;
-        border-radius: 50%;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        color: white;
-        font-size: 20px;
+    .file-preview i {
+        font-size: 24px;
+        color: #4CAF50;
     }
 
+    .file-info {
+        flex: 1;
+    }
+
+    .file-info strong {
+        display: block;
+        margin-bottom: 5px;
+    }
+
+    /* Message Container */
     .message-content {
         min-height: 150px;
         padding: 20px;
@@ -662,12 +913,6 @@
         pointer-events: none;
     }
 
-    /* Disabled state for checkbox */
-    input[type="checkbox"]:disabled {
-        opacity: 0.5;
-        cursor: not-allowed;
-    }
-
     /* Buttons */
     .btn {
         padding: 12px 24px;
@@ -746,6 +991,16 @@
         box-shadow: 0 5px 15px rgba(29, 111, 66, 0.3);
     }
 
+    .btn-group {
+        background: linear-gradient(135deg, #9b59b6 0%, #8e44ad 100%);
+        color: white;
+    }
+
+    .btn-group:hover:not(:disabled) {
+        transform: translateY(-2px);
+        box-shadow: 0 5px 15px rgba(155, 89, 182, 0.3);
+    }
+
     .btn:disabled {
         opacity: 0.6;
         cursor: not-allowed;
@@ -757,44 +1012,6 @@
         margin-top: 40px;
         padding-top: 30px;
         border-top: 1px solid #e0e6ed;
-    }
-
-    /* Contact Control Buttons */
-    .contact-controls {
-        display: flex;
-        gap: 10px;
-        margin: 15px 0;
-        flex-wrap: wrap;
-    }
-
-    .contact-controls .btn {
-        padding: 8px 16px;
-        font-size: 13px;
-    }
-
-    /* File Upload Preview */
-    .file-preview {
-        background: #e8f5e9;
-        padding: 15px;
-        border-radius: 10px;
-        display: flex;
-        align-items: center;
-        gap: 15px;
-        margin-top: 15px;
-    }
-
-    .file-preview i {
-        font-size: 24px;
-        color: #4CAF50;
-    }
-
-    .file-info {
-        flex: 1;
-    }
-
-    .file-info strong {
-        display: block;
-        margin-bottom: 5px;
     }
 
     /* Campaign Summary */
@@ -929,6 +1146,34 @@
         flex: 1;
     }
 
+    /* Hidden File Input */
+    .hidden-file-input {
+        display: none;
+    }
+
+    /* Contact Count Badge */
+    #contactsCount {
+        position: absolute;
+        top: 15px;
+        right: 15px;
+        background: #667eea;
+        color: white;
+        padding: 3px 10px;
+        border-radius: 15px;
+        font-size: 12px;
+    }
+
+    /* Refresh Button */
+    .refresh-groups {
+        text-align: right;
+        margin-bottom: 15px;
+    }
+
+    .refresh-groups .btn {
+        padding: 8px 15px;
+        font-size: 13px;
+    }
+
     /* Responsive */
     @media (max-width: 768px) {
         .step {
@@ -971,6 +1216,26 @@
         .datetime-inputs {
             flex-direction: column;
         }
+
+        .groups-grid {
+            grid-template-columns: 1fr;
+        }
+
+        .selected-group-banner {
+            flex-direction: column;
+            gap: 15px;
+            text-align: center;
+        }
+
+        .selected-group-banner .group-info {
+            flex-direction: column;
+        }
+
+        .header {
+            flex-direction: column;
+            align-items: flex-start;
+            gap: 15px;
+        }
     }
 
     /* Loading Spinner */
@@ -986,23 +1251,6 @@
 
     @keyframes spin {
         to { transform: rotate(360deg); }
-    }
-
-    /* File Input Hidden */
-    .hidden-file-input {
-        display: none;
-    }
-
-    /* Contact Count Badge */
-    #contactsCount {
-        position: absolute;
-        top: 15px;
-        right: 15px;
-        background: #667eea;
-        color: white;
-        padding: 3px 10px;
-        border-radius: 15px;
-        font-size: 12px;
     }
 </style>
 </head>
@@ -1025,67 +1273,93 @@
                 <!-- Toast Container -->
                 <div id="toast"></div>
 
-                <!-- Header -->
+                <!-- Header - Modified (removed user info) -->
                 <div class="header">
-                    <h1><i class="fab fa-whatsapp"></i> WhatsApp Campaign</h1>
-                    <p>Complete step-by-step process to send WhatsApp messages to multiple contacts</p>
+                    <div>
+                        <h1><i class="fab fa-whatsapp"></i> WhatsApp Campaign</h1>
+                        <p>Complete step-by-step process to send WhatsApp messages to multiple contacts</p>
+                    </div>
+                </div>
+
+                <!-- Device Info -->
+                <div class="device-info">
+                    <i class="fas fa-info-circle"></i>
+                    <span>
+                        <strong><%= devices.length %></strong> device(s) available 
+                        <% if (user.role === 'SuperAdmin') { %>
+                            (all users - SuperAdmin view)
+                        <% } else { %>
+                            (your devices only)
+                        <% } %>
+                    </span>
                 </div>
 
                 <!-- Scheduled Campaigns Section -->
-                <% if(scheduledCampaigns && scheduledCampaigns.length > 0) { %>
-                <div style="background: white; border-radius: 15px; padding: 30px; margin-bottom: 40px; box-shadow: 0 10px 30px rgba(0,0,0,0.1);">
-                    <h2 style="color: #333; margin-bottom: 20px; display: flex; align-items: center; gap: 10px;">
-                        <i class="fas fa-clock"></i> Scheduled Campaigns (<%= scheduledCampaigns.length %>)
-                    </h2>
-                    
-                    <div style="overflow-x: auto;">
-                        <table class="campaign-table">
-                            <thead>
-                                <tr>
-                                    <th>Campaign ID</th>
-                                    <th>Scheduled Time</th>
-                                    <th>Contacts</th>
-                                    <th>Device</th>
-                                    <th>Status</th>
-                                    <th>Actions</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                <% scheduledCampaigns.forEach(campaign => { %>
-                                <tr>
-                                    <td>
-                                        <code style="background: #f3f4f6; padding: 2px 8px; border-radius: 4px; font-size: 12px;">
-                                            <%= campaign.campaignId.substring(0, 8) %>...
-                                        </code>
-                                    </td>
-                                    <td>
-                                        <div><strong><%= new Date(campaign.scheduledAt).toLocaleString() %></strong></div>
-                                        <small style="color: #666;">
-                                            <%= campaign.messageType === 'media' ? 'Media' : 'Text' %> message
-                                        </small>
-                                    </td>
-                                    <td>
-                                        <span style="background: #667eea; color: white; padding: 3px 10px; border-radius: 15px; font-size: 12px;">
-                                            <%= campaign.totalContacts %> contacts
-                                        </span>
-                                    </td>
-                                    <td><%= campaign.deviceId %></td>
-                                    <td>
-                                        <span class="status-badge status-scheduled">
-                                            <i class="fas fa-clock"></i> Scheduled
-                                        </span>
-                                    </td>
-                                    <td>
-                                        <button class="btn btn-outline" style="padding: 5px 15px; font-size: 14px;" onclick="cancelCampaign('<%= campaign.campaignId %>')">
-                                            <i class="fas fa-times"></i> Cancel
-                                        </button>
-                                    </td>
-                                </tr>
-                                <% }) %>
-                            </tbody>
-                        </table>
+                <% if(locals.scheduledCampaigns && scheduledCampaigns && scheduledCampaigns.length > 0) { %>
+                    <div style="background: white; border-radius: 15px; padding: 30px; margin-bottom: 40px; box-shadow: 0 10px 30px rgba(0,0,0,0.1);">
+                        <h2 style="color: #333; margin-bottom: 20px; display: flex; align-items: center; gap: 10px;">
+                            <i class="fas fa-clock"></i> Scheduled Campaigns (<%= scheduledCampaigns.length %>)
+                        </h2>
+                        
+                        <div style="overflow-x: auto;">
+                            <table class="campaign-table">
+                                <thead>
+                                    <tr>
+                                        <th>Campaign Name</th>
+                                        <th>Scheduled Time</th>
+                                        <th>Contacts</th>
+                                        <th>Device</th>
+                                        <th>Status</th>
+                                        <% if (user.role === 'SuperAdmin') { %>
+                                            <th>Created By</th>
+                                        <% } %>
+                                        <th>Actions</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <% scheduledCampaigns.forEach(campaign => { %>
+                                    <tr>
+                                        <td>
+                                            <strong><%= campaign.campaignName %></strong>
+                                            <div>
+                                                <small style="color: #666;">
+                                                    <%= campaign.messageType === 'media' ? 'Media' : 'Text' %>
+                                                </small>
+                                            </div>
+                                        </td>
+                                        <td>
+                                            <div><strong><%= new Date(campaign.scheduledAt).toLocaleString() %></strong></div>
+                                        </td>
+                                        <td>
+                                            <span style=" color: black; padding: 3px 10px; border-radius: 15px; font-size: 12px;font-weight: 600;">
+                                                <%= campaign.totalContacts %> contacts
+                                            </span>
+                                        </td>
+                                        <td><%= campaign.deviceId.substring(0, 8) %>...</td>
+                                        <td>
+                                            <span class="status-badge status-scheduled">
+                                                <i class="fas fa-clock"></i> Scheduled
+                                            </span>
+                                        </td>
+                                        <% if (user.role === 'SuperAdmin') { %>
+                                            <td>
+                                                <span class="role-badge role-<%= campaign.createdByRole?.toLowerCase() || 'user' %>">
+                                                    <%= campaign.createdByRole || 'Unknown' %>
+                                                </span>
+                                                <small class="d-block text-muted"><%= campaign.createdByEmail || 'N/A' %></small>
+                                            </td>
+                                        <% } %>
+                                        <td>
+                                            <button class="btn btn-outline" style="padding: 5px 15px; font-size: 14px;" onclick="cancelCampaign('<%= campaign.campaignId %>')">
+                                                <i class="fas fa-times"></i> Cancel
+                                            </button>
+                                        </td>
+                                    </tr>
+                                    <% }) %>
+                                </tbody>
+                            </table>
+                        </div>
                     </div>
-                </div>
                 <% } %>
 
                 <div class="process-container">
@@ -1121,7 +1395,10 @@
                                     <% if(devices && devices.length){ %>
                                         <% devices.forEach(d => { %>
                                             <option value="<%= d.deviceId %>">
-                                                <%= d.phone %> (<%= d.status %>)
+                                                <%= d.whatsappName || d.whatsappNumber || d.phone || 'WhatsApp Device' %> (<%= d.status %>)
+                                                <% if (user.role === 'SuperAdmin' && d.createdByEmail) { %>
+                                                    - <%= d.createdByEmail %>
+                                                <% } %>
                                             </option>
                                         <% }) %>
                                     <% } else { %>
@@ -1157,10 +1434,43 @@
                         </div>
                     </div>
 
-                    <!-- Step 2: Contacts -->
+                    <!-- Step 2: Contacts - REMOVED WhatsApp Toggle and WhatsApp Numbers Only button -->
                     <div class="step-content" id="step2">
                         <h2 class="step-title"><i class="fas fa-address-book"></i> Select Contacts</h2>
                         <p class="step-description">Choose contacts for your WhatsApp campaign.</p>
+
+                        <!-- GROUPS SECTION -->
+                        <div class="groups-section">
+                            <h3><i class="fas fa-layer-group"></i> Select from Existing Groups</h3>
+                            
+                            <div class="refresh-groups">
+                                <button class="btn btn-outline" onclick="loadGroups()">
+                                    <i class="fas fa-sync-alt"></i> Refresh Groups
+                                </button>
+                            </div>
+
+                            <div id="groupsGrid" class="groups-grid">
+                                <!-- Groups will be loaded here -->
+                                <div style="text-align: center; padding: 40px; color: #666; grid-column: 1/-1;">
+                                    <i class="fas fa-spinner fa-spin" style="font-size: 30px;"></i>
+                                    <p style="margin-top: 15px;">Loading groups...</p>
+                                </div>
+                            </div>
+
+                            <!-- Selected Group Banner -->
+                            <div id="selectedGroupBanner" class="selected-group-banner hidden">
+                                <div class="group-info">
+                                    <i class="fas fa-check-circle"></i>
+                                    <div class="group-details">
+                                        <h4 id="selectedGroupName"></h4>
+                                        <p id="selectedGroupStats"></p>
+                                    </div>
+                                </div>
+                                <button class="clear-btn" onclick="clearSelectedGroup()">
+                                    <i class="fas fa-times"></i> Clear Selection
+                                </button>
+                            </div>
+                        </div>
 
                         <!-- Excel Upload Section -->
                         <div class="excel-upload-container">
@@ -1185,9 +1495,9 @@
                                 <ul>
                                     <li>File should contain a column with phone numbers</li>
                                     <li>Phone numbers should be in 10-digit format (e.g., 9876543210)</li>
+                                    <li>If you have WhatsApp numbers, include them in a separate column</li>
                                     <li>Supported formats: Excel (.xlsx, .xls) or CSV (.csv)</li>
                                     <li>First row can be headers (optional)</li>
-                                    <li>Column name can be anything (Phone, Mobile, Number, etc.)</li>
                                 </ul>
                             </div>
                             
@@ -1217,7 +1527,7 @@
                         </div>
 
                         <div class="form-group">
-                            <label><i class="fas fa-mobile-alt"></i> Phone Numbers</label>
+                            <label><i class="fas fa-mobile-alt"></i> Phone Numbers / WhatsApp Numbers</label>
                             <div style="position: relative;">
                                 <textarea id="numbers" class="form-control" rows="8"
                                 placeholder="Example: 9876543210, 9123456789
@@ -1227,14 +1537,14 @@ Or paste numbers with any separator (comma, space, new line)" required></textare
                                 </div>
                             </div>
                             <small style="color: #666; margin-top: 5px; display: block;">
-                                <i class="fas fa-info-circle"></i> Enter numbers separated by commas, spaces, or new lines
+                                <i class="fas fa-info-circle"></i> Enter numbers separated by commas, spaces, or new lines.
                             </small>
                         </div>
 
-                        <!-- Contact Control Buttons -->
+                        <!-- Contact Control Buttons - REMOVED WhatsApp Numbers Only button -->
                         <div class="contact-controls">
                             <button type="button" class="btn btn-outline" onclick="fetchContacts()">
-                                <i class="fas fa-database"></i> Fetch Contacts
+                                <i class="fas fa-database"></i> All Contacts
                             </button>
                             <button type="button" class="btn btn-outline" onclick="selectAllContacts()">
                                 <i class="fas fa-check-double"></i> Select All
@@ -1260,7 +1570,7 @@ Or paste numbers with any separator (comma, space, new line)" required></textare
                         </div>
                     </div>
 
-                    <!-- Step 3: Message -->
+                    <!-- Step 3: Message - REMOVED Message Preview section -->
                     <div class="step-content" id="step3">
                         <h2 class="step-title"><i class="fas fa-edit"></i> Compose Message</h2>
                         <p class="step-description">Choose what you want to send - text message or media.</p>
@@ -1334,21 +1644,6 @@ Or paste numbers with any separator (comma, space, new line)" required></textare
                                     </button>
                                 </div>
                                 <span id="charCount" style="color: #666; font-size: 14px;">0/1000</span>
-                            </div>
-                        </div>
-
-                        <div class="message-preview">
-                            <div class="message-header">
-                                <div class="whatsapp-icon">
-                                    <i class="fab fa-whatsapp"></i>
-                                </div>
-                                <div>
-                                    <h4 style="margin: 0;">Message Preview</h4>
-                                    <small style="color: #666;">How your message will appear</small>
-                                </div>
-                            </div>
-                            <div class="message-content" id="messagePreview">
-                                Your message will appear here...
                             </div>
                         </div>
 
@@ -1436,13 +1731,6 @@ Or paste numbers with any separator (comma, space, new line)" required></textare
                                 <h4 style="color: #333; margin-bottom: 10px;">Media Attachment</h4>
                                 <div id="summaryMediaContent"></div>
                             </div>
-                            
-                            <div class="message-preview" style="margin-top: 20px;">
-                                <h4 style="margin-bottom: 15px;">Message Preview</h4>
-                                <div class="message-content" id="summaryMessage">
-                                    -- No message --
-                                </div>
-                            </div>
                         </div>
 
                         <!-- Progress Bar (Hidden by default) -->
@@ -1485,7 +1773,7 @@ Or paste numbers with any separator (comma, space, new line)" required></textare
 
     <script>
         // ======================
-        // SIDEBAR SYNC - EXACTLY LIKE DASHBOARD
+        // SIDEBAR SYNC
         // ======================
         document.addEventListener('DOMContentLoaded', function() {
             const sidebar = document.getElementById('mainSidebar');
@@ -1541,6 +1829,9 @@ Or paste numbers with any separator (comma, space, new line)" required></textare
             
             // Initialize campaign data
             initializeCampaign();
+            
+            // Load groups
+            loadGroups();
             
             // Show welcome toast
             setTimeout(() => {
@@ -1599,7 +1890,8 @@ Or paste numbers with any separator (comma, space, new line)" required></textare
             scheduleDate: '',
             scheduleTime: '',
             sendOption: 'textOnly',
-            includeMessageWithMedia: true
+            includeMessageWithMedia: true,
+            selectedGroup: null
         };
 
         // Excel data storage
@@ -1608,6 +1900,10 @@ Or paste numbers with any separator (comma, space, new line)" required></textare
             headers: [],
             rows: []
         };
+
+        // Groups data
+        let allGroups = [];
+        let selectedGroupId = null;
 
         // ======================
         // INITIALIZATION
@@ -1620,7 +1916,6 @@ Or paste numbers with any separator (comma, space, new line)" required></textare
             
             document.getElementById('message').addEventListener('input', function() {
                 campaignData.message = this.value;
-                updateMessagePreview();
                 updateSummary();
                 updateCharCount();
             });
@@ -1645,7 +1940,6 @@ Or paste numbers with any separator (comma, space, new line)" required></textare
             // Message checkbox listener
             document.getElementById('includeMessageCheckbox').addEventListener('change', function() {
                 campaignData.includeMessageWithMedia = this.checked;
-                updateMessagePreview();
                 updateSummary();
                 updateMessageFieldState();
             });
@@ -1654,6 +1948,208 @@ Or paste numbers with any separator (comma, space, new line)" required></textare
             updateContactCount();
         }
 
+        // ======================
+        // LOAD GROUPS FUNCTION
+        // ======================
+        async function loadGroups() {
+            const groupsGrid = document.getElementById('groupsGrid');
+            
+            try {
+                const response = await fetch('/api/groups');
+                const data = await response.json();
+                
+                if (!data.success || data.count === 0) {
+                    groupsGrid.innerHTML = `
+                        <div style="text-align: center; padding: 40px; color: #666; grid-column: 1/-1;">
+                            <i class="fas fa-layer-group" style="font-size: 48px; color: #d1d5db; margin-bottom: 15px;"></i>
+                            <h4>No Groups Found</h4>
+                            <p>Create groups first in Contact Groups page</p>
+                            <button class="btn btn-primary" onclick="window.location.href='/contactgroup'" style="margin-top: 15px;">
+                                <i class="fas fa-plus"></i> Create Group
+                            </button>
+                        </div>
+                    `;
+                    return;
+                }
+                
+                allGroups = data.data;
+                
+                groupsGrid.innerHTML = data.data.map(group => `
+                    <div class="group-card" onclick="selectGroup('${group.id}', '${group.name}', ${group.totalContacts})">
+                        <h4><i class="fas fa-users"></i> ${group.name}</h4>
+                        <p>${group.description || 'No description'}</p>
+                        <div class="group-stats">
+                            <span class="badge">${group.totalContacts} contacts</span>
+                            <span class="date"><i class="far fa-clock"></i> ${new Date(group.createdAt).toLocaleDateString()}</span>
+                        </div>
+                    </div>
+                `).join('');
+                
+            } catch (error) {
+                console.error('Error loading groups:', error);
+                groupsGrid.innerHTML = `
+                    <div style="text-align: center; padding: 40px; color: #666; grid-column: 1/-1;">
+                        <i class="fas fa-exclamation-circle" style="font-size: 48px; color: #dc2626; margin-bottom: 15px;"></i>
+                        <h4>Failed to load groups</h4>
+                        <p>Please try again</p>
+                        <button class="btn btn-outline" onclick="loadGroups()" style="margin-top: 15px;">
+                            <i class="fas fa-sync-alt"></i> Retry
+                        </button>
+                    </div>
+                `;
+            }
+        }
+
+        // ======================
+        // SELECT GROUP FUNCTION - Modified to always use WhatsApp numbers
+        // ======================
+        async function selectGroup(groupId, groupName, totalContacts) {
+            try {
+                showToast('Loading', `Loading contacts from ${groupName}...`, 'info');
+                
+                // Remove selected class from all cards
+                document.querySelectorAll('.group-card').forEach(card => {
+                    card.classList.remove('selected');
+                });
+                
+                // Add selected class to clicked card
+                event.currentTarget.classList.add('selected');
+                
+                // Fetch group details with contacts
+                const response = await fetch(`/api/groups/${groupId}`);
+                const data = await response.json();
+                
+                if (data.success) {
+                    const group = data.data;
+                    
+                    // Extract WhatsApp numbers if available, otherwise use phone numbers
+                    let phoneNumbers = [];
+                    
+                    phoneNumbers = group.contacts.map(contact => {
+                        // First try to get WhatsApp number
+                        if (contact.whatsappNumber) {
+                            let whatsapp = contact.whatsappNumber.replace(/\D/g, '');
+                            return whatsapp.length === 10 ? whatsapp : null;
+                        } 
+                        // Fallback to phone number
+                        else if (contact.phoneNumber) {
+                            let phone = contact.phoneNumber.replace(/\D/g, '');
+                            return phone.length === 10 ? phone : null;
+                        }
+                        return null;
+                    }).filter(phone => phone !== null);
+                    
+                    // Update textarea with numbers
+                    const numbersTextarea = document.getElementById('numbers');
+                    numbersTextarea.value = phoneNumbers.join(',\n');
+                    
+                    // Update campaign data
+                    campaignData.selectedGroup = {
+                        id: groupId,
+                        name: groupName,
+                        contacts: group.contacts
+                    };
+                    selectedGroupId = groupId;
+                    
+                    // Show selected group banner
+                    const banner = document.getElementById('selectedGroupBanner');
+                    document.getElementById('selectedGroupName').textContent = groupName;
+                    document.getElementById('selectedGroupStats').textContent = `${phoneNumbers.length} numbers loaded`;
+                    banner.classList.remove('hidden');
+                    
+                    // Update contact count
+                    updateContactCount();
+                    
+                    showToast('Success', `Loaded ${phoneNumbers.length} numbers from ${groupName}`, 'success');
+                }
+            } catch (error) {
+                console.error('Error loading group contacts:', error);
+                showToast('Error', 'Failed to load group contacts', 'error');
+            }
+        }
+
+        // ======================
+        // CLEAR SELECTED GROUP
+        // ======================
+        function clearSelectedGroup() {
+            campaignData.selectedGroup = null;
+            selectedGroupId = null;
+            
+            // Hide banner
+            document.getElementById('selectedGroupBanner').classList.add('hidden');
+            
+            // Remove selected class from all cards
+            document.querySelectorAll('.group-card').forEach(card => {
+                card.classList.remove('selected');
+            });
+            
+            // Don't clear numbers - let user decide
+            showToast('Info', 'Group selection cleared', 'info');
+        }
+
+        // ======================
+        // FETCH ALL CONTACTS - Modified to use WhatsApp numbers primarily
+        // ======================
+      // ======================
+// FETCH ALL CONTACTS - FIXED API ENDPOINT
+// ======================
+async function fetchContacts() {
+    try {
+        showToast('Fetching', 'Loading contacts from database...', 'info');
+        
+        // 👇 FIXED: Changed from '/api/condevices/contacts' to '/api/contacts'
+        const response = await fetch('/api/contacts');
+        const data = await response.json();
+        
+        if (!response.ok) {
+            throw new Error(`HTTP error! status: ${response.status}`);
+        }
+        
+        if (data.status && data.contacts && data.contacts.length > 0) {
+            // Try to use WhatsApp numbers first, fallback to phone
+            let phones = data.contacts.map(c => {
+                if (c.whatsappNumber) {
+                    let whatsapp = c.whatsappNumber.replace(/\D/g, '');
+                    if (whatsapp.startsWith('91')) whatsapp = whatsapp.substring(2);
+                    return whatsapp.length === 10 ? whatsapp : null;
+                } else if (c.phoneNumber) {
+                    let phone = c.phoneNumber.replace(/\D/g, '');
+                    if (phone.startsWith('91')) phone = phone.substring(2);
+                    return phone.length === 10 ? phone : null;
+                }
+                return null;
+            }).filter(n => n && n.length === 10);
+            
+            const uniqueNumbers = [...new Set(phones)];
+            if (uniqueNumbers.length > 0) {
+                document.getElementById('numbers').value = uniqueNumbers.join(',\n');
+                
+                // Clear selected group if any
+                clearSelectedGroup();
+                
+                updateContactCount();
+                showToast('Success', `Loaded ${uniqueNumbers.length} contacts (using WhatsApp numbers where available)`, 'success');
+            } else {
+                showToast('Warning', 'No valid 10-digit numbers found in contacts', 'warning');
+            }
+        } else if (data.contacts && data.contacts.length === 0) {
+            showToast('Info', 'No contacts found in database', 'info');
+        } else {
+            showToast('Error', data.msg || 'Failed to fetch contacts', 'error');
+        }
+    } catch (err) {
+        console.error('Fetch contacts error:', err);
+        showToast('Error', 'Failed to fetch contacts: ' + err.message, 'error');
+        
+        // Fallback demo data for testing
+        if (confirm('Server error. Would you like to load sample contacts for testing?')) {
+            const sampleNumbers = ['9876543210', '8765432109', '7654321098', '6543210987', '5432109876'];
+            document.getElementById('numbers').value = sampleNumbers.join(',\n');
+            updateContactCount();
+            showToast('Info', 'Sample contacts loaded for testing', 'info');
+        }
+    }
+}
         // ======================
         // STEP NAVIGATION
         // ======================
@@ -1696,6 +2192,47 @@ Or paste numbers with any separator (comma, space, new line)" required></textare
             // Show toast
             const stepNames = ['', 'Device', 'Contacts', 'Message', 'Send'];
             showToast('Step ' + step, stepNames[step], 'info');
+        }
+
+        // Function to reset to step 1 after successful send
+        function resetToStep1() {
+            // Clear form data
+            document.getElementById('numbers').value = '';
+            document.getElementById('message').value = '';
+            document.getElementById('mediaPreview').innerHTML = '';
+            document.getElementById('mediaFile').value = '';
+            document.getElementById('excelPreview').style.display = 'none';
+            document.getElementById('excelFileInput').value = '';
+            
+            // Reset campaign data
+            campaignData.numbers = [];
+            campaignData.message = '';
+            campaignData.mediaData = null;
+            campaignData.selectedGroup = null;
+            
+            // Clear selected group banner
+            clearSelectedGroup();
+            
+            // Reset to step 1
+            document.getElementById(`step${currentStep}`).classList.remove('active');
+            document.getElementById(`step${currentStep}-indicator`).classList.remove('active');
+            
+            currentStep = 1;
+            document.getElementById(`step1`).classList.add('active');
+            document.getElementById(`step1-indicator`).classList.add('active');
+            
+            // Reset completed indicators
+            for (let i = 2; i <= 4; i++) {
+                const indicator = document.getElementById(`step${i}-indicator`);
+                if (indicator) {
+                    indicator.classList.remove('completed');
+                }
+            }
+            
+            // Update contact count
+            updateContactCount();
+            
+            showToast('Success', 'Campaign completed! Ready for next campaign', 'success');
         }
 
         // ======================
@@ -1771,7 +2308,6 @@ Or paste numbers with any separator (comma, space, new line)" required></textare
                 updateMessageFieldState();
             }
             
-            updateMessagePreview();
             updateSummary();
             
             showToast('Option Selected', option === 'textOnly' ? 'Text message only' : 'Media with optional message', 'info');
@@ -1796,7 +2332,7 @@ Or paste numbers with any separator (comma, space, new line)" required></textare
         }
 
         // ======================
-        // EXCEL UPLOAD FUNCTIONS
+        // EXCEL UPLOAD FUNCTIONS - Updated for WhatsApp numbers
         // ======================
         async function handleExcelUpload(event) {
             const file = event.target.files[0];
@@ -1839,8 +2375,20 @@ Or paste numbers with any separator (comma, space, new line)" required></textare
                         const rows = jsonData.slice(1);
                         
                         let phoneColumnIndex = -1;
+                        let whatsappColumnIndex = -1;
                         let phoneNumbers = [];
                         
+                        // First look for WhatsApp column
+                        headers.forEach((header, index) => {
+                            if (header && typeof header === 'string') {
+                                const lowerHeader = header.toLowerCase();
+                                if (lowerHeader.includes('whatsapp')) {
+                                    whatsappColumnIndex = index;
+                                }
+                            }
+                        });
+                        
+                        // Then look for phone column
                         headers.forEach((header, index) => {
                             if (header && typeof header === 'string') {
                                 const lowerHeader = header.toLowerCase();
@@ -1853,20 +2401,22 @@ Or paste numbers with any separator (comma, space, new line)" required></textare
                             }
                         });
                         
-                        if (phoneColumnIndex === -1) {
-                            headers.forEach((header, index) => {
-                                const numbersCount = rows.filter(row => {
-                                    const value = row[index];
-                                    return value && /^\d{10,}$/.test(value.toString().trim());
-                                }).length;
-                                
-                                if (numbersCount > rows.length * 0.5) {
-                                    phoneColumnIndex = index;
+                        // If WhatsApp column found, use that
+                        if (whatsappColumnIndex !== -1) {
+                            rows.forEach(row => {
+                                if (row[whatsappColumnIndex]) {
+                                    const phone = row[whatsappColumnIndex].toString().trim();
+                                    const cleanPhone = phone.replace(/\D/g, '');
+                                    if (cleanPhone.length >= 10) {
+                                        const finalPhone = cleanPhone.length > 10 ? cleanPhone.slice(-10) : cleanPhone;
+                                        if (finalPhone.length === 10) {
+                                            phoneNumbers.push(finalPhone);
+                                        }
+                                    }
                                 }
                             });
-                        }
-                        
-                        if (phoneColumnIndex !== -1) {
+                        } else if (phoneColumnIndex !== -1) {
+                            // Fallback to phone column
                             rows.forEach(row => {
                                 if (row[phoneColumnIndex]) {
                                     const phone = row[phoneColumnIndex].toString().trim();
@@ -1879,6 +2429,33 @@ Or paste numbers with any separator (comma, space, new line)" required></textare
                                     }
                                 }
                             });
+                        } else {
+                            // Auto-detect
+                            headers.forEach((header, index) => {
+                                const numbersCount = rows.filter(row => {
+                                    const value = row[index];
+                                    return value && /^\d{10,}$/.test(value.toString().trim());
+                                }).length;
+                                
+                                if (numbersCount > rows.length * 0.5) {
+                                    phoneColumnIndex = index;
+                                }
+                            });
+                            
+                            if (phoneColumnIndex !== -1) {
+                                rows.forEach(row => {
+                                    if (row[phoneColumnIndex]) {
+                                        const phone = row[phoneColumnIndex].toString().trim();
+                                        const cleanPhone = phone.replace(/\D/g, '');
+                                        if (cleanPhone.length >= 10) {
+                                            const finalPhone = cleanPhone.length > 10 ? cleanPhone.slice(-10) : cleanPhone;
+                                            if (finalPhone.length === 10) {
+                                                phoneNumbers.push(finalPhone);
+                                            }
+                                        }
+                                    }
+                                });
+                            }
                         }
                         
                         const uniqueNumbers = [...new Set(phoneNumbers)];
@@ -1887,7 +2464,8 @@ Or paste numbers with any separator (comma, space, new line)" required></textare
                             numbers: uniqueNumbers,
                             headers: headers,
                             rows: rows,
-                            phoneColumnIndex: phoneColumnIndex
+                            phoneColumnIndex: phoneColumnIndex,
+                            whatsappColumnIndex: whatsappColumnIndex
                         });
                     } catch (error) {
                         reject(error);
@@ -1918,7 +2496,14 @@ Or paste numbers with any separator (comma, space, new line)" required></textare
             let headerHtml = '<tr>';
             excelData.headers.forEach((header, index) => {
                 const isPhoneColumn = index === excelData.phoneColumnIndex;
-                headerHtml += `<th style="${isPhoneColumn ? 'background:#4CAF50;' : ''}">${header || `Column ${index + 1}`}</th>`;
+                const isWhatsAppColumn = index === excelData.whatsappColumnIndex;
+                let style = '';
+                if (isWhatsAppColumn) {
+                    style = 'background:#25D366; color:white;';
+                } else if (isPhoneColumn) {
+                    style = 'background:#4CAF50;';
+                }
+                headerHtml += `<th style="${style}">${header || `Column ${index + 1}`}</th>`;
             });
             headerHtml += '</tr>';
             headerElem.innerHTML = headerHtml;
@@ -1930,8 +2515,15 @@ Or paste numbers with any separator (comma, space, new line)" required></textare
                 bodyHtml += '<tr>';
                 excelData.headers.forEach((header, index) => {
                     const value = row[index] || '';
+                    const isWhatsAppColumn = index === excelData.whatsappColumnIndex;
                     const isPhoneColumn = index === excelData.phoneColumnIndex;
-                    bodyHtml += `<td style="${isPhoneColumn ? 'background:#e8f5e9; font-weight:bold;' : ''}">${value}</td>`;
+                    let style = '';
+                    if (isWhatsAppColumn) {
+                        style = 'background:#e8f5e9; font-weight:bold; color:#25D366;';
+                    } else if (isPhoneColumn) {
+                        style = 'background:#e8f5e9;';
+                    }
+                    bodyHtml += `<td style="${style}">${value}</td>`;
                 });
                 bodyHtml += '</tr>';
             }
@@ -1949,6 +2541,9 @@ Or paste numbers with any separator (comma, space, new line)" required></textare
             const numbersTextarea = document.getElementById('numbers');
             numbersTextarea.value = excelData.numbers.join(',\n');
             
+            // Clear selected group if any
+            clearSelectedGroup();
+            
             updateContactCount();
             
             document.getElementById('excelPreview').style.display = 'none';
@@ -1964,40 +2559,14 @@ Or paste numbers with any separator (comma, space, new line)" required></textare
             const numbersText = document.getElementById('numbers').value;
             return numbersText.split(/[,\n\s]+/)
                 .map(n => n.trim().replace(/\D/g, ''))
-                .filter(n => n.length >= 10);
+                .filter(n => n.length >= 10)
+                .map(n => n.length === 10 ? n : n.slice(-10));
         }
 
         function updateContactCount() {
             const numbers = getNumbersArray();
             document.getElementById('countNumber').textContent = numbers.length;
             return numbers.length;
-        }
-
-        async function fetchContacts() {
-            try {
-                showToast('Fetching', 'Loading contacts from database...', 'info');
-                
-                const response = await fetch('/api/condevices/contacts');
-                const data = await response.json();
-                
-                if (data.success && data.data.length > 0) {
-                    const phones = data.data.map(c => {
-                        let phone = c.phoneNumber.replace(/\D/g, '');
-                        if (phone.startsWith('91')) phone = phone.substring(2);
-                        return phone;
-                    }).filter(n => n.length === 10);
-                    
-                    const uniqueNumbers = [...new Set(phones)];
-                    document.getElementById('numbers').value = uniqueNumbers.join(',\n');
-                    
-                    updateContactCount();
-                    showToast('Success', `Loaded ${uniqueNumbers.length} contacts`, 'success');
-                } else {
-                    showToast('Warning', 'No contacts found in database', 'warning');
-                }
-            } catch (err) {
-                showToast('Error', 'Failed to fetch contacts: ' + err.message, 'error');
-            }
         }
 
         function selectAllContacts() {
@@ -2008,6 +2577,7 @@ Or paste numbers with any separator (comma, space, new line)" required></textare
 
         function clearAllContacts() {
             document.getElementById('numbers').value = '';
+            clearSelectedGroup();
             updateContactCount();
             showToast('Cleared', 'All numbers removed', 'info');
         }
@@ -2062,7 +2632,6 @@ Or paste numbers with any separator (comma, space, new line)" required></textare
                 if(data.status) {
                     campaignData.mediaData = data;
                     displayMediaPreview(data);
-                    updateMessagePreview();
                     updateSummary();
                     showToast('Success', 'Media uploaded successfully!', 'success');
                 } else {
@@ -2113,7 +2682,6 @@ Or paste numbers with any separator (comma, space, new line)" required></textare
             campaignData.mediaData = null;
             document.getElementById('mediaPreview').innerHTML = '';
             document.getElementById('mediaFile').value = '';
-            updateMessagePreview();
             updateSummary();
             showToast('Info', 'Media removed', 'info');
         }
@@ -2133,7 +2701,6 @@ Or paste numbers with any separator (comma, space, new line)" required></textare
             
             campaignData.message = textarea.value;
             updateCharCount();
-            updateMessagePreview();
             updateSummary();
             
             showToast('Variable Added', variable + ' added to message', 'info');
@@ -2150,72 +2717,6 @@ Or paste numbers with any separator (comma, space, new line)" required></textare
                 document.getElementById('charCount').style.color = '#facc15';
             } else {
                 document.getElementById('charCount').style.color = '#666';
-            }
-        }
-
-        function updateMessagePreview() {
-            const messageContent = campaignData.message || '';
-            const preview = document.getElementById('messagePreview');
-            
-            if (!preview) return;
-            
-            if (campaignData.sendOption === 'textOnly') {
-                preview.textContent = messageContent || 'Your message will appear here...';
-            } else if (campaignData.sendOption === 'media') {
-                if (campaignData.mediaData) {
-                    const isImage = campaignData.mediaData.fileType === 'image';
-                    const isVideo = campaignData.mediaData.fileType === 'video';
-                    
-                    if (isImage) {
-                        preview.innerHTML = `
-                            <div style="margin-bottom: 15px; text-align: center;">
-                                <img src="${campaignData.mediaData.fileUrl}" style="max-width: 200px; max-height: 200px; border-radius: 10px; border: 1px solid #ddd;">
-                                <div style="margin-top: 10px; color: #666; font-size: 14px;">
-                                    [Image: ${campaignData.mediaData.originalName}]
-                                </div>
-                            </div>
-                        `;
-                    } else if (isVideo) {
-                        preview.innerHTML = `
-                            <div style="margin-bottom: 15px; text-align: center;">
-                                <i class="fas fa-video" style="font-size: 48px; color: #666; margin-bottom: 10px;"></i>
-                                <div style="color: #666; font-size: 14px;">
-                                    [Video: ${campaignData.mediaData.originalName}]
-                                </div>
-                            </div>
-                        `;
-                    } else {
-                        preview.innerHTML = `
-                            <div style="margin-bottom: 15px; text-align: center;">
-                                <i class="fas fa-file" style="font-size: 48px; color: #666; margin-bottom: 10px;"></i>
-                                <div style="color: #666; font-size: 14px;">
-                                    [Document: ${campaignData.mediaData.originalName}]
-                                </div>
-                            </div>
-                        `;
-                    }
-                    
-                    if (campaignData.includeMessageWithMedia && messageContent) {
-                        preview.innerHTML += `
-                            <div style="padding: 10px; background: #f0f7ff; border-radius: 5px; margin-top: 15px;">
-                                ${messageContent}
-                            </div>
-                        `;
-                    } else if (!messageContent) {
-                        preview.innerHTML += `
-                            <div style="padding: 10px; background: #f0f7ff; border-radius: 5px; margin-top: 15px; text-align: center; color: #666; font-style: italic;">
-                                No text message included
-                            </div>
-                        `;
-                    }
-                } else {
-                    preview.innerHTML = `
-                        <div style="text-align: center; padding: 40px; color: #666;">
-                            <i class="fas fa-cloud-upload-alt" style="font-size: 48px; margin-bottom: 15px;"></i>
-                            <div>Upload media file to see preview</div>
-                        </div>
-                    `;
-                }
             }
         }
 
@@ -2298,23 +2799,10 @@ Or paste numbers with any separator (comma, space, new line)" required></textare
             
             const interval = document.getElementById('interval').value;
             document.getElementById('summaryInterval').textContent = interval + ' seconds';
-            
-            const summaryMsg = document.getElementById('summaryMessage');
-            if (summaryMsg) {
-                if (campaignData.sendOption === 'textOnly') {
-                    summaryMsg.textContent = campaignData.message.substring(0, 100) + (campaignData.message.length > 100 ? '...' : '');
-                } else {
-                    if (campaignData.includeMessageWithMedia) {
-                        summaryMsg.textContent = campaignData.message.substring(0, 100) + (campaignData.message.length > 100 ? '...' : '');
-                    } else {
-                        summaryMsg.textContent = 'No text message (media only)';
-                    }
-                }
-            }
         }
 
         // ======================
-        // TEST FUNCTION
+        // TEST FUNCTION - Updated
         // ======================
         async function testCampaign() {
             const nums = getNumbersArray();
@@ -2361,7 +2849,7 @@ Or paste numbers with any separator (comma, space, new line)" required></textare
         }
 
         // ======================
-        // CAMPAIGN SEND FUNCTIONS
+        // CAMPAIGN SEND FUNCTIONS - Updated with auto reset
         // ======================
         async function sendCampaignNow() {
             await sendOrScheduleCampaign('now');
@@ -2425,6 +2913,14 @@ Or paste numbers with any separator (comma, space, new line)" required></textare
                     payload.message = campaignData.message;
                 }
             }
+
+            // Add campaign name based on selected group
+            if (campaignData.selectedGroup) {
+                payload.campaignName = campaignData.selectedGroup.name;
+            } else {
+                const date = new Date().toLocaleString();
+                payload.campaignName = `Campaign ${date}`;
+            }
             
             try {
                 if(scheduleType === 'now') {
@@ -2446,7 +2942,9 @@ Or paste numbers with any separator (comma, space, new line)" required></textare
                         showToast('Scheduled', `Campaign scheduled successfully! It will start at ${new Date(data.scheduledAt).toLocaleString()}`, 'success');
                         setTimeout(() => location.reload(), 2000);
                     } else {
-                        showToast('Success', 'Campaign started successfully!', 'success');
+                        showToast('Success', `Campaign completed: ${data.sent} sent, ${data.failed} failed`, 'success');
+                        // Auto reset to step 1 after successful send
+                        setTimeout(() => resetToStep1(), 2000);
                     }
                 } else {
                     showToast('Error', data.msg, 'error');
