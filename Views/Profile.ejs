@@ -11,6 +11,51 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     
     <style>
+        /* ===== THEME VARIABLES ===== */
+        :root {
+            --primary: #3b82f6;
+            --primary-dark: #2563eb;
+            --primary-gradient: linear-gradient(135deg, #3b82f6 0%, #2563eb 100%);
+            --success: #10b981;
+            --warning: #f59e0b;
+            --danger: #ef4444;
+            --info: #3b82f6;
+            
+            /* Light Mode */
+            --bg-body: #f3f4f6;
+            --bg-white: #ffffff;
+            --bg-offwhite: #f8fafc;
+            --bg-card: #ffffff;
+            --text: #1e293b;
+            --text-light: #334155;
+            --text-muted: #64748b;
+            --dark: #0f172a;
+            --border: #eef2f6;
+            --shadow: 0 2px 10px rgba(0,0,0,0.05);
+            --shadow-lg: 0 10px 30px rgba(0,0,0,0.05);
+            --shadow-xl: 0 20px 35px rgba(0,0,0,0.15);
+            
+            /* Layout */
+            --header-height: 70px;
+            --sidebar-width: 280px;
+        }
+
+        /* Dark Mode */
+        body.dark {
+            --bg-body: #0f172a;
+            --bg-white: #1e293b;
+            --bg-offwhite: #334155;
+            --bg-card: #1e293b;
+            --text: #f1f5f9;
+            --text-light: #cbd5e1;
+            --text-muted: #94a3b8;
+            --dark: #f8fafc;
+            --border: #334155;
+            --shadow: 0 2px 10px rgba(0,0,0,0.3);
+            --shadow-lg: 0 10px 30px rgba(0,0,0,0.3);
+            --shadow-xl: 0 20px 35px rgba(0,0,0,0.5);
+        }
+
         * {
             margin: 0;
             padding: 0;
@@ -19,8 +64,58 @@
 
         body {
             overflow-x: hidden;
-            background: #f3f4f6;
+            background: var(--bg-body);
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            color: var(--text);
+            transition: background-color 0.3s, color 0.3s;
+        }
+
+        /* ===== BORDER MODES ===== */
+        body.round-border .header-wrapper,
+        body.round-border .sidebar-wrapper,
+        body.round-border .profile-card,
+        body.round-border .info-item,
+        body.round-border .btn-edit,
+        body.round-border .btn-back,
+        body.round-border .modal-content,
+        body.round-border .form-control,
+        body.round-border .form-select,
+        body.round-border .btn-save,
+        body.round-border .btn-cancel,
+        body.round-border .modal-avatar-section,
+        body.round-border .toast-notification {
+            border-radius: 24px !important;
+        }
+
+        body.round-border .profile-avatar,
+        body.round-border .avatar-upload-btn,
+        body.round-border .info-icon,
+        body.round-border .role-badge,
+        body.round-border .status-badge,
+        body.round-border .modal-avatar-preview {
+            border-radius: 50% !important;
+        }
+
+        body.no-radius .header-wrapper,
+        body.no-radius .sidebar-wrapper,
+        body.no-radius .profile-card,
+        body.no-radius .info-item,
+        body.no-radius .btn-edit,
+        body.no-radius .btn-back,
+        body.no-radius .modal-content,
+        body.no-radius .form-control,
+        body.no-radius .form-select,
+        body.no-radius .btn-save,
+        body.no-radius .btn-cancel,
+        body.no-radius .modal-avatar-section,
+        body.no-radius .toast-notification,
+        body.no-radius .profile-avatar,
+        body.no-radius .avatar-upload-btn,
+        body.no-radius .info-icon,
+        body.no-radius .role-badge,
+        body.no-radius .status-badge,
+        body.no-radius .modal-avatar-preview {
+            border-radius: 0 !important;
         }
 
         .header-wrapper {
@@ -29,8 +124,9 @@
             left: 0;
             right: 0;
             z-index: 1030;
-            background: white;
-            box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+            background: var(--bg-white);
+            box-shadow: var(--shadow);
+            border-bottom: 1px solid var(--border);
         }
 
         .main-wrapper {
@@ -49,8 +145,8 @@
             bottom: 0;
             z-index: 1020;
             transition: width 0.3s ease;
-            background: white;
-            border-right: 1px solid #eef2f6;
+            background: var(--bg-white);
+            border-right: 1px solid var(--border);
         }
 
         .sidebar-wrapper.collapsed {
@@ -60,9 +156,9 @@
         .content-wrapper {
             flex: 1;
             margin-left: 280px;
-            padding: 20px 15px; /* Reduced padding */
+            padding: 25px 30px;
             transition: margin-left 0.3s ease;
-            background: #f8fafc;
+            background: var(--bg-body);
             min-height: calc(100vh - 70px);
         }
 
@@ -82,21 +178,22 @@
             
             .content-wrapper {
                 margin-left: 0 !important;
-                padding: 15px 10px;
+                padding: 20px 15px;
             }
         }
 
         /* Profile Card Styles */
         .profile-container {
-            max-width: 700px; /* Reduced from 800px */
+            max-width: 1200px;
             margin: 0 auto;
+            width: 100%;
         }
 
         .profile-card {
-            background: white;
-            border-radius: 20px;
-            box-shadow: 0 5px 20px rgba(0,0,0,0.03);
-            border: 1px solid #eef2f6;
+            background: var(--bg-card);
+            border-radius: 24px;
+            box-shadow: var(--shadow-lg);
+            border: 1px solid var(--border);
             overflow: hidden;
             animation: slideUp 0.5s ease-out;
         }
@@ -113,12 +210,12 @@
         }
 
         .profile-header {
-            background: linear-gradient(135deg, #3b82f6 0%, #2563eb 100%);
-            padding: 35px 25px;
+            background: var(--primary-gradient);
+            padding: 40px 35px;
             position: relative;
             display: flex;
             align-items: center;
-            gap: 25px;
+            gap: 35px;
             flex-wrap: wrap;
         }
 
@@ -126,7 +223,7 @@
             .profile-header {
                 flex-direction: column;
                 text-align: center;
-                padding: 25px 20px;
+                padding: 30px 25px;
             }
         }
 
@@ -135,84 +232,106 @@
             display: inline-block;
         }
 
-        .profile-avatar {
-            width: 100px; /* Slightly smaller */
-            height: 100px;
-            background: white;
+        /* ===== IMPORTANT: Avatar Size Classes ===== */
+           .profile-avatar {
+            width: 130px;
+            height: 130px;
             border-radius: 50%;
             display: flex;
             align-items: center;
             justify-content: center;
-            font-size: 42px;
             font-weight: bold;
-            color: #3b82f6;
-            border: 4px solid rgba(255,255,255,0.3);
-            box-shadow: 0 8px 16px rgba(0,0,0,0.15);
+            color: red;
+            border: 5px solid rgba(255,255,255,0.3);
+            box-shadow: 0 10px 20px rgba(0,0,0,0.2);
             transition: all 0.3s ease;
             background-size: cover;
             background-position: center;
+            background-repeat: no-repeat;
         }
 
+
         .profile-avatar:hover {
-            transform: scale(1.03);
+            transform: scale(1.05);
+        }
+
+        /* Modal Avatar Preview Size */
+        .modal-avatar-preview {
+            width: 70px !important;
+            height: 70px !important;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 28px;
+            font-weight: bold;
+            color: white;
+            border: 3px solid white;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+            background-size: cover !important;
+            background-position: center !important;
+            background-repeat: no-repeat !important;
+            object-fit: cover;
         }
 
         .avatar-upload-btn {
             position: absolute;
-            bottom: 5px;
-            right: 5px;
-            width: 32px;
-            height: 32px;
-            background: white;
+            bottom: 8px;
+            right: 8px;
+            width: 36px;
+            height: 36px;
+            background: var(--bg-white);
             border-radius: 50%;
             display: flex;
             align-items: center;
             justify-content: center;
-            color: #3b82f6;
-            border: 2px solid #3b82f6;
+            color: var(--primary);
+            border: 2px solid var(--primary);
             cursor: pointer;
             transition: all 0.3s ease;
-            box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+            box-shadow: 0 4px 8px rgba(0,0,0,0.15);
+            font-size: 16px;
         }
 
         .avatar-upload-btn:hover {
-            background: #3b82f6;
+            background: var(--primary);
             color: white;
         }
 
         .profile-title h1 {
             margin: 0;
-            font-size: 28px;
+            font-size: 36px;
             font-weight: 700;
             color: white;
+            line-height: 1.2;
         }
 
         .profile-title p {
-            margin: 5px 0 0;
-            opacity: 0.9;
-            font-size: 15px;
+            margin: 8px 0 0;
+            opacity: 0.95;
+            font-size: 18px;
             color: white;
         }
 
         .role-badge {
             display: inline-block;
-            padding: 6px 16px;
+            padding: 8px 20px;
             background: rgba(255,255,255,0.2);
-            border-radius: 30px;
-            font-size: 13px;
+            border-radius: 40px;
+            font-size: 15px;
             font-weight: 600;
-            margin-top: 12px;
+            margin-top: 15px;
             color: white;
             backdrop-filter: blur(5px);
             border: 1px solid rgba(255,255,255,0.3);
         }
 
         .profile-body {
-            padding: 30px 25px;
+            padding: 40px 35px;
         }
 
         .info-section {
-            margin-bottom: 30px;
+            margin-bottom: 40px;
         }
 
         .info-section:last-child {
@@ -220,61 +339,69 @@
         }
 
         .info-title {
-            font-size: 17px;
+            font-size: 20px;
             font-weight: 600;
-            color: #1e293b;
-            margin-bottom: 15px;
-            padding-bottom: 8px;
-            border-bottom: 2px solid #eef2f6;
+            color: var(--dark);
+            margin-bottom: 20px;
+            padding-bottom: 10px;
+            border-bottom: 2px solid var(--border);
             display: flex;
             align-items: center;
-            gap: 8px;
+            gap: 10px;
         }
 
         .info-title i {
-            color: #3b82f6;
-            font-size: 18px;
+            color: var(--primary);
+            font-size: 22px;
         }
 
         .info-grid {
             display: grid;
             grid-template-columns: repeat(2, 1fr);
-            gap: 15px;
+            gap: 20px;
+        }
+
+        @media (min-width: 1200px) {
+            .info-grid {
+                gap: 25px;
+            }
         }
 
         @media (max-width: 640px) {
             .info-grid {
                 grid-template-columns: 1fr;
-                gap: 12px;
+                gap: 15px;
             }
         }
 
         .info-item {
             display: flex;
             align-items: flex-start;
-            gap: 12px;
-            padding: 12px;
-            background: #f8fafc;
-            border-radius: 14px;
+            gap: 15px;
+            padding: 18px;
+            background: var(--bg-offwhite);
+            border-radius: 18px;
             transition: all 0.2s ease;
-            border: 1px solid #eef2f6;
+            border: 1px solid var(--border);
         }
 
         .info-item:hover {
-            border-color: #3b82f6;
+            border-color: var(--primary);
+            background: var(--bg-card);
+            box-shadow: var(--shadow);
         }
 
         .info-icon {
-            width: 40px;
-            height: 40px;
-            background: white;
-            border-radius: 10px;
+            width: 48px;
+            height: 48px;
+            background: var(--bg-card);
+            border-radius: 14px;
             display: flex;
             align-items: center;
             justify-content: center;
-            font-size: 18px;
-            color: #3b82f6;
-            border: 1px solid #e2e8f0;
+            font-size: 22px;
+            color: var(--primary);
+            border: 1px solid var(--border);
             flex-shrink: 0;
         }
 
@@ -283,60 +410,60 @@
         }
 
         .info-label {
-            font-size: 11px;
-            color: #64748b;
-            margin-bottom: 2px;
+            font-size: 13px;
+            color: var(--text-muted);
+            margin-bottom: 4px;
             text-transform: uppercase;
-            letter-spacing: 0.3px;
+            letter-spacing: 0.4px;
             font-weight: 600;
         }
 
         .info-value {
-            font-size: 15px;
+            font-size: 18px;
             font-weight: 500;
-            color: #1e293b;
+            color: var(--dark);
             word-break: break-word;
             line-height: 1.4;
         }
 
         .info-value.email {
-            color: #3b82f6;
+            color: var(--primary);
         }
 
         .status-badge {
             display: inline-flex;
             align-items: center;
-            gap: 4px;
-            padding: 3px 8px;
+            gap: 5px;
+            padding: 4px 10px;
             border-radius: 30px;
-            font-size: 10px;
+            font-size: 12px;
             font-weight: 600;
-            margin-left: 6px;
+            margin-left: 8px;
         }
 
         .status-active {
-            background: #e6f7ee;
-            color: #10b981;
+            background: rgba(16, 185, 129, 0.1);
+            color: var(--success);
         }
 
         .profile-footer {
-            padding: 20px 25px;
-            background: #f8fafc;
-            border-top: 1px solid #eef2f6;
+            padding: 25px 35px;
+            background: var(--bg-offwhite);
+            border-top: 1px solid var(--border);
             display: flex;
             justify-content: flex-end;
-            gap: 12px;
+            gap: 15px;
             flex-wrap: wrap;
         }
 
         .btn-edit, .btn-back {
-            padding: 10px 22px;
-            border-radius: 10px;
+            padding: 12px 28px;
+            border-radius: 12px;
             font-weight: 600;
-            font-size: 14px;
+            font-size: 16px;
             display: inline-flex;
             align-items: center;
-            gap: 8px;
+            gap: 10px;
             cursor: pointer;
             transition: all 0.3s;
             border: none;
@@ -344,37 +471,39 @@
         }
 
         .btn-edit {
-            background: white;
-            color: #3b82f6;
-            border: 1px solid #3b82f6;
+            background: var(--bg-card);
+            color: var(--primary);
+            border: 1px solid var(--primary);
         }
 
         .btn-edit:hover {
-            background: #3b82f6;
+            background: var(--primary);
             color: white;
             transform: translateY(-2px);
-            box-shadow: 0 5px 12px rgba(59, 130, 246, 0.3);
+            box-shadow: 0 8px 18px rgba(59, 130, 246, 0.3);
         }
 
         .btn-back {
-            background: linear-gradient(135deg, #3b82f6, #2563eb);
+            background: var(--primary-gradient);
             color: white;
         }
 
         .btn-back:hover {
             transform: translateY(-2px);
-            box-shadow: 0 6px 16px rgba(59, 130, 246, 0.3);
+            box-shadow: 0 8px 20px rgba(59, 130, 246, 0.4);
         }
 
         /* Modal Styles */
         .modal-content {
+            background: var(--bg-card);
             border-radius: 18px;
             border: none;
-            box-shadow: 0 20px 35px rgba(0,0,0,0.15);
+            box-shadow: var(--shadow-xl);
+            color: var(--text);
         }
 
         .modal-header {
-            background: linear-gradient(135deg, #3b82f6, #2563eb);
+            background: var(--primary-gradient);
             color: white;
             border-radius: 18px 18px 0 0;
             padding: 18px 22px;
@@ -390,6 +519,7 @@
         .modal-title {
             font-weight: 600;
             font-size: 18px;
+            color: white;
         }
 
         .modal-body {
@@ -400,33 +530,36 @@
 
         .modal-footer {
             padding: 18px 22px;
-            border-top: 1px solid #eef2f6;
-            background: #f8fafc;
+            border-top: 1px solid var(--border);
+            background: var(--bg-offwhite);
             border-radius: 0 0 18px 18px;
         }
 
         .form-label {
             font-weight: 600;
-            color: #334155;
+            color: var(--text-light);
             font-size: 12px;
             margin-bottom: 4px;
         }
 
         .form-control, .form-select {
-            border: 1px solid #e2e8f0;
+            border: 1px solid var(--border);
             border-radius: 8px;
             padding: 9px 14px;
             font-size: 14px;
             transition: all 0.2s;
+            background: var(--bg-white);
+            color: var(--text);
         }
 
         .form-control:focus, .form-select:focus {
-            border-color: #3b82f6;
+            border-color: var(--primary);
             box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+            outline: none;
         }
 
         .btn-save {
-            background: linear-gradient(135deg, #3b82f6, #2563eb);
+            background: var(--primary-gradient);
             color: white;
             border: none;
             padding: 9px 22px;
@@ -444,9 +577,9 @@
         }
 
         .btn-cancel {
-            background: white;
-            color: #64748b;
-            border: 1px solid #e2e8f0;
+            background: var(--bg-card);
+            color: var(--text-muted);
+            border: 1px solid var(--border);
             padding: 9px 22px;
             border-radius: 8px;
             font-weight: 600;
@@ -457,7 +590,7 @@
         }
 
         .btn-cancel:hover {
-            background: #f1f5f9;
+            background: var(--bg-offwhite);
         }
 
         /* Avatar upload in modal */
@@ -467,26 +600,9 @@
             gap: 18px;
             margin-bottom: 22px;
             padding: 14px;
-            background: #f8fafc;
+            background: var(--bg-offwhite);
             border-radius: 14px;
-            border: 1px solid #eef2f6;
-        }
-
-        .modal-avatar-preview {
-            width: 70px;
-            height: 70px;
-            background: linear-gradient(135deg, #3b82f6, #2563eb);
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 28px;
-            font-weight: bold;
-            color: white;
-            border: 3px solid white;
-            box-shadow: 0 4px 10px rgba(0,0,0,0.1);
-            background-size: cover;
-            background-position: center;
+            border: 1px solid var(--border);
         }
 
         .modal-avatar-upload .btn-upload {
@@ -494,9 +610,9 @@
             align-items: center;
             gap: 6px;
             padding: 7px 16px;
-            background: white;
-            color: #3b82f6;
-            border: 1px solid #3b82f6;
+            background: var(--bg-card);
+            color: var(--primary);
+            border: 1px solid var(--primary);
             border-radius: 6px;
             font-size: 12px;
             font-weight: 500;
@@ -504,14 +620,14 @@
         }
 
         .modal-avatar-upload .btn-upload:hover {
-            background: #3b82f6;
+            background: var(--primary);
             color: white;
         }
 
         .modal-avatar-upload small {
             display: block;
             margin-top: 5px;
-            color: #64748b;
+            color: var(--text-muted);
             font-size: 10px;
         }
 
@@ -523,7 +639,7 @@
             width: 300px;
             padding: 12px 16px;
             border-radius: 10px;
-            box-shadow: 0 12px 25px rgba(0,0,0,0.15);
+            box-shadow: var(--shadow-xl);
             opacity: 0;
             transform: translateY(-15px);
             transition: .3s ease;
@@ -565,9 +681,9 @@
             opacity: .9;
         }
 
-        .toast-success { background: #16a34a; }
-        .toast-error { background: #dc2626; }
-        .toast-info { background: #2563eb; }
+        .toast-success { background: var(--success); }
+        .toast-error { background: var(--danger); }
+        .toast-info { background: var(--info); }
 
         .toast-progress {
             height: 3px;
@@ -581,9 +697,28 @@
             from { width: 100%; }
             to { width: 0%; }
         }
+
+        /* Text colors */
+        .text-muted {
+            color: var(--text-muted) !important;
+        }
+
+        .text-primary {
+            color: var(--primary) !important;
+        }
     </style>
 </head>
 <body>
+    <!-- Theme Initialization Script -->
+    <script>
+        (function() {
+            const savedTheme = localStorage.getItem('theme') || 'light';
+            const savedBorder = localStorage.getItem('border') || 'round-border';
+            document.body.classList.add(savedTheme);
+            document.body.classList.add(savedBorder);
+        })();
+    </script>
+
     <!-- HEADER -->
     <div class="header-wrapper">
         <%- include('../partials/ram/header') %>
@@ -607,15 +742,18 @@
                     <!-- Profile Header with Avatar -->
                     <div class="profile-header">
                         <div class="profile-avatar-wrapper">
+                            <!-- Profile Avatar - Fixed size 130x130 -->
                             <div class="profile-avatar" id="profileAvatar"
-                                style="<%= user.avatar ? `background-image: url('${user.avatar}'); background-size: cover; background-position: center;` : '' %>">
+                                <% if (user.avatar) { %>
+                                    style="background-image: url('<%= user.avatar %>'); background-size: cover; background-position: center; background-repeat: no-repeat; width: 130px; height: 130px;"
+                                <% } else { %>
+                                    style="background: linear-gradient(135deg, #3b82f6, #2563eb); width: 130px; height: 130px;"
+                                <% } %>>
                                 <% if (!user.avatar) { %>
                                     <%= (user?.firstName || user?.email || 'U').charAt(0).toUpperCase() %>
                                 <% } %>
                             </div>
-                            <div class="avatar-upload-btn" onclick="openEditModal()">
-                                <i class="fas fa-camera"></i>
-                            </div>
+                            <!-- Camera button ab sirf edit mode mein dikhega -->
                         </div>
                         <div class="profile-title">
                             <h1><%= user?.firstName || '' %> <%= user?.lastName || '' %></h1>
@@ -723,7 +861,7 @@
                         </div>
                     </div>
 
-                    <!-- Footer -->
+                    <!-- Footer - Edit button yahan hai -->
                     <div class="profile-footer">
                         <button class="btn-edit" onclick="openEditModal()"><i class="fas fa-edit"></i> Edit Profile</button>
                         <button class="btn-back" onclick="goBack()"><i class="fas fa-arrow-left"></i> Back to Dashboard</button>
@@ -733,48 +871,52 @@
         </div>
     </div>
 
-    <!-- Edit Profile Modal -->
+    <!-- Edit Profile Modal - Camera sirf yahan dikhega -->
     <div class="modal fade" id="editProfileModal" tabindex="-1" aria-hidden="true">
         <div class="modal-dialog modal-dialog-centered">
             <div class="modal-content">
                 <div class="modal-header">
                     <h5 class="modal-title"><i class="fas fa-edit me-2"></i> Edit Profile</h5>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
                 <form id="editProfileForm" onsubmit="saveProfileChanges(event)">
                     <div class="modal-body">
-                        <!-- Avatar Upload Section -->
+                        <!-- Avatar Upload Section - Camera yahan hai -->
                         <div class="modal-avatar-section">
                             <div class="modal-avatar-preview" id="modalAvatarPreview"
-                                style="<%= user.avatar ? `background-image: url('${user.avatar}'); background-size: cover; background-position: center;` : '' %>">
+                                <% if (user.avatar) { %>
+                                    style="background-image: url('<%= user.avatar %>'); background-size: cover; background-position: center; background-repeat: no-repeat; width: 70px; height: 70px;"
+                                <% } else { %>
+                                    style="background: linear-gradient(135deg, #3b82f6, #2563eb); width: 70px; height: 70px;"
+                                <% } %>>
                                 <% if (!user.avatar) { %>
                                     <%= (user?.firstName || user?.email || 'U').charAt(0).toUpperCase() %>
                                 <% } %>
                             </div>
                             <div class="modal-avatar-upload">
                                 <label for="avatarUpload" class="btn-upload"><i class="fas fa-camera"></i> Change Photo</label>
-                                <input type="file" id="avatarUpload" accept="image/*" style="display: none;" onchange="previewAvatar(this)">
-                                <small>JPG, PNG or GIF (Max 2MB)</small>
+                                <input type="file" id="avatarUpload" accept="image/jpeg,image/png,image/gif,image/webp" style="display: none;" onchange="previewAvatar(this)">
+                                <small>JPG, PNG, GIF or WebP (Max 2MB)</small>
                             </div>
                         </div>
 
                         <h6 class="mb-3 text-primary">Personal Information</h6>
                         <div class="row g-3 mb-4">
                             <div class="col-md-6">
-                                <label class="form-label">First Name</label>
-                                <input type="text" class="form-control" id="editFirstName" value="<%= user?.firstName || '' %>" required>
+                                <label class="form-label">First Name *</label>
+                                <input type="text" class="form-control" id="editFirstName" value="<%= user?.firstName || '' %>" required maxlength="50">
                             </div>
                             <div class="col-md-6">
                                 <label class="form-label">Last Name</label>
-                                <input type="text" class="form-control" id="editLastName" value="<%= user?.lastName || '' %>">
+                                <input type="text" class="form-control" id="editLastName" value="<%= user?.lastName || '' %>" maxlength="50">
                             </div>
                             <div class="col-md-6">
                                 <label class="form-label">Contact Number</label>
-                                <input type="tel" class="form-control" id="editPhone" value="<%= user?.contactNumber || '' %>">
+                                <input type="tel" class="form-control" id="editPhone" value="<%= user?.contactNumber || '' %>" pattern="[0-9+\-\s]+" title="Please enter a valid phone number">
                             </div>
                             <div class="col-md-6">
                                 <label class="form-label">Date of Birth</label>
-                                <input type="date" class="form-control" id="editDob" value="<%= user?.dob ? new Date(user.dob).toISOString().split('T')[0] : '' %>">
+                                <input type="date" class="form-control" id="editDob" value="<%= user?.dob ? new Date(user.dob).toISOString().split('T')[0] : '' %>" max="<%= new Date().toISOString().split('T')[0] %>">
                             </div>
                             <div class="col-md-6">
                                 <label class="form-label">Gender</label>
@@ -791,18 +933,18 @@
                         <div class="row g-3">
                             <div class="col-12">
                                 <label class="form-label">Email Address</label>
-                                <input type="email" class="form-control" value="<%= user?.email || '' %>" readonly>
+                                <input type="email" class="form-control" value="<%= user?.email || '' %>" readonly disabled>
                                 <small class="text-muted">Email cannot be changed</small>
                             </div>
                             <div class="col-12">
                                 <label class="form-label">Address</label>
-                                <textarea class="form-control" id="editAddress" rows="2"><%= user?.address || '' %></textarea>
+                                <textarea class="form-control" id="editAddress" rows="2" maxlength="200"><%= user?.address || '' %></textarea>
                             </div>
                         </div>
                     </div>
                     <div class="modal-footer">
                         <button type="button" class="btn-cancel" data-bs-dismiss="modal"><i class="fas fa-times"></i> Cancel</button>
-                        <button type="submit" class="btn-save"><i class="fas fa-save"></i> Save Changes</button>
+                        <button type="submit" class="btn-save" id="saveBtn"><i class="fas fa-save"></i> Save Changes</button>
                     </div>
                 </form>
             </div>
@@ -818,19 +960,27 @@
         // ======================
         let editModal;
         let selectedAvatarFile = null;
+        let isSubmitting = false;
 
         // ======================
         // INITIALIZATION
         // ======================
         document.addEventListener('DOMContentLoaded', function() {
-            editModal = new bootstrap.Modal(document.getElementById('editProfileModal'));
+            // Initialize modal
+            const modalElement = document.getElementById('editProfileModal');
+            if (modalElement) {
+                editModal = new bootstrap.Modal(modalElement);
+            }
 
+            // Sidebar functionality
             const sidebar = document.getElementById('mainSidebar');
             const sidebarWrapper = document.getElementById('sidebarWrapper');
+            
             if (sidebar && sidebarWrapper) {
                 if (sidebar.classList.contains('collapsed')) {
                     sidebarWrapper.classList.add('collapsed');
                 }
+                
                 window.toggleCollapse = function() {
                     if (sidebar.classList.contains('collapsed')) {
                         sidebar.classList.remove('collapsed');
@@ -840,6 +990,7 @@
                         sidebarWrapper.classList.add('collapsed');
                     }
                 };
+                
                 window.toggleMobileSidebar = function() {
                     if (sidebar.classList.contains('open')) {
                         sidebar.classList.remove('open');
@@ -849,25 +1000,44 @@
                         sidebarWrapper.classList.add('mobile-open');
                     }
                 };
+                
                 window.closeMobileSidebar = function() {
                     sidebar.classList.remove('open');
                     sidebarWrapper.classList.remove('mobile-open');
                 };
             }
 
-            // URL messages
+            // Handle URL messages
             const urlParams = new URLSearchParams(window.location.search);
             const message = urlParams.get('message');
             const messageType = urlParams.get('messageType');
+            
             if (message) {
-                showToast(messageType === 'success' ? 'Success' : 'Notification', message, messageType || 'info');
+                showToast(
+                    messageType === 'success' ? 'Success' : 'Notification', 
+                    decodeURIComponent(message), 
+                    messageType || 'info'
+                );
+                
+                // Clean URL
                 const url = new URL(window.location);
                 url.searchParams.delete('message');
                 url.searchParams.delete('messageType');
                 window.history.replaceState({}, document.title, url);
             }
 
-            showToast('Welcome', 'Welcome to your profile, <%= user?.firstName || 'User' %>!', 'info');
+            // Welcome toast
+            setTimeout(() => {
+                showToast('Welcome', 'Welcome to your profile, <%= user?.firstName || 'User' %>!', 'info');
+            }, 500);
+
+            // Set avatar background color if no image
+            setAvatarColor();
+            
+            // Log avatar size for debugging
+            console.log('Profile avatar class:', document.querySelector('.profile-avatar'));
+            console.log('Avatar width:', document.querySelector('.profile-avatar')?.offsetWidth);
+            console.log('Avatar height:', document.querySelector('.profile-avatar')?.offsetHeight);
         });
 
         function goBack() {
@@ -875,48 +1045,91 @@
         }
 
         document.addEventListener('keydown', function(e) {
-            if (e.key === 'Escape' && !document.getElementById('editProfileModal').classList.contains('show')) {
-                goBack();
+            if (e.key === 'Escape') {
+                const modal = document.getElementById('editProfileModal');
+                if (!modal.classList.contains('show')) {
+                    goBack();
+                }
             }
         });
 
         function openEditModal() {
             selectedAvatarFile = null;
+            isSubmitting = false;
+            
             const modalAvatar = document.getElementById('modalAvatarPreview');
-            // Reset to initial state
-            <% if (user.avatar) { %>
-                modalAvatar.style.backgroundImage = `url('<%= user.avatar %>')`;
+            const profileAvatar = document.getElementById('profileAvatar');
+            
+            // Get current profile image style
+            const profileStyle = window.getComputedStyle(profileAvatar);
+            const backgroundImage = profileStyle.backgroundImage;
+            
+            // Reset modal avatar to match profile avatar with correct size
+            if (backgroundImage && backgroundImage !== 'none') {
+                // Profile has image
+                modalAvatar.style.backgroundImage = backgroundImage;
                 modalAvatar.style.backgroundSize = 'cover';
                 modalAvatar.style.backgroundPosition = 'center';
+                modalAvatar.style.backgroundRepeat = 'no-repeat';
+                modalAvatar.style.width = '70px';
+                modalAvatar.style.height = '70px';
+                modalAvatar.style.background = 'none';
                 modalAvatar.textContent = '';
-            <% } else { %>
-                modalAvatar.style.backgroundImage = '';
-                modalAvatar.textContent = '<%= (user?.firstName || user?.email || 'U').charAt(0).toUpperCase() %>';
-                modalAvatar.style.background = 'linear-gradient(135deg, #3b82f6, #2563eb)';
-            <% } %>
+            } else {
+                // Profile has initials
+                <% if (user.avatar) { %>
+                    // User has avatar in database but maybe not loaded? Use database value
+                    modalAvatar.style.backgroundImage = `url('<%= user.avatar %>')`;
+                    modalAvatar.style.backgroundSize = 'cover';
+                    modalAvatar.style.backgroundPosition = 'center';
+                    modalAvatar.style.backgroundRepeat = 'no-repeat';
+                    modalAvatar.style.width = '70px';
+                    modalAvatar.style.height = '70px';
+                    modalAvatar.style.background = 'none';
+                    modalAvatar.textContent = '';
+                <% } else { %>
+                    // No avatar - use initials
+                    modalAvatar.style.backgroundImage = '';
+                    modalAvatar.style.background = 'linear-gradient(135deg, #3b82f6, #2563eb)';
+                    modalAvatar.style.width = '70px';
+                    modalAvatar.style.height = '70px';
+                    modalAvatar.textContent = '<%= (user?.firstName || user?.email || 'U').charAt(0).toUpperCase() %>';
+                <% } %>
+            }
+            
             editModal.show();
         }
 
         function previewAvatar(input) {
             if (input.files && input.files[0]) {
                 const file = input.files[0];
+                
+                // Validate file size (2MB)
                 if (file.size > 2 * 1024 * 1024) {
                     showToast('Error', 'File size must be less than 2MB', 'error');
                     input.value = '';
                     return;
                 }
+                
+                // Validate file type
                 if (!file.type.startsWith('image/')) {
                     showToast('Error', 'Please select an image file', 'error');
                     input.value = '';
                     return;
                 }
+                
                 selectedAvatarFile = file;
+                
                 const reader = new FileReader();
                 reader.onload = function(e) {
                     const modalAvatar = document.getElementById('modalAvatarPreview');
                     modalAvatar.style.backgroundImage = `url('${e.target.result}')`;
                     modalAvatar.style.backgroundSize = 'cover';
                     modalAvatar.style.backgroundPosition = 'center';
+                    modalAvatar.style.backgroundRepeat = 'no-repeat';
+                    modalAvatar.style.width = '70px';
+                    modalAvatar.style.height = '70px';
+                    modalAvatar.style.background = 'none';
                     modalAvatar.textContent = '';
                 };
                 reader.readAsDataURL(file);
@@ -926,6 +1139,13 @@
         function saveProfileChanges(event) {
             event.preventDefault();
             
+            // Prevent double submission
+            if (isSubmitting) {
+                showToast('Info', 'Already saving changes...', 'info');
+                return;
+            }
+            
+            // Get form values
             const firstName = document.getElementById('editFirstName').value.trim();
             const lastName = document.getElementById('editLastName').value.trim();
             const phone = document.getElementById('editPhone').value.trim();
@@ -933,13 +1153,30 @@
             const gender = document.getElementById('editGender').value;
             const address = document.getElementById('editAddress').value.trim();
             
+            // Validate required fields
             if (!firstName) {
                 showToast('Error', 'First name is required', 'error');
+                document.getElementById('editFirstName').focus();
                 return;
             }
             
+            // Validate phone if provided
+            if (phone && !/^[0-9+\-\s]+$/.test(phone)) {
+                showToast('Error', 'Please enter a valid phone number', 'error');
+                document.getElementById('editPhone').focus();
+                return;
+            }
+            
+            // Disable save button and set submitting flag
+            isSubmitting = true;
+            const saveBtn = document.getElementById('saveBtn');
+            const originalText = saveBtn.innerHTML;
+            saveBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Saving...';
+            saveBtn.disabled = true;
+            
             showToast('Updating', 'Saving your changes...', 'info');
             
+            // Prepare form data
             const formData = new FormData();
             formData.append('firstName', firstName);
             formData.append('lastName', lastName);
@@ -947,15 +1184,22 @@
             formData.append('dob', dob);
             formData.append('gender', gender);
             formData.append('address', address);
+            
             if (selectedAvatarFile) {
                 formData.append('avatar', selectedAvatarFile);
             }
             
+            // Send request
             fetch('/profile/update', {
                 method: 'POST',
                 body: formData
             })
-            .then(response => response.json())
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error('Network response was not ok');
+                }
+                return response.json();
+            })
             .then(data => {
                 if (data.status) {
                     // Update displayed values
@@ -964,13 +1208,14 @@
                     document.getElementById('displayPhone').textContent = phone || 'Not provided';
                     document.getElementById('displayAddress').textContent = address || 'Not provided';
                     document.getElementById('displayGender').textContent = gender || 'Not specified';
+                    
                     if (dob) {
                         document.getElementById('displayDob').textContent = new Date(dob).toLocaleDateString();
                     } else {
                         document.getElementById('displayDob').textContent = 'Not provided';
                     }
                     
-                    // Update avatar if changed
+                    // Update profile avatar if changed with correct size
                     if (selectedAvatarFile) {
                         const reader = new FileReader();
                         reader.onload = function(e) {
@@ -978,30 +1223,59 @@
                             avatar.style.backgroundImage = `url('${e.target.result}')`;
                             avatar.style.backgroundSize = 'cover';
                             avatar.style.backgroundPosition = 'center';
+                            avatar.style.backgroundRepeat = 'no-repeat';
+                            avatar.style.width = '130px';
+                            avatar.style.height = '130px';
+                            avatar.style.background = 'none';
                             avatar.textContent = '';
                         };
                         reader.readAsDataURL(selectedAvatarFile);
                     }
                     
+                    // Close modal and show success
                     editModal.hide();
-                    showToast('Success', 'Profile updated successfully!', 'success');
+                    showToast('Success', data.message || 'Profile updated successfully!', 'success');
+                    
+                    // Optional: Reload page after 1.5 seconds to ensure everything is in sync
+                    setTimeout(() => {
+                        window.location.reload();
+                    }, 1500);
+                    
                 } else {
-                    showToast('Error', data.msg || 'Failed to update profile', 'error');
+                    showToast('Error', data.message || 'Failed to update profile', 'error');
                 }
             })
             .catch(error => {
                 console.error('Error:', error);
                 showToast('Error', 'Failed to update profile. Please try again.', 'error');
+            })
+            .finally(() => {
+                // Re-enable save button
+                isSubmitting = false;
+                saveBtn.innerHTML = originalText;
+                saveBtn.disabled = false;
             });
         }
 
         function showToast(title, message, type = 'info') {
             const toast = document.getElementById('toast');
-            if (window.toastTimeout) clearTimeout(window.toastTimeout);
             
-            const icons = { success: '✅', error: '❌', warning: '⚠️', info: 'ℹ️' };
+            // Clear existing timeout
+            if (window.toastTimeout) {
+                clearTimeout(window.toastTimeout);
+            }
+            
+            // Icons mapping
+            const icons = { 
+                success: '✅', 
+                error: '❌', 
+                warning: '⚠️', 
+                info: 'ℹ️' 
+            };
+            
             const icon = icons[type] || 'ℹ️';
             
+            // Set toast content
             toast.className = '';
             toast.innerHTML = `
                 <div class="toast-row">
@@ -1013,23 +1287,31 @@
                 </div>
                 <div class="toast-progress"></div>
             `;
+            
             toast.classList.add(`toast-${type}`, 'show');
             
-            window.toastTimeout = setTimeout(() => toast.classList.remove('show'), 3000);
+            // Auto hide after 3 seconds
+            window.toastTimeout = setTimeout(() => {
+                toast.classList.remove('show');
+            }, 3000);
         }
 
-        // Avatar color fallback
-        (function setAvatarColor() {
+        // Avatar color fallback for users without avatar
+        function setAvatarColor() {
             const avatar = document.getElementById('profileAvatar');
             if (avatar && avatar.textContent && !avatar.style.backgroundImage) {
                 const name = avatar.textContent.trim();
                 let hash = 0;
-                for (let i = 0; i < name.length; i++) hash = name.charCodeAt(i) + ((hash << 5) - hash);
-                const hue = hash % 360;
+                for (let i = 0; i < name.length; i++) {
+                    hash = name.charCodeAt(i) + ((hash << 5) - hash);
+                }
+                const hue = Math.abs(hash % 360);
                 avatar.style.background = `hsl(${hue}, 70%, 50%)`;
                 avatar.style.color = 'white';
+                avatar.style.width = '130px';
+                avatar.style.height = '130px';
             }
-        })();
+        }
     </script>
 </body>
 </html>

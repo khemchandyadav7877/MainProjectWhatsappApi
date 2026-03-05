@@ -19,10 +19,104 @@
             box-sizing: border-box;
         }
 
+        /* ===== THEME VARIABLES ===== */
+        :root {
+            --primary: #667eea;
+            --primary-dark: #5a67d8;
+            --primary-gradient: linear-gradient(135deg, #667eea, #764ba2);
+            --success: #10b981;
+            --warning: #f59e0b;
+            --danger: #ef4444;
+            --info: #3b82f6;
+            
+            /* Light Mode */
+            --bg-body: #f8fafc;
+            --bg-white: #ffffff;
+            --bg-offwhite: #f1f5f9;
+            --bg-card: #ffffff;
+            --text: #334155;
+            --text-light: #64748b;
+            --text-muted: #94a3b8;
+            --dark: #0f172a;
+            --border: #eef2f6;
+            --shadow: 0 8px 25px rgba(0,0,0,0.03);
+            --shadow-lg: 0 15px 35px rgba(102, 126, 234, 0.1);
+            
+            /* Layout */
+            --header-height: 70px;
+            --sidebar-width: 280px;
+        }
+
+        /* Dark Mode */
+        body.dark {
+            --bg-body: #0f172a;
+            --bg-white: #1e293b;
+            --bg-offwhite: #334155;
+            --bg-card: #1e293b;
+            --text: #e2e8f0;
+            --text-light: #cbd5e1;
+            --text-muted: #94a3b8;
+            --dark: #f8fafc;
+            --border: #334155;
+            --shadow: 0 8px 25px rgba(0,0,0,0.2);
+            --shadow-lg: 0 15px 35px rgba(102, 126, 234, 0.2);
+        }
+
         body {
             overflow-x: hidden;
-            background: #f8fafc;
+            background: var(--bg-body);
             font-family: 'Inter', 'Segoe UI', sans-serif;
+            color: var(--text);
+            transition: background-color 0.3s, color 0.3s;
+        }
+
+        /* ===== BORDER MODES ===== */
+        body.round-border .header-wrapper,
+        body.round-border .sidebar-wrapper,
+        body.round-border .stat-card,
+        body.round-border .campaign-card,
+        body.round-border .chart-card,
+        body.round-border .device-card,
+        body.round-border .type-item,
+        body.round-border .recent-section,
+        body.round-border .action-btn,
+        body.round-border .welcome-section {
+            border-radius: 20px !important;
+        }
+
+        body.round-border .stat-icon,
+        body.round-border .campaign-icon,
+        body.round-border .type-icon,
+        body.round-border .device-icon,
+        body.round-border .btn {
+            border-radius: 16px !important;
+        }
+
+        body.round-border .status-dot,
+        body.round-border .notification-badge,
+        body.round-border .mobile-toggle {
+            border-radius: 50% !important;
+        }
+
+        body.no-radius .header-wrapper,
+        body.no-radius .sidebar-wrapper,
+        body.no-radius .stat-card,
+        body.no-radius .campaign-card,
+        body.no-radius .chart-card,
+        body.no-radius .device-card,
+        body.no-radius .type-item,
+        body.no-radius .recent-section,
+        body.no-radius .action-btn,
+        body.no-radius .welcome-section,
+        body.no-radius .stat-icon,
+        body.no-radius .campaign-icon,
+        body.no-radius .type-icon,
+        body.no-radius .device-icon,
+        body.no-radius .btn,
+        body.no-radius .status-dot,
+        body.no-radius .notification-badge,
+        body.no-radius .mobile-toggle {
+            border-radius: 0 !important;
         }
 
         /* HEADER FIXED */
@@ -32,8 +126,10 @@
             left: 0;
             right: 0;
             z-index: 1030;
-            background: white;
-            box-shadow: 0 4px 20px rgba(0,0,0,0.05);
+            background: var(--bg-white);
+            box-shadow: var(--shadow);
+            border-bottom: 1px solid var(--border);
+            transition: all 0.3s;
         }
 
         /* MAIN LAYOUT */
@@ -53,9 +149,10 @@
             top: 70px;
             bottom: 0;
             z-index: 1020;
-            transition: width 0.3s ease;
-            background: white;
-            border-right: 1px solid #eef2f6;
+            transition: all 0.3s ease;
+            background: var(--bg-white);
+            border-right: 1px solid var(--border);
+            overflow-y: auto;
         }
 
         .sidebar-wrapper.collapsed {
@@ -68,7 +165,7 @@
             margin-left: 280px;
             padding: 25px;
             transition: margin-left 0.3s ease;
-            background: #f8fafc;
+            background: var(--bg-body);
             min-height: calc(100vh - 70px);
         }
 
@@ -103,7 +200,7 @@
 
         /* Welcome Section */
         .welcome-section {
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            background: linear-gradient(135deg, var(--primary) 0%, #764ba2 100%);
             border-radius: 25px;
             padding: 30px 35px;
             margin-bottom: 30px;
@@ -179,11 +276,11 @@
         }
 
         .stat-card {
-            background: white;
+            background: var(--bg-card);
             border-radius: 20px;
             padding: 25px;
-            box-shadow: 0 8px 25px rgba(0,0,0,0.03);
-            border: 1px solid #eef2f6;
+            box-shadow: var(--shadow);
+            border: 1px solid var(--border);
             transition: all 0.3s;
             position: relative;
             overflow: hidden;
@@ -192,8 +289,8 @@
 
         .stat-card:hover {
             transform: translateY(-5px);
-            box-shadow: 0 15px 35px rgba(102, 126, 234, 0.1);
-            border-color: #667eea;
+            box-shadow: var(--shadow-lg);
+            border-color: var(--primary);
         }
 
         .stat-card::before {
@@ -203,7 +300,7 @@
             left: 0;
             width: 4px;
             height: 100%;
-            background: linear-gradient(135deg, #667eea, #764ba2);
+            background: var(--primary-gradient);
             opacity: 0;
             transition: opacity 0.3s;
         }
@@ -230,7 +327,7 @@
         .stat-icon.orange { background: linear-gradient(135deg, #f59e0b, #d97706); }
 
         .stat-label {
-            color: #64748b;
+            color: var(--text-light);
             font-size: 14px;
             font-weight: 500;
             text-transform: uppercase;
@@ -241,14 +338,14 @@
         .stat-value {
             font-size: 36px;
             font-weight: 700;
-            color: #0f172a;
+            color: var(--dark);
             margin-bottom: 8px;
         }
 
         .stat-change {
             font-size: 13px;
-            color: #10b981;
-            background: #e6f7ee;
+            color: var(--success);
+            background: rgba(16, 185, 129, 0.1);
             padding: 4px 10px;
             border-radius: 50px;
             display: inline-flex;
@@ -257,8 +354,8 @@
         }
 
         .stat-change.negative {
-            color: #ef4444;
-            background: #fee2e2;
+            color: var(--danger);
+            background: rgba(239, 68, 68, 0.1);
         }
 
         /* Campaign Stats */
@@ -270,11 +367,11 @@
         }
 
         .campaign-card {
-            background: white;
+            background: var(--bg-card);
             border-radius: 20px;
             padding: 25px;
-            box-shadow: 0 8px 25px rgba(0,0,0,0.03);
-            border: 1px solid #eef2f6;
+            box-shadow: var(--shadow);
+            border: 1px solid var(--border);
         }
 
         .campaign-header {
@@ -288,43 +385,43 @@
             width: 50px;
             height: 50px;
             border-radius: 16px;
-            background: #f1f5f9;
+            background: var(--bg-offwhite);
             display: flex;
             align-items: center;
             justify-content: center;
             font-size: 24px;
-            color: #667eea;
+            color: var(--primary);
         }
 
         .campaign-header h3 {
-            color: #0f172a;
+            color: var(--dark);
             font-size: 16px;
             font-weight: 600;
             margin-bottom: 5px;
         }
 
         .campaign-header p {
-            color: #64748b;
+            color: var(--text-light);
             font-size: 13px;
         }
 
         .progress {
             height: 8px;
-            background: #f1f5f9;
+            background: var(--bg-offwhite);
             border-radius: 10px;
             margin-bottom: 15px;
             overflow: hidden;
         }
 
         .progress-bar {
-            background: linear-gradient(90deg, #667eea, #764ba2);
+            background: var(--primary-gradient);
             border-radius: 10px;
         }
 
         .campaign-footer {
             display: flex;
             justify-content: space-between;
-            color: #64748b;
+            color: var(--text-light);
             font-size: 13px;
         }
 
@@ -337,11 +434,11 @@
         }
 
         .chart-card {
-            background: white;
+            background: var(--bg-card);
             border-radius: 20px;
             padding: 25px;
-            box-shadow: 0 8px 25px rgba(0,0,0,0.03);
-            border: 1px solid #eef2f6;
+            box-shadow: var(--shadow);
+            border: 1px solid var(--border);
         }
 
         .chart-header {
@@ -352,7 +449,7 @@
         }
 
         .chart-header h3 {
-            color: #0f172a;
+            color: var(--dark);
             font-size: 18px;
             font-weight: 600;
             display: flex;
@@ -361,16 +458,16 @@
         }
 
         .chart-header h3 i {
-            color: #667eea;
+            color: var(--primary);
         }
 
         .chart-actions select {
             padding: 8px 15px;
-            border: 1px solid #e2e8f0;
+            border: 1px solid var(--border);
             border-radius: 10px;
             font-size: 13px;
-            color: #475569;
-            background: #f8fafc;
+            color: var(--text);
+            background: var(--bg-white);
             cursor: pointer;
         }
 
@@ -388,10 +485,10 @@
         }
 
         .device-card {
-            background: white;
+            background: var(--bg-card);
             border-radius: 18px;
             padding: 20px;
-            border: 1px solid #eef2f6;
+            border: 1px solid var(--border);
             display: flex;
             align-items: center;
             gap: 15px;
@@ -401,15 +498,15 @@
 
         .device-card:hover {
             transform: translateY(-3px);
-            box-shadow: 0 10px 25px rgba(102, 126, 234, 0.1);
-            border-color: #667eea;
+            box-shadow: var(--shadow-lg);
+            border-color: var(--primary);
         }
 
         .device-icon {
             width: 50px;
             height: 50px;
             border-radius: 16px;
-            background: #f1f5f9;
+            background: var(--bg-offwhite);
             display: flex;
             align-items: center;
             justify-content: center;
@@ -418,18 +515,18 @@
         }
 
         .device-icon.connected {
-            background: #e6f7ee;
-            color: #10b981;
+            background: rgba(16, 185, 129, 0.1);
+            color: var(--success);
         }
 
         .device-icon.pending {
-            background: #fef3c7;
-            color: #f59e0b;
+            background: rgba(245, 158, 11, 0.1);
+            color: var(--warning);
         }
 
         .device-icon.offline {
-            background: #fee2e2;
-            color: #ef4444;
+            background: rgba(239, 68, 68, 0.1);
+            color: var(--danger);
         }
 
         .device-info {
@@ -437,14 +534,14 @@
         }
 
         .device-info h4 {
-            color: #0f172a;
+            color: var(--dark);
             font-size: 15px;
             font-weight: 600;
             margin-bottom: 5px;
         }
 
         .device-info p {
-            color: #64748b;
+            color: var(--text-light);
             font-size: 13px;
             display: flex;
             align-items: center;
@@ -460,18 +557,18 @@
         }
 
         .status-dot.connected { 
-            background: #10b981; 
+            background: var(--success); 
             box-shadow: 0 0 0 3px rgba(16, 185, 129, 0.2);
             animation: pulse 2s infinite;
         }
         
         .status-dot.pending { 
-            background: #f59e0b; 
+            background: var(--warning); 
             box-shadow: 0 0 0 3px rgba(245, 158, 11, 0.2);
         }
         
         .status-dot.offline { 
-            background: #ef4444; 
+            background: var(--danger); 
             box-shadow: 0 0 0 3px rgba(239, 68, 68, 0.2);
         }
 
@@ -490,18 +587,18 @@
         }
 
         .type-item {
-            background: white;
+            background: var(--bg-card);
             border-radius: 18px;
             padding: 20px;
             text-align: center;
-            border: 1px solid #eef2f6;
+            border: 1px solid var(--border);
             transition: all 0.3s;
         }
 
         .type-item:hover {
             transform: translateY(-3px);
-            box-shadow: 0 10px 25px rgba(102, 126, 234, 0.1);
-            border-color: #667eea;
+            box-shadow: var(--shadow-lg);
+            border-color: var(--primary);
         }
 
         .type-icon {
@@ -524,21 +621,21 @@
         .type-count {
             font-size: 28px;
             font-weight: 700;
-            color: #0f172a;
+            color: var(--dark);
             margin-bottom: 5px;
         }
 
         .type-label {
-            color: #64748b;
+            color: var(--text-light);
             font-size: 14px;
         }
 
         /* Recent Campaigns */
         .recent-section {
-            background: white;
+            background: var(--bg-card);
             border-radius: 20px;
             padding: 25px;
-            border: 1px solid #eef2f6;
+            border: 1px solid var(--border);
             margin-bottom: 30px;
         }
 
@@ -550,7 +647,7 @@
         }
 
         .section-header h3 {
-            color: #0f172a;
+            color: var(--dark);
             font-size: 18px;
             font-weight: 600;
             display: flex;
@@ -559,7 +656,7 @@
         }
 
         .view-all {
-            color: #667eea;
+            color: var(--primary);
             text-decoration: none;
             font-size: 14px;
             font-weight: 500;
@@ -569,7 +666,7 @@
         }
 
         .view-all:hover {
-            color: #764ba2;
+            color: var(--primary-dark);
         }
 
         .table-responsive {
@@ -584,16 +681,16 @@
         th {
             text-align: left;
             padding: 15px 10px;
-            color: #64748b;
+            color: var(--text-light);
             font-weight: 600;
             font-size: 13px;
-            border-bottom: 1px solid #eef2f6;
+            border-bottom: 1px solid var(--border);
         }
 
         td {
             padding: 15px 10px;
-            border-bottom: 1px solid #f1f5f9;
-            color: #334155;
+            border-bottom: 1px solid var(--border);
+            color: var(--text);
             font-size: 14px;
         }
 
@@ -604,22 +701,22 @@
             font-weight: 600;
         }
 
-        .badge-success { background: #e6f7ee; color: #10b981; }
-        .badge-warning { background: #fef3c7; color: #d97706; }
-        .badge-danger { background: #fee2e2; color: #ef4444; }
-        .badge-info { background: #e0f2fe; color: #3b82f6; }
+        .badge-success { background: rgba(16, 185, 129, 0.1); color: var(--success); }
+        .badge-warning { background: rgba(245, 158, 11, 0.1); color: var(--warning); }
+        .badge-danger { background: rgba(239, 68, 68, 0.1); color: var(--danger); }
+        .badge-info { background: rgba(59, 130, 246, 0.1); color: var(--info); }
 
         .progress-mini {
             width: 100px;
             height: 6px;
-            background: #f1f5f9;
+            background: var(--bg-offwhite);
             border-radius: 10px;
             overflow: hidden;
         }
 
         .progress-mini-bar {
             height: 100%;
-            background: linear-gradient(90deg, #667eea, #764ba2);
+            background: var(--primary-gradient);
             border-radius: 10px;
         }
 
@@ -632,38 +729,38 @@
         }
 
         .action-btn {
-            background: white;
-            border: 1px solid #eef2f6;
+            background: var(--bg-card);
+            border: 1px solid var(--border);
             border-radius: 16px;
             padding: 20px;
             text-align: center;
             transition: all 0.3s;
             cursor: pointer;
             text-decoration: none;
-            color: inherit;
+            color: var(--text);
         }
 
         .action-btn:hover {
             transform: translateY(-3px);
-            border-color: #667eea;
-            box-shadow: 0 10px 25px rgba(102, 126, 234, 0.1);
+            border-color: var(--primary);
+            box-shadow: var(--shadow-lg);
         }
 
         .action-btn i {
             font-size: 28px;
-            color: #667eea;
+            color: var(--primary);
             margin-bottom: 12px;
         }
 
         .action-btn h4 {
-            color: #0f172a;
+            color: var(--dark);
             font-size: 16px;
             font-weight: 600;
             margin-bottom: 5px;
         }
 
         .action-btn p {
-            color: #64748b;
+            color: var(--text-light);
             font-size: 12px;
         }
 
@@ -674,7 +771,7 @@
             left: 0;
             right: 0;
             bottom: 0;
-            background: rgba(255,255,255,0.8);
+            background: rgba(0,0,0,0.5);
             display: none;
             align-items: center;
             justify-content: center;
@@ -685,8 +782,8 @@
         .spinner {
             width: 50px;
             height: 50px;
-            border: 5px solid #f1f5f9;
-            border-top: 5px solid #667eea;
+            border: 5px solid var(--bg-offwhite);
+            border-top: 5px solid var(--primary);
             border-radius: 50%;
             animation: spin 1s linear infinite;
         }
@@ -704,7 +801,7 @@
             width: 320px;
             padding: 14px 16px;
             border-radius: 12px;
-            box-shadow: 0 15px 30px rgba(0,0,0,.2);
+            box-shadow: var(--shadow-lg);
             opacity: 0;
             transform: translateY(-15px);
             transition: .3s ease;
@@ -717,10 +814,10 @@
             transform: translateY(0);
         }
 
-        .toast-success { background: #16a34a; }
-        .toast-error { background: #dc2626; }
-        .toast-info { background: #2563eb; }
-        .toast-warning { background: #f59e0b; }
+        .toast-success { background: var(--success); }
+        .toast-error { background: var(--danger); }
+        .toast-info { background: var(--info); }
+        .toast-warning { background: var(--warning); }
 
         .toast-content {
             display: flex;
@@ -765,18 +862,18 @@
 
         .empty-state i {
             font-size: 50px;
-            color: #cbd5e1;
+            color: var(--text-muted);
             margin-bottom: 15px;
         }
 
         .empty-state h5 {
-            color: #334155;
+            color: var(--dark);
             font-size: 18px;
             margin-bottom: 10px;
         }
 
         .empty-state p {
-            color: #64748b;
+            color: var(--text-light);
             max-width: 300px;
             margin: 0 auto;
         }
@@ -959,9 +1056,9 @@
                                 <p>Delivery failed</p>
                             </div>
                         </div>
-                        <div class="stat-value" style="font-size: 32px; color: #ef4444;" id="failedMessages">0</div>
+                        <div class="stat-value" style="font-size: 32px; color: var(--danger);" id="failedMessages">0</div>
                         <div class="progress">
-                            <div class="progress-bar" id="failureRateBar" style="width: 0%; background: #ef4444;"></div>
+                            <div class="progress-bar" id="failureRateBar" style="width: 0%; background: var(--danger);"></div>
                         </div>
                         <div class="campaign-footer">
                             <span id="failureRate">0% failure rate</span>
@@ -979,9 +1076,9 @@
                                 <p>Awaiting delivery</p>
                             </div>
                         </div>
-                        <div class="stat-value" style="font-size: 32px; color: #f59e0b;" id="pendingMessages">0</div>
+                        <div class="stat-value" style="font-size: 32px; color: var(--warning);" id="pendingMessages">0</div>
                         <div class="progress">
-                            <div class="progress-bar" style="width: 0%; background: #f59e0b;" id="pendingBar"></div>
+                            <div class="progress-bar" style="width: 0%; background: var(--warning);" id="pendingBar"></div>
                         </div>
                         <div class="campaign-footer">
                             <span id="pendingCount">0 campaigns scheduled</span>
@@ -1097,13 +1194,13 @@
 
                 <!-- Quick Actions -->
                 <div class="quick-actions">
-                    <a href="/campaign/new" class="action-btn">
+                    <a href="/devices/campaign" class="action-btn">
                         <i class="fas fa-plus-circle"></i>
                         <h4>New Campaign</h4>
                         <p>Create WhatsApp campaign</p>
                     </a>
                     
-                    <a href="/contacts/add" class="action-btn">
+                    <a href="/devices/add" class="action-btn">
                         <i class="fas fa-user-plus"></i>
                         <h4>Add Contact</h4>
                         <p>Add new contact</p>
@@ -1126,6 +1223,22 @@
     </div>
 
     <script>
+        // ======================
+        // THEME INITIALIZATION
+        // ======================
+        (function() {
+            // Load saved theme
+            const savedTheme = localStorage.getItem('theme') || 'light';
+            document.body.classList.add(savedTheme);
+            
+            // Load saved border mode
+            const savedBorder = localStorage.getItem('border') || 'round-border';
+            document.body.classList.add(savedBorder);
+            
+            console.log('🎨 Theme loaded:', savedTheme);
+            console.log('📐 Border mode loaded:', savedBorder);
+        })();
+
         // ======================
         // GLOBAL VARIABLES
         // ======================
@@ -1376,7 +1489,7 @@
                         <td colspan="7" class="text-center text-muted py-4">
                             <i class="fas fa-bullhorn fa-3x mb-3"></i>
                             <p>No campaigns found</p>
-                            <a href="/campaign/new" class="btn btn-sm btn-primary">Create Campaign</a>
+                            <a href="/devices/campaign" class="btn btn-sm btn-primary">Create Campaign</a>
                         </td>
                     </tr>
                 `;
@@ -1494,7 +1607,8 @@
                         enabled: true,
                         easing: 'easeinout',
                         speed: 800
-                    }
+                    },
+                    background: 'transparent'
                 },
                 colors: ['#667eea', '#ef4444'],
                 dataLabels: { enabled: false },
@@ -1509,13 +1623,13 @@
                 },
                 xaxis: {
                     categories: categories,
-                    labels: { style: { colors: '#64748b' } }
+                    labels: { style: { colors: 'var(--text-light)' } }
                 },
                 yaxis: {
-                    labels: { style: { colors: '#64748b' } }
+                    labels: { style: { colors: 'var(--text-light)' } }
                 },
                 legend: { show: false },
-                tooltip: { theme: 'dark' }
+                tooltip: { theme: document.body.classList.contains('dark') ? 'dark' : 'light' }
             };
 
             campaignChart = new ApexCharts(document.querySelector("#campaignChart"), campaignOptions);
@@ -1536,7 +1650,8 @@
                         enabled: true,
                         easing: 'easeinout',
                         speed: 800
-                    }
+                    },
+                    background: 'transparent'
                 },
                 labels: ['Text', 'Images', 'Videos', 'PDF/Docs'],
                 colors: ['#3b82f6', '#10b981', '#8b5cf6', '#f59e0b'],
@@ -1563,6 +1678,7 @@
                 },
                 dataLabels: { enabled: false },
                 legend: { show: false },
+                tooltip: { theme: document.body.classList.contains('dark') ? 'dark' : 'light' },
                 responsive: [{
                     breakpoint: 480,
                     options: { chart: { width: 200 } }
@@ -1609,5 +1725,6 @@
             loadDashboardData();
         }
     </script>
+
 </body>
 </html>

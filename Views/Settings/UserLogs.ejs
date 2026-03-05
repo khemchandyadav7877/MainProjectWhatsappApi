@@ -17,6 +17,67 @@
     <script src="https://cdn.jsdelivr.net/npm/moment@2.29.4/moment.min.js"></script>
     
     <style>
+        /* ===== THEME VARIABLES ===== */
+        :root {
+            --primary: #667eea;
+            --primary-dark: #5a67d8;
+            --primary-gradient: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            --success: #10b981;
+            --warning: #f59e0b;
+            --danger: #ef4444;
+            --info: #3b82f6;
+            
+            /* Role Colors */
+            --role-superadmin: #4f46e5;
+            --role-educator: #3b82f6;
+            --role-trainer: #10b981;
+            --role-student: #f59e0b;
+            
+            /* Status Colors */
+            --status-login-bg: #ecfdf5;
+            --status-login-text: #10b981;
+            --status-logout-bg: #fef2f2;
+            --status-logout-text: #ef4444;
+            --status-active-bg: #e0f2fe;
+            --status-active-text: #0284c7;
+            
+            /* Light Mode */
+            --bg-body: #f8fafc;
+            --bg-white: #ffffff;
+            --bg-offwhite: #f8fafc;
+            --bg-card: #ffffff;
+            --text: #1e293b;
+            --text-light: #334155;
+            --text-muted: #64748b;
+            --dark: #0f172a;
+            --border: #e2e8f0;
+            --shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+            --shadow-lg: 0 20px 25px -5px rgba(0, 0, 0, 0.1);
+            
+            /* Layout */
+            --header-height: 70px;
+            --sidebar-width: 280px;
+        }
+
+        /* Dark Mode */
+        body.dark {
+            --bg-body: #0f172a;
+            --bg-white: #1e293b;
+            --bg-offwhite: #334155;
+            --bg-card: #1e293b;
+            --text: #f1f5f9;
+            --text-light: #cbd5e1;
+            --text-muted: #94a3b8;
+            --dark: #f8fafc;
+            --border: #334155;
+            --shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.3);
+            --shadow-lg: 0 20px 25px -5px rgba(0, 0, 0, 0.5);
+            
+            --status-login-bg: rgba(16, 185, 129, 0.2);
+            --status-logout-bg: rgba(239, 68, 68, 0.2);
+            --status-active-bg: rgba(2, 132, 199, 0.2);
+        }
+
         * {
             margin: 0;
             padding: 0;
@@ -25,8 +86,58 @@
 
         body {
             font-family: 'Inter', sans-serif;
-            background: #f8fafc;
-            color: #1e293b;
+            background: var(--bg-body);
+            color: var(--text);
+            transition: background-color 0.3s, color 0.3s;
+        }
+
+        /* ===== BORDER MODES ===== */
+        body.round-border .logs-header,
+        body.round-border .stat-card,
+        body.round-border .role-tab,
+        body.round-border .filter-section,
+        body.round-border .filter-input,
+        body.round-border .filter-button,
+        body.round-border .chart-card,
+        body.round-border .timeline-section,
+        body.round-border .logs-table th,
+        body.round-border .logs-table td,
+        body.round-border .ip-address,
+        body.round-border .status-badge,
+        body.round-border .user-badge,
+        body.round-border .page-btn,
+        body.round-border .toast-notification {
+            border-radius: 16px !important;
+        }
+
+        body.round-border .stat-icon,
+        body.round-border .user-badge {
+            border-radius: 12px !important;
+        }
+
+        body.round-border .status-dot {
+            border-radius: 50% !important;
+        }
+
+        body.no-radius .logs-header,
+        body.no-radius .stat-card,
+        body.no-radius .role-tab,
+        body.no-radius .filter-section,
+        body.no-radius .filter-input,
+        body.no-radius .filter-button,
+        body.no-radius .chart-card,
+        body.no-radius .timeline-section,
+        body.no-radius .logs-table th,
+        body.no-radius .logs-table td,
+        body.no-radius .ip-address,
+        body.no-radius .status-badge,
+        body.no-radius .user-badge,
+        body.no-radius .page-btn,
+        body.no-radius .toast-notification,
+        body.no-radius .stat-icon,
+        body.no-radius .user-badge,
+        body.no-radius .status-dot {
+            border-radius: 0 !important;
         }
 
         /* Main Container */
@@ -37,7 +148,7 @@
 
         /* Header Section */
         .logs-header {
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            background: var(--primary-gradient);
             border-radius: 20px;
             padding: 2rem;
             margin-bottom: 2rem;
@@ -66,23 +177,23 @@
         }
 
         .stat-card {
-            background: white;
+            background: var(--bg-card);
             border-radius: 16px;
             padding: 1.5rem;
-            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+            box-shadow: var(--shadow);
             transition: all 0.3s ease;
-            border: 1px solid #e2e8f0;
+            border: 1px solid var(--border);
             cursor: pointer;
         }
 
         .stat-card:hover {
             transform: translateY(-5px);
-            box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1);
+            box-shadow: var(--shadow-lg);
         }
 
         .stat-card.active {
-            border: 2px solid #667eea;
-            background: #f5f3ff;
+            border: 2px solid var(--primary);
+            background: rgba(102, 126, 234, 0.05);
         }
 
         .stat-icon {
@@ -96,25 +207,25 @@
             margin-bottom: 1rem;
         }
 
-        .stat-icon.blue { background: #eef2ff; color: #4f46e5; }
-        .stat-icon.green { background: #ecfdf5; color: #10b981; }
-        .stat-icon.purple { background: #f5f3ff; color: #8b5cf6; }
-        .stat-icon.orange { background: #fff7ed; color: #f97316; }
-        .stat-icon.superadmin { background: #eef2ff; color: #4f46e5; }
-        .stat-icon.educator { background: #dbeafe; color: #3b82f6; }
-        .stat-icon.trainer { background: #ecfdf5; color: #10b981; }
-        .stat-icon.student { background: #fff7ed; color: #f59e0b; }
+        .stat-icon.blue { background: rgba(79, 70, 229, 0.1); color: var(--role-superadmin); }
+        .stat-icon.green { background: rgba(16, 185, 129, 0.1); color: var(--role-trainer); }
+        .stat-icon.purple { background: rgba(139, 92, 246, 0.1); color: #8b5cf6; }
+        .stat-icon.orange { background: rgba(249, 115, 22, 0.1); color: #f97316; }
+        .stat-icon.superadmin { background: rgba(79, 70, 229, 0.1); color: var(--role-superadmin); }
+        .stat-icon.educator { background: rgba(59, 130, 246, 0.1); color: var(--role-educator); }
+        .stat-icon.trainer { background: rgba(16, 185, 129, 0.1); color: var(--role-trainer); }
+        .stat-icon.student { background: rgba(245, 158, 11, 0.1); color: var(--role-student); }
 
         .stat-value {
             font-size: 2rem;
             font-weight: 700;
-            color: #1e293b;
+            color: var(--dark);
             margin-bottom: 0.25rem;
         }
 
         .stat-label {
             font-size: 0.875rem;
-            color: #64748b;
+            color: var(--text-muted);
         }
 
         /* Role Filter Tabs */
@@ -139,70 +250,70 @@
         }
 
         .role-tab.superadmin {
-            background: #eef2ff;
-            color: #4f46e5;
+            background: rgba(79, 70, 229, 0.1);
+            color: var(--role-superadmin);
         }
 
         .role-tab.superadmin:hover, .role-tab.superadmin.active {
-            background: #4f46e5;
+            background: var(--role-superadmin);
             color: white;
         }
 
         .role-tab.educator {
-            background: #dbeafe;
-            color: #3b82f6;
+            background: rgba(59, 130, 246, 0.1);
+            color: var(--role-educator);
         }
 
         .role-tab.educator:hover, .role-tab.educator.active {
-            background: #3b82f6;
+            background: var(--role-educator);
             color: white;
         }
 
         .role-tab.trainer {
-            background: #ecfdf5;
-            color: #10b981;
+            background: rgba(16, 185, 129, 0.1);
+            color: var(--role-trainer);
         }
 
         .role-tab.trainer:hover, .role-tab.trainer.active {
-            background: #10b981;
+            background: var(--role-trainer);
             color: white;
         }
 
         .role-tab.student {
-            background: #fff7ed;
-            color: #f59e0b;
+            background: rgba(245, 158, 11, 0.1);
+            color: var(--role-student);
         }
 
         .role-tab.student:hover, .role-tab.student.active {
-            background: #f59e0b;
+            background: var(--role-student);
             color: white;
         }
 
         .role-tab.all {
-            background: #f1f5f9;
-            color: #64748b;
+            background: var(--bg-offwhite);
+            color: var(--text-muted);
         }
 
         .role-tab.all:hover, .role-tab.all.active {
-            background: #64748b;
+            background: var(--text-muted);
             color: white;
         }
 
         /* Filter Section */
         .filter-section {
-            background: white;
+            background: var(--bg-card);
             border-radius: 16px;
             padding: 1.5rem;
             margin-bottom: 2rem;
-            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
-            border: 1px solid #e2e8f0;
+            box-shadow: var(--shadow);
+            border: 1px solid var(--border);
         }
 
         .filter-title {
             font-size: 1.125rem;
             font-weight: 600;
             margin-bottom: 1rem;
-            color: #1e293b;
+            color: var(--dark);
         }
 
         .filter-grid {
@@ -213,21 +324,24 @@
 
         .filter-input {
             padding: 0.75rem 1rem;
-            border: 1px solid #e2e8f0;
+            border: 1px solid var(--border);
             border-radius: 10px;
             font-size: 0.875rem;
             transition: all 0.2s;
+            background: var(--bg-white);
+            color: var(--text);
         }
 
         .filter-input:focus {
             outline: none;
-            border-color: #667eea;
+            border-color: var(--primary);
             box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+            background: var(--bg-white);
         }
 
         .filter-button {
             padding: 0.75rem 1.5rem;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            background: var(--primary-gradient);
             color: white;
             border: none;
             border-radius: 10px;
@@ -247,16 +361,17 @@
             align-items: center;
             gap: 0.5rem;
             padding: 0.5rem 1rem;
-            background: #f1f5f9;
+            background: var(--bg-offwhite);
             border-radius: 50px;
             font-size: 0.875rem;
             margin-right: 0.5rem;
             margin-bottom: 0.5rem;
+            color: var(--text);
         }
 
         .active-filter .remove {
             cursor: pointer;
-            color: #ef4444;
+            color: var(--danger);
         }
 
         .active-filter .remove:hover {
@@ -272,17 +387,17 @@
         }
 
         .chart-card {
-            background: white;
+            background: var(--bg-card);
             border-radius: 16px;
             padding: 1.5rem;
-            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
-            border: 1px solid #e2e8f0;
+            box-shadow: var(--shadow);
+            border: 1px solid var(--border);
         }
 
         .chart-title {
             font-size: 1rem;
             font-weight: 600;
-            color: #64748b;
+            color: var(--text-muted);
             text-transform: uppercase;
             letter-spacing: 0.5px;
             margin-bottom: 1rem;
@@ -296,11 +411,11 @@
 
         /* Timeline Section */
         .timeline-section {
-            background: white;
+            background: var(--bg-card);
             border-radius: 16px;
             padding: 1.5rem;
-            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
-            border: 1px solid #e2e8f0;
+            box-shadow: var(--shadow);
+            border: 1px solid var(--border);
             margin-bottom: 2rem;
         }
 
@@ -309,17 +424,19 @@
             justify-content: space-between;
             align-items: center;
             margin-bottom: 1.5rem;
+            flex-wrap: wrap;
+            gap: 1rem;
         }
 
         .timeline-title {
             font-size: 1.25rem;
             font-weight: 600;
-            color: #1e293b;
+            color: var(--dark);
         }
 
         .timeline-export {
             padding: 0.5rem 1rem;
-            background: #10b981;
+            background: var(--success);
             color: white;
             border: none;
             border-radius: 8px;
@@ -346,22 +463,22 @@
         .logs-table th {
             text-align: left;
             padding: 1rem;
-            background: #f8fafc;
-            color: #64748b;
+            background: var(--bg-offwhite);
+            color: var(--text-muted);
             font-weight: 600;
             font-size: 0.875rem;
-            border-bottom: 2px solid #e2e8f0;
+            border-bottom: 2px solid var(--border);
         }
 
         .logs-table td {
             padding: 1rem;
-            border-bottom: 1px solid #e2e8f0;
-            color: #334155;
+            border-bottom: 1px solid var(--border);
+            color: var(--text);
             font-size: 0.875rem;
         }
 
         .logs-table tr:hover {
-            background: #f8fafc;
+            background: var(--bg-offwhite);
         }
 
         /* User Info Badge */
@@ -370,9 +487,9 @@
             align-items: center;
             gap: 0.5rem;
             padding: 0.25rem 0.75rem;
-            background: #eef2ff;
+            background: rgba(79, 70, 229, 0.1);
             border-radius: 20px;
-            color: #4f46e5;
+            color: var(--role-superadmin);
             font-weight: 500;
         }
 
@@ -390,51 +507,40 @@
         }
 
         .status-login {
-            background: #ecfdf5;
-            color: #10b981;
+            background: var(--status-login-bg);
+            color: var(--status-login-text);
         }
 
         .status-logout {
-            background: #fef2f2;
-            color: #ef4444;
+            background: var(--status-logout-bg);
+            color: var(--status-logout-text);
         }
 
         .status-active {
-            background: #e0f2fe;
-            color: #0284c7;
+            background: var(--status-active-bg);
+            color: var(--status-active-text);
         }
 
         /* Device Icon */
         .device-icon {
             font-size: 1.25rem;
-            color: #64748b;
+            color: var(--text-muted);
         }
 
         /* IP Address */
         .ip-address {
             font-family: monospace;
-            background: #f1f5f9;
+            background: var(--bg-offwhite);
             padding: 0.25rem 0.5rem;
             border-radius: 6px;
             font-size: 0.75rem;
+            color: var(--text);
         }
 
         /* Duration */
         .duration {
             font-weight: 600;
-            color: #4f46e5;
-        }
-
-        /* Location */
-        .location {
-            display: flex;
-            align-items: center;
-            gap: 0.25rem;
-            color: #64748b;
-        }
-
-        .location i {
-            font-size: 0.75rem;
+            color: var(--role-superadmin);
         }
 
         /* Pagination */
@@ -449,23 +555,24 @@
         .page-btn {
             width: 36px;
             height: 36px;
-            border: 1px solid #e2e8f0;
-            background: white;
+            border: 1px solid var(--border);
+            background: var(--bg-white);
             border-radius: 8px;
             cursor: pointer;
             transition: all 0.2s;
+            color: var(--text);
         }
 
         .page-btn:hover:not(:disabled) {
-            background: #667eea;
+            background: var(--primary);
             color: white;
-            border-color: #667eea;
+            border-color: var(--primary);
         }
 
         .page-btn.active {
-            background: #667eea;
+            background: var(--primary);
             color: white;
-            border-color: #667eea;
+            border-color: var(--primary);
         }
 
         .page-btn:disabled {
@@ -481,7 +588,8 @@
             left: 0;
             right: 0;
             bottom: 0;
-            background: rgba(255, 255, 255, 0.9);
+            background: rgba(0, 0, 0, 0.5);
+            backdrop-filter: blur(5px);
             z-index: 9999;
             justify-content: center;
             align-items: center;
@@ -491,8 +599,8 @@
         .loading-spinner {
             width: 50px;
             height: 50px;
-            border: 4px solid #e2e8f0;
-            border-top-color: #667eea;
+            border: 4px solid var(--border);
+            border-top-color: var(--primary);
             border-radius: 50%;
             animation: spin 1s linear infinite;
             margin-bottom: 1rem;
@@ -506,7 +614,7 @@
         .empty-state {
             text-align: center;
             padding: 3rem;
-            color: #94a3b8;
+            color: var(--text-muted);
         }
 
         .empty-icon {
@@ -520,14 +628,15 @@
             top: 20px;
             right: 20px;
             padding: 1rem 1.5rem;
-            background: white;
+            background: var(--bg-white);
             border-radius: 10px;
-            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+            box-shadow: var(--shadow-lg);
             display: flex;
             align-items: center;
             gap: 1rem;
             z-index: 10000;
             animation: slideIn 0.3s ease;
+            border: 1px solid var(--border);
         }
 
         @keyframes slideIn {
@@ -542,11 +651,11 @@
         }
 
         .toast-success {
-            border-left: 4px solid #10b981;
+            border-left: 4px solid var(--success);
         }
 
         .toast-error {
-            border-left: 4px solid #ef4444;
+            border-left: 4px solid var(--danger);
         }
 
         .toast-icon {
@@ -554,11 +663,11 @@
         }
 
         .toast-success .toast-icon {
-            color: #10b981;
+            color: var(--success);
         }
 
         .toast-error .toast-icon {
-            color: #ef4444;
+            color: var(--danger);
         }
 
         /* Responsive */
@@ -586,16 +695,28 @@
     </style>
 </head>
 <body>
+    <!-- Theme Initialization Script -->
+    <script>
+        (function() {
+            const savedTheme = localStorage.getItem('theme') || 'light';
+            const savedBorder = localStorage.getItem('border') || 'round-border';
+            document.body.classList.add(savedTheme);
+            document.body.classList.add(savedBorder);
+            console.log('🎨 Theme loaded:', savedTheme);
+            console.log('📐 Border mode loaded:', savedBorder);
+        })();
+    </script>
+
     <!-- Loading Overlay -->
     <div class="loading-overlay" id="loadingOverlay">
         <div class="loading-spinner"></div>
-        <p style="color: #667eea; font-weight: 500;">Loading logs...</p>
+        <p style="color: white; font-weight: 500;">Loading logs...</p>
     </div>
 
     <div class="logs-container">
         <!-- Header Section -->
         <div class="logs-header">
-            <div class="d-flex justify-content-between align-items-start">
+            <div class="d-flex justify-content-between align-items-start flex-wrap gap-3">
                 <div>
                     <h1 class="header-title">
                         <i class="fas fa-history me-3"></i>User Activity Logs
@@ -621,7 +742,7 @@
                 <div class="stat-icon blue">
                     <i class="fas fa-users"></i>
                 </div>
-                <div class="stat-value" id="totalUsers">156</div>
+                <div class="stat-value" id="totalUsers"><%= totalUsers || 0 %></div>
                 <div class="stat-label">All Users</div>
             </div>
             
@@ -629,7 +750,7 @@
                 <div class="stat-icon superadmin">
                     <i class="fas fa-user-shield"></i>
                 </div>
-                <div class="stat-value" id="superadminCount">25</div>
+                <div class="stat-value" id="superadminCount"><%= roleCounts && roleCounts.SuperAdmin ? roleCounts.SuperAdmin : 0 %></div>
                 <div class="stat-label">SuperAdmin</div>
             </div>
             
@@ -637,7 +758,7 @@
                 <div class="stat-icon educator">
                     <i class="fas fa-chalkboard-teacher"></i>
                 </div>
-                <div class="stat-value" id="educatorCount">35</div>
+                <div class="stat-value" id="educatorCount"><%= roleCounts && roleCounts.Educator ? roleCounts.Educator : 0 %></div>
                 <div class="stat-label">Educator</div>
             </div>
             
@@ -645,7 +766,7 @@
                 <div class="stat-icon trainer">
                     <i class="fas fa-dumbbell"></i>
                 </div>
-                <div class="stat-value" id="trainerCount">20</div>
+                <div class="stat-value" id="trainerCount"><%= roleCounts && roleCounts.Trainer ? roleCounts.Trainer : 0 %></div>
                 <div class="stat-label">Trainer</div>
             </div>
             
@@ -653,7 +774,7 @@
                 <div class="stat-icon student">
                     <i class="fas fa-user-graduate"></i>
                 </div>
-                <div class="stat-value" id="studentCount">40</div>
+                <div class="stat-value" id="studentCount"><%= roleCounts && roleCounts.Student ? roleCounts.Student : 0 %></div>
                 <div class="stat-label">Student</div>
             </div>
         </div>
@@ -678,9 +799,7 @@
         </div>
 
         <!-- Active Filters Display -->
-        <div id="activeFilters" style="margin-bottom: 1rem;">
-            <!-- Active filters will be displayed here -->
-        </div>
+        <div id="activeFilters" style="margin-bottom: 1rem;"></div>
 
         <!-- Filter Section -->
         <div class="filter-section">
@@ -691,12 +810,10 @@
             <div class="filter-grid">
                 <select class="filter-input" id="userSelect">
                     <option value="">All Users</option>
-                    <option value="john@example.com">John Doe (SuperAdmin)</option>
-                    <option value="jane@example.com">Jane Smith (Educator)</option>
-                    <option value="mike@example.com">Mike Johnson (Trainer)</option>
-                    <option value="sarah@example.com">Sarah Wilson (Student)</option>
-                    <option value="robert@example.com">Robert Brown (Student)</option>
-                    <option value="emily@example.com">Emily Davis (Trainer)</option>
+                    <% if (users && users.length > 0) { 
+                        users.forEach(user => { %>
+                            <option value="<%= user._id %>"><%= user.firstName || '' %> <%= user.lastName || '' %> (<%= user.role || 'User' %>)</option>
+                    <% }); } %>
                 </select>
                 
                 <select class="filter-input" id="actionSelect">
@@ -706,9 +823,9 @@
                     <option value="session">Session Active</option>
                 </select>
                 
-                <input type="date" class="filter-input" id="dateFrom" value="2024-01-01">
+                <input type="date" class="filter-input" id="dateFrom" value="<%= defaultDateFrom || '' %>">
                 
-                <input type="date" class="filter-input" id="dateTo" value="2024-12-31">
+                <input type="date" class="filter-input" id="dateTo" value="<%= defaultDateTo || '' %>">
                 
                 <button class="filter-button" onclick="applyFilters()">
                     <i class="fas fa-search me-2"></i>Apply Filters
@@ -749,6 +866,7 @@
                 <div class="timeline-title">
                     <i class="fas fa-list-ul me-2 text-primary"></i>Detailed Activity Timeline
                     <span id="activeRoleLabel" class="badge bg-primary ms-2">All Users</span>
+                    <span class="badge bg-secondary ms-2" id="totalLogsCount"><%= totalLogs || 0 %></span>
                 </div>
                 <button class="timeline-export" onclick="exportToCSV()">
                     <i class="fas fa-file-csv me-2"></i>Export to CSV
@@ -766,32 +884,27 @@
                             <th>Action</th>
                             <th>IP Address</th>
                             <th>Device/Browser</th>
-                            <th>Location</th>
                             <th>Duration</th>
                             <th>Status</th>
                         </tr>
                     </thead>
                     <tbody id="logsTableBody">
-                        <!-- Logs will be populated here by JavaScript -->
+                        <!-- Logs will be populated here by JavaScript from server data -->
                     </tbody>
                 </table>
             </div>
 
             <!-- Pagination -->
             <div class="pagination">
-                <button class="page-btn" onclick="changePage('prev')" id="prevPage">
+                <button class="page-btn" onclick="changePage('prev')" id="prevPage" disabled>
                     <i class="fas fa-chevron-left"></i>
                 </button>
                 
                 <div id="pageNumbers">
                     <button class="page-btn active">1</button>
-                    <button class="page-btn">2</button>
-                    <button class="page-btn">3</button>
-                    <span>...</span>
-                    <button class="page-btn">10</button>
                 </div>
                 
-                <button class="page-btn" onclick="changePage('next')" id="nextPage">
+                <button class="page-btn" onclick="changePage('next')" id="nextPage" disabled>
                     <i class="fas fa-chevron-right"></i>
                 </button>
             </div>
@@ -804,41 +917,39 @@
                     <h6 class="fw-bold mb-3">
                         <i class="fas fa-chart-simple me-2 text-primary"></i>Session Summary
                     </h6>
-                    <div class="d-flex gap-4">
+                    <div class="d-flex gap-4 flex-wrap">
                         <div>
                             <small class="text-muted">Total Sessions</small>
-                            <h4 id="totalSessions">1,234</h4>
+                            <h4 id="totalSessions"><%= summary && summary.totalSessions ? summary.totalSessions : 0 %></h4>
+                        </div>
+                        <div>
+                            <small class="text-muted">Active Now</small>
+                            <h4 id="activeNow"><%= summary && summary.activeNow ? summary.activeNow : 0 %></h4>
                         </div>
                         <div>
                             <small class="text-muted">Avg. Session Time</small>
-                            <h4 id="avgSessionTime">45m 30s</h4>
+                            <h4 id="avgSessionTime"><%= summary && summary.avgSessionTime ? summary.avgSessionTime : 'N/A' %></h4>
                         </div>
                         <div>
                             <small class="text-muted">Peak Hour</small>
-                            <h4 id="peakHour">10:00 AM</h4>
+                            <h4 id="peakHour"><%= summary && summary.peakHour ? summary.peakHour : 'N/A' %></h4>
                         </div>
                     </div>
                 </div>
                 
                 <div class="col-md-6">
                     <h6 class="fw-bold mb-3">
-                        <i class="fas fa-globe me-2 text-primary"></i>Geographic Distribution
+                        <i class="fas fa-globe me-2 text-primary"></i>Quick Stats
                     </h6>
                     <div class="d-flex flex-wrap gap-3">
                         <span class="badge bg-light text-dark p-2">
-                            🇮🇳 India: 45%
+                            <i class="fas fa-sign-in-alt text-success me-1"></i> Logins: <%= summary && summary.totalLogins ? summary.totalLogins : 0 %>
                         </span>
                         <span class="badge bg-light text-dark p-2">
-                            🇺🇸 USA: 25%
+                            <i class="fas fa-sign-out-alt text-danger me-1"></i> Logouts: <%= summary && summary.totalLogouts ? summary.totalLogouts : 0 %>
                         </span>
                         <span class="badge bg-light text-dark p-2">
-                            🇬🇧 UK: 15%
-                        </span>
-                        <span class="badge bg-light text-dark p-2">
-                            🇨🇦 Canada: 10%
-                        </span>
-                        <span class="badge bg-light text-dark p-2">
-                            🇦🇺 Australia: 5%
+                            <i class="fas fa-clock text-info me-1"></i> Avg Duration: <%= summary && summary.avgDuration ? summary.avgDuration : 'N/A' %>
                         </span>
                     </div>
                 </div>
@@ -849,296 +960,131 @@
     <!-- Toast Notification -->
     <div id="toast" style="display: none;"></div>
 
+    <!-- Pass server data to JavaScript -->
+    <script>
+        // Server-side data passed to frontend - WITH NULL CHECKS
+        const serverLogs = <%- JSON.stringify(logs || []) %>;
+        const serverUsers = <%- JSON.stringify(users || []) %>;
+        const serverRoleCounts = <%- JSON.stringify(roleCounts || {}) %>;
+        const serverTotalUsers = <%- totalUsers || 0 %>;
+        const serverChartData = <%- JSON.stringify(chartData || { loginActivity: [] }) %>;
+        const serverDefaultDateFrom = '<%= defaultDateFrom || "" %>';
+        const serverDefaultDateTo = '<%= defaultDateTo || "" %>';
+    </script>
+
     <script>
         // ============================================
-        // USER LOGS PAGE - ROLE-BASED FILTERING
+        // USER LOGS PAGE - REAL DATA FROM DATABASE
         // ============================================
 
-        // Sample data for demo
-        const sampleLogs = [
-            {
-                id: 1,
-                timestamp: '2024-02-24 09:15:23',
-                user: 'John Doe',
-                email: 'john@example.com',
-                role: 'SuperAdmin',
-                action: 'login',
-                ip: '192.168.1.105',
-                device: 'Chrome 121 / Windows 11',
-                location: 'Mumbai, India',
-                duration: '2h 15m',
-                status: 'active'
-            },
-            {
-                id: 2,
-                timestamp: '2024-02-24 10:30:45',
-                user: 'Jane Smith',
-                email: 'jane@example.com',
-                role: 'Educator',
-                action: 'login',
-                ip: '203.45.67.89',
-                device: 'Safari / macOS',
-                location: 'Delhi, India',
-                duration: '1h 30m',
-                status: 'active'
-            },
-            {
-                id: 3,
-                timestamp: '2024-02-24 08:45:12',
-                user: 'Mike Johnson',
-                email: 'mike@example.com',
-                role: 'Trainer',
-                action: 'logout',
-                ip: '156.34.21.78',
-                device: 'Firefox / Ubuntu',
-                location: 'Bangalore, India',
-                duration: '3h 20m',
-                status: 'completed'
-            },
-            {
-                id: 4,
-                timestamp: '2024-02-23 22:15:33',
-                user: 'Sarah Wilson',
-                email: 'sarah@example.com',
-                role: 'Student',
-                action: 'login',
-                ip: '45.67.89.123',
-                device: 'Chrome / Android',
-                location: 'Pune, India',
-                duration: '45m',
-                status: 'active'
-            },
-            {
-                id: 5,
-                timestamp: '2024-02-23 18:30:00',
-                user: 'John Doe',
-                email: 'john@example.com',
-                role: 'SuperAdmin',
-                action: 'logout',
-                ip: '192.168.1.105',
-                device: 'Chrome / Windows',
-                location: 'Mumbai, India',
-                duration: '4h 15m',
-                status: 'completed'
-            },
-            {
-                id: 6,
-                timestamp: '2024-02-23 15:20:10',
-                user: 'Jane Smith',
-                email: 'jane@example.com',
-                role: 'Educator',
-                action: 'login',
-                ip: '203.45.67.89',
-                device: 'Edge / Windows',
-                location: 'Delhi, India',
-                duration: '2h 10m',
-                status: 'active'
-            },
-            {
-                id: 7,
-                timestamp: '2024-02-23 11:05:45',
-                user: 'Robert Brown',
-                email: 'robert@example.com',
-                role: 'Student',
-                action: 'login',
-                ip: '67.89.123.45',
-                device: 'Firefox / Android',
-                location: 'Chennai, India',
-                duration: '1h 15m',
-                status: 'active'
-            },
-            {
-                id: 8,
-                timestamp: '2024-02-23 09:30:22',
-                user: 'Emily Davis',
-                email: 'emily@example.com',
-                role: 'Trainer',
-                action: 'login',
-                ip: '89.123.45.67',
-                device: 'Chrome / macOS',
-                location: 'Hyderabad, India',
-                duration: '3h 45m',
-                status: 'active'
-            },
-            {
-                id: 9,
-                timestamp: '2024-02-22 20:45:00',
-                user: 'Mike Johnson',
-                email: 'mike@example.com',
-                role: 'Trainer',
-                action: 'logout',
-                ip: '156.34.21.78',
-                device: 'Firefox / Ubuntu',
-                location: 'Bangalore, India',
-                duration: '5h 30m',
-                status: 'completed'
-            },
-            {
-                id: 10,
-                timestamp: '2024-02-22 16:10:15',
-                user: 'Sarah Wilson',
-                email: 'sarah@example.com',
-                role: 'Student',
-                action: 'logout',
-                ip: '45.67.89.123',
-                device: 'Chrome / Android',
-                location: 'Pune, India',
-                duration: '2h 25m',
-                status: 'completed'
-            },
-            {
-                id: 11,
-                timestamp: '2024-02-22 14:30:00',
-                user: 'John Doe',
-                email: 'john@example.com',
-                role: 'SuperAdmin',
-                action: 'login',
-                ip: '192.168.1.105',
-                device: 'Chrome / Windows',
-                location: 'Mumbai, India',
-                duration: '1h 40m',
-                status: 'active'
-            },
-            {
-                id: 12,
-                timestamp: '2024-02-22 10:00:00',
-                user: 'Jane Smith',
-                email: 'jane@example.com',
-                role: 'Educator',
-                action: 'logout',
-                ip: '203.45.67.89',
-                device: 'Safari / macOS',
-                location: 'Delhi, India',
-                duration: '3h 15m',
-                status: 'completed'
-            },
-            {
-                id: 13,
-                timestamp: '2024-02-21 16:30:00',
-                user: 'Emily Davis',
-                email: 'emily@example.com',
-                role: 'Trainer',
-                action: 'logout',
-                ip: '89.123.45.67',
-                device: 'Chrome / macOS',
-                location: 'Hyderabad, India',
-                duration: '2h 30m',
-                status: 'completed'
-            },
-            {
-                id: 14,
-                timestamp: '2024-02-21 14:00:00',
-                user: 'Robert Brown',
-                email: 'robert@example.com',
-                role: 'Student',
-                action: 'logout',
-                ip: '67.89.123.45',
-                device: 'Firefox / Android',
-                location: 'Chennai, India',
-                duration: '1h 45m',
-                status: 'completed'
-            },
-            {
-                id: 15,
-                timestamp: '2024-02-21 11:30:00',
-                user: 'Mike Johnson',
-                email: 'mike@example.com',
-                role: 'Trainer',
-                action: 'login',
-                ip: '156.34.21.78',
-                device: 'Firefox / Ubuntu',
-                location: 'Bangalore, India',
-                duration: '4h 15m',
-                status: 'active'
-            }
-        ];
-
         // State
-        let currentLogs = [...sampleLogs];
+        let currentLogs = serverLogs && serverLogs.length > 0 ? [...serverLogs] : [];
         let currentPage = 1;
         let currentRoleFilter = 'all';
-        const rowsPerPage = 5;
+        const rowsPerPage = 10;
         let charts = {};
 
         // Initialize on page load
         document.addEventListener('DOMContentLoaded', function() {
-            console.log('🚀 User Logs page initializing...');
-            initializeCharts();
-            updateRoleCounts();
-            renderTable();
-            updateStats();
+            console.log('🚀 User Logs page initializing with', currentLogs.length, 'logs');
+            
+            if (currentLogs.length === 0) {
+                console.log('No logs found in database');
+                document.getElementById('logsTableBody').innerHTML = `
+                    <tr>
+                        <td colspan="8" class="empty-state">
+                            <i class="fas fa-history empty-icon"></i>
+                            <p>No logs found in database. Users need to login first.</p>
+                        </td>
+                    </tr>
+                `;
+            } else {
+                initializeCharts();
+                renderTable();
+                updatePagination();
+            }
+            
+            // Set active stat based on URL or default
+            const urlParams = new URLSearchParams(window.location.search);
+            const roleParam = urlParams.get('role');
+            if (roleParam) {
+                filterByRole(roleParam);
+            }
+            
             showToast('Logs loaded successfully!', 'success');
         });
 
         // Initialize Charts
         function initializeCharts() {
-            // Login Activity Chart (Line Chart)
-            const loginCtx = document.getElementById('loginChart').getContext('2d');
-            charts.login = new Chart(loginCtx, {
-                type: 'line',
-                data: {
-                    labels: ['Day 1', 'Day 2', 'Day 3', 'Day 4', 'Day 5', 'Day 6', 'Today'],
-                    datasets: [{
-                        label: 'Logins',
-                        data: [12, 19, 15, 17, 24, 22, 24],
-                        borderColor: '#667eea',
-                        backgroundColor: 'rgba(102, 126, 234, 0.1)',
-                        tension: 0.4,
-                        fill: true
-                    }]
-                },
-                options: {
-                    responsive: true,
-                    maintainAspectRatio: false,
-                    plugins: {
-                        legend: {
-                            display: false
+            try {
+                // Login Activity Chart (Line Chart)
+                const loginCtx = document.getElementById('loginChart').getContext('2d');
+                
+                // Prepare chart data from server
+                const loginLabels = serverChartData.loginActivity.map(item => item.date);
+                const loginData = serverChartData.loginActivity.map(item => item.count);
+                
+                charts.login = new Chart(loginCtx, {
+                    type: 'line',
+                    data: {
+                        labels: loginLabels,
+                        datasets: [{
+                            label: 'Logins',
+                            data: loginData,
+                            borderColor: '#667eea',
+                            backgroundColor: 'rgba(102, 126, 234, 0.1)',
+                            tension: 0.4,
+                            fill: true
+                        }]
+                    },
+                    options: {
+                        responsive: true,
+                        maintainAspectRatio: false,
+                        plugins: {
+                            legend: {
+                                display: false
+                            }
                         }
                     }
-                }
-            });
+                });
 
-            // Activity Distribution Chart (Pie Chart)
-            const activityCtx = document.getElementById('activityChart').getContext('2d');
-            charts.activity = new Chart(activityCtx, {
-                type: 'doughnut',
-                data: {
-                    labels: ['SuperAdmin', 'Educator', 'Trainer', 'Student'],
-                    datasets: [{
-                        data: [25, 35, 20, 40],
-                        backgroundColor: ['#4f46e5', '#3b82f6', '#10b981', '#f59e0b'],
-                        borderWidth: 0
-                    }]
-                },
-                options: {
-                    responsive: true,
-                    maintainAspectRatio: false,
-                    cutout: '60%',
-                    plugins: {
-                        legend: {
-                            position: 'bottom'
+                // Activity Distribution Chart (Pie Chart)
+                const activityCtx = document.getElementById('activityChart').getContext('2d');
+                charts.activity = new Chart(activityCtx, {
+                    type: 'doughnut',
+                    data: {
+                        labels: ['SuperAdmin', 'Educator', 'Trainer', 'Student'],
+                        datasets: [{
+                            data: [
+                                serverRoleCounts.SuperAdmin || 0,
+                                serverRoleCounts.Educator || 0,
+                                serverRoleCounts.Trainer || 0,
+                                serverRoleCounts.Student || 0
+                            ],
+                            backgroundColor: ['#4f46e5', '#3b82f6', '#10b981', '#f59e0b'],
+                            borderWidth: 0
+                        }]
+                    },
+                    options: {
+                        responsive: true,
+                        maintainAspectRatio: false,
+                        cutout: '60%',
+                        plugins: {
+                            legend: {
+                                position: 'bottom'
+                            }
                         }
                     }
-                }
-            });
-        }
-
-        // Update role counts
-        function updateRoleCounts() {
-            const superadminCount = sampleLogs.filter(log => log.role === 'SuperAdmin').length;
-            const educatorCount = sampleLogs.filter(log => log.role === 'Educator').length;
-            const trainerCount = sampleLogs.filter(log => log.role === 'Trainer').length;
-            const studentCount = sampleLogs.filter(log => log.role === 'Student').length;
-            
-            document.getElementById('superadminCount').textContent = superadminCount;
-            document.getElementById('educatorCount').textContent = educatorCount;
-            document.getElementById('trainerCount').textContent = trainerCount;
-            document.getElementById('studentCount').textContent = studentCount;
-            document.getElementById('totalUsers').textContent = sampleLogs.length;
+                });
+            } catch (error) {
+                console.error('Error initializing charts:', error);
+            }
         }
 
         // Filter by role
         function filterByRole(role) {
+            showLoading();
+            
             currentRoleFilter = role;
             currentPage = 1;
             
@@ -1146,37 +1092,51 @@
             document.querySelectorAll('.stat-card').forEach(card => {
                 card.classList.remove('active');
             });
-            document.getElementById(`stat${role === 'all' ? 'All' : role}`).classList.add('active');
+            const statElement = document.getElementById(`stat${role === 'all' ? 'All' : role}`);
+            if (statElement) {
+                statElement.classList.add('active');
+            }
             
             // Update role tabs
             document.querySelectorAll('.role-tab').forEach(tab => {
                 tab.classList.remove('active');
             });
             if (role === 'all') {
-                document.querySelector('.role-tab.all').classList.add('active');
+                const allTab = document.querySelector('.role-tab.all');
+                if (allTab) allTab.classList.add('active');
             } else {
-                document.querySelector(`.role-tab.${role.toLowerCase()}`).classList.add('active');
+                const roleLower = role.toLowerCase();
+                const roleTab = document.querySelector(`.role-tab.${roleLower}`);
+                if (roleTab) roleTab.classList.add('active');
             }
             
             // Update active role label
             const roleLabel = document.getElementById('activeRoleLabel');
-            if (role === 'all') {
-                roleLabel.textContent = 'All Users';
-                roleLabel.className = 'badge bg-primary ms-2';
-            } else {
-                roleLabel.textContent = role;
-                roleLabel.className = `badge ms-2 bg-${getRoleColorClass(role)}`;
+            if (roleLabel) {
+                if (role === 'all') {
+                    roleLabel.textContent = 'All Users';
+                    roleLabel.className = 'badge bg-primary ms-2';
+                } else {
+                    roleLabel.textContent = role;
+                    roleLabel.className = `badge ms-2 bg-${getRoleColorClass(role)}`;
+                }
             }
             
             // Filter logs
             if (role === 'all') {
-                currentLogs = [...sampleLogs];
+                currentLogs = serverLogs && serverLogs.length > 0 ? [...serverLogs] : [];
             } else {
-                currentLogs = sampleLogs.filter(log => log.role === role);
+                currentLogs = serverLogs ? serverLogs.filter(log => log.role === role) : [];
             }
             
+            const totalLogsCount = document.getElementById('totalLogsCount');
+            if (totalLogsCount) totalLogsCount.textContent = currentLogs.length;
+            
             renderTable();
-            showToast(`Showing ${role === 'all' ? 'all users' : role} logs`, 'success');
+            updatePagination();
+            
+            setTimeout(hideLoading, 300);
+            showToast(`Showing ${role === 'all' ? 'all users' : role} logs (${currentLogs.length} entries)`, 'success');
         }
 
         // Get role color class
@@ -1193,6 +1153,8 @@
         // Render Table
         function renderTable() {
             const tbody = document.getElementById('logsTableBody');
+            if (!tbody) return;
+            
             const start = (currentPage - 1) * rowsPerPage;
             const end = start + rowsPerPage;
             const pageLogs = currentLogs.slice(start, end);
@@ -1200,7 +1162,7 @@
             if (pageLogs.length === 0) {
                 tbody.innerHTML = `
                     <tr>
-                        <td colspan="9" class="empty-state">
+                        <td colspan="8" class="empty-state">
                             <i class="fas fa-history empty-icon"></i>
                             <p>No logs found for ${currentRoleFilter === 'all' ? 'any user' : currentRoleFilter}</p>
                         </td>
@@ -1211,63 +1173,100 @@
 
             let html = '';
             pageLogs.forEach(log => {
-                const actionIcon = log.action === 'login' ? 'fa-sign-in-alt' : 
-                                 log.action === 'logout' ? 'fa-sign-out-alt' : 'fa-clock';
+                // Determine action and icon
+                let actionIcon = 'fa-clock';
+                let actionText = 'Session';
+                let statusClass = 'status-active';
+                let statusText = 'Active Session';
                 
-                const statusClass = log.status === 'active' ? 'status-active' : 
-                                   log.status === 'completed' ? 'status-logout' : 'status-login';
+                if (log.action === 'login') {
+                    actionIcon = 'fa-sign-in-alt';
+                    actionText = 'Login';
+                    statusClass = 'status-login';
+                    statusText = 'Logged In';
+                } else if (log.action === 'logout') {
+                    actionIcon = 'fa-sign-out-alt';
+                    actionText = 'Logout';
+                    statusClass = 'status-logout';
+                    statusText = 'Completed';
+                }
                 
-                const statusText = log.status === 'active' ? 'Active Session' :
-                                  log.status === 'completed' ? 'Completed' : 'Logged In';
+                // Format duration
+                let durationText = 'N/A';
+                if (log.duration !== null && log.duration !== undefined) {
+                    if (typeof log.duration === 'number') {
+                        if (log.duration === 0) {
+                            durationText = '0s';
+                        } else {
+                            const hours = Math.floor(log.duration / 3600);
+                            const minutes = Math.floor((log.duration % 3600) / 60);
+                            const seconds = Math.floor(log.duration % 60);
+                            
+                            if (hours > 0) {
+                                durationText = `${hours}h ${minutes}m ${seconds}s`;
+                            } else if (minutes > 0) {
+                                durationText = `${minutes}m ${seconds}s`;
+                            } else {
+                                durationText = `${seconds}s`;
+                            }
+                        }
+                    } else {
+                        durationText = log.duration; // fallback
+                    }
+                }
+                
+                // Format timestamp
+                let formattedDate = 'N/A';
+                let formattedTime = '';
+                try {
+                    formattedDate = moment(log.timestamp).format('MMM DD, YYYY');
+                    formattedTime = moment(log.timestamp).format('hh:mm:ss A');
+                } catch (e) {
+                    console.error('Date formatting error:', e);
+                }
 
                 html += `
                     <tr>
                         <td>
-                            <div class="fw-semibold">${moment(log.timestamp).format('MMM DD, YYYY')}</div>
-                            <small class="text-muted">${moment(log.timestamp).format('hh:mm:ss A')}</small>
+                            <div class="fw-semibold">${formattedDate}</div>
+                            <small class="text-muted">${formattedTime}</small>
                         </td>
                         <td>
                             <div class="d-flex align-items-center gap-2">
                                 <div class="user-badge">
                                     <i class="fas fa-user-circle"></i>
-                                    ${log.user}
+                                    ${log.userName || log.email || 'Unknown'}
                                 </div>
                                 <div>
-                                    <small class="text-muted">${log.email}</small>
+                                    <small class="text-muted">${log.email || ''}</small>
                                 </div>
                             </div>
                         </td>
                         <td>
                             <span class="badge" style="background: ${getRoleColor(log.role)}; color: white;">
-                                ${log.role}
+                                ${log.role || 'User'}
                             </span>
                         </td>
                         <td>
-                            <span class="status-badge ${log.action === 'login' ? 'status-login' : 'status-logout'}">
+                            <span class="status-badge ${log.action === 'login' ? 'status-login' : log.action === 'logout' ? 'status-logout' : 'status-active'}">
                                 <i class="fas ${actionIcon} me-1"></i>
-                                ${log.action === 'login' ? 'Login' : log.action === 'logout' ? 'Logout' : 'Session'}
+                                ${actionText}
                             </span>
                         </td>
                         <td>
                             <span class="ip-address">
-                                <i class="fas fa-network-wired me-1"></i>${log.ip}
+                                <i class="fas fa-network-wired me-1"></i>${log.ipAddress || 'Unknown'}
                             </span>
                         </td>
                         <td>
                             <div class="d-flex align-items-center gap-2">
-                                <i class="fas ${getDeviceIcon(log.device)} device-icon"></i>
-                                <span>${log.device}</span>
-                            </div>
-                        </td>
-                        <td>
-                            <div class="location">
-                                <i class="fas fa-map-marker-alt"></i>
-                                ${log.location}
+                                <i class="fas ${getDeviceIcon(log.userAgent || '')} device-icon"></i>
+                                <span>${log.device || (log.userAgent ? log.userAgent.substring(0, 30) + '...' : 'Unknown')}</span>
                             </div>
                         </td>
                         <td>
                             <span class="duration">
-                                <i class="fas fa-hourglass-half me-1"></i>${log.duration}
+                                <i class="fas fa-hourglass-half me-1"></i>${durationText}
                             </span>
                         </td>
                         <td>
@@ -1281,7 +1280,6 @@
             });
 
             tbody.innerHTML = html;
-            renderPagination();
         }
 
         // Get role color
@@ -1295,27 +1293,34 @@
             }
         }
 
-        // Get device icon
-        function getDeviceIcon(device) {
-            if (device.includes('Windows')) return 'fa-windows';
-            if (device.includes('macOS')) return 'fa-apple';
-            if (device.includes('Linux') || device.includes('Ubuntu')) return 'fa-linux';
-            if (device.includes('Android')) return 'fa-android';
-            if (device.includes('iOS') || device.includes('iPhone')) return 'fa-apple';
+        // Get device icon from user agent
+        function getDeviceIcon(userAgent) {
+            if (!userAgent) return 'fa-desktop';
+            
+            const ua = userAgent.toLowerCase();
+            if (ua.includes('windows')) return 'fa-windows';
+            if (ua.includes('mac')) return 'fa-apple';
+            if (ua.includes('linux')) return 'fa-linux';
+            if (ua.includes('android')) return 'fa-android';
+            if (ua.includes('iphone') || ua.includes('ipad')) return 'fa-apple';
+            if (ua.includes('mobile')) return 'fa-mobile-alt';
             return 'fa-desktop';
         }
 
-        // Render Pagination
-        function renderPagination() {
+        // Update pagination
+        function updatePagination() {
+            const paginationElement = document.querySelector('.pagination');
+            if (!paginationElement) return;
+            
             const totalPages = Math.ceil(currentLogs.length / rowsPerPage);
             const pageNumbers = document.getElementById('pageNumbers');
             
             if (totalPages <= 1) {
-                document.querySelector('.pagination').style.display = 'none';
+                paginationElement.style.display = 'none';
                 return;
             }
             
-            document.querySelector('.pagination').style.display = 'flex';
+            paginationElement.style.display = 'flex';
             
             let html = '';
             
@@ -1349,14 +1354,18 @@
             
             pageNumbers.innerHTML = html;
             
-            document.getElementById('prevPage').disabled = currentPage === 1;
-            document.getElementById('nextPage').disabled = currentPage === totalPages;
+            const prevPage = document.getElementById('prevPage');
+            const nextPage = document.getElementById('nextPage');
+            
+            if (prevPage) prevPage.disabled = currentPage === 1;
+            if (nextPage) nextPage.disabled = currentPage === totalPages;
         }
 
         // Page navigation
         function goToPage(page) {
             currentPage = page;
             renderTable();
+            updatePagination();
         }
 
         function changePage(direction) {
@@ -1366,36 +1375,34 @@
                 currentPage++;
             }
             renderTable();
-        }
-
-        // Update stats
-        function updateStats() {
-            document.getElementById('totalSessions').textContent = '1,234';
-            document.getElementById('avgSessionTime').textContent = '45m 30s';
-            document.getElementById('peakHour').textContent = '10:00 AM';
+            updatePagination();
         }
 
         // Apply filters
         function applyFilters() {
             showLoading();
             
-            const user = document.getElementById('userSelect').value;
+            const userId = document.getElementById('userSelect').value;
             const action = document.getElementById('actionSelect').value;
             const dateFrom = document.getElementById('dateFrom').value;
             const dateTo = document.getElementById('dateTo').value;
             
             // Start with role-filtered logs
-            let filtered = currentRoleFilter === 'all' ? [...sampleLogs] : 
-                          sampleLogs.filter(log => log.role === currentRoleFilter);
+            let filtered = currentRoleFilter === 'all' ? (serverLogs ? [...serverLogs] : []) : 
+                          (serverLogs ? serverLogs.filter(log => log.role === currentRoleFilter) : []);
             
             // Apply additional filters
             filtered = filtered.filter(log => {
-                if (user && !log.email.includes(user)) return false;
+                if (userId && log.userId !== userId) return false;
                 if (action && log.action !== action) return false;
                 
-                const logDate = moment(log.timestamp).format('YYYY-MM-DD');
-                if (dateFrom && logDate < dateFrom) return false;
-                if (dateTo && logDate > dateTo) return false;
+                try {
+                    const logDate = moment(log.timestamp).format('YYYY-MM-DD');
+                    if (dateFrom && logDate < dateFrom) return false;
+                    if (dateTo && logDate > dateTo) return false;
+                } catch (e) {
+                    console.error('Date filter error:', e);
+                }
                 
                 return true;
             });
@@ -1403,18 +1410,23 @@
             currentLogs = filtered;
             currentPage = 1;
             renderTable();
+            updatePagination();
             
-            setTimeout(hideLoading, 500);
+            const totalLogsCount = document.getElementById('totalLogsCount');
+            if (totalLogsCount) totalLogsCount.textContent = filtered.length;
+            
+            setTimeout(hideLoading, 300);
+            showToast(`Found ${filtered.length} logs matching filters`, 'success');
             
             // Show active filters
-            showActiveFilters(user, action, dateFrom, dateTo);
-            
-            showToast(`Found ${filtered.length} logs`, 'success');
+            showActiveFilters(userId, action, dateFrom, dateTo);
         }
 
         // Show active filters
-        function showActiveFilters(user, action, dateFrom, dateTo) {
+        function showActiveFilters(userId, action, dateFrom, dateTo) {
             const container = document.getElementById('activeFilters');
+            if (!container) return;
+            
             let html = '';
             
             if (currentRoleFilter !== 'all') {
@@ -1426,8 +1438,12 @@
                 `;
             }
             
-            if (user) {
-                const userName = user.split('@')[0];
+            if (userId) {
+                const userSelect = document.getElementById('userSelect');
+                let userName = userId;
+                if (userSelect && userSelect.selectedIndex > -1) {
+                    userName = userSelect.options[userSelect.selectedIndex]?.text || userId;
+                }
                 html += `
                     <span class="active-filter">
                         <i class="fas fa-user"></i> User: ${userName}
@@ -1446,20 +1462,20 @@
                 `;
             }
             
-            if (dateFrom && dateFrom !== '2024-01-01') {
+            if (dateFrom) {
                 html += `
                     <span class="active-filter">
                         <i class="fas fa-calendar"></i> From: ${dateFrom}
-                        <span class="remove" onclick="document.getElementById('dateFrom').value='2024-01-01'; applyFilters();">&times;</span>
+                        <span class="remove" onclick="document.getElementById('dateFrom').value='${serverDefaultDateFrom}'; applyFilters();">&times;</span>
                     </span>
                 `;
             }
             
-            if (dateTo && dateTo !== '2024-12-31') {
+            if (dateTo) {
                 html += `
                     <span class="active-filter">
                         <i class="fas fa-calendar"></i> To: ${dateTo}
-                        <span class="remove" onclick="document.getElementById('dateTo').value='2024-12-31'; applyFilters();">&times;</span>
+                        <span class="remove" onclick="document.getElementById('dateTo').value='${serverDefaultDateTo}'; applyFilters();">&times;</span>
                     </span>
                 `;
             }
@@ -1469,11 +1485,18 @@
 
         // Reset filters
         function resetFilters() {
-            document.getElementById('userSelect').value = '';
-            document.getElementById('actionSelect').value = '';
-            document.getElementById('dateFrom').value = '2024-01-01';
-            document.getElementById('dateTo').value = '2024-12-31';
-            document.getElementById('activeFilters').innerHTML = '';
+            const userSelect = document.getElementById('userSelect');
+            const actionSelect = document.getElementById('actionSelect');
+            const dateFrom = document.getElementById('dateFrom');
+            const dateTo = document.getElementById('dateTo');
+            
+            if (userSelect) userSelect.value = '';
+            if (actionSelect) actionSelect.value = '';
+            if (dateFrom) dateFrom.value = serverDefaultDateFrom;
+            if (dateTo) dateTo.value = serverDefaultDateTo;
+            
+            const activeFilters = document.getElementById('activeFilters');
+            if (activeFilters) activeFilters.innerHTML = '';
             
             filterByRole('all');
         }
@@ -1482,29 +1505,41 @@
         function refreshLogs() {
             showLoading();
             
+            // Reload the page to get fresh data
             setTimeout(() => {
-                filterByRole(currentRoleFilter);
-                hideLoading();
-                showToast('Logs refreshed!', 'success');
-            }, 1000);
+                window.location.reload();
+            }, 500);
         }
 
         // Export to CSV
         function exportToCSV() {
-            const headers = ['Timestamp', 'User', 'Email', 'Role', 'Action', 'IP Address', 'Device', 'Location', 'Duration', 'Status'];
+            if (currentLogs.length === 0) {
+                showToast('No logs to export', 'error');
+                return;
+            }
             
-            const rows = currentLogs.map(log => [
-                log.timestamp,
-                log.user,
-                log.email,
-                log.role,
-                log.action,
-                log.ip,
-                log.device,
-                log.location,
-                log.duration,
-                log.status
-            ]);
+            const headers = ['Timestamp', 'User', 'Email', 'Role', 'Action', 'IP Address', 'Device', 'Duration', 'Status'];
+            
+            const rows = currentLogs.map(log => {
+                let durationText = log.duration || 'N/A';
+                if (log.duration && typeof log.duration === 'number') {
+                    const hours = Math.floor(log.duration / 3600);
+                    const minutes = Math.floor((log.duration % 3600) / 60);
+                    durationText = `${hours}h ${minutes}m`;
+                }
+                
+                return [
+                    log.timestamp || '',
+                    log.userName || log.email || '',
+                    log.email || '',
+                    log.role || '',
+                    log.action || '',
+                    log.ipAddress || '',
+                    (log.userAgent || '').substring(0, 50),
+                    durationText,
+                    log.status || ''
+                ];
+            });
             
             let csvContent = headers.join(',') + '\n' + 
                 rows.map(row => row.map(cell => `"${cell}"`).join(',')).join('\n');
@@ -1528,16 +1563,19 @@
 
         // Loading functions
         function showLoading() {
-            document.getElementById('loadingOverlay').style.display = 'flex';
+            const overlay = document.getElementById('loadingOverlay');
+            if (overlay) overlay.style.display = 'flex';
         }
 
         function hideLoading() {
-            document.getElementById('loadingOverlay').style.display = 'none';
+            const overlay = document.getElementById('loadingOverlay');
+            if (overlay) overlay.style.display = 'none';
         }
 
         // Toast notification
         function showToast(message, type = 'success') {
             const toast = document.getElementById('toast');
+            if (!toast) return;
             
             toast.style.display = 'block';
             toast.className = `toast-notification toast-${type}`;
@@ -1555,12 +1593,6 @@
                 toast.style.display = 'none';
             }, 3000);
         }
-
-        // Auto-refresh every 30 seconds (demo)
-        setInterval(() => {
-            console.log('🔄 Auto-refreshing logs...');
-            // In real app, you would fetch new data here
-        }, 30000);
     </script>
 </body>
 </html>

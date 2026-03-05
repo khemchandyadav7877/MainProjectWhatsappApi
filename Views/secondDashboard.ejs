@@ -1,0 +1,644 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title><%= typeof title !== 'undefined' ? title : 'WaBlast Pro Dashboard' %></title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    
+    <!-- Global Variables -->
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --primary: #38BDF8;
+            --primary-dark: #0EA5E9;
+            --primary-deeper: #0284C7;
+            --primary-light: #BAE6FD;
+            --primary-pale: #E0F2FE;
+            --success: #10B981;
+            --warning: #F59E0B;
+            --danger: #EF4444;
+            --dark: #0C1A2E;
+            --dark2: #112240;
+            --text: #1E3A5F;
+            --text-light: #3B5A80;
+            --text-muted: #7A9BB5;
+            --bg-body: #F8F7F4;
+            --bg-white: #FFFFFF;
+            --bg-offwhite: #F1EFE9;
+            --bg-card: #FFFFFF;
+            --border: rgba(56,189,248,0.2);
+            --border-dark: rgba(56,189,248,0.12);
+            --shadow: 0 4px 20px rgba(0,0,0,0.08);
+            --shadow-lg: 0 10px 40px rgba(0,0,0,0.12);
+            
+            /* Layout */
+            --header-height: 70px;
+            --sidebar-width: 280px;
+        }
+
+        /* Dark Mode Variables */
+        body.dark {
+            --primary-pale: rgba(56,189,248,0.15);
+            --bg-body: #0D1117;
+            --bg-white: #161B22;
+            --bg-offwhite: #21262D;
+            --bg-card: #161B22;
+            --dark: #E6EDF3;
+            --dark2: #1A2233;
+            --text: #C9D1D9;
+            --text-light: #8B949E;
+            --text-muted: #6E7681;
+            --border: rgba(56,189,248,0.25);
+            --border-dark: rgba(56,189,248,0.15);
+            --shadow: 0 4px 20px rgba(0,0,0,0.4);
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background: var(--bg-body);
+            color: var(--text);
+            overflow-x: hidden;
+            transition: background-color 0.3s, color 0.3s;
+        }
+
+        /* Border Mode Classes */
+        body.round-border .stat-card,
+        body.round-border .chart-card,
+        body.round-border .recent-activity,
+        body.round-border .quick-actions,
+        body.round-border .user-card,
+        body.round-border .user-card-minimized,
+        body.round-border .nav-link,
+        body.round-border .section-title,
+        body.round-border .logout-link,
+        body.round-border .header-btn,
+        body.round-border .menu-toggle,
+        body.round-border .profile-avatar {
+            border-radius: 16px !important;
+        }
+
+        body.no-radius .stat-card,
+        body.no-radius .chart-card,
+        body.no-radius .recent-activity,
+        body.no-radius .quick-actions,
+        body.no-radius .user-card,
+        body.no-radius .user-card-minimized,
+        body.no-radius .nav-link,
+        body.no-radius .section-title,
+        body.no-radius .logout-link,
+        body.no-radius .header-btn,
+        body.no-radius .menu-toggle,
+        body.no-radius .profile-avatar {
+            border-radius: 0 !important;
+        }
+    </style>
+</head>
+<body>
+    <!-- Mobile Toggle -->
+    <button class="mobile-toggle" onclick="toggleMobileSidebar()" id="mobileToggle">
+        <i class="fas fa-bars"></i>
+    </button>
+
+    <!-- Sidebar Overlay -->
+    <div class="sidebar-overlay" onclick="closeSidebar()" id="sidebarOverlay"></div>
+
+    <!-- Include Header -->
+    <%- include('../partials/second/header.ejs') %>
+
+    <!-- Include Sidebar -->
+    <%- include('../partials/second/left.ejs') %>
+
+    <!-- ===== MAIN CONTENT ===== -->
+    <style>
+        /* ===== MID CONTENT STYLES - ONLY MID CONTENT ===== */
+        .main-content {
+            flex: 1;
+            margin-left: var(--sidebar-width);
+            margin-top: var(--header-height);
+            transition: margin-left 0.3s;
+            min-height: calc(100vh - var(--header-height));
+            background: var(--bg-body);
+            padding: 1.5rem;
+            width: calc(100% - var(--sidebar-width));
+        }
+
+        .main-content.full-width {
+            margin-left: 0;
+            width: 100%;
+        }
+
+        /* Stats Cards */
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 1.5rem;
+            margin-bottom: 2rem;
+        }
+
+        .stat-card {
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: 16px;
+            padding: 1.5rem;
+            transition: all 0.3s;
+            box-shadow: var(--shadow);
+        }
+
+        .stat-card:hover {
+            transform: translateY(-4px);
+            border-color: var(--primary);
+            box-shadow: var(--shadow-lg);
+        }
+
+        .stat-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 1rem;
+        }
+
+        .stat-icon {
+            width: 54px;
+            height: 54px;
+            border-radius: 14px;
+            background: var(--primary-pale);
+            color: var(--primary);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.5rem;
+        }
+
+        .stat-value {
+            font-size: 2rem;
+            font-weight: 700;
+            color: var(--dark);
+            margin-bottom: 0.25rem;
+        }
+
+        .stat-label {
+            color: var(--text-muted);
+            font-size: 0.85rem;
+        }
+
+        .stat-change {
+            display: flex;
+            align-items: center;
+            gap: 0.25rem;
+            font-size: 0.8rem;
+            color: var(--success);
+            margin-top: 0.5rem;
+        }
+
+        /* Charts */
+        .charts-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 1.5rem;
+            margin-bottom: 2rem;
+        }
+
+        .chart-card {
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: 16px;
+            padding: 1.5rem;
+            box-shadow: var(--shadow);
+        }
+
+        .chart-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 1.5rem;
+        }
+
+        .chart-title {
+            font-weight: 600;
+            color: var(--dark);
+            font-size: 1rem;
+        }
+
+        .chart-actions {
+            display: flex;
+            gap: 0.5rem;
+        }
+
+        .chart-btn {
+            padding: 0.25rem 0.75rem;
+            border: 1px solid var(--border);
+            border-radius: 6px;
+            background: var(--bg-white);
+            color: var(--text-muted);
+            font-size: 0.7rem;
+            cursor: pointer;
+        }
+
+        .chart-btn:hover,
+        .chart-btn.active {
+            background: var(--primary);
+            color: white;
+            border-color: var(--primary);
+        }
+
+        .chart-placeholder {
+            height: 250px;
+            background: linear-gradient(135deg, var(--primary-pale) 0%, transparent 100%);
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--text-muted);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .chart-placeholder::before {
+            content: '';
+            position: absolute;
+            inset: 0;
+            background: repeating-linear-gradient(45deg, transparent, transparent 10px, var(--border) 10px, var(--border) 20px);
+            opacity: 0.3;
+        }
+
+        /* Activity */
+        .activity-grid {
+            display: grid;
+            grid-template-columns: 2fr 1fr;
+            gap: 1.5rem;
+        }
+
+        .recent-activity,
+        .quick-actions {
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: 16px;
+            padding: 1.5rem;
+            box-shadow: var(--shadow);
+        }
+
+        .activity-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 1.5rem;
+        }
+
+        .activity-title {
+            font-weight: 600;
+            color: var(--dark);
+            font-size: 1rem;
+        }
+
+        .view-all {
+            color: var(--primary);
+            text-decoration: none;
+            font-size: 0.8rem;
+            font-weight: 500;
+        }
+
+        .activity-list {
+            display: flex;
+            flex-direction: column;
+            gap: 0.75rem;
+        }
+
+        .activity-item {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            padding: 0.75rem;
+            border-radius: 8px;
+            transition: all 0.2s;
+        }
+
+        .activity-item:hover {
+            background: var(--bg-offwhite);
+        }
+
+        .activity-avatar {
+            width: 42px;
+            height: 42px;
+            border-radius: 8px;
+            background: var(--primary-pale);
+            color: var(--primary);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1rem;
+            flex-shrink: 0;
+        }
+
+        .activity-details {
+            flex: 1;
+        }
+
+        .activity-text {
+            font-size: 0.85rem;
+            color: var(--text);
+            margin-bottom: 0.2rem;
+        }
+
+        .activity-time {
+            font-size: 0.7rem;
+            color: var(--text-muted);
+        }
+
+        .actions-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 0.75rem;
+            margin-top: 1rem;
+        }
+
+        .action-btn {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 0.5rem;
+            padding: 1rem;
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            background: var(--bg-white);
+            color: var(--text);
+            text-decoration: none;
+            transition: all 0.2s;
+        }
+
+        .action-btn:hover {
+            background: var(--primary);
+            color: white;
+            border-color: var(--primary);
+            transform: translateY(-2px);
+        }
+
+        .action-btn i {
+            font-size: 1.3rem;
+        }
+
+        .action-btn span {
+            font-size: 0.75rem;
+            font-weight: 500;
+        }
+
+        /* Overlay */
+        .sidebar-overlay {
+            display: none;
+            position: fixed;
+            inset: 0;
+            background: rgba(0, 0, 0, 0.5);
+            backdrop-filter: blur(2px);
+            z-index: 998;
+        }
+
+        .sidebar-overlay.active {
+            display: block;
+        }
+
+        /* Mobile Toggle */
+        .mobile-toggle {
+            display: none;
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            width: 56px;
+            height: 56px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, var(--primary-dark), var(--primary));
+            color: white;
+            border: none;
+            box-shadow: var(--shadow-lg);
+            z-index: 1001;
+            cursor: pointer;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.3rem;
+        }
+
+        .mobile-toggle:hover {
+            transform: scale(1.1);
+        }
+
+        /* Responsive */
+        @media (max-width: 1200px) {
+            .stats-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+            
+            .charts-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .activity-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .main-content {
+                margin-left: 0 !important;
+                width: 100% !important;
+                padding: 1rem;
+            }
+            
+            .mobile-toggle {
+                display: flex;
+            }
+            
+            .stats-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+
+    <div class="main-content" id="mainContent">
+        <!-- Dynamic Content -->
+        <% if (typeof content !== 'undefined' && content) { %>
+            <%- content %>
+        <% } else { %>
+            <!-- Default Dashboard Content -->
+            <div class="stats-grid">
+                <div class="stat-card">
+                    <div class="stat-header">
+                        <div class="stat-icon">
+                            <i class="fas fa-envelope-open-text"></i>
+                        </div>
+                    </div>
+                    <div class="stat-value">15.2K</div>
+                    <div class="stat-label">Messages Sent</div>
+                    <div class="stat-change">
+                        <i class="fas fa-arrow-up"></i>
+                        <span>12% from last month</span>
+                    </div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-header">
+                        <div class="stat-icon">
+                            <i class="fas fa-users"></i>
+                        </div>
+                    </div>
+                    <div class="stat-value">2,847</div>
+                    <div class="stat-label">Active Contacts</div>
+                    <div class="stat-change">
+                        <i class="fas fa-arrow-up"></i>
+                        <span>8% from last month</span>
+                    </div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-header">
+                        <div class="stat-icon">
+                            <i class="fas fa-robot"></i>
+                        </div>
+                    </div>
+                    <div class="stat-value">1,234</div>
+                    <div class="stat-label">Chatbot Conversations</div>
+                    <div class="stat-change">
+                        <i class="fas fa-arrow-up"></i>
+                        <span>24% from last month</span>
+                    </div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-header">
+                        <div class="stat-icon">
+                            <i class="fas fa-chart-line"></i>
+                        </div>
+                    </div>
+                    <div class="stat-value">98%</div>
+                    <div class="stat-label">Delivery Rate</div>
+                    <div class="stat-change">
+                        <i class="fas fa-arrow-up"></i>
+                        <span>2% from last month</span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="charts-grid">
+                <div class="chart-card">
+                    <div class="chart-header">
+                        <h3 class="chart-title">Message Delivery Trends</h3>
+                        <div class="chart-actions">
+                            <button class="chart-btn active">Week</button>
+                            <button class="chart-btn">Month</button>
+                            <button class="chart-btn">Year</button>
+                        </div>
+                    </div>
+                    <div class="chart-placeholder">
+                        Chart: Message Delivery Analytics
+                    </div>
+                </div>
+                <div class="chart-card">
+                    <div class="chart-header">
+                        <h3 class="chart-title">Campaign Performance</h3>
+                        <div class="chart-actions">
+                            <button class="chart-btn active">Reach</button>
+                            <button class="chart-btn">Engagement</button>
+                            <button class="chart-btn">Conversions</button>
+                        </div>
+                    </div>
+                    <div class="chart-placeholder">
+                        Chart: Campaign Performance Metrics
+                    </div>
+                </div>
+            </div>
+
+            <div class="activity-grid">
+                <div class="recent-activity">
+                    <div class="activity-header">
+                        <h3 class="activity-title">Recent Activity</h3>
+                        <a href="#" class="view-all">View All <i class="fas fa-arrow-right"></i></a>
+                    </div>
+                    <div class="activity-list">
+                        <div class="activity-item">
+                            <div class="activity-avatar">
+                                <i class="fas fa-paper-plane"></i>
+                            </div>
+                            <div class="activity-details">
+                                <div class="activity-text">Bulk message campaign sent to 2,500 contacts</div>
+                                <div class="activity-time">2 minutes ago</div>
+                            </div>
+                        </div>
+                        <div class="activity-item">
+                            <div class="activity-avatar">
+                                <i class="fas fa-robot"></i>
+                            </div>
+                            <div class="activity-details">
+                                <div class="activity-text">AI chatbot handled 150 conversations automatically</div>
+                                <div class="activity-time">15 minutes ago</div>
+                            </div>
+                        </div>
+                        <div class="activity-item">
+                            <div class="activity-avatar">
+                                <i class="fas fa-user-plus"></i>
+                            </div>
+                            <div class="activity-details">
+                                <div class="activity-text">45 new contacts added via import</div>
+                                <div class="activity-time">1 hour ago</div>
+                            </div>
+                        </div>
+                        <div class="activity-item">
+                            <div class="activity-avatar">
+                                <i class="fas fa-check-circle"></i>
+                            </div>
+                            <div class="activity-details">
+                                <div class="activity-text">Campaign "Summer Sale" completed with 98% delivery</div>
+                                <div class="activity-time">3 hours ago</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="quick-actions">
+                    <h3 class="activity-title">Quick Actions</h3>
+                    <div class="actions-grid">
+                        <a href="#" class="action-btn">
+                            <i class="fas fa-paper-plane"></i>
+                            <span>New Campaign</span>
+                        </a>
+                        <a href="#" class="action-btn">
+                            <i class="fas fa-user-plus"></i>
+                            <span>Add Contact</span>
+                        </a>
+                        <a href="#" class="action-btn">
+                            <i class="fas fa-robot"></i>
+                            <span>Bot Builder</span>
+                        </a>
+                        <a href="#" class="action-btn">
+                            <i class="fas fa-chart-bar"></i>
+                            <span>Reports</span>
+                        </a>
+                        <a href="#" class="action-btn">
+                            <i class="fas fa-qrcode"></i>
+                            <span>Scan QR</span>
+                        </a>
+                        <a href="#" class="action-btn">
+                            <i class="fas fa-cog"></i>
+                            <span>Settings</span>
+                        </a>
+                    </div>
+                </div>
+            </div>
+        <% } %>
+    </div>
+
+    <!-- Include Footer with Common Scripts -->
+    <%- include('../partials/second/footer.ejs') %>
+
+    <!-- Theme Initialization Script -->
+    <script>
+        // Load theme settings on every page
+        (function() {
+            const savedTheme = localStorage.getItem('theme') || 'light';
+            const savedBorder = localStorage.getItem('border') || 'round-border';
+            
+            document.body.classList.add(savedTheme);
+            document.body.classList.add(savedBorder);
+        })();
+    </script>
+</body>
+</html>

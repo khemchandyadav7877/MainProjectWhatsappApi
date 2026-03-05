@@ -1,0 +1,215 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Theme & Border</title>
+
+<style>
+*{
+    box-sizing:border-box;
+    margin:0;
+    padding:0;
+}
+
+body{
+    font-family:Arial, Helvetica, sans-serif;
+    transition:0.3s;
+    min-height:100vh;
+}
+
+/* THEMES */
+body.dark{
+    background:#1e1e1e;
+    color:#f0f0f0;
+}
+
+body.light{
+    background:#fafafa;
+    color:#1e1e1e;
+}
+
+/* LAYOUT */
+.settings{
+    max-width:780px;
+    margin:auto;
+    padding:40px 28px;
+}
+
+.section-title{
+    font-size:20px;
+    font-weight:600;
+    margin-bottom:18px;
+}
+
+.card-row{
+    display:flex;
+    gap:28px;
+    margin-bottom:40px;
+}
+
+/* CARD */
+.card{
+    width:280px;
+    height:170px;
+    border:2px solid #555;
+    border-radius:18px;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    position:relative;
+    cursor:pointer;
+    font-size:22px;
+    font-weight:600;
+    transition:0.2s;
+}
+
+body.light .card{
+    border-color:#b0b0b0;
+}
+
+.card.active{
+    border-color:#ff5e57 !important;
+}
+
+/* CHECK */
+.check-badge{
+    position:absolute;
+    width:64px;
+    height:64px;
+    background:#ff5e57;
+    border-radius:14px;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    color:white;
+    font-size:36px;
+    display:none;
+}
+
+.card.active .check-badge{
+    display:flex;
+}
+
+/* BORDER MODES */
+body.round-border .card{
+    border-radius:32px;
+}
+
+body.no-radius .card{
+    border-radius:0;
+}
+
+/* BUTTON */
+.save-btn{
+    padding:14px 42px;
+    font-size:18px;
+    border:none;
+    background:#2e2e2e;
+    color:white;
+    cursor:pointer;
+    transition:0.2s;
+}
+
+body.light .save-btn{
+    background:#d0d0d0;
+    color:black;
+}
+
+.save-btn:hover{
+    background:#ff5e57;
+    color:white;
+}
+</style>
+</head>
+
+<body>
+
+<div class="settings">
+
+    <div class="section-title">Theme</div>
+    <div class="card-row">
+        <div class="card" data-theme="light">
+            Light Mode
+            <div class="check-badge">✔</div>
+        </div>
+        <div class="card" data-theme="dark">
+            Dark Mode
+            <div class="check-badge">✔</div>
+        </div>
+    </div>
+
+    <div class="section-title">Border</div>
+    <div class="card-row">
+        <div class="card" data-border="round-border">
+            Round Border
+            <div class="check-badge">✔</div>
+        </div>
+        <div class="card" data-border="no-radius">
+            Square Border
+            <div class="check-badge">✔</div>
+        </div>
+    </div>
+
+    <button class="save-btn" onclick="applySettings()">Save</button>
+
+</div>
+
+<script>
+let selectedTheme = localStorage.getItem("theme") || "dark";
+let selectedBorder = localStorage.getItem("border") || "round-border";
+
+/* Load saved settings */
+window.onload = function(){
+
+    document.body.classList.add(selectedTheme);
+    document.body.classList.add(selectedBorder);
+
+    document.querySelectorAll("[data-theme]").forEach(card=>{
+        if(card.dataset.theme === selectedTheme){
+            card.classList.add("active");
+        }
+    });
+
+    document.querySelectorAll("[data-border]").forEach(card=>{
+        if(card.dataset.border === selectedBorder){
+            card.classList.add("active");
+        }
+    });
+};
+
+/* Only select visually */
+document.querySelectorAll("[data-theme]").forEach(card=>{
+    card.onclick = function(){
+        document.querySelectorAll("[data-theme]").forEach(c=>c.classList.remove("active"));
+        this.classList.add("active");
+        selectedTheme = this.dataset.theme;
+    }
+});
+
+document.querySelectorAll("[data-border]").forEach(card=>{
+    card.onclick = function(){
+        document.querySelectorAll("[data-border]").forEach(c=>c.classList.remove("active"));
+        this.classList.add("active");
+        selectedBorder = this.dataset.border;
+    }
+});
+
+/* Apply + Save permanently */
+function applySettings(){
+
+    document.body.classList.remove("dark","light");
+    document.body.classList.add(selectedTheme);
+
+    document.body.classList.remove("round-border","no-radius");
+    document.body.classList.add(selectedBorder);
+
+    localStorage.setItem("theme", selectedTheme);
+    localStorage.setItem("border", selectedBorder);
+
+    alert("Settings Saved Successfully ✅");
+}
+</script>
+
+</body>
+</html>

@@ -1,0 +1,165 @@
+<!-- views/partials/footer.ejs -->
+<script>
+    // ===== GLOBAL FUNCTIONS =====
+    
+    // Sidebar State
+    let isSidebarOpen = true;
+    let userCardVisible = localStorage.getItem('userCardVisible') !== 'false';
+    let currentlyOpenSection = 'dashboard';
+
+    // Sidebar Toggle - Global Function
+    window.toggleSidebar = function() {
+        const sidebar = document.getElementById('sidebar');
+        const mainContent = document.getElementById('mainContent');
+        const menuIcon = document.querySelector('.menu-toggle i');
+        
+        if(!sidebar || !mainContent) return;
+        
+        isSidebarOpen = !isSidebarOpen;
+        
+        if (isSidebarOpen) {
+            sidebar.classList.remove('closed');
+            mainContent.classList.remove('full-width');
+            if (menuIcon) menuIcon.className = 'fas fa-bars';
+        } else {
+            sidebar.classList.add('closed');
+            mainContent.classList.add('full-width');
+            if (menuIcon) menuIcon.className = 'fas fa-chevron-right';
+        }
+    };
+
+    // Mobile Sidebar Toggle
+    window.toggleMobileSidebar = function() {
+        const sidebar = document.getElementById('sidebar');
+        const overlay = document.getElementById('sidebarOverlay');
+        const mobileIcon = document.querySelector('.mobile-toggle i');
+        
+        if(!sidebar || !overlay || !mobileIcon) return;
+        
+        if (window.innerWidth <= 768) {
+            if (sidebar.classList.contains('open')) {
+                sidebar.classList.remove('open');
+                overlay.classList.remove('active');
+                mobileIcon.className = 'fas fa-bars';
+            } else {
+                sidebar.classList.add('open');
+                overlay.classList.add('active');
+                mobileIcon.className = 'fas fa-times';
+            }
+        }
+    };
+
+    window.closeSidebar = function() {
+        const sidebar = document.getElementById('sidebar');
+        const overlay = document.getElementById('sidebarOverlay');
+        const mobileIcon = document.querySelector('.mobile-toggle i');
+        
+        if(!sidebar || !overlay || !mobileIcon) return;
+        
+        sidebar.classList.remove('open');
+        overlay.classList.remove('active');
+        mobileIcon.className = 'fas fa-bars';
+    };
+
+    // User Card Toggle
+    window.toggleUserCard = function(event) {
+        if (event) event.stopPropagation();
+        
+        userCardVisible = !userCardVisible;
+        
+        const userCard = document.getElementById('userCard');
+        const minimizedCard = document.getElementById('userCardMinimized');
+        const toggleIcon = document.querySelector('.user-card-toggle i');
+        
+        if(!userCard || !minimizedCard) return;
+        
+        if (userCardVisible) {
+            userCard.style.display = 'block';
+            minimizedCard.style.display = 'none';
+            if (toggleIcon) toggleIcon.className = 'fas fa-chevron-up';
+        } else {
+            userCard.style.display = 'none';
+            minimizedCard.style.display = 'flex';
+            if (toggleIcon) toggleIcon.className = 'fas fa-chevron-down';
+        }
+        
+        localStorage.setItem('userCardVisible', userCardVisible);
+    };
+
+    // Section Toggle - One at a time
+    window.toggleSection = function(section, element) {
+        const sectionDiv = document.getElementById(`section-${section}`);
+        const arrowIcon = element.querySelector('.arrow-icon');
+        
+        if(!sectionDiv) return;
+        
+        if (currentlyOpenSection === section && sectionDiv.style.display !== 'none') {
+            sectionDiv.style.display = 'none';
+            element.classList.remove('open');
+            if(arrowIcon) arrowIcon.classList.remove('rotate');
+            currentlyOpenSection = null;
+        } else {
+            if (currentlyOpenSection) {
+                const prevSection = document.getElementById(`section-${currentlyOpenSection}`);
+                const prevTitle = prevSection?.previousElementSibling;
+                if (prevSection && prevTitle) {
+                    prevSection.style.display = 'none';
+                    prevTitle.classList.remove('open');
+                    const prevArrow = prevTitle.querySelector('.arrow-icon');
+                    if (prevArrow) prevArrow.classList.remove('rotate');
+                }
+            }
+            
+            sectionDiv.style.display = 'block';
+            element.classList.add('open');
+            if(arrowIcon) arrowIcon.classList.add('rotate');
+            currentlyOpenSection = section;
+        }
+    };
+
+    // Apply Saved States
+    document.addEventListener('DOMContentLoaded', function() {
+        const userCard = document.getElementById('userCard');
+        const minimizedCard = document.getElementById('userCardMinimized');
+        
+        if (!userCardVisible && userCard && minimizedCard) {
+            userCard.style.display = 'none';
+            minimizedCard.style.display = 'flex';
+        }
+    });
+
+    // Navigation Active State
+    document.querySelectorAll('.nav-link').forEach(link => {
+        link.addEventListener('click', function(e) {
+            document.querySelectorAll('.nav-link').forEach(l => l.classList.remove('active'));
+            this.classList.add('active');
+            
+            if (window.innerWidth <= 768) {
+                window.closeSidebar();
+            }
+        });
+    });
+
+    // Close sidebar on outside click
+    document.addEventListener('click', function(event) {
+        const sidebar = document.getElementById('sidebar');
+        const mobileToggle = document.querySelector('.mobile-toggle');
+        
+        if (window.innerWidth <= 768 && sidebar?.classList.contains('open')) {
+            if (!sidebar.contains(event.target) && !mobileToggle?.contains(event.target)) {
+                window.closeSidebar();
+            }
+        }
+    });
+
+    // Handle resize
+    window.addEventListener('resize', function() {
+        const sidebar = document.getElementById('sidebar');
+        const overlay = document.getElementById('sidebarOverlay');
+        
+        if (window.innerWidth > 768) {
+            sidebar?.classList.remove('open');
+            overlay?.classList.remove('active');
+        }
+    });
+</script>

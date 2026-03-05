@@ -1,536 +1,615 @@
 const router = require('express').Router();
 const mongoose = require('mongoose');
 const Notification = require('../models/Notification');
+const NotificationReply = require('../models/NotificationReply');
+const auth = require('../models/auth');
+const { isAuthenticated, hasRole } = require('../middleware/auth');
 
-// ==================== SUPERADMIN ROUTES ====================
+// Helper function to safely get ObjectId
+function getValidObjectId(id) {
+    if (!id) return null;
+    if (id instanceof mongoose.Types.ObjectId) return id;
+    if (mongoose.Types.ObjectId.isValid(id)) return new mongoose.Types.ObjectId(id);
+    return null;
+}
 
-// GET SuperAdmin Notifications Page
-router.get('/superadmin/notifications', async (req, res) => {
+// ========== PAGE ROUTES (Protected) ==========
+router.get('/superadmin/notifications', isAuthenticated, hasRole('superadmin', 'SuperAdmin'), async (req, res) => {
     try {
-        const superadmin = {
-            _id: req.session?.userId || '67b8f8c8f8c8f8c8f8c8f8c8',
-            name: 'Super Admin',
-            role: 'superadmin',
-            phone: '+91 9876543210',
-            email: 'admin@example.com'
-        };
-
-        res.render("Notifications/Notifications", {
-            user: superadmin,
-            userName: superadmin.name,
-            userRole: superadmin.role,
-            userId: superadmin._id
+        res.render("Notifications/Notifications", { 
+            user: req.user, 
+            pageTitle: 'SuperAdmin Notifications' 
         });
     } catch (error) {
-        console.error('Error loading superadmin notifications:', error);
-        res.status(500).send('Error loading page');
+        console.error('Error rendering superadmin notifications:', error);
+        res.status(500).send('Server Error');
     }
 });
 
-// API: Get SuperAdmin Notifications
-router.get('/api/notifications', async (req, res) => {
+router.get('/educator/notifications', isAuthenticated, hasRole('educator', 'Educator'), async (req, res) => {
     try {
+        res.render("Notifications/Educator", { 
+            user: req.user, 
+            pageTitle: 'Educator Notifications' 
+        });
+    } catch (error) {
+        console.error('Error rendering educator notifications:', error);
+        res.status(500).send('Server Error');
+    }
+});
+
+// ========== API ROUTES (Protected) ==========
+// GET Notifications (SuperAdmin)
+router.get('/api/notifications', isAuthenticated, hasRole('superadmin', 'SuperAdmin'), async (req, res) => {
+    try {
+        const userId = req.userId;
         const { filter = 'all', search = '' } = req.query;
-        const superadminId = req.session?.userId || '67b8f8c8f8c8f8c8f8c8f8c8';
         
-        // Received messages (from educators)
-        let receivedQuery = {
-            recipientId: superadminId,
-            recipientRole: 'superadmin'
+        // Build base query
+        let query = {
+            $or: [
+                { recipientId: new mongoose.Types.ObjectId(userId) },
+                { senderId: new mongoose.Types.ObjectId(userId) }
+            ]
         };
 
+        // Apply filters
         if (filter === 'unread') {
-            receivedQuery.isRead = false;
+            query.isRead = false;
+            // For unread, we only want messages where current user is recipient
+            query = {
+                recipientId: new mongoose.Types.ObjectId(userId),
+                isRead: false
+            };
         } else if (filter === 'educator') {
-            receivedQuery.senderRole = 'educator';
+            // Messages FROM educators (sent to superadmin)
+            query = {
+                senderRole: { $in: ['educator', 'Educator'] },
+                recipientId: new mongoose.Types.ObjectId(userId)
+            };
+        } else if (filter === 'sent') {
+            // Messages FROM superadmin (sent to educators)
+            query = {
+                senderId: new mongoose.Types.ObjectId(userId),
+                senderRole: { $in: ['superadmin', 'SuperAdmin'] }
+            };
         }
-
-        let received = await Notification.find(receivedQuery).sort({ createdAt: -1 });
-
-        // Sent messages (to educators)
-        let sentQuery = {
-            senderId: superadminId,
-            senderRole: 'superadmin',
-            recipientRole: 'educator'
-        };
-
-        if (filter === 'sent') {
-            // Only show sent when filter is sent
-        } else if (filter !== 'all') {
-            // If not all and not sent, don't show sent
-            sentQuery = { _id: null };
-        }
-
-        let sent = await Notification.find(sentQuery).sort({ createdAt: -1 });
-
-        // Apply search
+        
+        // Add search if provided
         if (search) {
-            received = received.filter(n => 
-                n.message.toLowerCase().includes(search.toLowerCase()) ||
-                n.senderName.toLowerCase().includes(search.toLowerCase())
-            );
-            sent = sent.filter(n => 
-                n.message.toLowerCase().includes(search.toLowerCase())
-            );
+            query.$and = [
+                query,
+                {
+                    $or: [
+                        { message: { $regex: search, $options: 'i' } },
+                        { senderName: { $regex: search, $options: 'i' } }
+                    ]
+                }
+            ];
         }
 
-        const allNotifications = [
-            ...received.map(n => ({ ...n.toObject(), type: 'received' })),
-            ...sent.map(n => ({ ...n.toObject(), type: 'sent' }))
-        ].sort((a, b) => b.createdAt - a.createdAt);
+        // Get notifications
+        const notifications = await Notification.find(query)
+            .sort({ createdAt: -1 })
+            .limit(100)
+            .lean();
 
+        // Format notifications for frontend
+        const formattedNotifications = notifications.map(n => ({
+            ...n,
+            _id: n._id.toString(),
+            createdAt: n.createdAt,
+            type: n.senderId.toString() === userId ? 'sent' : 'received'
+        }));
+
+        // Get stats
         const stats = {
-            total: allNotifications.length,
-            unread: received.filter(n => !n.isRead).length,
-            educator: received.length,
-            sent: sent.length
+            total: await Notification.countDocuments({
+                $or: [
+                    { recipientId: new mongoose.Types.ObjectId(userId) },
+                    { senderId: new mongoose.Types.ObjectId(userId) }
+                ]
+            }),
+            unread: await Notification.countDocuments({
+                recipientId: new mongoose.Types.ObjectId(userId),
+                isRead: false
+            }),
+            educator: await Notification.countDocuments({
+                senderRole: { $in: ['educator', 'Educator'] },
+                recipientId: new mongoose.Types.ObjectId(userId)
+            }),
+            sent: await Notification.countDocuments({
+                senderId: new mongoose.Types.ObjectId(userId),
+                senderRole: { $in: ['superadmin', 'SuperAdmin'] }
+            })
         };
 
-        res.json({ success: true, notifications: allNotifications, stats });
-
-    } catch (error) {
-        console.error('Error fetching notifications:', error);
-        res.status(500).json({ success: false, error: 'Failed to fetch notifications' });
-    }
-});
-
-// API: Mark Notification as Read
-router.put('/api/notifications/:id/read', async (req, res) => {
-    try {
-        const { id } = req.params;
-        await Notification.findByIdAndUpdate(id, { isRead: true });
-        res.json({ success: true, message: 'Marked as read' });
-    } catch (error) {
-        res.status(500).json({ success: false, error: 'Failed to mark as read' });
-    }
-});
-
-// API: Mark All as Read
-router.put('/api/notifications/read-all', async (req, res) => {
-    try {
-        const superadminId = req.session?.userId || '67b8f8c8f8c8f8c8f8c8f8c8';
-        await Notification.updateMany(
-            { recipientId: superadminId, recipientRole: 'superadmin', isRead: false },
-            { isRead: true }
-        );
-        res.json({ success: true, message: 'All marked as read' });
-    } catch (error) {
-        res.status(500).json({ success: false, error: 'Failed to mark all as read' });
-    }
-});
-
-// API: Delete Notification
-router.delete('/api/notifications/:id', async (req, res) => {
-    try {
-        const { id } = req.params;
-        await Notification.findByIdAndDelete(id);
-        res.json({ success: true, message: 'Notification deleted' });
-    } catch (error) {
-        res.status(500).json({ success: false, error: 'Failed to delete notification' });
-    }
-});
-
-// API: Send Reply from SuperAdmin
-router.post('/api/notifications/reply', async (req, res) => {
-    try {
-        const { notificationId, message } = req.body;
-        
-        const superadmin = {
-            _id: req.session?.userId || '67b8f8c8f8c8f8c8f8c8f8c8',
-            name: 'Super Admin',
-            role: 'superadmin',
-            phone: '+91 9876543210'
-        };
-
-        const originalNotif = await Notification.findById(notificationId);
-        if (!originalNotif) {
-            return res.status(404).json({ success: false, error: 'Notification not found' });
-        }
-
-        // Update original with reply
-        originalNotif.reply = {
-            message: message,
-            repliedAt: new Date(),
-            repliedBy: superadmin._id,
-            repliedByModel: 'SuperAdmin',
-            repliedByRole: 'superadmin'
-        };
-        originalNotif.isRead = true;
-        await originalNotif.save();
-
-        // Create notification for educator
-        const newNotification = new Notification({
-            senderId: superadmin._id,
-            senderModel: 'SuperAdmin',
-            senderName: superadmin.name,
-            senderRole: 'superadmin',
-            senderPhone: superadmin.phone,
-            recipientId: originalNotif.senderId,
-            recipientModel: 'Educator',
-            recipientRole: 'educator',
-            message: message,
-            conversationId: originalNotif.conversationId || originalNotif._id
-        });
-
-        await newNotification.save();
-
-        // Create sent copy for superadmin
-        const sentCopy = new Notification({
-            senderId: superadmin._id,
-            senderModel: 'SuperAdmin',
-            senderName: superadmin.name,
-            senderRole: 'superadmin',
-            senderPhone: superadmin.phone,
-            recipientId: originalNotif.senderId,
-            recipientModel: 'Educator',
-            recipientRole: 'educator',
-            message: message,
-            conversationId: originalNotif.conversationId || originalNotif._id,
-            isRead: true
-        });
-
-        await sentCopy.save();
-
-        res.json({ success: true, message: 'Reply sent successfully' });
-
-    } catch (error) {
-        console.error('Error sending reply:', error);
-        res.status(500).json({ success: false, error: 'Failed to send reply: ' + error.message });
-    }
-});
-
-// API: Send New Message from SuperAdmin to Educator
-router.post('/api/notifications/new', async (req, res) => {
-    try {
-        const { message, recipientRole } = req.body;
-        
-        const superadmin = {
-            _id: req.session?.userId || '67b8f8c8f8c8f8c8f8c8f8c8',
-            name: 'Super Admin',
-            role: 'superadmin',
-            phone: '+91 9876543210'
-        };
-
-        // Get educator ID (in real app, you'd get this from request or database)
-        const educatorId = '67b8f8c8f8c8f8c8f8c8f8c9';
-
-        const conversationId = new mongoose.Types.ObjectId();
-
-        // Create notification for educator
-        const newNotification = new Notification({
-            senderId: superadmin._id,
-            senderModel: 'SuperAdmin',
-            senderName: superadmin.name,
-            senderRole: 'superadmin',
-            senderPhone: superadmin.phone,
-            recipientId: educatorId,
-            recipientModel: 'Educator',
-            recipientRole: 'educator',
-            message: message,
-            conversationId: conversationId
-        });
-
-        await newNotification.save();
-
-        // Create sent copy for superadmin
-        const sentCopy = new Notification({
-            senderId: superadmin._id,
-            senderModel: 'SuperAdmin',
-            senderName: superadmin.name,
-            senderRole: 'superadmin',
-            senderPhone: superadmin.phone,
-            recipientId: educatorId,
-            recipientModel: 'Educator',
-            recipientRole: 'educator',
-            message: message,
-            conversationId: conversationId,
-            isRead: true
-        });
-
-        await sentCopy.save();
-
-        res.json({ success: true, message: 'Message sent to educator successfully' });
-
-    } catch (error) {
-        console.error('Error sending message:', error);
-        res.status(500).json({ success: false, error: 'Failed to send message: ' + error.message });
-    }
-});
-
-// ==================== EDUCATOR ROUTES ====================
-
-// GET Educator Notifications Page
-router.get('/educator/notifications', async (req, res) => {
-    try {
-        const educator = {
-            _id: req.session?.userId || '67b8f8c8f8c8f8c8f8c8f8c9',
-            name: 'John Educator',
-            role: 'educator',
-            phone: '+91 9876543211',
-            email: 'educator@example.com'
-        };
-
-        res.render("notifications/educator", {
-            user: educator,
-            userName: educator.name,
-            userRole: educator.role,
-            userId: educator._id
+        res.json({ 
+            success: true, 
+            notifications: formattedNotifications, 
+            stats 
         });
     } catch (error) {
-        console.error('Error loading educator notifications:', error);
-        res.status(500).send('Error loading page');
+        console.error('Error fetching superadmin notifications:', error);
+        res.status(500).json({ success: false, error: error.message });
     }
 });
 
-// API: Get Educator Notifications
-router.get('/api/educator/notifications', async (req, res) => {
+// GET Notifications (Educator)
+router.get('/api/educator/notifications', isAuthenticated, hasRole('educator', 'Educator'), async (req, res) => {
     try {
+        const userId = req.userId;
         const { filter = 'all', search = '' } = req.query;
-        const educatorId = req.session?.userId || '67b8f8c8f8c8f8c8f8c8f8c9';
         
-        // Received messages (from superadmin)
-        let receivedQuery = {
-            recipientId: educatorId,
-            recipientRole: 'educator',
-            senderRole: 'superadmin'
+        // Build base query
+        let query = {
+            $or: [
+                { recipientId: new mongoose.Types.ObjectId(userId) },
+                { senderId: new mongoose.Types.ObjectId(userId) }
+            ]
         };
 
+        // Apply filters
         if (filter === 'unread') {
-            receivedQuery.isRead = false;
+            query = {
+                recipientId: new mongoose.Types.ObjectId(userId),
+                isRead: false
+            };
         } else if (filter === 'superadmin') {
-            // Only from superadmin
+            // Messages FROM superadmin (sent to educator)
+            query = {
+                senderRole: { $in: ['superadmin', 'SuperAdmin'] },
+                recipientId: new mongoose.Types.ObjectId(userId)
+            };
+        } else if (filter === 'sent') {
+            // Messages FROM educator (sent to superadmin)
+            query = {
+                senderId: new mongoose.Types.ObjectId(userId),
+                senderRole: { $in: ['educator', 'Educator'] }
+            };
         }
-
-        let received = await Notification.find(receivedQuery).sort({ createdAt: -1 });
-
-        // Sent messages (to superadmin)
-        let sentQuery = {
-            senderId: educatorId,
-            senderRole: 'educator',
-            recipientRole: 'superadmin'
-        };
-
-        if (filter === 'sent') {
-            // Only show sent
-        } else if (filter !== 'all') {
-            sentQuery = { _id: null };
-        }
-
-        let sent = await Notification.find(sentQuery).sort({ createdAt: -1 });
-
-        // Apply search
+        
+        // Add search if provided
         if (search) {
-            received = received.filter(n => 
-                n.message.toLowerCase().includes(search.toLowerCase()) ||
-                n.senderName.toLowerCase().includes(search.toLowerCase())
-            );
-            sent = sent.filter(n => 
-                n.message.toLowerCase().includes(search.toLowerCase())
-            );
+            query.$and = [
+                query,
+                {
+                    $or: [
+                        { message: { $regex: search, $options: 'i' } },
+                        { senderName: { $regex: search, $options: 'i' } }
+                    ]
+                }
+            ];
         }
 
-        const allNotifications = [
-            ...received.map(n => ({ ...n.toObject(), type: 'received' })),
-            ...sent.map(n => ({ ...n.toObject(), type: 'sent' }))
-        ].sort((a, b) => b.createdAt - a.createdAt);
+        // Get notifications
+        const notifications = await Notification.find(query)
+            .sort({ createdAt: -1 })
+            .limit(100)
+            .lean();
 
+        // Format notifications for frontend
+        const formattedNotifications = notifications.map(n => ({
+            ...n,
+            _id: n._id.toString(),
+            createdAt: n.createdAt,
+            type: n.senderId.toString() === userId ? 'sent' : 'received'
+        }));
+
+        // Get stats
         const stats = {
-            total: allNotifications.length,
-            unread: received.filter(n => !n.isRead).length,
-            superadmin: received.length,
-            sent: sent.length
+            total: await Notification.countDocuments({
+                $or: [
+                    { recipientId: new mongoose.Types.ObjectId(userId) },
+                    { senderId: new mongoose.Types.ObjectId(userId) }
+                ]
+            }),
+            unread: await Notification.countDocuments({
+                recipientId: new mongoose.Types.ObjectId(userId),
+                isRead: false
+            }),
+            superadmin: await Notification.countDocuments({
+                senderRole: { $in: ['superadmin', 'SuperAdmin'] },
+                recipientId: new mongoose.Types.ObjectId(userId)
+            }),
+            sent: await Notification.countDocuments({
+                senderId: new mongoose.Types.ObjectId(userId),
+                senderRole: { $in: ['educator', 'Educator'] }
+            })
         };
 
-        res.json({ success: true, notifications: allNotifications, stats });
-
+        res.json({ 
+            success: true, 
+            notifications: formattedNotifications, 
+            stats 
+        });
     } catch (error) {
         console.error('Error fetching educator notifications:', error);
-        res.status(500).json({ success: false, error: 'Failed to fetch notifications' });
+        res.status(500).json({ success: false, error: error.message });
     }
 });
 
-// API: Mark Educator Notification as Read
-router.put('/api/educator/notifications/:id/read', async (req, res) => {
+// POST New Message (Educator)
+router.post('/api/educator/notifications/new', isAuthenticated, hasRole('educator', 'Educator'), async (req, res) => {
     try {
-        const { id } = req.params;
-        await Notification.findByIdAndUpdate(id, { isRead: true });
-        res.json({ success: true, message: 'Marked as read' });
-    } catch (error) {
-        res.status(500).json({ success: false, error: 'Failed to mark as read' });
-    }
-});
-
-// API: Mark All Educator Notifications as Read
-router.put('/api/educator/notifications/read-all', async (req, res) => {
-    try {
-        const educatorId = req.session?.userId || '67b8f8c8f8c8f8c8f8c8f8c9';
-        await Notification.updateMany(
-            { recipientId: educatorId, recipientRole: 'educator', isRead: false },
-            { isRead: true }
-        );
-        res.json({ success: true, message: 'All marked as read' });
-    } catch (error) {
-        res.status(500).json({ success: false, error: 'Failed to mark all as read' });
-    }
-});
-
-// API: Delete Educator Notification
-router.delete('/api/educator/notifications/:id', async (req, res) => {
-    try {
-        const { id } = req.params;
-        await Notification.findByIdAndDelete(id);
-        res.json({ success: true, message: 'Notification deleted' });
-    } catch (error) {
-        res.status(500).json({ success: false, error: 'Failed to delete notification' });
-    }
-});
-
-// API: Send Reply from Educator to Superadmin
-router.post('/api/educator/notifications/reply', async (req, res) => {
-    try {
-        const { notificationId, message } = req.body;
-        
-        const educator = {
-            _id: req.session?.userId || '67b8f8c8f8c8f8c8f8c8f8c9',
-            name: 'John Educator',
-            role: 'educator',
-            phone: '+91 9876543211'
-        };
-
-        const originalNotif = await Notification.findById(notificationId);
-        if (!originalNotif) {
-            return res.status(404).json({ success: false, error: 'Notification not found' });
-        }
-
-        // Update original with reply
-        originalNotif.reply = {
-            message: message,
-            repliedAt: new Date(),
-            repliedBy: educator._id,
-            repliedByModel: 'Educator',
-            repliedByRole: 'educator'
-        };
-        originalNotif.isRead = true;
-        await originalNotif.save();
-
-        // Create notification for superadmin
-        const newNotification = new Notification({
-            senderId: educator._id,
-            senderModel: 'Educator',
-            senderName: educator.name,
-            senderRole: 'educator',
-            senderPhone: educator.phone,
-            recipientId: originalNotif.senderId,
-            recipientModel: 'SuperAdmin',
-            recipientRole: 'superadmin',
-            message: message,
-            conversationId: originalNotif.conversationId || originalNotif._id
-        });
-
-        await newNotification.save();
-
-        // Create sent copy for educator
-        const sentCopy = new Notification({
-            senderId: educator._id,
-            senderModel: 'Educator',
-            senderName: educator.name,
-            senderRole: 'educator',
-            senderPhone: educator.phone,
-            recipientId: originalNotif.senderId,
-            recipientModel: 'SuperAdmin',
-            recipientRole: 'superadmin',
-            message: message,
-            conversationId: originalNotif.conversationId || originalNotif._id,
-            isRead: true
-        });
-
-        await sentCopy.save();
-
-        res.json({ success: true, message: 'Reply sent to superadmin successfully' });
-
-    } catch (error) {
-        console.error('Error sending reply:', error);
-        res.status(500).json({ success: false, error: 'Failed to send reply: ' + error.message });
-    }
-});
-
-// API: Send New Message from Educator to Superadmin
-router.post('/api/educator/notifications/new', async (req, res) => {
-    try {
+        const userId = req.userId;
+        const user = req.user;
         const { message } = req.body;
         
-        const educator = {
-            _id: req.session?.userId || '67b8f8c8f8c8f8c8f8c8f8c9',
-            name: 'John Educator',
-            role: 'educator',
-            phone: '+91 9876543211'
-        };
+        if (!message?.trim()) {
+            return res.status(400).json({ success: false, error: 'Message required' });
+        }
 
-        const superadminId = '67b8f8c8f8c8f8c8f8c8f8c8';
-        const conversationId = new mongoose.Types.ObjectId();
+        // Find superadmin
+        let superAdmin = await auth.findOne({ 
+            $or: [
+                { role: 'superadmin' },
+                { role: 'SuperAdmin' }
+            ]
+        }).lean();
+        
+        if (!superAdmin) {
+            return res.status(404).json({ success: false, error: 'No superadmin found' });
+        }
 
-        // Create notification for superadmin
-        const newNotification = new Notification({
-            senderId: educator._id,
-            senderModel: 'Educator',
-            senderName: educator.name,
-            senderRole: 'educator',
-            senderPhone: educator.phone,
-            recipientId: superadminId,
-            recipientModel: 'SuperAdmin',
-            recipientRole: 'superadmin',
-            message: message,
-            conversationId: conversationId
-        });
-
-        await newNotification.save();
-
-        // Create sent copy for educator
-        const sentCopy = new Notification({
-            senderId: educator._id,
-            senderModel: 'Educator',
-            senderName: educator.name,
-            senderRole: 'educator',
-            senderPhone: educator.phone,
-            recipientId: superadminId,
-            recipientModel: 'SuperAdmin',
-            recipientRole: 'superadmin',
-            message: message,
-            conversationId: conversationId,
-            isRead: true
-        });
-
-        await sentCopy.save();
-
-        res.json({ success: true, message: 'Message sent to superadmin successfully' });
-
-    } catch (error) {
-        console.error('Error sending message:', error);
-        res.status(500).json({ success: false, error: 'Failed to send message: ' + error.message });
-    }
-});
-
-// ==================== TEST ROUTES ====================
-
-// Test: Create sample notification from superadmin to educator
-router.post('/api/test/superadmin-to-educator', async (req, res) => {
-    try {
+        // Create notification
         const notification = new Notification({
-            senderId: '67b8f8c8f8c8f8c8f8c8f8c8',
-            senderModel: 'SuperAdmin',
-            senderName: 'Super Admin',
-            senderRole: 'superadmin',
-            senderPhone: '+91 9876543210',
-            recipientId: '67b8f8c8f8c8f8c8f8c8f8c9',
-            recipientModel: 'Educator',
-            recipientRole: 'educator',
-            message: 'Please check the new student assignments and provide feedback'
+            senderId: new mongoose.Types.ObjectId(userId),
+            senderModel: 'Educator',
+            senderName: `${user.firstName || ''} ${user.lastName || ''}`.trim() || user.name || 'Educator',
+            senderRole: 'educator',
+            senderPhone: user.contactNumber || user.phone || 'N/A',
+            recipientId: new mongoose.Types.ObjectId(superAdmin._id),
+            recipientModel: 'SuperAdmin',
+            recipientRole: 'superadmin',
+            message: message.trim(),
+            isRead: false,
+            conversationId: new mongoose.Types.ObjectId().toString()
         });
 
         await notification.save();
-        res.json({ success: true, message: 'Test notification created', notification });
-
+        
+        res.json({ success: true, notification });
     } catch (error) {
+        console.error('Error sending educator message:', error);
+        res.status(500).json({ success: false, error: error.message });
+    }
+});
+
+// POST New Message (SuperAdmin)
+router.post('/api/notifications/new', isAuthenticated, hasRole('superadmin', 'SuperAdmin'), async (req, res) => {
+    try {
+        const userId = req.userId;
+        const user = req.user;
+        const { message, educatorId } = req.body;
+        
+        if (!message?.trim()) {
+            return res.status(400).json({ success: false, error: 'Message required' });
+        }
+
+        // If specific educator not provided, find first educator
+        let targetEducatorId = educatorId;
+        if (!targetEducatorId) {
+            let educator = await auth.findOne({ 
+                $or: [
+                    { role: 'educator' },
+                    { role: 'Educator' }
+                ]
+            }).lean();
+            
+            if (!educator) {
+                return res.status(404).json({ success: false, error: 'No educator found' });
+            }
+            targetEducatorId = educator._id;
+        }
+
+        // Create notification
+        const notification = new Notification({
+            senderId: new mongoose.Types.ObjectId(userId),
+            senderModel: 'SuperAdmin',
+            senderName: `${user.firstName || ''} ${user.lastName || ''}`.trim() || user.name || 'Super Admin',
+            senderRole: 'superadmin',
+            senderPhone: user.contactNumber || user.phone || 'N/A',
+            recipientId: new mongoose.Types.ObjectId(targetEducatorId),
+            recipientModel: 'Educator',
+            recipientRole: 'educator',
+            message: message.trim(),
+            isRead: false,
+            conversationId: new mongoose.Types.ObjectId().toString()
+        });
+
+        await notification.save();
+        
+        res.json({ success: true, notification });
+    } catch (error) {
+        console.error('Error sending superadmin message:', error);
+        res.status(500).json({ success: false, error: error.message });
+    }
+});
+
+// POST Reply (SuperAdmin)
+router.post('/api/notifications/reply', isAuthenticated, hasRole('superadmin', 'SuperAdmin'), async (req, res) => {
+    try {
+        const userId = req.userId;
+        const user = req.user;
+        const { notificationId, message } = req.body;
+        
+        if (!notificationId || !message?.trim()) {
+            return res.status(400).json({ success: false, error: 'Notification ID and message required' });
+        }
+
+        // Find original notification
+        const original = await Notification.findById(notificationId);
+        if (!original) {
+            return res.status(404).json({ success: false, error: 'Notification not found' });
+        }
+
+        // Create reply notification
+        const replyNotif = new Notification({
+            senderId: new mongoose.Types.ObjectId(userId),
+            senderModel: 'SuperAdmin',
+            senderName: `${user.firstName || ''} ${user.lastName || ''}`.trim() || user.name || 'Super Admin',
+            senderRole: 'superadmin',
+            senderPhone: user.contactNumber || user.phone || 'N/A',
+            recipientId: original.senderId,
+            recipientModel: 'Educator',
+            recipientRole: 'educator',
+            message: message.trim(),
+            isRead: false,
+            conversationId: original.conversationId || new mongoose.Types.ObjectId().toString(),
+            parentId: original._id
+        });
+        
+        await replyNotif.save();
+
+        // Create reply record
+        const reply = new NotificationReply({
+            notificationId: original._id,
+            from: { 
+                userId: new mongoose.Types.ObjectId(userId), 
+                model: 'SuperAdmin', 
+                name: `${user.firstName || ''} ${user.lastName || ''}`.trim() || user.name, 
+                role: 'superadmin' 
+            },
+            to: { 
+                userId: original.senderId, 
+                model: 'Educator', 
+                name: original.senderName, 
+                role: 'educator' 
+            },
+            message: message.trim(),
+            sentVia: 'dashboard',
+            status: 'sent'
+        });
+        
+        await reply.save();
+
+        // Update original notification
+        original.reply = {
+            message: message.trim(),
+            repliedAt: new Date(),
+            repliedBy: new mongoose.Types.ObjectId(userId),
+            repliedByModel: 'SuperAdmin',
+            repliedByRole: 'superadmin'
+        };
+        original.isRead = true;
+        await original.save();
+
+        res.json({ success: true, reply, notification: replyNotif });
+    } catch (error) {
+        console.error('Error sending superadmin reply:', error);
+        res.status(500).json({ success: false, error: error.message });
+    }
+});
+
+// POST Reply (Educator)
+router.post('/api/educator/notifications/reply', isAuthenticated, hasRole('educator', 'Educator'), async (req, res) => {
+    try {
+        const userId = req.userId;
+        const user = req.user;
+        const { notificationId, message } = req.body;
+        
+        if (!notificationId || !message?.trim()) {
+            return res.status(400).json({ success: false, error: 'Notification ID and message required' });
+        }
+
+        // Find original notification
+        const original = await Notification.findById(notificationId);
+        if (!original) {
+            return res.status(404).json({ success: false, error: 'Notification not found' });
+        }
+
+        // Find superadmin
+        let superAdmin = await auth.findOne({ 
+            $or: [
+                { role: 'superadmin' },
+                { role: 'SuperAdmin' }
+            ]
+        }).lean();
+        
+        if (!superAdmin) {
+            return res.status(404).json({ success: false, error: 'No superadmin found' });
+        }
+
+        // Create reply notification
+        const replyNotif = new Notification({
+            senderId: new mongoose.Types.ObjectId(userId),
+            senderModel: 'Educator',
+            senderName: `${user.firstName || ''} ${user.lastName || ''}`.trim() || user.name || 'Educator',
+            senderRole: 'educator',
+            senderPhone: user.contactNumber || user.phone || 'N/A',
+            recipientId: new mongoose.Types.ObjectId(superAdmin._id),
+            recipientModel: 'SuperAdmin',
+            recipientRole: 'superadmin',
+            message: message.trim(),
+            isRead: false,
+            conversationId: original.conversationId || new mongoose.Types.ObjectId().toString(),
+            parentId: original._id
+        });
+        
+        await replyNotif.save();
+
+        // Create reply record
+        const reply = new NotificationReply({
+            notificationId: original._id,
+            from: { 
+                userId: new mongoose.Types.ObjectId(userId), 
+                model: 'Educator', 
+                name: `${user.firstName || ''} ${user.lastName || ''}`.trim() || user.name, 
+                role: 'educator' 
+            },
+            to: { 
+                userId: new mongoose.Types.ObjectId(superAdmin._id), 
+                model: 'SuperAdmin', 
+                name: 'Super Admin', 
+                role: 'superadmin' 
+            },
+            message: message.trim(),
+            sentVia: 'dashboard',
+            status: 'sent'
+        });
+        
+        await reply.save();
+
+        // Update original notification
+        original.reply = {
+            message: message.trim(),
+            repliedAt: new Date(),
+            repliedBy: new mongoose.Types.ObjectId(userId),
+            repliedByModel: 'Educator',
+            repliedByRole: 'educator'
+        };
+        original.isRead = true;
+        await original.save();
+
+        res.json({ success: true, reply, notification: replyNotif });
+    } catch (error) {
+        console.error('Error sending educator reply:', error);
+        res.status(500).json({ success: false, error: error.message });
+    }
+});
+
+// Mark as Read
+router.put('/api/notifications/:id/read', isAuthenticated, async (req, res) => {
+    try {
+        const userId = req.userId;
+        const notificationId = req.params.id;
+        
+        // Only allow marking as read if user is the recipient
+        await Notification.findOneAndUpdate(
+            { 
+                _id: notificationId, 
+                recipientId: new mongoose.Types.ObjectId(userId) 
+            }, 
+            { isRead: true }
+        );
+        
+        res.json({ success: true });
+    } catch (error) {
+        console.error('Error marking as read:', error);
+        res.status(500).json({ success: false, error: error.message });
+    }
+});
+
+router.put('/api/educator/notifications/:id/read', isAuthenticated, async (req, res) => {
+    try {
+        const userId = req.userId;
+        const notificationId = req.params.id;
+        
+        await Notification.findOneAndUpdate(
+            { 
+                _id: notificationId, 
+                recipientId: new mongoose.Types.ObjectId(userId) 
+            }, 
+            { isRead: true }
+        );
+        
+        res.json({ success: true });
+    } catch (error) {
+        console.error('Error marking as read:', error);
+        res.status(500).json({ success: false, error: error.message });
+    }
+});
+
+// Mark All Read
+router.put('/api/notifications/read-all', isAuthenticated, async (req, res) => {
+    try {
+        const userId = req.userId;
+        await Notification.updateMany(
+            { 
+                recipientId: new mongoose.Types.ObjectId(userId), 
+                isRead: false 
+            }, 
+            { isRead: true }
+        );
+        
+        res.json({ success: true });
+    } catch (error) {
+        console.error('Error marking all as read:', error);
+        res.status(500).json({ success: false, error: error.message });
+    }
+});
+
+router.put('/api/educator/notifications/read-all', isAuthenticated, async (req, res) => {
+    try {
+        const userId = req.userId;
+        await Notification.updateMany(
+            { 
+                recipientId: new mongoose.Types.ObjectId(userId), 
+                isRead: false 
+            }, 
+            { isRead: true }
+        );
+        
+        res.json({ success: true });
+    } catch (error) {
+        console.error('Error marking all as read:', error);
+        res.status(500).json({ success: false, error: error.message });
+    }
+});
+
+// Delete
+router.delete('/api/notifications/:id', isAuthenticated, async (req, res) => {
+    try {
+        const userId = req.userId;
+        const notificationId = req.params.id;
+        
+        // Only allow deletion if user is sender or recipient
+        await Notification.findOneAndDelete({
+            _id: notificationId,
+            $or: [
+                { senderId: new mongoose.Types.ObjectId(userId) },
+                { recipientId: new mongoose.Types.ObjectId(userId) }
+            ]
+        });
+        
+        await NotificationReply.deleteMany({ notificationId });
+        
+        res.json({ success: true });
+    } catch (error) {
+        console.error('Error deleting notification:', error);
+        res.status(500).json({ success: false, error: error.message });
+    }
+});
+
+router.delete('/api/educator/notifications/:id', isAuthenticated, async (req, res) => {
+    try {
+        const userId = req.userId;
+        const notificationId = req.params.id;
+        
+        await Notification.findOneAndDelete({
+            _id: notificationId,
+            $or: [
+                { senderId: new mongoose.Types.ObjectId(userId) },
+                { recipientId: new mongoose.Types.ObjectId(userId) }
+            ]
+        });
+        
+        await NotificationReply.deleteMany({ notificationId });
+        
+        res.json({ success: true });
+    } catch (error) {
+        console.error('Error deleting notification:', error);
         res.status(500).json({ success: false, error: error.message });
     }
 });

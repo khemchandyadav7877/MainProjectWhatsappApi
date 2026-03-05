@@ -15,50 +15,53 @@ const qrMemory = {};
 // =========================
 // CREATE WHATSAPP CLIENT (WITH HIDDEN BROWSER)
 // =========================
-async function createWhatsAppClient(req) {
-    const deviceId = uuidv4();
+async function createWhatsAppClient(req, deviceIdFromDb = null) {
+    // Agar deviceId DB se mila hai to use karo, otherwise naya banao
+    const deviceId = deviceIdFromDb || uuidv4();
     const token = uuidv4();
     
-    // GET CLIENT IP ADDRESS
-    const clientIp = req.headers['x-forwarded-for'] || req.socket.remoteAddress || req.ip || '-';
-    const ipAddress = clientIp.toString().split(',')[0].trim();
+    // GET CLIENT IP ADDRESS (only for new device)
+    const clientIp = req?.headers['x-forwarded-for'] || req?.socket.remoteAddress || req?.ip || '-';
+    const ipAddress = clientIp ? clientIp.toString().split(',')[0].trim() : '-';
 
-    // ===== GET CURRENT USER FROM SESSION =====
-    const user = req.session.user || req.user;
-    if (!user) {
-        throw new Error('User not authenticated');
+    // ===== GET CURRENT USER FROM SESSION (for new device) =====
+    let user = null;
+    if (req) {
+        user = req.session?.user || req.user;
     }
 
-    console.log('👤 Creating device for user:', {
-        userId: user._id,
-        role: user.role,
-        email: user.email
-    });
-
-    // SAVE DEVICE WITH USER INFO
-    await Device.create({
-        deviceId,
-        token,
-        ipAddress,
-        phone: null,
-        whatsappName: 'WhatsApp Device',
-        whatsappNumber: null,
-        status: 'SCANNING',
-        connectionStatus: 'pending',
-        deviceAddedAt: new Date(),
-        qrCode: null,
-        // ===== USER INFO =====
-        createdBy: user._id,
-        createdByRole: user.role,
-        createdByEmail: user.email
-    });
-
-    console.log(`📱 Device created: ${deviceId}, IP: ${ipAddress}, User: ${user.email} (${user.role})`);
+    // Agar device pehle se DB me hai to usko find karo
+    let device = await Device.findOne({ deviceId });
+    
+    if (!device) {
+        // Naya device create karo
+        if (!user) {
+            throw new Error('User not authenticated for new device');
+        }
+        device = await Device.create({
+            deviceId,
+            token,
+            ipAddress,
+            phone: null,
+            whatsappName: 'WhatsApp Device',
+            whatsappNumber: null,
+            status: 'SCANNING',
+            connectionStatus: 'pending',
+            deviceAddedAt: new Date(),
+            qrCode: null,
+            createdBy: user._id,
+            createdByRole: user.role,
+            createdByEmail: user.email
+        });
+        console.log(`📱 New device created: ${deviceId}, User: ${user.email}`);
+    } else {
+        console.log(`🔄 Reinitializing existing device: ${deviceId}`);
+    }
 
     const client = new Client({
         authStrategy: new LocalAuth({
             clientId: deviceId,
-            dataPath: './.wwebjs_auth'
+            dataPath: './.wwebjs_auth'  // make sure this path is accessible
         }),
         puppeteer: {
             headless: true,
@@ -229,6 +232,90 @@ async function createWhatsAppClient(req) {
 }
 
 // =========================
+// INITIALIZE EXISTING DEVICES ON SERVER START
+// =========================
+async function initializeExistingDevices() {
+    console.log('🔄 Initializing existing WhatsApp devices...');
+    try {
+        // Fetch all devices that are either connected or have a session (you can also fetch all)
+        const devices = await Device.find({ 
+            $or: [
+                { status: 'CONNECTED' },
+                { status: 'SCANNING' },
+                { status: 'DISCONNECTED' } // if you want to try reconnecting
+            ]
+        });
+        
+        console.log(`📦 Found ${devices.length} devices to reinitialize.`);
+        
+        for (const device of devices) {
+            try {
+                // Check if session folder exists (optional)
+                // Reinitialize client without req (pass null)
+                await createWhatsAppClient(null, device.deviceId);
+                // Add a small delay to avoid overwhelming
+                await new Promise(resolve => setTimeout(resolve, 2000));
+            } catch (err) {
+                console.error(`❌ Failed to reinitialize device ${device.deviceId}:`, err.message);
+                // Update device status to error if needed
+                await Device.updateOne(
+                    { deviceId: device.deviceId },
+                    { status: 'ERROR', connectionStatus: 'offline', error: err.message }
+                );
+            }
+        }
+        console.log('✅ Existing devices initialization completed.');
+    } catch (error) {
+        console.error('🔥 Error initializing existing devices:', error);
+    }
+}
+
+// =========================
+// ROUTES
+// =========================
+
+
+
+// ADD DEVICE
+router.post('/add-device', async (req, res) => {
+    try {
+        console.log('📝 Add device request received');
+        
+        // ===== CHECK IF USER IS AUTHENTICATED =====
+        const user = req.session.user || req.user;
+        if (!user) {
+            return res.status(401).json({ 
+                status: false, 
+                msg: 'User not authenticated' 
+            });
+        }
+        
+        const deviceId = await createWhatsAppClient(req);
+        res.json({ 
+            status: true, 
+            deviceId,
+            message: 'Device created successfully' 
+        });
+    } catch (err) {
+        console.log('🔥 ADD DEVICE ERROR:', err);
+        res.status(500).json({ 
+            status: false, 
+            msg: err.message,
+            code: 'DEVICE_CREATION_FAILED'
+        });
+    }
+});
+
+
+
+
+
+// =========================
+// EXPORT
+// =========================
+
+
+// =========================
 // ROUTES
 // =========================
 
@@ -350,34 +437,7 @@ router.get('/scan/whatsapp', async (req, res) => {
 });
 
 // ADD DEVICE
-router.post('/add-device', async (req, res) => {
-    try {
-        console.log('📝 Add device request received');
-        
-        // ===== CHECK IF USER IS AUTHENTICATED =====
-        const user = req.session.user || req.user;
-        if (!user) {
-            return res.status(401).json({ 
-                status: false, 
-                msg: 'User not authenticated' 
-            });
-        }
-        
-        const deviceId = await createWhatsAppClient(req);
-        res.json({ 
-            status: true, 
-            deviceId,
-            message: 'Device created successfully' 
-        });
-    } catch (err) {
-        console.log('🔥 ADD DEVICE ERROR:', err);
-        res.status(500).json({ 
-            status: false, 
-            msg: err.message,
-            code: 'DEVICE_CREATION_FAILED'
-        });
-    }
-});
+
 
 // GET QR / STATUS
 router.get('/get-qr/:deviceId', async (req, res) => {
@@ -618,7 +678,8 @@ router.delete('/delete-device/:deviceId', async (req, res) => {
     }
 });
 
-// =========================
-// EXPORT
-// =========================
-module.exports = { router, clients };
+module.exports = { 
+    router, 
+    clients,
+    initializeExistingDevices 
+};

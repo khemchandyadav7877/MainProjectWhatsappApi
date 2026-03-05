@@ -11,6 +11,55 @@
 <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" rel="stylesheet">
 
 <style>
+/* ===== THEME VARIABLES ===== */
+:root {
+    --primary: #4f46e5;
+    --primary-dark: #4338ca;
+    --primary-light: #6366f1;
+    --success: #10b981;
+    --warning: #f59e0b;
+    --danger: #ef4444;
+    --info: #3b82f6;
+    
+    /* Light Mode */
+    --bg-body: #f3f4f6;
+    --bg-white: #ffffff;
+    --bg-offwhite: #f8fafc;
+    --bg-card: #ffffff;
+    --text: #1f2937;
+    --text-light: #4b5563;
+    --text-muted: #6b7280;
+    --dark: #111827;
+    --border: #e5e7eb;
+    --shadow: 0 2px 10px rgba(0,0,0,0.05);
+    --shadow-lg: 0 10px 25px rgba(0,0,0,0.1);
+    
+    /* Layout */
+    --header-height: 70px;
+    --sidebar-width: 280px;
+}
+
+/* Dark Mode */
+body.dark {
+    --bg-body: #111827;
+    --bg-white: #1f2937;
+    --bg-offwhite: #374151;
+    --bg-card: #1f2937;
+    --text: #f9fafb;
+    --text-light: #e5e7eb;
+    --text-muted: #9ca3af;
+    --dark: #f9fafb;
+    --border: #374151;
+    --shadow: 0 2px 10px rgba(0,0,0,0.3);
+    --shadow-lg: 0 10px 25px rgba(0,0,0,0.5);
+    
+    /* Status colors for dark mode */
+    --badge-active-bg: rgba(16, 185, 129, 0.2);
+    --badge-inactive-bg: rgba(239, 68, 68, 0.2);
+    --badge-connected-bg: rgba(59, 130, 246, 0.2);
+    --badge-disconnected-bg: rgba(107, 114, 128, 0.2);
+}
+
 /* RESET */
 * {
     margin: 0;
@@ -20,8 +69,58 @@
 
 body {
     overflow-x: hidden;
-    background: #f3f4f6;
+    background: var(--bg-body);
     font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    color: var(--text);
+    transition: background-color 0.3s, color 0.3s;
+}
+
+/* ===== BORDER MODES ===== */
+body.round-border .header-wrapper,
+body.round-border .sidebar-wrapper,
+body.round-border .mid-content,
+body.round-border .stat-card,
+body.round-border .filter-box,
+body.round-border .device-table,
+body.round-border .device-checkbox,
+body.round-border .badge-soft,
+body.round-border .whatsapp-badge,
+body.round-border .email-badge,
+body.round-border .action-btn,
+body.round-border .selected-counter,
+body.round-border .btn,
+body.round-border .form-control,
+body.round-border .form-select {
+    border-radius: 16px !important;
+}
+
+body.round-border .stat-icon,
+body.round-border .connection-dot {
+    border-radius: 50% !important;
+}
+
+body.round-border .toast-notification {
+    border-radius: 12px !important;
+}
+
+body.no-radius .header-wrapper,
+body.no-radius .sidebar-wrapper,
+body.no-radius .mid-content,
+body.no-radius .stat-card,
+body.no-radius .filter-box,
+body.no-radius .device-table,
+body.no-radius .device-checkbox,
+body.no-radius .badge-soft,
+body.no-radius .whatsapp-badge,
+body.no-radius .email-badge,
+body.no-radius .action-btn,
+body.no-radius .selected-counter,
+body.no-radius .btn,
+body.no-radius .form-control,
+body.no-radius .form-select,
+body.no-radius .stat-icon,
+body.no-radius .connection-dot {
+    border-radius: 0 !important;
 }
 
 /* HEADER FIXED */
@@ -31,8 +130,9 @@ body {
     left: 0;
     right: 0;
     z-index: 1030;
-    background: white;
-    box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+    background: var(--bg-white);
+    box-shadow: var(--shadow);
+    border-bottom: 1px solid var(--border);
 }
 
 /* MAIN LAYOUT */
@@ -53,6 +153,8 @@ body {
     bottom: 0;
     z-index: 1020;
     transition: width 0.3s ease;
+    background: var(--bg-white);
+    border-right: 1px solid var(--border);
 }
 
 .sidebar-wrapper.collapsed {
@@ -65,7 +167,7 @@ body {
     margin-left: 280px;
     padding: 20px;
     transition: margin-left 0.3s ease;
-    background: #f3f4f6;
+    background: var(--bg-body);
     min-height: calc(100vh - 70px);
 }
 
@@ -75,10 +177,11 @@ body {
 
 /* MAIN CONTENT */
 .mid-content {
-    background: white;
+    background: var(--bg-card);
     border-radius: 12px;
     padding: 24px;
-    box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+    box-shadow: var(--shadow);
+    border: 1px solid var(--border);
     min-height: 500px;
 }
 
@@ -112,7 +215,7 @@ body {
     width: 320px;
     padding: 14px 16px;
     border-radius: 12px;
-    box-shadow: 0 15px 30px rgba(0,0,0,.2);
+    box-shadow: var(--shadow-lg);
     opacity: 0;
     transform: translateY(-15px);
     transition: .3s ease;
@@ -156,19 +259,19 @@ body {
 
 /* Toast Colors */
 .toast-success {
-    background: #16a34a;
+    background: var(--success);
     color: #ffffff;
 }
 .toast-error {
-    background: #dc2626;
+    background: var(--danger);
     color: #ffffff;
 }
 .toast-info {
-    background: #2563eb;
+    background: var(--info);
     color: #ffffff;
 }
 .toast-warning {
-    background: #facc15;
+    background: var(--warning);
     color: #1f2937;
 }
 
@@ -194,26 +297,29 @@ body {
 .page-title {
     font-size: 26px;
     font-weight: 600;
+    color: var(--dark);
 }
 .sub-title {
-    color: #6c757d;
+    color: var(--text-muted);
 }
 
 /* STAT CARDS */
 .stat-card {
-    background: #fff;
+    background: var(--bg-card);
     border-radius: 14px;
     padding: 20px;
     display: flex;
     align-items: center;
     gap: 15px;
-    box-shadow: 0 8px 25px rgba(0,0,0,.05);
+    box-shadow: var(--shadow);
+    border: 1px solid var(--border);
     transition: transform 0.3s ease, box-shadow 0.3s ease;
     cursor: pointer;
 }
 .stat-card:hover {
     transform: translateY(-5px);
-    box-shadow: 0 12px 30px rgba(0,0,0,.1);
+    box-shadow: var(--shadow-lg);
+    border-color: var(--primary);
 }
 .stat-icon {
     width: 48px;
@@ -224,21 +330,22 @@ body {
     justify-content: center;
     font-size: 20px;
 }
-.icon-blue { background: #eef2ff; color: #4f46e5; }
-.icon-green { background: #ecfdf5; color: #10b981; }
-.icon-red { background: #fef2f2; color: #ef4444; }
-.icon-yellow { background: #fff7ed; color: #f59e0b; }
+.icon-blue { background: rgba(79, 70, 229, 0.1); color: var(--primary); }
+.icon-green { background: rgba(16, 185, 129, 0.1); color: var(--success); }
+.icon-red { background: rgba(239, 68, 68, 0.1); color: var(--danger); }
+.icon-yellow { background: rgba(245, 158, 11, 0.1); color: var(--warning); }
 
 /* FILTER */
 .filter-box {
-    background: #fff;
+    background: var(--bg-card);
     border-radius: 14px;
     padding: 20px;
-    box-shadow: 0 8px 25px rgba(0,0,0,.05);
+    box-shadow: var(--shadow);
+    border: 1px solid var(--border);
 }
 .filter-tag {
-    background: #eef2ff;
-    color: #4f46e5;
+    background: rgba(79, 70, 229, 0.1);
+    color: var(--primary);
     padding: 4px 10px;
     border-radius: 20px;
     font-size: 12px;
@@ -252,25 +359,28 @@ body {
 
 /* TABLE */
 .device-table {
-    background: #fff;
+    background: var(--bg-card);
     border-radius: 14px;
     overflow-x: auto;
-    box-shadow: 0 8px 25px rgba(0,0,0,.05);
+    box-shadow: var(--shadow);
+    border: 1px solid var(--border);
 }
 .table th {
     font-size: 13px;
-    color: #6c757d;
+    color: var(--text-muted);
     font-weight: 600;
-    border-bottom: 2px solid #f1f5f9;
+    border-bottom: 2px solid var(--border);
     padding: 16px 12px;
+    background: var(--bg-card);
 }
 .table td {
     padding: 16px 12px;
     vertical-align: middle;
-    border-bottom: 1px solid #f1f5f9;
+    border-bottom: 1px solid var(--border);
+    color: var(--text);
 }
 .table tr:hover {
-    background: #f8fafc;
+    background: var(--bg-offwhite);
 }
 .badge-soft {
     padding: 6px 12px;
@@ -280,15 +390,27 @@ body {
     display: inline-block;
     text-decoration: none !important;
 }
-.badge-active { background: #ecfdf5; color: #10b981; }
-.badge-inactive { background: #fef2f2; color: #ef4444; }
-.badge-connected { background: #dbeafe; color: #1d4ed8; }
-.badge-disconnected { background: #f3f4f6; color: #6b7280; }
+.badge-active { 
+    background: rgba(16, 185, 129, 0.1); 
+    color: var(--success); 
+}
+.badge-inactive { 
+    background: rgba(239, 68, 68, 0.1); 
+    color: var(--danger); 
+}
+.badge-connected { 
+    background: rgba(59, 130, 246, 0.1); 
+    color: var(--info); 
+}
+.badge-disconnected { 
+    background: rgba(107, 114, 128, 0.1); 
+    color: var(--text-muted); 
+}
 
 /* WhatsApp badge */
 .whatsapp-badge {
-    background: #25D366;
-    color: white;
+    background: rgba(37, 211, 102, 0.15);
+    color: #25D366;
     padding: 4px 8px;
     border-radius: 20px;
     font-size: 11px;
@@ -300,8 +422,8 @@ body {
 
 /* Email badge */
 .email-badge {
-    background: #f3f4f6;
-    color: #4b5563;
+    background: var(--bg-offwhite);
+    color: var(--text-light);
     padding: 4px 8px;
     border-radius: 20px;
     font-size: 11px;
@@ -326,25 +448,26 @@ body {
 .action-btn:hover {
     transform: scale(1.1);
 }
-.btn-view { background: #ecfdf5; color: #10b981; }
-.btn-edit { background: #eef2ff; color: #4f46e5; }
-.btn-delete { background: #fef2f2; color: #ef4444; }
+.btn-view { background: rgba(16, 185, 129, 0.1); color: var(--success); }
+.btn-edit { background: rgba(79, 70, 229, 0.1); color: var(--primary); }
+.btn-delete { background: rgba(239, 68, 68, 0.1); color: var(--danger); }
 
 /* CHECKBOX */
 .device-checkbox {
     width: 20px;
     height: 20px;
     border-radius: 5px;
-    border: 2px solid #adb5bd;
+    border: 2px solid var(--border);
     cursor: pointer;
     display: flex;
     align-items: center;
     justify-content: center;
     transition: all 0.2s ease;
+    background: var(--bg-card);
 }
 .device-checkbox.checked {
-    background: var(--primary, #4c6ef5);
-    border-color: var(--primary, #4c6ef5);
+    background: var(--primary);
+    border-color: var(--primary);
 }
 .device-checkbox.checked::after {
     content: '✓';
@@ -361,8 +484,8 @@ body {
     display: inline-block;
     margin-right: 6px;
 }
-.dot-connected { background: #10b981; }
-.dot-disconnected { background: #ef4444; }
+.dot-connected { background: var(--success); }
+.dot-disconnected { background: var(--danger); }
 
 /* LOADING */
 .loading-overlay {
@@ -372,10 +495,12 @@ body {
     left: 0;
     width: 100%;
     height: 100%;
-    background: rgba(255,255,255,0.8);
+    background: rgba(0,0,0,0.5);
+    backdrop-filter: blur(5px);
     z-index: 9999;
     justify-content: center;
     align-items: center;
+    color: white;
 }
 
 /* SELECTED DEVICES COUNTER */
@@ -383,11 +508,11 @@ body {
     position: fixed;
     bottom: 30px;
     right: 30px;
-    background: #4c6ef5;
+    background: var(--primary);
     color: white;
     padding: 12px 20px;
     border-radius: 50px;
-    box-shadow: 0 10px 25px rgba(76, 110, 245, 0.3);
+    box-shadow: 0 10px 25px rgba(79, 70, 229, 0.3);
     font-weight: 600;
     display: flex;
     align-items: center;
@@ -398,8 +523,80 @@ body {
 }
 .selected-counter:hover {
     transform: translateY(-2px);
-    box-shadow: 0 15px 30px rgba(76, 110, 245, 0.4);
+    box-shadow: 0 15px 30px rgba(79, 70, 229, 0.4);
 }
+
+/* FORM CONTROLS */
+.form-control, .form-select {
+    background: var(--bg-white);
+    border: 1px solid var(--border);
+    color: var(--text);
+    border-radius: 25px;
+    padding: 10px 16px;
+}
+
+.form-control:focus, .form-select:focus {
+    border-color: var(--primary);
+    box-shadow: 0 0 0 0.2rem rgba(79, 70, 229, 0.25);
+    background: var(--bg-white);
+    color: var(--text);
+    outline: none;
+}
+
+.form-control::placeholder {
+    color: var(--text-muted);
+    opacity: 0.7;
+}
+
+/* BUTTONS */
+.btn {
+    border-radius: 25px;
+    padding: 10px 20px;
+    font-weight: 600;
+    transition: all 0.3s ease;
+}
+
+.btn-primary {
+    background: var(--primary);
+    border: none;
+    color: white;
+}
+
+.btn-primary:hover {
+    background: var(--primary-dark);
+    transform: translateY(-2px);
+    box-shadow: 0 5px 15px rgba(79, 70, 229, 0.3);
+}
+
+.btn-outline-primary {
+    border: 2px solid var(--primary);
+    color: var(--primary);
+    background: transparent;
+}
+
+.btn-outline-primary:hover {
+    background: var(--primary);
+    color: white;
+}
+
+.btn-outline-secondary {
+    border: 2px solid var(--text-muted);
+    color: var(--text-muted);
+    background: transparent;
+}
+
+.btn-outline-secondary:hover {
+    background: var(--text-muted);
+    color: white;
+}
+
+/* TEXT COLORS */
+.text-primary { color: var(--primary) !important; }
+.text-success { color: var(--success) !important; }
+.text-danger { color: var(--danger) !important; }
+.text-warning { color: var(--warning) !important; }
+.text-muted { color: var(--text-muted) !important; }
+.text-secondary { color: var(--text-light) !important; }
 
 /* RESPONSIVE */
 @media(max-width:992px){
@@ -430,6 +627,18 @@ body {
 </head>
 
 <body>
+    <!-- Theme Initialization Script -->
+    <script>
+        (function() {
+            const savedTheme = localStorage.getItem('theme') || 'light';
+            const savedBorder = localStorage.getItem('border') || 'round-border';
+            document.body.classList.add(savedTheme);
+            document.body.classList.add(savedBorder);
+            console.log('🎨 Theme loaded:', savedTheme);
+            console.log('📐 Border mode loaded:', savedBorder);
+        })();
+    </script>
+
     <!-- HEADER -->
     <div class="header-wrapper">
         <%- include('../../partials/ram/header') %>
@@ -583,7 +792,7 @@ body {
                     </form>
                 </div>
 
-                <!-- DEVICE TABLE - UPDATED with WhatsApp Number and Email -->
+                <!-- DEVICE TABLE -->
                 <div class="device-table">
                     <table class="table align-middle mb-0">
                         <thead>
@@ -718,10 +927,10 @@ body {
     <!-- LOADING OVERLAY -->
     <div class="loading-overlay" id="loadingOverlay">
         <div class="text-center">
-            <div class="spinner-border text-primary mb-3" role="status">
+            <div class="spinner-border text-light mb-3" role="status">
                 <span class="visually-hidden">Loading...</span>
             </div>
-            <p class="text-muted">Loading...</p>
+            <p class="text-light">Loading...</p>
         </div>
     </div>
 

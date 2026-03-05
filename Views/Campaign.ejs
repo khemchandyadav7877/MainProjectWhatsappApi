@@ -11,6 +11,50 @@
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 
 <style>
+    /* ===== THEME VARIABLES ===== */
+    :root {
+        --primary: #667eea;
+        --primary-dark: #5a67d8;
+        --primary-gradient: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        --success: #10b981;
+        --warning: #f59e0b;
+        --danger: #ef4444;
+        --info: #3b82f6;
+        --whatsapp: #25D366;
+        
+        /* Light Mode */
+        --bg-body: #f3f4f6;
+        --bg-white: #ffffff;
+        --bg-offwhite: #f8fafc;
+        --bg-card: #ffffff;
+        --text: #1e293b;
+        --text-light: #334155;
+        --text-muted: #64748b;
+        --dark: #0f172a;
+        --border: #eef2f6;
+        --shadow: 0 2px 10px rgba(0,0,0,0.05);
+        --shadow-lg: 0 10px 30px rgba(0,0,0,0.1);
+        
+        /* Layout */
+        --header-height: 70px;
+        --sidebar-width: 280px;
+    }
+
+    /* Dark Mode */
+    body.dark {
+        --bg-body: #0f172a;
+        --bg-white: #1e293b;
+        --bg-offwhite: #334155;
+        --bg-card: #1e293b;
+        --text: #f1f5f9;
+        --text-light: #cbd5e1;
+        --text-muted: #94a3b8;
+        --dark: #f8fafc;
+        --border: #334155;
+        --shadow: 0 2px 10px rgba(0,0,0,0.3);
+        --shadow-lg: 0 10px 30px rgba(0,0,0,0.5);
+    }
+
     /* RESET - Same as before */
     * {
         margin: 0;
@@ -20,8 +64,78 @@
 
     body {
         overflow-x: hidden;
-        background: #f3f4f6;
+        background: var(--bg-body);
         font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        color: var(--text);
+        transition: background-color 0.3s, color 0.3s;
+    }
+
+    /* ===== BORDER MODES ===== */
+    body.round-border .header-wrapper,
+    body.round-border .sidebar-wrapper,
+    body.round-border .mid-content,
+    body.round-border .header,
+    body.round-border .device-info,
+    body.round-border .step-circle,
+    body.round-border .step-content,
+    body.round-border .form-control,
+    body.round-border .btn,
+    body.round-border .groups-section,
+    body.round-border .group-card,
+    body.round-border .selected-group-banner,
+    body.round-border .excel-upload-container,
+    body.round-border .excel-upload-box,
+    body.round-border .excel-instructions,
+    body.round-border .media-upload,
+    body.round-border .file-preview,
+    body.round-border .media-option,
+    body.round-border .schedule-option,
+    body.round-border .campaign-table,
+    body.round-border .status-badge,
+    body.round-border .summary-item,
+    body.round-border .role-badge,
+    body.round-border .toast-notification,
+    body.round-border .modal-content {
+        border-radius: 16px !important;
+    }
+
+    body.round-border .step-circle {
+        border-radius: 50% !important;
+    }
+
+    body.round-border .excel-preview-table {
+        border-radius: 10px !important;
+        overflow: hidden;
+    }
+
+    body.no-radius .header-wrapper,
+    body.no-radius .sidebar-wrapper,
+    body.no-radius .mid-content,
+    body.no-radius .header,
+    body.no-radius .device-info,
+    body.no-radius .step-circle,
+    body.no-radius .step-content,
+    body.no-radius .form-control,
+    body.no-radius .btn,
+    body.no-radius .groups-section,
+    body.no-radius .group-card,
+    body.no-radius .selected-group-banner,
+    body.no-radius .excel-upload-container,
+    body.no-radius .excel-upload-box,
+    body.no-radius .excel-instructions,
+    body.no-radius .media-upload,
+    body.no-radius .file-preview,
+    body.no-radius .media-option,
+    body.no-radius .schedule-option,
+    body.no-radius .campaign-table,
+    body.no-radius .status-badge,
+    body.no-radius .summary-item,
+    body.no-radius .role-badge,
+    body.no-radius .toast-notification,
+    body.no-radius .modal-content,
+    body.no-radius .excel-preview-table,
+    body.no-radius .step-circle {
+        border-radius: 0 !important;
     }
 
     /* HEADER FIXED */
@@ -31,8 +145,9 @@
         left: 0;
         right: 0;
         z-index: 1030;
-        background: white;
-        box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+        background: var(--bg-white);
+        box-shadow: var(--shadow);
+        border-bottom: 1px solid var(--border);
     }
 
     /* MAIN LAYOUT */
@@ -53,6 +168,8 @@
         bottom: 0;
         z-index: 1020;
         transition: width 0.3s ease;
+        background: var(--bg-white);
+        border-right: 1px solid var(--border);
     }
 
     .sidebar-wrapper.collapsed {
@@ -65,7 +182,7 @@
         margin-left: 280px;
         padding: 20px;
         transition: margin-left 0.3s ease;
-        background: #f3f4f6;
+        background: var(--bg-body);
         min-height: calc(100vh - 70px);
     }
 
@@ -75,10 +192,11 @@
 
     /* MAIN CONTENT */
     .mid-content {
-        background: white;
+        background: var(--bg-card);
         border-radius: 12px;
         padding: 24px;
-        box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+        box-shadow: var(--shadow);
+        border: 1px solid var(--border);
         min-height: 500px;
     }
 
@@ -112,7 +230,7 @@
         width: 320px;
         padding: 14px 16px;
         border-radius: 12px;
-        box-shadow: 0 15px 30px rgba(0,0,0,.2);
+        box-shadow: var(--shadow-lg);
         opacity: 0;
         transform: translateY(-15px);
         transition: .3s ease;
@@ -156,19 +274,19 @@
 
     /* Toast Colors */
     .toast-success {
-        background: #16a34a;
+        background: var(--success);
         color: #ffffff;
     }
     .toast-error {
-        background: #dc2626;
+        background: var(--danger);
         color: #ffffff;
     }
     .toast-info {
-        background: #2563eb;
+        background: var(--info);
         color: #ffffff;
     }
     .toast-warning {
-        background: #facc15;
+        background: var(--warning);
         color: #1f2937;
     }
 
@@ -192,15 +310,16 @@
 
     /* Header - Modified */
     .header {
-        background: white;
+        background: var(--bg-card);
         border-radius: 15px;
         padding: 25px 30px;
         margin-bottom: 30px;
-        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+        box-shadow: var(--shadow-lg);
+        border: 1px solid var(--border);
     }
 
     .header h1 {
-        color: #333;
+        color: var(--dark);
         font-size: 32px;
         margin-bottom: 10px;
         display: flex;
@@ -209,11 +328,11 @@
     }
 
     .header h1 i {
-        color: #667eea;
+        color: var(--primary);
     }
 
     .header p {
-        color: #666;
+        color: var(--text-muted);
         font-size: 16px;
         line-height: 1.6;
     }
@@ -247,13 +366,13 @@
     }
     
     .role-user {
-        background: #6b7280;
+        background: var(--text-muted);
         color: white;
     }
 
     /* Device count info */
     .device-info {
-        background: #f0f4ff;
+        background: rgba(102, 126, 234, 0.1);
         padding: 8px 15px;
         border-radius: 8px;
         margin-bottom: 15px;
@@ -261,10 +380,12 @@
         display: flex;
         align-items: center;
         gap: 10px;
+        color: var(--text);
+        border: 1px solid var(--border);
     }
 
     .device-info i {
-        color: #667eea;
+        color: var(--primary);
     }
 
     /* Process Steps */
@@ -287,7 +408,7 @@
         left: 0;
         right: 0;
         height: 3px;
-        background: #e0e6ed;
+        background: var(--border);
         z-index: 1;
     }
 
@@ -302,8 +423,8 @@
         width: 50px;
         height: 50px;
         border-radius: 50%;
-        background: white;
-        color: #666;
+        background: var(--bg-white);
+        color: var(--text-muted);
         display: flex;
         align-items: center;
         justify-content: center;
@@ -311,42 +432,43 @@
         font-weight: bold;
         margin: 0 auto 15px;
         transition: all 0.3s;
-        border: 3px solid #e0e6ed;
-        box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+        border: 3px solid var(--border);
+        box-shadow: var(--shadow);
     }
 
     .step.active .step-circle {
-        background: #667eea;
-        border-color: #667eea;
+        background: var(--primary);
+        border-color: var(--primary);
         color: white;
         box-shadow: 0 4px 15px rgba(102, 126, 234, 0.4);
     }
 
     .step.completed .step-circle {
-        background: #25D366;
-        border-color: #25D366;
+        background: var(--whatsapp);
+        border-color: var(--whatsapp);
         color: white;
     }
 
     .step-label {
-        color: #666;
+        color: var(--text-muted);
         font-weight: 600;
         font-size: 14px;
     }
 
     .step.active .step-label {
-        color: #667eea;
+        color: var(--primary);
         font-weight: 700;
     }
 
     /* Process Steps Content */
     .step-content {
-        background: white;
+        background: var(--bg-card);
         border-radius: 20px;
         padding: 40px;
-        box-shadow: 0 15px 40px rgba(0, 0, 0, 0.1);
+        box-shadow: var(--shadow-lg);
         margin-bottom: 30px;
         display: none;
+        border: 1px solid var(--border);
     }
 
     .step-content.active {
@@ -366,7 +488,7 @@
     }
 
     .step-title {
-        color: #333;
+        color: var(--dark);
         font-size: 28px;
         margin-bottom: 20px;
         display: flex;
@@ -375,11 +497,11 @@
     }
 
     .step-title i {
-        color: #667eea;
+        color: var(--primary);
     }
 
     .step-description {
-        color: #666;
+        color: var(--text-muted);
         font-size: 16px;
         line-height: 1.6;
         margin-bottom: 30px;
@@ -392,7 +514,7 @@
 
     .form-group label {
         display: block;
-        color: #333;
+        color: var(--dark);
         font-weight: 600;
         margin-bottom: 10px;
         font-size: 15px;
@@ -401,17 +523,18 @@
     .form-control {
         width: 100%;
         padding: 15px 20px;
-        border: 2px solid #e0e6ed;
+        border: 2px solid var(--border);
         border-radius: 10px;
         font-size: 16px;
         transition: all 0.3s;
-        background: #f8f9fa;
+        background: var(--bg-white);
+        color: var(--text);
     }
 
     .form-control:focus {
         outline: none;
-        border-color: #667eea;
-        background: white;
+        border-color: var(--primary);
+        background: var(--bg-white);
         box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
     }
 
@@ -424,7 +547,7 @@
         right: 20px;
         top: 50%;
         transform: translateY(-50%);
-        color: #666;
+        color: var(--text-muted);
         pointer-events: none;
     }
 
@@ -449,28 +572,28 @@
     }
 
     .hint-whatsapp {
-        background: #e8f5e9;
-        color: #25D366;
-        border-left: 3px solid #25D366;
+        background: rgba(37, 211, 102, 0.1);
+        color: var(--whatsapp);
+        border-left: 3px solid var(--whatsapp);
     }
 
     .hint-phone {
-        background: #eef2ff;
-        color: #4f46e5;
-        border-left: 3px solid #4f46e5;
+        background: rgba(79, 70, 229, 0.1);
+        color: var(--primary);
+        border-left: 3px solid var(--primary);
     }
 
     /* Groups Section - NEW */
     .groups-section {
-        background: linear-gradient(135deg, #667eea10 0%, #764ba210 100%);
+        background: rgba(102, 126, 234, 0.05);
         border-radius: 15px;
         padding: 25px;
         margin: 30px 0;
-        border: 2px solid #667eea30;
+        border: 2px solid rgba(102, 126, 234, 0.2);
     }
 
     .groups-section h3 {
-        color: #333;
+        color: var(--dark);
         margin-bottom: 20px;
         display: flex;
         align-items: center;
@@ -478,7 +601,7 @@
     }
 
     .groups-section h3 i {
-        color: #667eea;
+        color: var(--primary);
     }
 
     .groups-grid {
@@ -491,8 +614,8 @@
     }
 
     .group-card {
-        background: white;
-        border: 2px solid #e0e6ed;
+        background: var(--bg-card);
+        border: 2px solid var(--border);
         border-radius: 12px;
         padding: 20px;
         cursor: pointer;
@@ -501,14 +624,14 @@
     }
 
     .group-card:hover {
-        border-color: #667eea;
+        border-color: var(--primary);
         transform: translateY(-3px);
-        box-shadow: 0 10px 20px rgba(102, 126, 234, 0.2);
+        box-shadow: var(--shadow-lg);
     }
 
     .group-card.selected {
-        border-color: #25D366;
-        background: #e8f5e9;
+        border-color: var(--whatsapp);
+        background: rgba(37, 211, 102, 0.1);
     }
 
     .group-card.selected::before {
@@ -518,7 +641,7 @@
         position: absolute;
         top: -10px;
         right: -10px;
-        background: #25D366;
+        background: var(--whatsapp);
         color: white;
         width: 30px;
         height: 30px;
@@ -531,7 +654,7 @@
     }
 
     .group-card h4 {
-        color: #333;
+        color: var(--dark);
         margin-bottom: 10px;
         display: flex;
         align-items: center;
@@ -540,11 +663,11 @@
     }
 
     .group-card h4 i {
-        color: #667eea;
+        color: var(--primary);
     }
 
     .group-card p {
-        color: #666;
+        color: var(--text-muted);
         font-size: 14px;
         margin-bottom: 15px;
         line-height: 1.5;
@@ -558,26 +681,27 @@
     }
 
     .group-card .badge {
-        background: #667eea;
+        background: var(--primary);
         color: white;
         padding: 5px 10px;
         border-radius: 20px;
     }
 
     .group-card .date {
-        color: #999;
+        color: var(--text-muted);
     }
 
     /* Selected Group Info */
     .selected-group-banner {
-        background: #e8f5e9;
+        background: rgba(37, 211, 102, 0.1);
         border-radius: 10px;
         padding: 15px;
         margin-bottom: 20px;
         display: flex;
         justify-content: space-between;
         align-items: center;
-        border-left: 4px solid #25D366;
+        border-left: 4px solid var(--whatsapp);
+        color: var(--text);
     }
 
     .selected-group-banner.hidden {
@@ -591,25 +715,25 @@
     }
 
     .selected-group-banner .group-info i {
-        color: #25D366;
+        color: var(--whatsapp);
         font-size: 24px;
     }
 
     .selected-group-banner .group-details h4 {
-        color: #333;
+        color: var(--dark);
         margin: 0;
     }
 
     .selected-group-banner .group-details p {
-        color: #666;
+        color: var(--text-muted);
         margin: 5px 0 0;
         font-size: 14px;
     }
 
     .selected-group-banner .clear-btn {
         background: transparent;
-        border: 2px solid #25D366;
-        color: #25D366;
+        border: 2px solid var(--whatsapp);
+        color: var(--whatsapp);
         padding: 8px 15px;
         border-radius: 8px;
         cursor: pointer;
@@ -618,7 +742,7 @@
     }
 
     .selected-group-banner .clear-btn:hover {
-        background: #25D366;
+        background: var(--whatsapp);
         color: white;
     }
 
@@ -636,9 +760,9 @@
     .excel-upload-container {
         margin: 20px 0;
         padding: 20px;
-        background: #f8f9fa;
+        background: var(--bg-offwhite);
         border-radius: 15px;
-        border: 2px dashed #e0e6ed;
+        border: 2px dashed var(--border);
     }
 
     .excel-upload-box {
@@ -647,12 +771,12 @@
         cursor: pointer;
         transition: all 0.3s;
         border-radius: 10px;
-        background: white;
+        background: var(--bg-white);
     }
 
     .excel-upload-box:hover {
-        background: #f0f4ff;
-        border-color: #667eea;
+        background: rgba(102, 126, 234, 0.1);
+        border-color: var(--primary);
     }
 
     .excel-upload-box i {
@@ -662,32 +786,33 @@
     }
 
     .excel-upload-box h4 {
-        color: #333;
+        color: var(--dark);
         margin-bottom: 10px;
     }
 
     .excel-upload-box p {
-        color: #666;
+        color: var(--text-muted);
         margin-bottom: 15px;
     }
 
     .excel-upload-box small {
-        color: #999;
+        color: var(--text-muted);
         display: block;
         margin-top: 10px;
     }
 
     /* Excel Instructions */
     .excel-instructions {
-        background: #e8f5e9;
+        background: rgba(16, 185, 129, 0.1);
         padding: 15px;
         border-radius: 10px;
         margin: 20px 0;
-        border-left: 4px solid #4CAF50;
+        border-left: 4px solid var(--success);
+        color: var(--text);
     }
 
     .excel-instructions h5 {
-        color: #2e7d32;
+        color: var(--success);
         margin-bottom: 10px;
         display: flex;
         align-items: center;
@@ -696,7 +821,7 @@
 
     .excel-instructions ul {
         margin-left: 20px;
-        color: #666;
+        color: var(--text-muted);
     }
 
     .excel-instructions li {
@@ -712,10 +837,10 @@
     .excel-preview-table {
         width: 100%;
         border-collapse: collapse;
-        background: white;
+        background: var(--bg-white);
         border-radius: 10px;
         overflow: hidden;
-        box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+        box-shadow: var(--shadow-lg);
     }
 
     .excel-preview-table th {
@@ -728,11 +853,12 @@
 
     .excel-preview-table td {
         padding: 10px 15px;
-        border-bottom: 1px solid #e0e0e0;
+        border-bottom: 1px solid var(--border);
+        color: var(--text);
     }
 
     .excel-preview-table tr:hover {
-        background: #f5f5f5;
+        background: var(--bg-offwhite);
     }
 
     /* Contact Control Buttons */
@@ -750,41 +876,42 @@
 
     /* Media Upload */
     .media-upload {
-        border: 2px dashed #e0e6ed;
+        border: 2px dashed var(--border);
         border-radius: 10px;
         padding: 30px;
         text-align: center;
         cursor: pointer;
         transition: all 0.3s;
-        background: #f8f9fa;
+        background: var(--bg-offwhite);
         margin: 20px 0;
     }
 
     .media-upload:hover {
-        border-color: #667eea;
-        background: #f0f4ff;
+        border-color: var(--primary);
+        background: rgba(102, 126, 234, 0.1);
     }
 
     .media-upload i {
         font-size: 48px;
-        color: #667eea;
+        color: var(--primary);
         margin-bottom: 15px;
     }
 
     /* File Preview */
     .file-preview {
-        background: #e8f5e9;
+        background: rgba(16, 185, 129, 0.1);
         padding: 15px;
         border-radius: 10px;
         display: flex;
         align-items: center;
         gap: 15px;
         margin-top: 15px;
+        border: 1px solid var(--border);
     }
 
     .file-preview i {
         font-size: 24px;
-        color: #4CAF50;
+        color: var(--success);
     }
 
     .file-info {
@@ -794,29 +921,35 @@
     .file-info strong {
         display: block;
         margin-bottom: 5px;
+        color: var(--dark);
+    }
+
+    .file-info div {
+        color: var(--text-muted);
     }
 
     /* Message Container */
     .message-content {
         min-height: 150px;
         padding: 20px;
-        background: white;
+        background: var(--bg-white);
         border-radius: 10px;
         white-space: pre-wrap;
         font-size: 16px;
         line-height: 1.6;
-        color: #333;
+        color: var(--text);
         overflow-y: auto;
         max-height: 300px;
+        border: 1px solid var(--border);
     }
 
     /* Media Options Styles */
     .media-options-container {
         margin: 20px 0;
         padding: 20px;
-        background: #f8f9fa;
+        background: var(--bg-offwhite);
         border-radius: 15px;
-        border: 2px solid #e0e6ed;
+        border: 2px solid var(--border);
     }
 
     .media-option {
@@ -824,21 +957,21 @@
         align-items: center;
         margin-bottom: 15px;
         padding: 15px;
-        background: white;
+        background: var(--bg-white);
         border-radius: 10px;
         cursor: pointer;
         transition: all 0.3s;
-        border: 2px solid #e0e6ed;
+        border: 2px solid var(--border);
     }
 
     .media-option:hover {
-        border-color: #667eea;
-        background: #f0f4ff;
+        border-color: var(--primary);
+        background: rgba(102, 126, 234, 0.1);
     }
 
     .media-option.selected {
-        border-color: #25D366;
-        background: #e8f5e9;
+        border-color: var(--whatsapp);
+        background: rgba(37, 211, 102, 0.1);
     }
 
     .media-option input[type="checkbox"] {
@@ -846,6 +979,7 @@
         width: 20px;
         height: 20px;
         cursor: pointer;
+        accent-color: var(--whatsapp);
     }
 
     .media-option-content {
@@ -854,12 +988,12 @@
 
     .media-option-content h4 {
         margin: 0 0 5px 0;
-        color: #333;
+        color: var(--dark);
     }
 
     .media-option-content p {
         margin: 0;
-        color: #666;
+        color: var(--text-muted);
         font-size: 14px;
     }
 
@@ -867,7 +1001,7 @@
         width: 40px;
         height: 40px;
         border-radius: 50%;
-        background: #667eea;
+        background: var(--primary);
         color: white;
         display: flex;
         align-items: center;
@@ -879,9 +1013,9 @@
     .message-checkbox-container {
         margin: 15px 0;
         padding: 15px;
-        background: #f8f9fa;
+        background: var(--bg-offwhite);
         border-radius: 10px;
-        border: 2px solid #e0e6ed;
+        border: 2px solid var(--border);
     }
 
     .message-checkbox {
@@ -894,10 +1028,11 @@
         width: 18px;
         height: 18px;
         cursor: pointer;
+        accent-color: var(--primary);
     }
 
     .message-checkbox label {
-        color: #333;
+        color: var(--dark);
         font-weight: 600;
         cursor: pointer;
         user-select: none;
@@ -929,7 +1064,7 @@
     }
 
     .btn-primary {
-        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        background: var(--primary-gradient);
         color: white;
     }
 
@@ -939,7 +1074,7 @@
     }
 
     .btn-success {
-        background: linear-gradient(135deg, #25D366 0%, #1EBEA5 100%);
+        background: linear-gradient(135deg, var(--whatsapp) 0%, #1EBEA5 100%);
         color: white;
     }
 
@@ -949,29 +1084,30 @@
     }
 
     .btn-secondary {
-        background: #00ff88;
-        color: #333;
+        background: var(--bg-white);
+        color: var(--text);
+        border: 1px solid var(--border);
     }
 
     .btn-secondary:hover:not(:disabled) {
         transform: translateY(-2px);
-        box-shadow: 0 5px 15px rgba(0, 255, 136, 0.3);
+        box-shadow: var(--shadow-lg);
     }
 
     .btn-outline {
         background: transparent;
-        border: 2px solid #667eea;
-        color: #667eea;
+        border: 2px solid var(--primary);
+        color: var(--primary);
         padding: 10px 22px;
     }
 
     .btn-outline:hover:not(:disabled) {
-        background: #667eea;
+        background: var(--primary);
         color: white;
     }
 
     .btn-warning {
-        background: #ff9800;
+        background: var(--warning);
         color: white;
     }
 
@@ -982,7 +1118,7 @@
     }
 
     .btn-excel {
-        background: linear-gradient(135deg, #1d6f42 0%, #4CAF50 100%);
+        background: linear-gradient(135deg, #1d6f42 0%, var(--success) 100%);
         color: white;
     }
 
@@ -1011,7 +1147,7 @@
         justify-content: space-between;
         margin-top: 40px;
         padding-top: 30px;
-        border-top: 1px solid #e0e6ed;
+        border-top: 1px solid var(--border);
     }
 
     /* Campaign Summary */
@@ -1023,14 +1159,15 @@
     }
 
     .summary-item {
-        background: #f8f9fa;
+        background: var(--bg-offwhite);
         padding: 15px;
         border-radius: 10px;
-        border-left: 4px solid #667eea;
+        border-left: 4px solid var(--primary);
+        border: 1px solid var(--border);
     }
 
     .summary-item small {
-        color: #666;
+        color: var(--text-muted);
         font-size: 12px;
         text-transform: uppercase;
         letter-spacing: 0.5px;
@@ -1040,7 +1177,7 @@
         font-weight: bold;
         font-size: 16px;
         margin-top: 5px;
-        color: #333;
+        color: var(--dark);
     }
 
     /* Progress Bar */
@@ -1050,14 +1187,14 @@
 
     .progress-bar {
         height: 10px;
-        background: #e0e6ed;
+        background: var(--border);
         border-radius: 5px;
         overflow: hidden;
     }
 
     .progress-fill {
         height: 100%;
-        background: linear-gradient(90deg, #667eea, #25D366);
+        background: linear-gradient(90deg, var(--primary), var(--whatsapp));
         width: 0%;
         transition: width 0.5s ease;
     }
@@ -1067,7 +1204,7 @@
         justify-content: space-between;
         margin-top: 5px;
         font-size: 14px;
-        color: #666;
+        color: var(--text-muted);
     }
 
     /* Table Styles */
@@ -1075,21 +1212,26 @@
         width: 100%;
         border-collapse: collapse;
         margin-top: 20px;
+        background: var(--bg-white);
+        border-radius: 10px;
+        overflow: hidden;
+        box-shadow: var(--shadow);
     }
 
     .campaign-table th {
-        background: #f8f9fa;
+        background: var(--bg-offwhite);
         padding: 15px;
         text-align: left;
-        color: #666;
+        color: var(--text-muted);
         font-weight: 600;
-        border-bottom: 2px solid #e0e6ed;
+        border-bottom: 2px solid var(--border);
     }
 
     .campaign-table td {
         padding: 15px;
-        border-bottom: 1px solid #e0e6ed;
+        border-bottom: 1px solid var(--border);
         vertical-align: top;
+        color: var(--text);
     }
 
     .status-badge {
@@ -1100,11 +1242,11 @@
         font-weight: 600;
     }
 
-    .status-scheduled { background: #fef3c7; color: #92400e; }
-    .status-sending { background: #dbeafe; color: #1e40af; }
-    .status-completed { background: #d1fae5; color: #065f46; }
-    .status-failed { background: #fee2e2; color: #991b1b; }
-    .status-cancelled { background: #f3f4f6; color: #374151; }
+    .status-scheduled { background: rgba(245, 158, 11, 0.1); color: var(--warning); }
+    .status-sending { background: rgba(59, 130, 246, 0.1); color: var(--info); }
+    .status-completed { background: rgba(16, 185, 129, 0.1); color: var(--success); }
+    .status-failed { background: rgba(239, 68, 68, 0.1); color: var(--danger); }
+    .status-cancelled { background: var(--bg-offwhite); color: var(--text-muted); }
 
     /* Schedule Options */
     .schedule-options {
@@ -1116,16 +1258,17 @@
     .schedule-option {
         flex: 1;
         padding: 15px;
-        border: 2px solid #ddd;
+        border: 2px solid var(--border);
         border-radius: 8px;
         cursor: pointer;
         text-align: center;
-        background: white;
+        background: var(--bg-white);
+        color: var(--text);
     }
 
     .schedule-option.active {
-        border-color: #25D366;
-        background: #e8f5e9;
+        border-color: var(--whatsapp);
+        background: rgba(37, 211, 102, 0.1);
     }
 
     .schedule-datetime {
@@ -1156,7 +1299,7 @@
         position: absolute;
         top: 15px;
         right: 15px;
-        background: #667eea;
+        background: var(--primary);
         color: white;
         padding: 3px 10px;
         border-radius: 15px;
@@ -1255,6 +1398,18 @@
 </style>
 </head>
 <body>
+    <!-- Theme Initialization Script -->
+    <script>
+        (function() {
+            const savedTheme = localStorage.getItem('theme') || 'light';
+            const savedBorder = localStorage.getItem('border') || 'round-border';
+            document.body.classList.add(savedTheme);
+            document.body.classList.add(savedBorder);
+            console.log('🎨 Theme loaded:', savedTheme);
+            console.log('📐 Border mode loaded:', savedBorder);
+        })();
+    </script>
+
     <!-- HEADER -->
     <div class="header-wrapper">
         <%- include('../partials/ram/header') %>
@@ -1296,8 +1451,8 @@
 
                 <!-- Scheduled Campaigns Section -->
                 <% if(locals.scheduledCampaigns && scheduledCampaigns && scheduledCampaigns.length > 0) { %>
-                    <div style="background: white; border-radius: 15px; padding: 30px; margin-bottom: 40px; box-shadow: 0 10px 30px rgba(0,0,0,0.1);">
-                        <h2 style="color: #333; margin-bottom: 20px; display: flex; align-items: center; gap: 10px;">
+                    <div style="background: var(--bg-card); border-radius: 15px; padding: 30px; margin-bottom: 40px; box-shadow: var(--shadow-lg); border: 1px solid var(--border);">
+                        <h2 style="color: var(--dark); margin-bottom: 20px; display: flex; align-items: center; gap: 10px;">
                             <i class="fas fa-clock"></i> Scheduled Campaigns (<%= scheduledCampaigns.length %>)
                         </h2>
                         
@@ -1322,7 +1477,7 @@
                                         <td>
                                             <strong><%= campaign.campaignName %></strong>
                                             <div>
-                                                <small style="color: #666;">
+                                                <small style="color: var(--text-muted);">
                                                     <%= campaign.messageType === 'media' ? 'Media' : 'Text' %>
                                                 </small>
                                             </div>
@@ -1331,7 +1486,7 @@
                                             <div><strong><%= new Date(campaign.scheduledAt).toLocaleString() %></strong></div>
                                         </td>
                                         <td>
-                                            <span style=" color: black; padding: 3px 10px; border-radius: 15px; font-size: 12px;font-weight: 600;">
+                                            <span style="color: black; padding: 3px 10px; border-radius: 15px; font-size: 12px; font-weight: 600;">
                                                 <%= campaign.totalContacts %> contacts
                                             </span>
                                         </td>
@@ -1408,11 +1563,11 @@
                                 <i class="fas fa-chevron-down"></i>
                             </div>
                             <% if(devices && devices.length){ %>
-                                <small style="color: #666; margin-top: 5px; display: block;">
+                                <small style="color: var(--text-muted); margin-top: 5px; display: block;">
                                     <i class="fas fa-info-circle"></i> Select the device you want to use for sending messages
                                 </small>
                             <% } else { %>
-                                <small style="color: #ff6b6b; margin-top: 5px; display: block;">
+                                <small style="color: var(--danger); margin-top: 5px; display: block;">
                                     <i class="fas fa-exclamation-triangle"></i> No WhatsApp device found. Please connect a device first.
                                 </small>
                             <% } %>
@@ -1421,7 +1576,7 @@
                         <div class="form-group">
                             <label><i class="fas fa-clock"></i> Delay Between Messages (Seconds)</label>
                             <input type="number" class="form-control" id="interval" value="5" min="1" max="30" required>
-                            <small style="color: #666; margin-top: 5px; display: block;">
+                            <small style="color: var(--text-muted); margin-top: 5px; display: block;">
                                 <i class="fas fa-info-circle"></i> Recommended: 5-10 seconds to avoid WhatsApp blocking
                             </small>
                         </div>
@@ -1451,7 +1606,7 @@
 
                             <div id="groupsGrid" class="groups-grid">
                                 <!-- Groups will be loaded here -->
-                                <div style="text-align: center; padding: 40px; color: #666; grid-column: 1/-1;">
+                                <div style="text-align: center; padding: 40px; color: var(--text-muted); grid-column: 1/-1;">
                                     <i class="fas fa-spinner fa-spin" style="font-size: 30px;"></i>
                                     <p style="margin-top: 15px;">Loading groups...</p>
                                 </div>
@@ -1474,7 +1629,7 @@
 
                         <!-- Excel Upload Section -->
                         <div class="excel-upload-container">
-                            <h4 style="color: #333; margin-bottom: 15px; display: flex; align-items: center; gap: 10px;">
+                            <h4 style="color: var(--dark); margin-bottom: 15px; display: flex; align-items: center; gap: 10px;">
                                 <i class="fas fa-file-excel"></i> Upload Excel/CSV File
                             </h4>
                             
@@ -1503,7 +1658,7 @@
                             
                             <!-- Excel Preview -->
                             <div id="excelPreview" class="excel-preview">
-                                <h5 style="color: #333; margin-bottom: 10px;">Preview (First 10 rows):</h5>
+                                <h5 style="color: var(--dark); margin-bottom: 10px;">Preview (First 10 rows):</h5>
                                 <table class="excel-preview-table">
                                     <thead id="excelPreviewHeader"></thead>
                                     <tbody id="excelPreviewBody"></tbody>
@@ -1520,9 +1675,9 @@
                         <!-- OR Divider -->
                         <div style="text-align: center; margin: 25px 0;">
                             <div style="display: flex; align-items: center;">
-                                <div style="flex: 1; height: 1px; background: #e0e6ed;"></div>
-                                <span style="margin: 0 15px; color: #666; font-weight: 600;">OR</span>
-                                <div style="flex: 1; height: 1px; background: #e0e6ed;"></div>
+                                <div style="flex: 1; height: 1px; background: var(--border);"></div>
+                                <span style="margin: 0 15px; color: var(--text-muted); font-weight: 600;">OR</span>
+                                <div style="flex: 1; height: 1px; background: var(--border);"></div>
                             </div>
                         </div>
 
@@ -1532,11 +1687,11 @@
                                 <textarea id="numbers" class="form-control" rows="8"
                                 placeholder="Example: 9876543210, 9123456789
 Or paste numbers with any separator (comma, space, new line)" required></textarea>
-                                <div id="contactsCount" style="position: absolute; top: 15px; right: 15px; background: #667eea; color: white; padding: 3px 10px; border-radius: 15px; font-size: 12px;">
+                                <div id="contactsCount" style="position: absolute; top: 15px; right: 15px; background: var(--primary); color: white; padding: 3px 10px; border-radius: 15px; font-size: 12px;">
                                     <span id="countNumber">0</span> contacts
                                 </div>
                             </div>
-                            <small style="color: #666; margin-top: 5px; display: block;">
+                            <small style="color: var(--text-muted); margin-top: 5px; display: block;">
                                 <i class="fas fa-info-circle"></i> Enter numbers separated by commas, spaces, or new lines.
                             </small>
                         </div>
@@ -1577,7 +1732,7 @@ Or paste numbers with any separator (comma, space, new line)" required></textare
 
                         <!-- Media Options -->
                         <div class="media-options-container">
-                            <h4 style="color: #333; margin-bottom: 20px;">Choose what to send:</h4>
+                            <h4 style="color: var(--dark); margin-bottom: 20px;">Choose what to send:</h4>
                             
                             <!-- Option 1: Only Text Message -->
                             <div class="media-option selected" id="textOnlyOption" onclick="selectMediaOption('textOnly')">
@@ -1611,7 +1766,7 @@ Or paste numbers with any separator (comma, space, new line)" required></textare
                                 <div class="media-upload" onclick="document.getElementById('mediaFile').click()">
                                     <i class="fas fa-cloud-upload-alt"></i>
                                     <p style="margin-bottom: 5px;">Click to upload image/video/document</p>
-                                    <small style="color: #666;">Supported: Images (JPG, PNG, GIF), Videos (MP4, AVI), Documents (PDF, DOC, TXT)</small>
+                                    <small style="color: var(--text-muted);">Supported: Images (JPG, PNG, GIF), Videos (MP4, AVI), Documents (PDF, DOC, TXT)</small>
                                     <input type="file" id="mediaFile" style="display: none;" onchange="handleMediaUpload(event)" accept="image/*,video/*,.pdf,.doc,.docx,.txt">
                                 </div>
                                 <div id="mediaPreview"></div>
@@ -1643,7 +1798,7 @@ Or paste numbers with any separator (comma, space, new line)" required></textare
                                         <i class="fas fa-calendar"></i> Date
                                     </button>
                                 </div>
-                                <span id="charCount" style="color: #666; font-size: 14px;">0/1000</span>
+                                <span id="charCount" style="color: var(--text-muted); font-size: 14px;">0/1000</span>
                             </div>
                         </div>
 
@@ -1690,14 +1845,14 @@ Or paste numbers with any separator (comma, space, new line)" required></textare
                                     <input type="time" class="form-control" id="scheduleTime" value="<%= new Date().getHours().toString().padStart(2, '0') %>:<%= (new Date().getMinutes()+5).toString().padStart(2, '0') %>">
                                 </div>
                             </div>
-                            <small style="color: #666; margin-top: 5px; display: block;">
+                            <small style="color: var(--text-muted); margin-top: 5px; display: block;">
                                 <i class="fas fa-info-circle"></i> Campaign will be sent automatically at scheduled time
                             </small>
                         </div>
                         
                         <!-- Campaign Summary -->
-                        <div style="background: #f8f9fa; border-radius: 15px; padding: 30px; margin: 30px 0;">
-                            <h3 style="color: #333; margin-bottom: 20px;">Campaign Summary</h3>
+                        <div style="background: var(--bg-offwhite); border-radius: 15px; padding: 30px; margin: 30px 0;">
+                            <h3 style="color: var(--dark); margin-bottom: 20px;">Campaign Summary</h3>
                             
                             <div class="summary-grid">
                                 <div class="summary-item">
@@ -1727,8 +1882,8 @@ Or paste numbers with any separator (comma, space, new line)" required></textare
                             </div>
                             
                             <!-- Media Preview in Summary -->
-                            <div id="summaryMediaPreview" style="display: none; margin-top: 20px; padding: 15px; background: white; border-radius: 10px; border: 1px solid #e0e6ed;">
-                                <h4 style="color: #333; margin-bottom: 10px;">Media Attachment</h4>
+                            <div id="summaryMediaPreview" style="display: none; margin-top: 20px; padding: 15px; background: var(--bg-white); border-radius: 10px; border: 1px solid var(--border);">
+                                <h4 style="color: var(--dark); margin-bottom: 10px;">Media Attachment</h4>
                                 <div id="summaryMediaContent"></div>
                             </div>
                         </div>
@@ -1960,7 +2115,7 @@ Or paste numbers with any separator (comma, space, new line)" required></textare
                 
                 if (!data.success || data.count === 0) {
                     groupsGrid.innerHTML = `
-                        <div style="text-align: center; padding: 40px; color: #666; grid-column: 1/-1;">
+                        <div style="text-align: center; padding: 40px; color: var(--text-muted); grid-column: 1/-1;">
                             <i class="fas fa-layer-group" style="font-size: 48px; color: #d1d5db; margin-bottom: 15px;"></i>
                             <h4>No Groups Found</h4>
                             <p>Create groups first in Contact Groups page</p>
@@ -1988,8 +2143,8 @@ Or paste numbers with any separator (comma, space, new line)" required></textare
             } catch (error) {
                 console.error('Error loading groups:', error);
                 groupsGrid.innerHTML = `
-                    <div style="text-align: center; padding: 40px; color: #666; grid-column: 1/-1;">
-                        <i class="fas fa-exclamation-circle" style="font-size: 48px; color: #dc2626; margin-bottom: 15px;"></i>
+                    <div style="text-align: center; padding: 40px; color: var(--text-muted); grid-column: 1/-1;">
+                        <i class="fas fa-exclamation-circle" style="font-size: 48px; color: var(--danger); margin-bottom: 15px;"></i>
                         <h4>Failed to load groups</h4>
                         <p>Please try again</p>
                         <button class="btn btn-outline" onclick="loadGroups()" style="margin-top: 15px;">
@@ -2088,68 +2243,65 @@ Or paste numbers with any separator (comma, space, new line)" required></textare
         }
 
         // ======================
-        // FETCH ALL CONTACTS - Modified to use WhatsApp numbers primarily
+        // FETCH ALL CONTACTS - FIXED API ENDPOINT
         // ======================
-      // ======================
-// FETCH ALL CONTACTS - FIXED API ENDPOINT
-// ======================
-async function fetchContacts() {
-    try {
-        showToast('Fetching', 'Loading contacts from database...', 'info');
-        
-        // 👇 FIXED: Changed from '/api/condevices/contacts' to '/api/contacts'
-        const response = await fetch('/api/contacts');
-        const data = await response.json();
-        
-        if (!response.ok) {
-            throw new Error(`HTTP error! status: ${response.status}`);
-        }
-        
-        if (data.status && data.contacts && data.contacts.length > 0) {
-            // Try to use WhatsApp numbers first, fallback to phone
-            let phones = data.contacts.map(c => {
-                if (c.whatsappNumber) {
-                    let whatsapp = c.whatsappNumber.replace(/\D/g, '');
-                    if (whatsapp.startsWith('91')) whatsapp = whatsapp.substring(2);
-                    return whatsapp.length === 10 ? whatsapp : null;
-                } else if (c.phoneNumber) {
-                    let phone = c.phoneNumber.replace(/\D/g, '');
-                    if (phone.startsWith('91')) phone = phone.substring(2);
-                    return phone.length === 10 ? phone : null;
+        async function fetchContacts() {
+            try {
+                showToast('Fetching', 'Loading contacts from database...', 'info');
+                
+                const response = await fetch('/api/contacts');
+                const data = await response.json();
+                
+                if (!response.ok) {
+                    throw new Error(`HTTP error! status: ${response.status}`);
                 }
-                return null;
-            }).filter(n => n && n.length === 10);
-            
-            const uniqueNumbers = [...new Set(phones)];
-            if (uniqueNumbers.length > 0) {
-                document.getElementById('numbers').value = uniqueNumbers.join(',\n');
                 
-                // Clear selected group if any
-                clearSelectedGroup();
+                if (data.status && data.contacts && data.contacts.length > 0) {
+                    // Try to use WhatsApp numbers first, fallback to phone
+                    let phones = data.contacts.map(c => {
+                        if (c.whatsappNumber) {
+                            let whatsapp = c.whatsappNumber.replace(/\D/g, '');
+                            if (whatsapp.startsWith('91')) whatsapp = whatsapp.substring(2);
+                            return whatsapp.length === 10 ? whatsapp : null;
+                        } else if (c.phoneNumber) {
+                            let phone = c.phoneNumber.replace(/\D/g, '');
+                            if (phone.startsWith('91')) phone = phone.substring(2);
+                            return phone.length === 10 ? phone : null;
+                        }
+                        return null;
+                    }).filter(n => n && n.length === 10);
+                    
+                    const uniqueNumbers = [...new Set(phones)];
+                    if (uniqueNumbers.length > 0) {
+                        document.getElementById('numbers').value = uniqueNumbers.join(',\n');
+                        
+                        // Clear selected group if any
+                        clearSelectedGroup();
+                        
+                        updateContactCount();
+                        showToast('Success', `Loaded ${uniqueNumbers.length} contacts (using WhatsApp numbers where available)`, 'success');
+                    } else {
+                        showToast('Warning', 'No valid 10-digit numbers found in contacts', 'warning');
+                    }
+                } else if (data.contacts && data.contacts.length === 0) {
+                    showToast('Info', 'No contacts found in database', 'info');
+                } else {
+                    showToast('Error', data.msg || 'Failed to fetch contacts', 'error');
+                }
+            } catch (err) {
+                console.error('Fetch contacts error:', err);
+                showToast('Error', 'Failed to fetch contacts: ' + err.message, 'error');
                 
-                updateContactCount();
-                showToast('Success', `Loaded ${uniqueNumbers.length} contacts (using WhatsApp numbers where available)`, 'success');
-            } else {
-                showToast('Warning', 'No valid 10-digit numbers found in contacts', 'warning');
+                // Fallback demo data for testing
+                if (confirm('Server error. Would you like to load sample contacts for testing?')) {
+                    const sampleNumbers = ['9876543210', '8765432109', '7654321098', '6543210987', '5432109876'];
+                    document.getElementById('numbers').value = sampleNumbers.join(',\n');
+                    updateContactCount();
+                    showToast('Info', 'Sample contacts loaded for testing', 'info');
+                }
             }
-        } else if (data.contacts && data.contacts.length === 0) {
-            showToast('Info', 'No contacts found in database', 'info');
-        } else {
-            showToast('Error', data.msg || 'Failed to fetch contacts', 'error');
         }
-    } catch (err) {
-        console.error('Fetch contacts error:', err);
-        showToast('Error', 'Failed to fetch contacts: ' + err.message, 'error');
-        
-        // Fallback demo data for testing
-        if (confirm('Server error. Would you like to load sample contacts for testing?')) {
-            const sampleNumbers = ['9876543210', '8765432109', '7654321098', '6543210987', '5432109876'];
-            document.getElementById('numbers').value = sampleNumbers.join(',\n');
-            updateContactCount();
-            showToast('Info', 'Sample contacts loaded for testing', 'info');
-        }
-    }
-}
+
         // ======================
         // STEP NAVIGATION
         // ======================
@@ -2667,7 +2819,7 @@ async function fetchContacts() {
                     </div>
                     <div class="file-info">
                         <strong>${data.originalName || data.fileName}</strong>
-                        <div style="color: #666; font-size: 14px;">
+                        <div style="color: var(--text-muted); font-size: 14px;">
                             ${typeName} • ${size} KB
                         </div>
                     </div>
@@ -2712,11 +2864,11 @@ async function fetchContacts() {
             document.getElementById('charCount').textContent = `${count}/1000`;
             
             if (count > 900) {
-                document.getElementById('charCount').style.color = '#dc2626';
+                document.getElementById('charCount').style.color = 'var(--danger)';
             } else if (count > 800) {
-                document.getElementById('charCount').style.color = '#facc15';
+                document.getElementById('charCount').style.color = 'var(--warning)';
             } else {
-                document.getElementById('charCount').style.color = '#666';
+                document.getElementById('charCount').style.color = 'var(--text-muted)';
             }
         }
 
@@ -2776,9 +2928,9 @@ async function fetchContacts() {
                     document.getElementById('summaryMediaPreview').style.display = 'block';
                     document.getElementById('summaryMediaContent').innerHTML = `
                         <div style="display: flex; align-items: center; gap: 10px;">
-                            <i class="fas fa-paperclip" style="color: #667eea;"></i>
+                            <i class="fas fa-paperclip" style="color: var(--primary);"></i>
                             <span>${campaignData.mediaData.originalName}</span>
-                            <small style="color: #666; margin-left: auto;">
+                            <small style="color: var(--text-muted); margin-left: auto;">
                                 ${(campaignData.mediaData.fileSize / 1024).toFixed(1)} KB
                             </small>
                         </div>

@@ -1,0 +1,381 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Theme & Border Settings</title>
+  <!-- Font Awesome -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: 'Inter', system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+      background: #f5f7fb;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      transition: background-color 0.2s ease, color 0.2s ease;
+    }
+
+    /* ----- THEMES (light / dark) ----- */
+    body.light {
+      --bg-page: #f0f2f5;
+      --bg-surface: #ffffff;
+      --text-primary: #1e293b;
+      --text-secondary: #475569;
+      --border-subtle: #e2e8f0;
+      --card-bg: #ffffff;
+      --accent: #2563eb;
+      --accent-soft: #dbeafe;
+      --shadow: 0 8px 20px rgba(0,0,0,0.02), 0 2px 6px rgba(0,0,0,0.05);
+      --header-bg: #ffffff;
+      --sidebar-bg: #ffffff;
+    }
+
+    body.dark {
+      --bg-page: #0b1120;
+      --bg-surface: #1e293b;
+      --text-primary: #f1f5f9;
+      --text-secondary: #cbd5e1;
+      --border-subtle: #334155;
+      --card-bg: #1e293b;
+      --accent: #3b82f6;
+      --accent-soft: #1e3a5f;
+      --shadow: 0 8px 20px rgba(0,0,0,0.4);
+      --header-bg: #1e293b;
+      --sidebar-bg: #1e293b;
+    }
+
+    body {
+      background: var(--bg-page);
+      color: var(--text-primary);
+    }
+
+    /* ----- BORDER MODES ----- */
+    body.round-border .settings-section,
+    body.round-border .theme-card,
+    body.round-border .save-btn {
+      border-radius: 28px !important;
+    }
+
+    body.no-radius .settings-section,
+    body.no-radius .theme-card,
+    body.no-radius .save-btn {
+      border-radius: 0 !important;
+    }
+
+    /* ----- LAYOUT ----- */
+    .header-wrapper {
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      z-index: 1030;
+      background: var(--header-bg);
+      box-shadow: var(--shadow);
+      border-bottom: 1px solid var(--border-subtle);
+    }
+
+    .main-wrapper {
+      margin-top: 70px;
+      display: flex;
+      width: 100%;
+      min-height: calc(100vh - 70px);
+    }
+
+    .sidebar-wrapper {
+      width: 280px;
+      flex-shrink: 0;
+      position: fixed;
+      left: 0;
+      top: 70px;
+      bottom: 0;
+      z-index: 1020;
+      background: var(--sidebar-bg);
+      border-right: 1px solid var(--border-subtle);
+      overflow-y: auto;
+    }
+
+    .content-wrapper {
+      flex: 1;
+      margin-left: 280px;
+      padding: 28px 32px;
+      background: var(--bg-page);
+      min-height: calc(100vh - 70px);
+    }
+
+    @media (max-width: 768px) {
+      .sidebar-wrapper {
+        transform: translateX(-100%);
+        width: 280px !important;
+      }
+      .sidebar-wrapper.mobile-open {
+        transform: translateX(0);
+      }
+      .content-wrapper {
+        margin-left: 0 !important;
+      }
+    }
+
+    /* ----- SETTINGS CARDS ----- */
+    .mid-content {
+      max-width: 1000px;
+      margin: 0 auto;
+    }
+
+    .settings-section {
+      background: var(--bg-surface);
+      border: 1px solid var(--border-subtle);
+      padding: 28px 30px;
+      margin-bottom: 40px;
+      box-shadow: var(--shadow);
+      border-radius: 24px;
+    }
+
+    .section-head {
+      font-size: 22px;
+      font-weight: 600;
+      margin-bottom: 24px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .card-row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 28px;
+      margin-top: 10px;
+    }
+
+    .theme-card {
+      width: 260px;
+      height: 160px;
+      border: 2px solid var(--border-subtle);
+      background: var(--card-bg);
+      border-radius: 24px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      position: relative;
+      cursor: pointer;
+      font-size: 1.5rem;
+      font-weight: 600;
+      transition: border 0.15s, transform 0.2s;
+      color: var(--text-primary);
+    }
+
+    .theme-card:hover {
+      transform: translateY(-6px);
+      box-shadow: 0 20px 25px -8px rgba(0,0,0,0.15);
+    }
+
+    .theme-card.active {
+      border-color: var(--accent) !important;
+      box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.2);
+    }
+
+    .check-badge {
+      position: absolute;
+      top: 12px;
+      right: 12px;
+      width: 40px;
+      height: 40px;
+      background: var(--accent);
+      border-radius: 40px;
+      display: none;
+      align-items: center;
+      justify-content: center;
+      color: white;
+      font-size: 1.4rem;
+    }
+
+    .theme-card.active .check-badge {
+      display: flex;
+    }
+
+    .border-preview {
+      font-size: 0.9rem;
+      margin-top: 8px;
+      padding: 4px 12px;
+      background: var(--accent-soft);
+      border-radius: 40px;
+      color: var(--text-secondary);
+    }
+
+    .save-btn {
+      background: var(--accent);
+      border: none;
+      color: white;
+      font-weight: 600;
+      padding: 16px 42px;
+      font-size: 1.2rem;
+      border-radius: 40px;
+      cursor: pointer;
+      box-shadow: 0 10px 18px -8px var(--accent);
+      transition: 0.15s;
+      margin-top: 16px;
+      width: fit-content;
+    }
+
+    .save-btn:hover {
+      background: #1d4ed8;
+      transform: scale(1.02);
+    }
+
+    body.dark .save-btn:hover {
+      background: #2563eb;
+    }
+  </style>
+</head>
+<body>
+  <!-- Load saved theme/border -->
+  <script>
+    (function() {
+      try {
+        const savedTheme = localStorage.getItem('theme') || 'light';
+        const savedBorder = localStorage.getItem('border') || 'round-border';
+        document.body.classList.add(savedTheme);
+        document.body.classList.add(savedBorder);
+      } catch (e) {}
+    })();
+  </script>
+
+  <!-- ===== HEADER ===== -->
+  <div class="header-wrapper">
+    <%- include('../partials/ram/header') %>
+  </div>
+
+  <!-- ===== MAIN LAYOUT ===== -->
+  <div class="main-wrapper">
+    <!-- SIDEBAR -->
+    <div class="sidebar-wrapper" id="sidebarWrapper">
+      <%- include('../partials/ram/sidebaar') %>
+    </div>
+
+    <!-- MAIN CONTENT -->
+    <div class="content-wrapper">
+      <div class="mid-content">
+        <!-- THEME SECTION -->
+        <div class="settings-section">
+          <div class="section-head">
+            <i class="fas fa-palette" style="color: var(--accent);"></i> Theme
+          </div>
+          <div class="card-row">
+            <div class="theme-card" data-theme="light">
+              <i class="fas fa-sun" style="margin-right: 8px;"></i> Light
+              <div class="check-badge"><i class="fas fa-check"></i></div>
+            </div>
+            <div class="theme-card" data-theme="dark">
+              <i class="fas fa-moon" style="margin-right: 8px;"></i> Dark
+              <div class="check-badge"><i class="fas fa-check"></i></div>
+            </div>
+          </div>
+        </div>
+
+        <!-- BORDER SECTION -->
+        <div class="settings-section">
+          <div class="section-head">
+            <i class="fas fa-border-all" style="color: var(--accent);"></i> Border style
+          </div>
+          <div class="card-row">
+            <div class="theme-card" data-border="round-border">
+              <span style="display: flex; flex-direction: column; align-items: center;">
+                <i class="fas fa-circle" style="font-size: 1rem; margin-bottom: 6px;"></i>
+                Rounded
+                <span class="border-preview">32px radius</span>
+              </span>
+              <div class="check-badge"><i class="fas fa-check"></i></div>
+            </div>
+            <div class="theme-card" data-border="no-radius">
+              <span style="display: flex; flex-direction: column; align-items: center;">
+                <i class="fas fa-square" style="font-size: 1rem; margin-bottom: 6px;"></i>
+                Square
+                <span class="border-preview">0px radius</span>
+              </span>
+              <div class="check-badge"><i class="fas fa-check"></i></div>
+            </div>
+          </div>
+        </div>
+
+        <!-- SAVE BUTTON -->
+        <div style="display: flex; justify-content: flex-end; margin-top: 40px;">
+          <button class="save-btn" id="saveSettingsBtn">
+            <i class="fas fa-save" style="margin-right: 8px;"></i> Save settings
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- JavaScript -->
+  <script>
+    (function() {
+      // Get current settings
+      let selectedTheme = document.body.classList.contains('dark') ? 'dark' : 'light';
+      let selectedBorder = document.body.classList.contains('no-radius') ? 'no-radius' : 'round-border';
+
+      const themeCards = document.querySelectorAll('[data-theme]');
+      const borderCards = document.querySelectorAll('[data-border]');
+      const saveBtn = document.getElementById('saveSettingsBtn');
+
+      function refreshActiveCards() {
+        themeCards.forEach(card => {
+          card.classList.toggle('active', card.dataset.theme === selectedTheme);
+        });
+        borderCards.forEach(card => {
+          card.classList.toggle('active', card.dataset.border === selectedBorder);
+        });
+      }
+
+      refreshActiveCards();
+
+      // Theme card clicks
+      themeCards.forEach(card => {
+        card.addEventListener('click', function() {
+          themeCards.forEach(c => c.classList.remove('active'));
+          this.classList.add('active');
+          selectedTheme = this.dataset.theme;
+        });
+      });
+
+      // Border card clicks
+      borderCards.forEach(card => {
+        card.addEventListener('click', function() {
+          borderCards.forEach(c => c.classList.remove('active'));
+          this.classList.add('active');
+          selectedBorder = this.dataset.border;
+        });
+      });
+
+      // Save settings
+      saveBtn.addEventListener('click', function() {
+        document.body.classList.remove('dark', 'light');
+        document.body.classList.add(selectedTheme);
+        document.body.classList.remove('round-border', 'no-radius');
+        document.body.classList.add(selectedBorder);
+
+        try {
+          localStorage.setItem('theme', selectedTheme);
+          localStorage.setItem('border', selectedBorder);
+        } catch (e) {}
+
+        // Optional: Show success message
+        alert('✅ Settings saved!');
+      });
+
+      // Load on page load
+      window.addEventListener('load', function() {
+        selectedTheme = document.body.classList.contains('dark') ? 'dark' : 'light';
+        selectedBorder = document.body.classList.contains('no-radius') ? 'no-radius' : 'round-border';
+        refreshActiveCards();
+      });
+    })();
+  </script>
+</body>
+</html>

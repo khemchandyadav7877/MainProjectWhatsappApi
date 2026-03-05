@@ -1,4 +1,3 @@
-// models/auth.js
 const mongoose = require("mongoose");
 
 const authSchema = new mongoose.Schema({
@@ -14,7 +13,9 @@ const authSchema = new mongoose.Schema({
   email: {
     type: String,
     required: true,
-    unique: true
+    unique: true,
+    lowercase: true,
+    trim: true
   },
   password: {
     type: String,
@@ -23,14 +24,24 @@ const authSchema = new mongoose.Schema({
   contactNumber: {
     type: String,
     required: false,
+    default: ""
   },
   dob: {
     type: Date,
     required: false,
   },
   
-  // ✅ ADD THESE PROFILE FIELDS
+  // ===== PROFILE FIELDS =====
   profileImage: {
+    type: String,
+    default: ""
+  },
+  // ⚡⚡ IMPORTANT: Avatar field for profile picture (profileImage alias)
+  avatar: {
+    type: String,
+    default: null
+  },
+  address: {
     type: String,
     default: ""
   },
@@ -92,7 +103,13 @@ const authSchema = new mongoose.Schema({
     default: "Low"
   },
   
-  // ✅ Login session tracking fields
+  // Current active session year
+  currentSessionYear: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: 'yearsession',
+    default: null
+  },
+  
   loginHistory: [{
     loginTime: {
       type: Date,
@@ -104,6 +121,10 @@ const authSchema = new mongoose.Schema({
     sessionId: {
       type: String
     },
+    sessionYear: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: 'yearsession'
+    },
     ipAddress: {
       type: String
     },
@@ -112,6 +133,10 @@ const authSchema = new mongoose.Schema({
     },
     duration: {
       type: Number // in seconds
+    },
+    rememberMe: {
+      type: Boolean,
+      default: false
     }
   }],
   
@@ -124,7 +149,6 @@ const authSchema = new mongoose.Schema({
     type: String
   },
   
-  // ✅ ADD PASSWORD HISTORY & ACTIVITY LOG
   passwordHistory: {
     type: [String],
     default: []
@@ -156,6 +180,46 @@ const authSchema = new mongoose.Schema({
   
 }, {
   timestamps: true
+});
+
+// Virtual for full name
+authSchema.virtual('fullName').get(function() {
+  return `${this.firstName} ${this.lastName}`;
+});
+
+// Method to get profile data
+authSchema.methods.getProfile = function() {
+  return {
+    firstName: this.firstName,
+    lastName: this.lastName,
+    email: this.email,
+    contactNumber: this.contactNumber || '',
+    address: this.address || '',
+    avatar: this.avatar || this.profileImage || null,
+    dob: this.dob,
+    title: this.title,
+    bio: this.bio,
+    location: this.location,
+    company: this.company,
+    role: this.role,
+    joinDate: this.joinDate,
+      gender: {
+    type: String,
+    enum: ["", "Male", "Female", "Other"],
+    default: ""
+  },
+  };
+};
+
+// Pre-save middleware to sync avatar with profileImage
+authSchema.pre('save', function(next) {
+  // Sync avatar with profileImage if one is set and other isn't
+  if (this.avatar && !this.profileImage) {
+    this.profileImage = this.avatar;
+  } else if (this.profileImage && !this.avatar) {
+    this.avatar = this.profileImage;
+  }
+  next();
 });
 
 module.exports = mongoose.model("auth", authSchema);

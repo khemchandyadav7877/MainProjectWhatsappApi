@@ -13,6 +13,70 @@
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     
     <style>
+        /* ===== THEME VARIABLES ===== */
+        :root {
+            --primary: #667eea;
+            --primary-dark: #5a67d8;
+            --primary-gradient: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            --success: #10b981;
+            --warning: #f59e0b;
+            --danger: #ef4444;
+            --info: #3b82f6;
+            
+            /* Role Colors */
+            --role-superadmin: #4f46e5;
+            --role-educator: #3b82f6;
+            --role-trainer: #10b981;
+            --role-student: #f59e0b;
+            
+            /* Status Colors */
+            --status-success-bg: #d1fae5;
+            --status-success-text: #065f46;
+            --status-failed-bg: #fee2e2;
+            --status-failed-text: #991b1b;
+            --status-pending-bg: #fef3c7;
+            --status-pending-text: #92400e;
+            
+            /* Light Mode */
+            --bg-body: #f0f2f5;
+            --bg-white: #ffffff;
+            --bg-offwhite: #f8fafc;
+            --bg-card: #ffffff;
+            --text: #1e293b;
+            --text-light: #334155;
+            --text-muted: #64748b;
+            --dark: #0f172a;
+            --border: #e5e7eb;
+            --shadow: 0 2px 20px rgba(0,0,0,0.05);
+            --shadow-lg: 0 15px 40px rgba(102, 126, 234, 0.15);
+            
+            /* Layout */
+            --header-height: 70px;
+            --sidebar-width: 280px;
+        }
+
+        /* Dark Mode */
+        body.dark {
+            --bg-body: #0f172a;
+            --bg-white: #1e293b;
+            --bg-offwhite: #334155;
+            --bg-card: #1e293b;
+            --text: #f1f5f9;
+            --text-light: #cbd5e1;
+            --text-muted: #94a3b8;
+            --dark: #f8fafc;
+            --border: #334155;
+            --shadow: 0 2px 20px rgba(0,0,0,0.3);
+            --shadow-lg: 0 15px 40px rgba(102, 126, 234, 0.3);
+            
+            --status-success-bg: rgba(16, 185, 129, 0.2);
+            --status-failed-bg: rgba(239, 68, 68, 0.2);
+            --status-pending-bg: rgba(245, 158, 11, 0.2);
+            --status-success-text: #10b981;
+            --status-failed-text: #ef4444;
+            --status-pending-text: #f59e0b;
+        }
+
         /* RESET */
         * {
             margin: 0;
@@ -22,8 +86,51 @@
 
         body {
             overflow-x: hidden;
-            background: #f0f2f5;
+            background: var(--bg-body);
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            color: var(--text);
+            transition: background-color 0.3s, color 0.3s;
+        }
+
+        /* ===== BORDER MODES ===== */
+        body.round-border .header-wrapper,
+        body.round-border .sidebar-wrapper,
+        body.round-border .mid-content,
+        body.round-border .report-header,
+        body.round-border .stat-card,
+        body.round-border .chart-container,
+        body.round-border .filter-tab,
+        body.round-border .media-card,
+        body.round-border .modal-content,
+        body.round-border .load-more-btn,
+        body.round-border .refresh-btn,
+        body.round-border .toast-notification {
+            border-radius: 20px !important;
+        }
+
+        body.round-border .media-preview {
+            border-radius: 20px 20px 0 0 !important;
+        }
+
+        body.round-border .media-badge {
+            border-radius: 20px !important;
+        }
+
+        body.no-radius .header-wrapper,
+        body.no-radius .sidebar-wrapper,
+        body.no-radius .mid-content,
+        body.no-radius .report-header,
+        body.no-radius .stat-card,
+        body.no-radius .chart-container,
+        body.no-radius .filter-tab,
+        body.no-radius .media-card,
+        body.no-radius .modal-content,
+        body.no-radius .load-more-btn,
+        body.no-radius .refresh-btn,
+        body.no-radius .toast-notification,
+        body.no-radius .media-preview,
+        body.no-radius .media-badge {
+            border-radius: 0 !important;
         }
 
         /* HEADER FIXED */
@@ -33,8 +140,9 @@
             left: 0;
             right: 0;
             z-index: 1030;
-            background: white;
-            box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+            background: var(--bg-white);
+            box-shadow: var(--shadow);
+            border-bottom: 1px solid var(--border);
         }
 
         /* MAIN LAYOUT */
@@ -55,6 +163,8 @@
             bottom: 0;
             z-index: 1020;
             transition: width 0.3s ease;
+            background: var(--bg-white);
+            border-right: 1px solid var(--border);
         }
 
         .sidebar-wrapper.collapsed {
@@ -68,6 +178,7 @@
             padding: 20px;
             transition: margin-left 0.3s ease;
             min-height: calc(100vh - 70px);
+            background: var(--bg-body);
         }
 
         .sidebar-wrapper.collapsed + .content-wrapper {
@@ -76,10 +187,11 @@
 
         /* MID CONTENT */
         .mid-content {
-            background: white;
+            background: var(--bg-card);
             border-radius: 20px;
             padding: 30px;
-            box-shadow: 0 2px 20px rgba(0,0,0,0.05);
+            box-shadow: var(--shadow);
+            border: 1px solid var(--border);
         }
 
         /* MOBILE */
@@ -100,7 +212,7 @@
 
         /* REPORT HEADER */
         .report-header {
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            background: var(--primary-gradient);
             color: white;
             padding: 30px;
             border-radius: 20px;
@@ -147,6 +259,7 @@
             font-size: 16px;
             opacity: 0.9;
             margin: 0;
+            color: white;
         }
 
         /* STATS CARDS */
@@ -158,18 +271,18 @@
         }
 
         .stat-card {
-            background: white;
+            background: var(--bg-card);
             border-radius: 15px;
             padding: 20px;
-            box-shadow: 0 5px 20px rgba(0,0,0,0.05);
+            box-shadow: var(--shadow);
             text-align: center;
             transition: transform 0.3s;
-            border: 1px solid #e5e7eb;
+            border: 1px solid var(--border);
         }
 
         .stat-card:hover {
             transform: translateY(-5px);
-            box-shadow: 0 15px 30px rgba(0,0,0,0.1);
+            box-shadow: var(--shadow-lg);
         }
 
         .stat-icon {
@@ -193,12 +306,12 @@
         .stat-value {
             font-size: 32px;
             font-weight: 700;
-            color: #1f2937;
+            color: var(--dark);
             margin-bottom: 5px;
         }
 
         .stat-label {
-            color: #6b7280;
+            color: var(--text-muted);
             font-size: 14px;
             font-weight: 500;
         }
@@ -212,11 +325,11 @@
         }
 
         .chart-container {
-            background: white;
+            background: var(--bg-card);
             border-radius: 20px;
             padding: 25px;
-            box-shadow: 0 5px 20px rgba(0,0,0,0.05);
-            border: 1px solid #e0e6ed;
+            box-shadow: var(--shadow);
+            border: 1px solid var(--border);
         }
 
         .chart-header {
@@ -227,7 +340,7 @@
         }
 
         .chart-header h3 {
-            color: #333;
+            color: var(--dark);
             font-size: 18px;
             margin: 0;
             display: flex;
@@ -236,7 +349,7 @@
         }
 
         .chart-header h3 i {
-            color: #667eea;
+            color: var(--primary);
         }
 
         .chart-legend {
@@ -249,7 +362,7 @@
             align-items: center;
             gap: 5px;
             font-size: 12px;
-            color: #666;
+            color: var(--text-muted);
         }
 
         .legend-color {
@@ -269,7 +382,7 @@
             gap: 10px;
             margin-bottom: 25px;
             flex-wrap: wrap;
-            border-bottom: 2px solid #e5e7eb;
+            border-bottom: 2px solid var(--border);
             padding-bottom: 10px;
         }
 
@@ -277,7 +390,7 @@
             padding: 10px 20px;
             border: none;
             background: transparent;
-            color: #6b7280;
+            color: var(--text-muted);
             font-weight: 600;
             cursor: pointer;
             border-radius: 8px 8px 0 0;
@@ -288,14 +401,14 @@
         }
 
         .filter-tab:hover {
-            color: #667eea;
-            background: #f3f4f6;
+            color: var(--primary);
+            background: var(--bg-offwhite);
         }
 
         .filter-tab.active {
-            color: #667eea;
-            border-bottom: 3px solid #667eea;
-            background: #f0f4ff;
+            color: var(--primary);
+            border-bottom: 3px solid var(--primary);
+            background: rgba(102, 126, 234, 0.1);
         }
 
         /* MEDIA GRID */
@@ -308,23 +421,23 @@
 
         /* MEDIA CARD */
         .media-card {
-            background: white;
+            background: var(--bg-card);
             border-radius: 20px;
             overflow: hidden;
-            box-shadow: 0 5px 20px rgba(0,0,0,0.05);
-            border: 1px solid #e0e6ed;
+            box-shadow: var(--shadow);
+            border: 1px solid var(--border);
             transition: all 0.3s;
         }
 
         .media-card:hover {
             transform: translateY(-5px);
-            box-shadow: 0 15px 40px rgba(102, 126, 234, 0.15);
+            box-shadow: var(--shadow-lg);
         }
 
         /* MEDIA PREVIEW */
         .media-preview {
             height: 220px;
-            background: #f8f9fa;
+            background: var(--bg-offwhite);
             position: relative;
             overflow: hidden;
             cursor: pointer;
@@ -441,7 +554,7 @@
 
         .media-title {
             font-weight: 600;
-            color: #1f2937;
+            color: var(--dark);
             font-size: 16px;
             max-width: 200px;
             overflow: hidden;
@@ -450,11 +563,11 @@
         }
 
         .media-campaign {
-            background: #f3f4f6;
+            background: var(--bg-offwhite);
             padding: 4px 10px;
             border-radius: 20px;
             font-size: 11px;
-            color: #6b7280;
+            color: var(--text-muted);
         }
 
         .media-meta {
@@ -462,11 +575,11 @@
             gap: 15px;
             margin-bottom: 12px;
             font-size: 12px;
-            color: #9ca3af;
+            color: var(--text-muted);
         }
 
         .media-recipient {
-            background: #f9fafb;
+            background: var(--bg-offwhite);
             padding: 8px 12px;
             border-radius: 8px;
             font-size: 13px;
@@ -474,18 +587,19 @@
             display: flex;
             align-items: center;
             gap: 5px;
+            color: var(--text);
         }
 
         .media-recipient i {
-            color: #667eea;
+            color: var(--primary);
         }
 
         .media-message {
-            background: #f3f4f6;
+            background: var(--bg-offwhite);
             padding: 12px;
             border-radius: 8px;
             font-size: 13px;
-            color: #4b5563;
+            color: var(--text);
             margin-bottom: 15px;
             max-height: 60px;
             overflow: hidden;
@@ -501,7 +615,7 @@
         .expand-btn {
             background: none;
             border: none;
-            color: #667eea;
+            color: var(--primary);
             font-size: 12px;
             cursor: pointer;
             margin-top: 5px;
@@ -515,7 +629,7 @@
             justify-content: space-between;
             align-items: center;
             padding-top: 15px;
-            border-top: 1px solid #e5e7eb;
+            border-top: 1px solid var(--border);
         }
 
         .status-badge {
@@ -526,22 +640,22 @@
         }
 
         .status-badge.success {
-            background: #d1fae5;
-            color: #065f46;
+            background: var(--status-success-bg);
+            color: var(--status-success-text);
         }
 
         .status-badge.failed {
-            background: #fee2e2;
-            color: #991b1b;
+            background: var(--status-failed-bg);
+            color: var(--status-failed-text);
         }
 
         .status-badge.pending {
-            background: #fef3c7;
-            color: #92400e;
+            background: var(--status-pending-bg);
+            color: var(--status-pending-text);
         }
 
         .view-btn {
-            background: #667eea;
+            background: var(--primary);
             color: white;
             border: none;
             padding: 6px 15px;
@@ -552,7 +666,7 @@
         }
 
         .view-btn:hover {
-            background: #5a67d8;
+            background: var(--primary-dark);
             transform: translateY(-2px);
         }
 
@@ -564,9 +678,9 @@
 
         .load-more-btn {
             padding: 12px 40px;
-            background: white;
-            border: 2px solid #667eea;
-            color: #667eea;
+            background: var(--bg-white);
+            border: 2px solid var(--primary);
+            color: var(--primary);
             border-radius: 30px;
             font-weight: 600;
             cursor: pointer;
@@ -577,7 +691,7 @@
         }
 
         .load-more-btn:hover {
-            background: #667eea;
+            background: var(--primary);
             color: white;
             transform: translateY(-2px);
             box-shadow: 0 5px 20px rgba(102, 126, 234, 0.3);
@@ -595,6 +709,7 @@
             z-index: 9999;
             align-items: center;
             justify-content: center;
+            backdrop-filter: blur(5px);
         }
 
         .modal.show {
@@ -602,7 +717,7 @@
         }
 
         .modal-content {
-            background: white;
+            background: var(--bg-card);
             border-radius: 20px;
             max-width: 800px;
             width: 90%;
@@ -611,6 +726,8 @@
             padding: 25px;
             position: relative;
             animation: modalSlide 0.3s ease;
+            border: 1px solid var(--border);
+            color: var(--text);
         }
 
         @keyframes modalSlide {
@@ -629,13 +746,13 @@
             top: 15px;
             right: 20px;
             font-size: 30px;
-            color: #9ca3af;
+            color: var(--text-muted);
             cursor: pointer;
             z-index: 10;
         }
 
         .modal-close:hover {
-            color: #ef4444;
+            color: var(--danger);
         }
 
         .modal-media {
@@ -652,25 +769,27 @@
         }
 
         .modal-details {
-            background: #f9fafb;
+            background: var(--bg-offwhite);
             padding: 20px;
             border-radius: 8px;
             margin-bottom: 20px;
+            border: 1px solid var(--border);
         }
 
         .modal-details p {
             margin-bottom: 10px;
             font-size: 14px;
+            color: var(--text);
         }
 
         .modal-details strong {
-            color: #374151;
+            color: var(--dark);
             width: 100px;
             display: inline-block;
         }
 
         .modal-message {
-            background: #f3f4f6;
+            background: var(--bg-offwhite);
             padding: 20px;
             border-radius: 8px;
             white-space: pre-wrap;
@@ -678,31 +797,34 @@
             line-height: 1.6;
             max-height: 200px;
             overflow-y: auto;
+            color: var(--text);
+            border: 1px solid var(--border);
         }
 
         /* EMPTY STATE */
         .empty-state {
             text-align: center;
             padding: 60px 20px;
-            background: #f8f9fa;
+            background: var(--bg-offwhite);
             border-radius: 20px;
             margin: 30px 0;
             grid-column: 1/-1;
+            color: var(--text-muted);
         }
 
         .empty-state i {
             font-size: 64px;
-            color: #d1d5db;
+            color: var(--text-muted);
             margin-bottom: 20px;
         }
 
         .empty-state h3 {
-            color: #333;
+            color: var(--dark);
             margin-bottom: 10px;
         }
 
         .empty-state p {
-            color: #666;
+            color: var(--text-muted);
             margin-bottom: 25px;
         }
 
@@ -714,7 +836,7 @@
             width: 320px;
             padding: 14px 16px;
             border-radius: 12px;
-            box-shadow: 0 15px 30px rgba(0,0,0,.2);
+            box-shadow: var(--shadow-lg);
             opacity: 0;
             transform: translateY(-15px);
             transition: .3s ease;
@@ -727,9 +849,9 @@
             transform: translateY(0);
         }
 
-        .toast-success { background: #16a34a; }
-        .toast-error { background: #dc2626; }
-        .toast-info { background: #2563eb; }
+        .toast-success { background: var(--success); }
+        .toast-error { background: var(--danger); }
+        .toast-info { background: var(--info); }
 
         /* REFRESH BUTTON */
         .refresh-btn {
@@ -739,7 +861,7 @@
             width: 60px;
             height: 60px;
             border-radius: 50%;
-            background: linear-gradient(135deg, #667eea, #764ba2);
+            background: var(--primary-gradient);
             color: white;
             display: flex;
             align-items: center;
@@ -778,6 +900,18 @@
     </style>
 </head>
 <body>
+    <!-- Theme Initialization Script -->
+    <script>
+        (function() {
+            const savedTheme = localStorage.getItem('theme') || 'light';
+            const savedBorder = localStorage.getItem('border') || 'round-border';
+            document.body.classList.add(savedTheme);
+            document.body.classList.add(savedBorder);
+            console.log('🎨 Theme loaded:', savedTheme);
+            console.log('📐 Border mode loaded:', savedBorder);
+        })();
+    </script>
+
     <!-- HEADER -->
     <div class="header-wrapper">
         <%- include('../partials/ram/header') %>
@@ -889,9 +1023,10 @@
 
                 <!-- Media Grid -->
                 <div id="mediaGrid" class="media-grid">
-                    <div class="loading-state">
-                        <i class="fas fa-spinner fa-spin fa-3x"></i>
-                        <h4>Loading media...</h4>
+                    <div class="empty-state">
+                        <i class="fas fa-spinner fa-spin"></i>
+                        <h3>Loading media...</h3>
+                        <p>Please wait while we fetch your campaign data</p>
                     </div>
                 </div>
 
@@ -1009,8 +1144,8 @@
                 <div style="display: flex; gap: 12px;">
                     <div style="font-size: 20px;">${icons[type]}</div>
                     <div>
-                        <h4 style="margin: 0; font-size: 14px;">${title}</h4>
-                        <p style="margin: 5px 0 0; font-size: 13px;">${message}</p>
+                        <h4 style="margin: 0; font-size: 14px; color: white;">${title}</h4>
+                        <p style="margin: 5px 0 0; font-size: 13px; color: white;">${message}</p>
                     </div>
                 </div>
                 <div style="height: 3px; background: rgba(255,255,255,0.6); margin-top: 10px; width: 100%; animation: progress 3s linear;"></div>
@@ -1552,10 +1687,10 @@
                     
                 default:
                     return `
-                        <div class="media-preview" style="background: #e5e7eb;" onclick="viewTextMessage('${media.id}')">
+                        <div class="media-preview" style="background: var(--bg-offwhite);" onclick="viewTextMessage('${media.id}')">
                             <div style="display: flex; align-items: center; justify-content: center; height: 100%; flex-direction: column; gap: 10px;">
-                                <i class="fas fa-comment" style="font-size: 50px; color: #9ca3af;"></i>
-                                <span style="color: #6b7280;">Text Message</span>
+                                <i class="fas fa-comment" style="font-size: 50px; color: var(--text-muted);"></i>
+                                <span style="color: var(--text-muted);">Text Message</span>
                             </div>
                             <div class="media-badge">
                                 <i class="fas fa-comment"></i> Text
@@ -1637,7 +1772,7 @@
             }
             
             content.innerHTML = `
-                <h3 style="margin-bottom: 20px;">${media.type.toUpperCase()} Details</h3>
+                <h3 style="margin-bottom: 20px; color: var(--dark);">${media.type.toUpperCase()} Details</h3>
                 
                 ${mediaHtml}
                 

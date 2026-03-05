@@ -1,0 +1,684 @@
+<!-- views/partials/second/left.ejs -->
+<style>
+    /* ===== SIDEBAR STYLES - ONLY SIDEBAR ===== */
+    .sidebar {
+        width: var(--sidebar-width, 280px);
+        background: var(--bg-white);
+        border-right: 1px solid var(--border);
+        height: calc(100vh - var(--header-height, 70px));
+        position: fixed;
+        left: 0;
+        top: var(--header-height, 70px);
+        transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        z-index: 999;
+        box-shadow: var(--shadow);
+        display: flex;
+        flex-direction: column;
+        overflow-y: auto;
+    }
+
+    .sidebar.closed {
+        width: 0;
+        min-width: 0;
+        opacity: 0;
+        transform: translateX(-100%);
+    }
+
+    /* Sidebar Header */
+    .sidebar-header {
+        padding: 1rem 1.25rem;
+        border-bottom: 1px solid var(--border);
+        display: flex;
+        align-items: center;
+        background: var(--bg-white);
+        flex-shrink: 0;
+    }
+
+    .logo-area {
+        display: flex;
+        align-items: center;
+        gap: 0.75rem;
+    }
+
+    .logo-icon {
+        width: 40px;
+        height: 40px;
+        background: linear-gradient(135deg, var(--primary-dark), var(--primary));
+        border-radius: 10px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: white;
+        font-size: 1.2rem;
+        flex-shrink: 0;
+    }
+
+    .logo-text {
+        font-weight: 700;
+        font-size: 1.2rem;
+        color: var(--dark);
+        white-space: nowrap;
+    }
+
+    .logo-text span {
+        color: var(--primary);
+    }
+
+    /* Sidebar Content */
+    .sidebar-content {
+        flex: 1;
+        overflow-y: auto;
+        padding: 1.25rem 1rem;
+        scrollbar-width: thin;
+        scrollbar-color: var(--border) transparent;
+    }
+
+    .sidebar-content::-webkit-scrollbar {
+        width: 4px;
+    }
+
+    .sidebar-content::-webkit-scrollbar-track {
+        background: transparent;
+    }
+
+    .sidebar-content::-webkit-scrollbar-thumb {
+        background: var(--border);
+        border-radius: 10px;
+    }
+
+    /* User Card */
+    .user-card {
+        background: linear-gradient(135deg, var(--primary)10, transparent);
+        border: 1px solid var(--border);
+        border-radius: 12px;
+        padding: 1rem;
+        margin-bottom: 1.5rem;
+        position: relative;
+        cursor: pointer;
+        transition: all 0.3s;
+    }
+
+    .user-card:hover {
+        border-color: var(--primary);
+        background: linear-gradient(135deg, var(--primary)15, transparent);
+    }
+
+    .user-card-toggle {
+        position: absolute;
+        top: 8px;
+        right: 8px;
+        width: 24px;
+        height: 24px;
+        border-radius: 50%;
+        background: var(--bg-white);
+        border: 1px solid var(--border);
+        color: var(--primary);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 12px;
+        opacity: 0;
+        transition: opacity 0.2s;
+        z-index: 2;
+    }
+
+    .user-card:hover .user-card-toggle {
+        opacity: 1;
+    }
+
+    .user-avatar-wrapper {
+        display: flex;
+        align-items: center;
+        gap: 0.75rem;
+        margin-bottom: 0.75rem;
+    }
+
+    .avatar {
+        width: 48px;
+        height: 48px;
+        border-radius: 50%;
+        background: var(--primary);
+        color: white;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-weight: 600;
+        font-size: 1.2rem;
+        position: relative;
+        flex-shrink: 0;
+    }
+
+    .online-indicator {
+        position: absolute;
+        bottom: 2px;
+        right: 2px;
+        width: 10px;
+        height: 10px;
+        background: var(--success);
+        border: 2px solid white;
+        border-radius: 50%;
+        animation: pulse 2s infinite;
+    }
+
+    @keyframes pulse {
+        0%, 100% { opacity: 1; }
+        50% { opacity: 0.5; }
+    }
+
+    .user-details {
+        overflow: hidden;
+        flex: 1;
+    }
+
+    .user-name {
+        font-size: 0.95rem;
+        font-weight: 600;
+        color: var(--dark);
+        margin-bottom: 0.25rem;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+    }
+
+    .role-badge {
+        display: inline-block;
+        padding: 0.2rem 0.5rem;
+        background: var(--primary);
+        color: white;
+        font-size: 0.65rem;
+        font-weight: 600;
+        border-radius: 4px;
+        text-transform: uppercase;
+        letter-spacing: 0.3px;
+    }
+
+    .user-email {
+        font-size: 0.7rem;
+        color: var(--text-muted);
+        margin-top: 0.25rem;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+    }
+
+    .user-stats {
+        display: flex;
+        gap: 0.75rem;
+        padding-top: 0.75rem;
+        border-top: 1px solid var(--border);
+    }
+
+    .stat-item {
+        flex: 1;
+        text-align: center;
+    }
+
+    .stat-value {
+        display: block;
+        font-size: 1.1rem;
+        font-weight: 700;
+        color: var(--primary);
+        line-height: 1.2;
+    }
+
+    .stat-label {
+        display: block;
+        font-size: 0.6rem;
+        color: var(--text-muted);
+        letter-spacing: 0.3px;
+    }
+
+    .user-card-minimized {
+        display: none;
+        background: linear-gradient(135deg, var(--primary)10, transparent);
+        border: 1px solid var(--border);
+        border-radius: 12px;
+        padding: 0.75rem 1rem;
+        margin-bottom: 1.5rem;
+        cursor: pointer;
+        align-items: center;
+        justify-content: space-between;
+        transition: all 0.2s;
+    }
+
+    .user-card-minimized:hover {
+        border-color: var(--primary);
+    }
+
+    .minimized-left {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+    }
+
+    .minimized-left i {
+        color: var(--primary);
+        font-size: 1rem;
+    }
+
+    .minimized-left span {
+        color: var(--text);
+        font-size: 0.85rem;
+        font-weight: 500;
+    }
+
+    .minimized-right {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+    }
+
+    .count-badge {
+        background: var(--primary);
+        color: white;
+        padding: 0.2rem 0.5rem;
+        border-radius: 4px;
+        font-size: 0.7rem;
+        font-weight: 600;
+        letter-spacing: 0.3px;
+    }
+
+    .minimized-right i {
+        color: var(--text-muted);
+        font-size: 0.75rem;
+    }
+
+    /* Navigation */
+    .nav-section {
+        margin-bottom: 0.25rem;
+    }
+
+    .section-title {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        padding: 0.7rem 0.75rem;
+        border-radius: 8px;
+        cursor: pointer;
+        color: var(--text-light);
+        font-weight: 500;
+        font-size: 0.9rem;
+        transition: all 0.2s;
+        margin-bottom: 0.25rem;
+    }
+
+    .section-title:hover {
+        background: var(--bg-offwhite);
+        color: var(--dark);
+    }
+
+    .section-title.open {
+        color: var(--primary);
+        background: var(--primary-pale);
+    }
+
+    .section-left {
+        display: flex;
+        align-items: center;
+        gap: 0.75rem;
+    }
+
+    .section-icon {
+        width: 22px;
+        text-align: center;
+        font-size: 1rem;
+    }
+
+    .arrow-icon {
+        font-size: 0.75rem;
+        transition: transform 0.3s;
+        color: var(--text-muted);
+    }
+
+    .arrow-icon.rotate {
+        transform: rotate(180deg);
+    }
+
+    .section-links {
+        padding-left: 2.2rem;
+        margin-top: 0.15rem;
+        margin-bottom: 0.25rem;
+    }
+
+    .feature-wrapper {
+        margin-bottom: 0.15rem;
+        width: 100%;
+    }
+
+    .nav-link {
+        display: flex;
+        align-items: center;
+        gap: 0.75rem;
+        padding: 0.6rem 0.75rem;
+        border-radius: 8px;
+        color: var(--text-light);
+        font-size: 0.85rem;
+        text-decoration: none;
+        transition: all 0.2s ease;
+        position: relative;
+        width: 100%;
+        cursor: pointer;
+    }
+
+    .nav-link:hover {
+        background: var(--bg-offwhite);
+        color: var(--dark);
+        transform: translateX(3px);
+    }
+
+    .nav-link.active {
+        background: var(--primary-pale);
+        color: var(--primary);
+        font-weight: 500;
+    }
+
+    .nav-link.active::before {
+        content: '';
+        position: absolute;
+        left: -2px;
+        top: 50%;
+        transform: translateY(-50%);
+        width: 3px;
+        height: 18px;
+        background: var(--primary);
+        border-radius: 0 4px 4px 0;
+    }
+
+    .link-icon {
+        width: 22px;
+        text-align: center;
+        font-size: 0.95rem;
+        color: inherit;
+    }
+
+    .logout-link {
+        display: flex;
+        align-items: center;
+        gap: 0.75rem;
+        padding: 0.75rem;
+        margin-top: 1.5rem;
+        border-radius: 8px;
+        background: #fee2e2;
+        border: 1px solid #fecaca;
+        color: #dc2626;
+        text-decoration: none;
+        font-size: 0.9rem;
+        font-weight: 500;
+        transition: all 0.2s;
+        cursor: pointer;
+    }
+
+    .logout-link:hover {
+        background: #fecaca;
+        transform: translateY(-2px);
+        box-shadow: 0 4px 8px rgba(220, 38, 38, 0.15);
+    }
+
+    .logout-link i {
+        font-size: 1rem;
+    }
+
+    /* Border Mode Classes */
+    body.round-border .sidebar {
+        border-radius: 20px 0 0 20px !important;
+    }
+
+    body.round-border .sidebar-header,
+    body.round-border .user-card,
+    body.round-border .user-card-minimized,
+    body.round-border .nav-link,
+    body.round-border .section-title,
+    body.round-border .logout-link {
+        border-radius: 12px !important;
+    }
+
+    body.round-border .avatar {
+        border-radius: 50% !important;
+    }
+
+    body.no-radius .sidebar,
+    body.no-radius .sidebar-header,
+    body.no-radius .user-card,
+    body.no-radius .user-card-minimized,
+    body.no-radius .nav-link,
+    body.no-radius .section-title,
+    body.no-radius .logout-link,
+    body.no-radius .avatar {
+        border-radius: 0 !important;
+    }
+
+    /* Sidebar Responsive */
+    @media (max-width: 768px) {
+        .sidebar {
+            transform: translateX(-100%);
+            width: var(--sidebar-width, 280px) !important;
+            opacity: 1;
+            box-shadow: none;
+        }
+        
+        .sidebar.open {
+            transform: translateX(0);
+            box-shadow: var(--shadow-lg);
+        }
+
+        body.round-border .sidebar {
+            border-radius: 0 20px 20px 0 !important;
+        }
+    }
+
+    /* Dark mode adjustments */
+    body.dark .logout-link {
+        background: rgba(220, 38, 38, 0.15);
+        border-color: rgba(220, 38, 38, 0.3);
+        color: #ef4444;
+    }
+
+    body.dark .logout-link:hover {
+        background: rgba(220, 38, 38, 0.25);
+    }
+
+    body.dark .nav-link.active {
+        background: rgba(56, 189, 248, 0.15);
+    }
+
+    body.dark .section-title.open {
+        background: rgba(56, 189, 248, 0.15);
+    }
+</style>
+
+<!-- Sidebar HTML -->
+<div class="sidebar" id="sidebar">
+    <div class="sidebar-header">
+        <div class="logo-area">
+            <div class="logo-icon">
+                <i class="fab fa-whatsapp"></i>
+            </div>
+            <div class="logo-text">WaBlast<span>Pro</span></div>
+        </div>
+    </div>
+
+    <div class="sidebar-content">
+        <!-- Minimized User Card -->
+        <div class="user-card-minimized" id="userCardMinimized" onclick="toggleUserCard(event)">
+            <div class="minimized-left">
+                <i class="fas fa-user-circle"></i>
+                <span>Show Profile</span>
+            </div>
+            <div class="minimized-right">
+                <span class="count-badge"><%= typeof featuresCount !== 'undefined' ? featuresCount : 24 %>F • <%= typeof sectionsCount !== 'undefined' ? sectionsCount : 12 %>S</span>
+                <i class="fas fa-chevron-down"></i>
+            </div>
+        </div>
+        
+        <!-- Main User Card -->
+        <div class="user-card" id="userCard" onclick="toggleUserCard(event)">
+            <div class="user-card-toggle" id="userCardToggle">
+                <i class="fas fa-chevron-up"></i>
+            </div>
+            
+            <div class="user-avatar-wrapper">
+                <div class="avatar">
+                    <%= typeof userInitials !== 'undefined' ? userInitials : 'JD' %>
+                    <span class="online-indicator"></span>
+                </div>
+                
+                <div class="user-details">
+                    <h4 class="user-name"><%= typeof userName !== 'undefined' ? userName : 'John Doe' %></h4>
+                    <span class="role-badge"><%= typeof userRole !== 'undefined' ? userRole : 'SuperAdmin' %></span>
+                    <p class="user-email"><%= typeof userEmail !== 'undefined' ? userEmail : 'john.doe@example.com' %></p>
+                </div>
+            </div>
+            
+            <div class="user-stats">
+                <div class="stat-item">
+                    <span class="stat-value"><%= typeof featuresCount !== 'undefined' ? featuresCount : 24 %></span>
+                    <span class="stat-label">FEATURES</span>
+                </div>
+                <div class="stat-item">
+                    <span class="stat-value"><%= typeof sectionsCount !== 'undefined' ? sectionsCount : 12 %></span>
+                    <span class="stat-label">SECTIONS</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- Navigation -->
+        <div class="nav-sections">
+            <!-- Dashboard -->
+            <div class="nav-section">
+                <div class="section-title open" onclick="toggleSection('dashboard', this)">
+                    <div class="section-left">
+                        <span class="section-icon"><i class="fas fa-tachometer-alt"></i></span>
+                        <span>Dashboard</span>
+                    </div>
+                    <i class="fas fa-chevron-down arrow-icon rotate"></i>
+                </div>
+                <div class="section-links" id="section-dashboard">
+                    <div class="feature-wrapper">
+                        <a href="/dashboard" class="nav-link active">
+                            <span class="link-icon"><i class="fas fa-chart-pie"></i></span>
+                            <span>Overview</span>
+                        </a>
+                    </div>
+                    <div class="feature-wrapper">
+                        <a href="/themesettings" class="nav-link">
+                            <span class="link-icon"><i class="fas fa-palette"></i></span>
+                            <span>Theme Settings</span>
+                        </a>
+                    </div>
+                </div>
+            </div>
+
+            <!-- CRM -->
+            <div class="nav-section">
+                <div class="section-title" onclick="toggleSection('crm', this)">
+                    <div class="section-left">
+                        <span class="section-icon"><i class="fas fa-address-book"></i></span>
+                        <span>CRM</span>
+                    </div>
+                    <i class="fas fa-chevron-down arrow-icon"></i>
+                </div>
+                <div class="section-links" id="section-crm" style="display: none;">
+                    <div class="feature-wrapper">
+                        <a href="/contacts/add" class="nav-link">
+                            <span class="link-icon"><i class="fas fa-user-plus"></i></span>
+                            <span>Add Contact</span>
+                        </a>
+                    </div>
+                    <div class="feature-wrapper">
+                        <a href="/contacts" class="nav-link">
+                            <span class="link-icon"><i class="fas fa-address-book"></i></span>
+                            <span>All Contacts</span>
+                        </a>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Campaigns -->
+            <div class="nav-section">
+                <div class="section-title" onclick="toggleSection('campaigns', this)">
+                    <div class="section-left">
+                        <span class="section-icon"><i class="fas fa-bullhorn"></i></span>
+                        <span>Campaigns</span>
+                    </div>
+                    <i class="fas fa-chevron-down arrow-icon"></i>
+                </div>
+                <div class="section-links" id="section-campaigns" style="display: none;">
+                    <div class="feature-wrapper">
+                        <a href="/campaigns/whatsapp" class="nav-link">
+                            <span class="link-icon"><i class="fab fa-whatsapp"></i></span>
+                            <span>WhatsApp Campaign</span>
+                        </a>
+                    </div>
+                    <div class="feature-wrapper">
+                        <a href="/campaigns/bulk" class="nav-link">
+                            <span class="link-icon"><i class="fas fa-envelope"></i></span>
+                            <span>Bulk Messaging</span>
+                        </a>
+                    </div>
+                </div>
+            </div>
+
+            <!-- AI Chatbot -->
+            <div class="nav-section">
+                <div class="section-title" onclick="toggleSection('chatbot', this)">
+                    <div class="section-left">
+                        <span class="section-icon"><i class="fas fa-robot"></i></span>
+                        <span>AI Chatbot</span>
+                    </div>
+                    <i class="fas fa-chevron-down arrow-icon"></i>
+                </div>
+                <div class="section-links" id="section-chatbot" style="display: none;">
+                    <div class="feature-wrapper">
+                        <a href="/chatbot/builder" class="nav-link">
+                            <span class="link-icon"><i class="fas fa-project-diagram"></i></span>
+                            <span>Bot Flow Builder</span>
+                        </a>
+                    </div>
+                    <div class="feature-wrapper">
+                        <a href="/chatbot/auto-replies" class="nav-link">
+                            <span class="link-icon"><i class="fas fa-reply"></i></span>
+                            <span>Auto Replies</span>
+                        </a>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Settings -->
+            <div class="nav-section">
+                <div class="section-title" onclick="toggleSection('settings', this)">
+                    <div class="section-left">
+                        <span class="section-icon"><i class="fas fa-sliders-h"></i></span>
+                        <span>Settings</span>
+                    </div>
+                    <i class="fas fa-chevron-down arrow-icon"></i>
+                </div>
+                <div class="section-links" id="section-settings" style="display: none;">
+                    <div class="feature-wrapper">
+                        <a href="/settings/profile" class="nav-link">
+                            <span class="link-icon"><i class="fas fa-user-cog"></i></span>
+                            <span>Profile Settings</span>
+                        </a>
+                    </div>
+                    <div class="feature-wrapper">
+                        <a href="/settings/security" class="nav-link">
+                            <span class="link-icon"><i class="fas fa-shield-alt"></i></span>
+                            <span>Security</span>
+                        </a>
+                    </div>
+                    <div class="feature-wrapper">
+                        <a href="/settings/api" class="nav-link">
+                            <span class="link-icon"><i class="fas fa-key"></i></span>
+                            <span>API Keys</span>
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Logout -->
+        <a href="/logout" class="logout-link">
+            <i class="fas fa-sign-out-alt"></i>
+            <span>Logout</span>
+        </a>
+    </div>
+</div>

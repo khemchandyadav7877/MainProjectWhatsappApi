@@ -1,100 +1,38 @@
 const mongoose = require('mongoose');
 
 const notificationSchema = new mongoose.Schema({
-    // Sender Info
-    senderId: {
-        type: mongoose.Schema.Types.ObjectId,
-        refPath: 'senderModel',
-        required: true
-    },
-    senderModel: {
-        type: String,
-        enum: ['SuperAdmin', 'Educator', 'Trainer', 'Student'],
-        required: true
-    },
-    senderName: {
-        type: String,
-        required: true
-    },
-    senderRole: {
-        type: String,
-        enum: ['superadmin', 'educator', 'trainer', 'student'],
-        required: true
-    },
-    senderPhone: {
-        type: String,
-        required: true
-    },
-
-    // Recipient Info
-    recipientId: {
-        type: mongoose.Schema.Types.ObjectId,
-        refPath: 'recipientModel',
-        required: true
-    },
-    recipientModel: {
-        type: String,
-        enum: ['SuperAdmin', 'Educator', 'Trainer', 'Student'],
-        required: true
-    },
-    recipientRole: {
-        type: String,
-        enum: ['superadmin', 'educator', 'trainer', 'student'],
-        required: true
-    },
-
-    // Message
-    message: {
-        type: String,
-        required: true
-    },
-
-    // Reply Info
+    senderId: { type: mongoose.Schema.Types.ObjectId, required: true, refPath: 'senderModel' },
+    senderModel: { type: String, required: true, enum: ['SuperAdmin', 'Educator', 'Trainer', 'Student'] },
+    senderName: { type: String, required: true },
+    senderRole: { type: String, required: true },
+    senderPhone: { type: String, default: 'N/A' },
+    
+    recipientId: { type: mongoose.Schema.Types.ObjectId, required: true, refPath: 'recipientModel' },
+    recipientModel: { type: String, required: true, enum: ['SuperAdmin', 'Educator', 'Trainer', 'Student'] },
+    recipientRole: { type: String, required: true },
+    
+    message: { type: String, required: true },
+    isRead: { type: Boolean, default: false },
+    
+    conversationId: { type: String, required: true },
+    parentId: { type: mongoose.Schema.Types.ObjectId, ref: 'Notification' },
+    
     reply: {
         message: String,
         repliedAt: Date,
-        repliedBy: {
-            type: mongoose.Schema.Types.ObjectId,
-            refPath: 'reply.repliedByModel'
-        },
+        repliedBy: mongoose.Schema.Types.ObjectId,
         repliedByModel: String,
         repliedByRole: String
     },
-
-    // Status
-    isRead: {
-        type: Boolean,
-        default: false
-    },
-
-    // Metadata
-    deviceId: String,
-    conversationId: String,  // ✅ This is fine, not indexed uniquely
-
-    // Timestamps
-    createdAt: {
-        type: Date,
-        default: Date.now
-    }
-}, {
-    // ✅ Add this to prevent automatic index creation
-    autoIndex: false
+    
+    createdAt: { type: Date, default: Date.now },
+    updatedAt: { type: Date, default: Date.now }
 });
 
-// ✅ Define only the indexes we need - NO notificationId index
-notificationSchema.index({ recipientId: 1, recipientRole: 1, createdAt: -1 });
-notificationSchema.index({ senderId: 1, senderRole: 1 });
-notificationSchema.index({ isRead: 1, recipientId: 1 });
-notificationSchema.index({ conversationId: 1 });  // Add this if needed
+// Indexes for better performance
+notificationSchema.index({ recipientId: 1, isRead: 1 });
+notificationSchema.index({ senderId: 1 });
+notificationSchema.index({ conversationId: 1 });
+notificationSchema.index({ createdAt: -1 });
 
-const Notification = mongoose.model('Notification', notificationSchema);
-
-// ✅ Drop the problematic index when server starts
-Notification.collection.dropIndex('notificationId_1')
-    .then(() => console.log('✅ Dropped old notificationId index'))
-    .catch(err => {
-        // Index doesn't exist - that's fine
-        console.log('ℹ️ No old index to drop (this is normal)');
-    });
-
-module.exports = Notification;
+module.exports = mongoose.model('Notification', notificationSchema);

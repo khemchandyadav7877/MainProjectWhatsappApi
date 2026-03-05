@@ -1,117 +1,120 @@
-// const jwt = require('jsonwebtoken');
-// const User = require('../models/User');
+const auth = require('../models/auth');
 
-// const auth = async (req, res, next) => {
-//     try {
-//         const token = req.header('Authorization')?.replace('Bearer ', '');
+// Middleware to check if user is authenticated
+async function isAuthenticated(req, res, next) {
+    if (!req.session || !req.session.isLoggedIn || !req.session.userId) {
+        // Check if it's an API request
+        if (req.path.startsWith('/api/')) {
+            return res.status(401).json({ 
+                success: false, 
+                error: 'Authentication required',
+                redirect: '/login'
+            });
+        }
+        return res.redirect('/login?message=Please login first&messageType=error');
+    }
+
+    try {
+        // Verify user still exists in database
+        const user = await auth.findById(req.session.userId).lean();
+        if (!user) {
+            req.session.destroy();
+            if (req.path.startsWith('/api/')) {
+                return res.status(401).json({ 
+                    success: false, 
+                    error: 'User not found',
+                    redirect: '/login'
+                });
+            }
+            return res.redirect('/login?message=User not found&messageType=error');
+        }
+
+        // Check if user is active
+        if (user.status !== 'Active' || user.activeStatus !== 'Active') {
+            req.session.destroy();
+            if (req.path.startsWith('/api/')) {
+                return res.status(403).json({ 
+                    success: false, 
+                    error: 'Account is inactive'
+                });
+            }
+            return res.redirect('/login?message=Account is inactive&messageType=error');
+        }
+
+        // Attach user to request for easy access
+        req.user = user;
+        req.userId = user._id.toString();
+        req.userRole = user.role;
         
-//         if (!token) {
-//             return res.status(401).json({ 
-//                 success: false, 
-//                 message: 'Authentication required' 
-//             });
-//         }
+        next();
+    } catch (error) {
+        console.error('Auth middleware error:', error);
+        if (req.path.startsWith('/api/')) {
+            return res.status(500).json({ 
+                success: false, 
+                error: 'Authentication error'
+            });
+        }
+        res.redirect('/login?message=Authentication error&messageType=error');
+    }
+}
+
+// Middleware to check specific roles
+function hasRole(...roles) {
+    return (req, res, next) => {
+        if (!req.user) {
+            if (req.path.startsWith('/api/')) {
+                return res.status(401).json({ 
+                    success: false, 
+                    error: 'Authentication required'
+                });
+            }
+            return res.redirect('/login');
+        }
+
+        if (!roles.includes(req.user.role)) {
+            if (req.path.startsWith('/api/')) {
+                return res.status(403).json({ 
+                    success: false, 
+                    error: 'Access denied. Insufficient permissions.'
+                });
+            }
+            return res.redirect('/dashboard?message=Access denied&messageType=error');
+        }
         
-//         const decoded = jwt.verify(token, process.env.JWT_SECRET);
-//         const user = await User.findOne({ 
-//             _id: decoded.userId, 
-//             status: 'active' 
-//         });
-        
-//         if (!user) {
-//             throw new Error();
-//         }
-        
-//         // Update last active
-//         user.last_active = Date.now();
-//         await user.save();
-        
-//         req.user = user;
-//         req.token = token;
-//         next();
-//     } catch (error) {
-//         res.status(401).json({ 
-//             success: false, 
-//             message: 'Please authenticate' 
-//         });
-//     }
-// };
+        next();
+    };
+}
 
-// const isSuperAdmin = async (req, res, next) => {
-//     try {
-//         if (req.user.role !== 'super_admin') {
-//             return res.status(403).json({ 
-//                 success: false, 
-//                 message: 'Super admin access required' 
-//             });
-//         }
-//         next();
-//     } catch (error) {
-//         res.status(500).json({ 
-//             success: false, 
-//             message: 'Server error' 
-//         });
-//     }
-// };
-
-// const checkPermission = (permission) => {
-//     return async (req, res, next) => {
-//         try {
-//             // Super admin has all permissions
-//             if (req.user.role === 'super_admin') {
-//                 return next();
-//             }
-            
-//             // Check if user has the required permission
-//             if (!req.user.permissions || !req.user.permissions[permission]) {
-//                 return res.status(403).json({ 
-//                     success: false, 
-//                     message: `Permission denied: ${permission}` 
-//                 });
-//             }
-            
-//             next();
-//         } catch (error) {
-//             res.status(500).json({ 
-//                 success: false, 
-//                 message: 'Server error' 
-//             });
-//         }
-//     };
-// };
-
-// // Role-based middleware
-// const requireRole = (...roles) => {
-//     return async (req, res, next) => {
-//         try {
-//             if (!roles.includes(req.user.role)) {
-//                 return res.status(403).json({ 
-//                     success: false, 
-//                     message: `Required role: ${roles.join(' or ')}` 
-//                 });
-//             }
-//             next();
-//         } catch (error) {
-//             res.status(500).json({ 
-//                 success: false, 
-//                 message: 'Server error' 
-//             });
-//         }
-//     };
-// };
-
-// module.exports = { 
-//     auth, 
-//     isSuperAdmin, 
-//     checkPermission, 
-//     requireRole 
-// };
-
-
-// middleware/auth.js
-module.exports = function(req, res, next) {
-    // Agar user session mein hai to use locals mein set karo
-    res.locals.user = req.session?.user || null;
-    res.locals.currentPath = req.path;
+// Middleware to make user available to all views
+async function loadUser(req, res, next) {
+    if (req.session && req.session.isLoggedIn && req.session.userId) {
+        try {
+            const user = await auth.findById(req.session.userId).lean();
+            if (user) {
+                res.locals.user = user;
+                res.locals.isLoggedIn = true;
+                req.user = user;
+                req.userId = user._id.toString();
+                req.userRole = user.role;
+            } else {
+                res.locals.user = null;
+                res.locals.isLoggedIn = false;
+            }
+        } catch (error) {
+            console.error('Error loading user:', error);
+            res.locals.user = null;
+            res.locals.isLoggedIn = false;
+        }
+    } else {
+        res.locals.user = null;
+        res.locals.isLoggedIn = false;
+    }
     next();
+}
+
+module.exports = {
+    isAuthenticated,
+    hasRole,
+    loadUser
 };

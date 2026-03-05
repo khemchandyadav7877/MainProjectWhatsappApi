@@ -3,782 +3,1066 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>SuperAdmin Notifications - WhatsApp Manager</title>
+    <title>SuperAdmin - Notifications</title>
+    
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Font Awesome -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
     <style>
+        /* ===== THEME VARIABLES ===== */
+        :root {
+            --primary: #075e54;
+            --primary-dark: #054c44;
+            --primary-light: #128c7e;
+            --success: #25d366;
+            --warning: #f59e0b;
+            --danger: #f44336;
+            --info: #3b82f6;
+            
+            /* Light Mode - WhatsApp Inspired */
+            --bg-body: #e5e5e5;
+            --bg-white: #ffffff;
+            --bg-offwhite: #f0f2f5;
+            --bg-card: #ffffff;
+            --bg-hover: #f5f5f5;
+            --text: #1e293b;
+            --text-light: #334155;
+            --text-muted: #64748b;
+            --dark: #0f172a;
+            --border: #e2e8f0;
+            --shadow: 0 2px 5px rgba(0,0,0,0.05);
+            --shadow-lg: 0 10px 25px rgba(0,0,0,0.1);
+            
+            /* Status Colors */
+            --unread-bg: #dcf8c6;
+            --unread-border: #25d366;
+            --sent-bg: #f3e5f5;
+            --sent-border: #9c27b0;
+            --received-bg: #e8f5e8;
+            
+            /* Layout */
+            --header-height: 70px;
+            --sidebar-width: 280px;
+        }
+
+        /* Dark Mode - WhatsApp Dark Theme */
+        body.dark {
+            --primary: #00a884;
+            --primary-dark: #008f72;
+            --primary-light: #00b98f;
+            
+            --bg-body: #111b21;
+            --bg-white: #1f2c33;
+            --bg-offwhite: #2a3942;
+            --bg-card: #1f2c33;
+            --bg-hover: #2a3942;
+            --text: #e9edef;
+            --text-light: #d1d7db;
+            --text-muted: #8696a0;
+            --dark: #f0f2f5;
+            --border: #2a3942;
+            --shadow: 0 2px 5px rgba(0,0,0,0.3);
+            --shadow-lg: 0 10px 25px rgba(0,0,0,0.5);
+            
+            --unread-bg: #1f2c33;
+            --unread-border: #00a884;
+            --sent-bg: #1f2c33;
+            --sent-border: #9c27b0;
+            --received-bg: #1f2c33;
+        }
+
         * {
             margin: 0;
             padding: 0;
             box-sizing: border-box;
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
         }
 
         body {
-            background: #f5f7fa;
-            min-height: 100vh;
+            overflow-x: hidden;
+            background: var(--bg-body);
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+            color: var(--text);
+            transition: background-color 0.3s, color 0.3s;
         }
 
-        .notifications-container {
-            max-width: 1400px;
-            margin: 0 auto;
-            padding: 20px;
+        /* ===== BORDER MODES ===== */
+        body.round-border .header-wrapper,
+        body.round-border .sidebar-wrapper,
+        body.round-border .mid-content,
+        body.round-border .notification-item,
+        body.round-border .stat-card,
+        body.round-border .filter-btn,
+        body.round-border .search-box input,
+        body.round-border .modal-content,
+        body.round-border .message-bubble,
+        body.round-border .action-btn,
+        body.round-border .avatar {
+            border-radius: 12px !important;
         }
 
-        /* Header */
-        .page-header {
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            color: white;
-            padding: 30px;
-            border-radius: 15px;
-            margin-bottom: 30px;
-            box-shadow: 0 5px 20px rgba(102, 126, 234, 0.3);
+        body.round-border .avatar {
+            border-radius: 50% !important;
+        }
+
+        body.no-radius .header-wrapper,
+        body.no-radius .sidebar-wrapper,
+        body.no-radius .mid-content,
+        body.no-radius .notification-item,
+        body.no-radius .stat-card,
+        body.no-radius .filter-btn,
+        body.no-radius .search-box input,
+        body.no-radius .modal-content,
+        body.no-radius .message-bubble,
+        body.no-radius .action-btn,
+        body.no-radius .avatar {
+            border-radius: 0 !important;
+        }
+
+        /* Header Styles */
+        .header-wrapper {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            z-index: 1030;
+            background: var(--bg-white);
+            box-shadow: var(--shadow);
+            border-bottom: 1px solid var(--border);
+        }
+
+        .main-wrapper {
+            margin-top: 70px;
             display: flex;
-            justify-content: space-between;
-            align-items: center;
+            width: 100%;
+            min-height: calc(100vh - 70px);
         }
 
-        .page-header h1 {
-            font-size: 32px;
-            margin-bottom: 10px;
+        .sidebar-wrapper {
+            width: 280px;
+            flex-shrink: 0;
+            position: fixed;
+            left: 0;
+            top: 70px;
+            bottom: 0;
+            z-index: 1020;
+            transition: width 0.3s ease;
+            background: var(--bg-white);
+            border-right: 1px solid var(--border);
+        }
+
+        .sidebar-wrapper.collapsed {
+            width: 80px;
+        }
+
+        .content-wrapper {
+            flex: 1;
+            margin-left: 280px;
+            padding: 20px;
+            transition: margin-left 0.3s ease;
+            background: var(--bg-body);
+            min-height: calc(100vh - 70px);
+        }
+
+        .sidebar-wrapper.collapsed + .content-wrapper {
+            margin-left: 80px;
+        }
+
+        .mid-content {
+            background: var(--bg-card);
+            border-radius: 16px;
+            padding: 24px;
+            box-shadow: var(--shadow);
+            border: 1px solid var(--border);
+        }
+
+        @media (max-width: 768px) {
+            .sidebar-wrapper {
+                transform: translateX(-100%);
+                width: 280px !important;
+            }
+            
+            .sidebar-wrapper.mobile-open {
+                transform: translateX(0);
+            }
+            
+            .content-wrapper {
+                margin-left: 0 !important;
+            }
+            
+            .mid-content {
+                padding: 16px;
+            }
+        }
+
+        /* Header Actions */
+        .header-actions {
             display: flex;
             align-items: center;
             gap: 15px;
         }
 
-        .page-header p {
-            opacity: 0.9;
+        .theme-toggle {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: var(--bg-offwhite);
+            color: var(--text);
+            border: 1px solid var(--border);
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .theme-toggle:hover {
+            background: var(--primary);
+            color: white;
+            border-color: var(--primary);
+        }
+
+        .border-toggle {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: var(--bg-offwhite);
+            color: var(--text);
+            border: 1px solid var(--border);
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .border-toggle:hover {
+            background: var(--primary);
+            color: white;
+            border-color: var(--primary);
+        }
+
+        .user-profile {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 5px 15px;
+            background: var(--bg-offwhite);
+            border-radius: 30px;
+            border: 1px solid var(--border);
+        }
+
+        .user-avatar {
+            width: 35px;
+            height: 35px;
+            border-radius: 50%;
+            background: var(--primary);
+            color: white;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
             font-size: 16px;
         }
 
         .user-info {
-            background: rgba(255,255,255,0.2);
-            padding: 10px 20px;
-            border-radius: 50px;
             display: flex;
-            align-items: center;
-            gap: 10px;
+            flex-direction: column;
         }
 
-        /* Action Buttons */
-        .action-buttons {
-            display: flex;
-            gap: 15px;
-            margin-bottom: 20px;
-        }
-
-        .primary-btn {
-            padding: 15px 30px;
-            border: none;
-            border-radius: 12px;
-            font-size: 16px;
+        .user-name {
+            font-size: 13px;
             font-weight: 600;
-            cursor: pointer;
-            transition: transform 0.3s, box-shadow 0.3s;
-            display: flex;
-            align-items: center;
-            gap: 10px;
-            background: white;
-            color: #667eea;
-            border: 2px solid #667eea;
+            color: var(--text);
         }
 
-        .primary-btn:hover {
-            transform: translateY(-3px);
-            box-shadow: 0 10px 20px rgba(102, 126, 234, 0.2);
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            color: white;
+        .user-role {
+            font-size: 11px;
+            color: var(--text-muted);
         }
 
-        .primary-btn i {
-            font-size: 18px;
-        }
-
-        /* Stats Row */
-        .stats-row {
+        /* Stats Cards */
+        .stats-grid {
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            grid-template-columns: repeat(4, 1fr);
             gap: 20px;
-            margin-bottom: 30px;
+            margin-bottom: 25px;
         }
 
         .stat-card {
-            background: white;
-            padding: 25px;
+            background: var(--bg-white);
+            padding: 20px;
             border-radius: 12px;
-            box-shadow: 0 2px 10px rgba(0,0,0,0.08);
+            box-shadow: var(--shadow);
+            border: 1px solid var(--border);
             display: flex;
             align-items: center;
-            gap: 20px;
-            transition: transform 0.3s;
+            gap: 15px;
             cursor: pointer;
+            transition: all 0.3s;
         }
 
         .stat-card:hover {
-            transform: translateY(-5px);
-            box-shadow: 0 5px 20px rgba(0,0,0,0.12);
+            transform: translateY(-2px);
+            box-shadow: var(--shadow-lg);
+            border-color: var(--primary);
         }
 
         .stat-card.active {
-            border: 2px solid #667eea;
+            border: 2px solid var(--primary);
+            background: var(--bg-offwhite);
         }
 
         .stat-icon {
-            width: 60px;
-            height: 60px;
+            width: 55px;
+            height: 55px;
             border-radius: 12px;
             display: flex;
             align-items: center;
             justify-content: center;
-            font-size: 24px;
             color: white;
+            font-size: 24px;
         }
 
-        .stat-icon.all { background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); }
-        .stat-icon.unread { background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%); }
-        .stat-icon.educator { background: linear-gradient(135deg, #43e97b 0%, #38f9d7 100%); }
-        .stat-icon.sent { background: linear-gradient(135deg, #fa709a 0%, #fee140 100%); }
+        .stat-icon.all { background: var(--primary); }
+        .stat-icon.unread { background: var(--danger); }
+        .stat-icon.educator { background: var(--info); }
+        .stat-icon.sent { background: #9c27b0; }
 
-        .stat-info h3 {
-            font-size: 14px;
-            color: #8492a6;
-            font-weight: 500;
+        .stat-info small {
+            font-size: 12px;
+            color: var(--text-muted);
+            display: block;
             margin-bottom: 5px;
         }
 
-        .stat-info p {
-            font-size: 28px;
-            font-weight: bold;
-            color: #1f2937;
+        .stat-info h3 {
+            font-size: 24px;
+            font-weight: 700;
+            color: var(--text);
+            margin: 0;
         }
 
         /* Filters Bar */
         .filters-bar {
-            background: white;
+            background: var(--bg-white);
             padding: 20px;
             border-radius: 12px;
-            margin-bottom: 20px;
-            box-shadow: 0 2px 10px rgba(0,0,0,0.08);
+            margin-bottom: 25px;
+            border: 1px solid var(--border);
             display: flex;
             gap: 15px;
             flex-wrap: wrap;
             align-items: center;
         }
 
+        .filter-group {
+            display: flex;
+            gap: 8px;
+            flex-wrap: wrap;
+        }
+
         .filter-btn {
-            padding: 10px 20px;
-            border: 2px solid #e5e7eb;
-            background: white;
+            padding: 8px 16px;
+            border: 1px solid var(--border);
+            background: var(--bg-white);
+            color: var(--text);
             border-radius: 8px;
+            font-size: 13px;
+            font-weight: 500;
             cursor: pointer;
-            font-size: 14px;
-            font-weight: 600;
-            color: #6b7280;
-            transition: all 0.3s;
+            transition: all 0.2s;
         }
 
         .filter-btn:hover {
-            border-color: #667eea;
-            color: #667eea;
+            border-color: var(--primary);
+            color: var(--primary);
         }
 
         .filter-btn.active {
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            background: var(--primary);
             color: white;
-            border-color: transparent;
+            border-color: var(--primary);
         }
 
         .search-box {
             flex: 1;
-            min-width: 250px;
             position: relative;
-        }
-
-        .search-box input {
-            width: 100%;
-            padding: 12px 15px 12px 45px;
-            border: 2px solid #e5e7eb;
-            border-radius: 8px;
-            font-size: 14px;
-            transition: border-color 0.3s;
-        }
-
-        .search-box input:focus {
-            outline: none;
-            border-color: #667eea;
+            min-width: 250px;
         }
 
         .search-box i {
             position: absolute;
-            left: 15px;
+            left: 12px;
             top: 50%;
             transform: translateY(-50%);
-            color: #9ca3af;
+            color: var(--text-muted);
+            font-size: 14px;
         }
 
-        /* Notifications List */
-        .notifications-list {
-            background: white;
+        .search-box input {
+            width: 100%;
+            padding: 10px 16px 10px 40px;
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            font-size: 14px;
+            background: var(--bg-offwhite);
+            color: var(--text);
+            transition: all 0.3s;
+        }
+
+        .search-box input:focus {
+            outline: none;
+            border-color: var(--primary);
+            background: var(--bg-white);
+            box-shadow: 0 0 0 3px rgba(7, 94, 84, 0.1);
+        }
+
+        .btn-primary {
+            padding: 10px 20px;
+            background: var(--primary);
+            color: white;
+            border: none;
+            border-radius: 8px;
+            font-size: 14px;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            cursor: pointer;
+            transition: all 0.3s;
+            white-space: nowrap;
+        }
+
+        .btn-primary:hover {
+            background: var(--primary-dark);
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(7, 94, 84, 0.3);
+        }
+
+        .btn-outline {
+            padding: 10px 20px;
+            background: transparent;
+            color: var(--text);
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            font-size: 14px;
+            font-weight: 500;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .btn-outline:hover {
+            border-color: var(--primary);
+            color: var(--primary);
+            background: var(--bg-offwhite);
+        }
+
+        /* Notifications Container */
+        .notifications-container {
+            background: var(--bg-white);
             border-radius: 12px;
-            box-shadow: 0 2px 10px rgba(0,0,0,0.08);
+            border: 1px solid var(--border);
             overflow: hidden;
         }
 
         .notification-item {
             padding: 20px;
-            border-bottom: 1px solid #f3f4f6;
+            border-bottom: 1px solid var(--border);
             display: flex;
             gap: 15px;
             cursor: pointer;
-            transition: background 0.3s;
+            transition: all 0.2s;
             position: relative;
         }
 
         .notification-item:hover {
-            background: #f9fafb;
+            background: var(--bg-hover);
         }
 
         .notification-item.unread {
-            background: #eff6ff;
-            border-left: 4px solid #667eea;
-        }
-
-        .notification-item.unread::before {
-            content: '';
-            position: absolute;
-            left: 10px;
-            top: 50%;
-            transform: translateY(-50%);
-            width: 8px;
-            height: 8px;
-            background: #667eea;
-            border-radius: 50%;
+            background: var(--unread-bg);
+            border-left: 4px solid var(--unread-border);
         }
 
         .notification-item.sent {
-            background: #f3e8ff;
-            border-left: 4px solid #9b59b6;
+            background: var(--sent-bg);
+            border-left: 4px solid var(--sent-border);
         }
 
-        .notif-avatar {
+        .notification-avatar {
             width: 50px;
             height: 50px;
             border-radius: 50%;
             display: flex;
             align-items: center;
             justify-content: center;
-            font-size: 20px;
-            font-weight: bold;
             color: white;
+            font-weight: bold;
+            font-size: 20px;
             flex-shrink: 0;
         }
 
-        .notif-avatar.educator { background: linear-gradient(135deg, #43e97b 0%, #38f9d7 100%); }
-        .notif-avatar.superadmin { background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); }
-        .notif-avatar.sent { background: linear-gradient(135deg, #9b59b6 0%, #8e44ad 100%); }
+        .avatar.educator { background: var(--info); }
+        .avatar.sent { background: #9c27b0; }
+        .avatar.superadmin { background: var(--primary); }
 
-        .notif-content {
+        .notification-content {
             flex: 1;
-            min-width: 0;
         }
 
-        .notif-header {
+        .notification-header {
             display: flex;
             justify-content: space-between;
-            align-items: start;
-            margin-bottom: 8px;
+            align-items: center;
+            margin-bottom: 5px;
         }
 
-        .notif-name {
-            font-weight: 600;
-            font-size: 16px;
-            color: #1f2937;
-            margin-bottom: 3px;
-        }
-
-        .notif-role {
-            display: inline-block;
-            padding: 3px 10px;
-            border-radius: 12px;
-            font-size: 11px;
-            font-weight: 600;
-            margin-left: 10px;
-        }
-
-        .notif-role.educator { background: #d1fae5; color: #065f46; }
-        .notif-role.superadmin { background: #ede9fe; color: #5b21b6; }
-        .notif-role.sent { background: #f3e8ff; color: #6b21a5; }
-
-        .notif-time {
-            font-size: 13px;
-            color: #9ca3af;
-            white-space: nowrap;
-        }
-
-        .notif-message {
-            color: #4b5563;
-            font-size: 14px;
-            line-height: 1.5;
-            margin-bottom: 8px;
-            word-break: break-word;
-        }
-
-        .reply-message {
-            background: #f3f4f6;
-            padding: 10px;
-            border-radius: 8px;
-            margin-top: 10px;
-            font-size: 13px;
-            border-left: 3px solid #667eea;
-        }
-
-        .reply-message i {
-            color: #667eea;
-            margin-right: 5px;
-        }
-
-        .notif-meta {
+        .sender-info {
             display: flex;
-            gap: 20px;
-            font-size: 13px;
-            color: #6b7280;
+            align-items: center;
+            gap: 10px;
             flex-wrap: wrap;
         }
 
-        .notif-meta span {
+        .sender-name {
+            font-weight: 600;
+            color: var(--text);
+            font-size: 15px;
+        }
+
+        .role-badge {
+            font-size: 10px;
+            padding: 3px 8px;
+            border-radius: 12px;
+            font-weight: 600;
+            letter-spacing: 0.3px;
+        }
+
+        .role-badge.educator {
+            background: rgba(33, 150, 243, 0.1);
+            color: var(--info);
+            border: 1px solid rgba(33, 150, 243, 0.2);
+        }
+
+        .role-badge.sent {
+            background: rgba(156, 39, 176, 0.1);
+            color: #9c27b0;
+            border: 1px solid rgba(156, 39, 176, 0.2);
+        }
+
+        .role-badge.superadmin {
+            background: rgba(7, 94, 84, 0.1);
+            color: var(--primary);
+            border: 1px solid rgba(7, 94, 84, 0.2);
+        }
+
+        .time {
+            color: var(--text-muted);
+            font-size: 11px;
+        }
+
+        .message-text {
+            color: var(--text);
+            font-size: 14px;
+            margin-bottom: 10px;
+            line-height: 1.5;
+        }
+
+        .reply-indicator {
+            background: var(--bg-offwhite);
+            padding: 12px;
+            border-radius: 8px;
+            margin-top: 8px;
+            font-size: 13px;
+            border-left: 3px solid var(--primary);
+            color: var(--text-light);
+        }
+
+        .reply-indicator i {
+            color: var(--primary);
+            margin-right: 8px;
+        }
+
+        .notification-meta {
             display: flex;
+            gap: 20px;
+            color: var(--text-muted);
+            font-size: 12px;
+            margin-bottom: 12px;
+        }
+
+        .notification-meta i {
+            margin-right: 5px;
+            color: var(--primary);
+        }
+
+        .notification-actions {
+            display: flex;
+            gap: 8px;
+        }
+
+        .action-btn {
+            padding: 6px 12px;
+            border: none;
+            border-radius: 6px;
+            font-size: 12px;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.2s;
+            display: inline-flex;
             align-items: center;
             gap: 5px;
         }
 
-        .notif-actions {
-            display: flex;
-            gap: 10px;
-            margin-top: 12px;
-            flex-wrap: wrap;
-        }
-
-        .action-btn {
-            padding: 8px 16px;
-            border: none;
-            border-radius: 6px;
-            font-size: 13px;
-            font-weight: 600;
-            cursor: pointer;
-            transition: transform 0.2s;
-        }
-
-        .action-btn:hover {
-            transform: translateY(-2px);
-        }
-
         .action-btn.reply {
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            background: var(--primary);
             color: white;
         }
 
+        .action-btn.reply:hover {
+            background: var(--primary-dark);
+        }
+
         .action-btn.mark-read {
-            background: #f3f4f6;
-            color: #6b7280;
+            background: var(--bg-offwhite);
+            color: var(--text);
+            border: 1px solid var(--border);
+        }
+
+        .action-btn.mark-read:hover {
+            background: var(--info);
+            color: white;
+            border-color: var(--info);
         }
 
         .action-btn.delete {
-            background: #fee2e2;
-            color: #dc2626;
+            background: var(--bg-offwhite);
+            color: var(--danger);
+            border: 1px solid var(--border);
+        }
+
+        .action-btn.delete:hover {
+            background: var(--danger);
+            color: white;
+            border-color: var(--danger);
         }
 
         .action-btn:disabled {
             opacity: 0.5;
             cursor: not-allowed;
-            transform: none;
+        }
+
+        /* Modal Styles */
+        .modal-content {
+            background: var(--bg-white);
+            border: 1px solid var(--border);
+            border-radius: 16px;
+        }
+
+        .modal-header {
+            border-bottom: 1px solid var(--border);
+            padding: 20px;
+        }
+
+        .modal-title {
+            color: var(--text);
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .modal-body {
+            padding: 20px;
+        }
+
+        .modal-footer {
+            border-top: 1px solid var(--border);
+            padding: 20px;
+        }
+
+        .btn-close {
+            filter: invert(var(--close-btn-invert));
+        }
+
+        body.dark .btn-close {
+            filter: invert(1);
+        }
+
+        /* Conversation Thread */
+        .conversation-thread {
+            max-height: 300px;
+            overflow-y: auto;
+            padding: 15px;
+            background: var(--bg-offwhite);
+            border-radius: 12px;
+            margin-bottom: 15px;
+        }
+
+        .message-bubble {
+            padding: 12px 15px;
+            border-radius: 12px;
+            margin-bottom: 15px;
+            max-width: 80%;
+            position: relative;
+        }
+
+        .message-bubble.incoming {
+            background: var(--bg-white);
+            border: 1px solid var(--border);
+            margin-right: auto;
+        }
+
+        .message-bubble.outgoing {
+            background: var(--primary);
+            color: white;
+            margin-left: auto;
+        }
+
+        .message-sender {
+            font-size: 11px;
+            font-weight: 600;
+            margin-bottom: 5px;
+            opacity: 0.8;
+        }
+
+        .message-time {
+            font-size: 9px;
+            margin-top: 5px;
+            opacity: 0.7;
+            text-align: right;
+        }
+
+        textarea {
+            width: 100%;
+            padding: 15px;
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            background: var(--bg-offwhite);
+            color: var(--text);
+            font-size: 14px;
+            resize: vertical;
+            min-height: 100px;
+            margin: 15px 0;
+        }
+
+        textarea:focus {
+            outline: none;
+            border-color: var(--primary);
+            background: var(--bg-white);
+        }
+
+        /* Toast Notification */
+        .toast-notification {
+            position: fixed;
+            top: 90px;
+            right: 20px;
+            min-width: 300px;
+            max-width: 400px;
+            padding: 15px 20px;
+            border-radius: 12px;
+            background: var(--bg-white);
+            border-left: 4px solid;
+            box-shadow: var(--shadow-lg);
+            z-index: 9999;
+            transform: translateX(400px);
+            transition: transform 0.3s ease;
+            border: 1px solid var(--border);
+        }
+
+        .toast-notification.show {
+            transform: translateX(0);
+        }
+
+        .toast-notification.success { border-left-color: var(--success); }
+        .toast-notification.error { border-left-color: var(--danger); }
+        .toast-notification.info { border-left-color: var(--info); }
+        .toast-notification.warning { border-left-color: var(--warning); }
+
+        .toast-content {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .toast-icon {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 20px;
+        }
+
+        .toast-icon.success { color: var(--success); }
+        .toast-icon.error { color: var(--danger); }
+        .toast-icon.info { color: var(--info); }
+        .toast-icon.warning { color: var(--warning); }
+
+        .toast-text {
+            flex: 1;
+        }
+
+        .toast-title {
+            font-weight: 600;
+            color: var(--text);
+            margin-bottom: 5px;
+            font-size: 14px;
+        }
+
+        .toast-message {
+            color: var(--text-muted);
+            font-size: 12px;
+        }
+
+        .toast-progress {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            height: 3px;
+            background: rgba(255,255,255,0.3);
+            animation: progress 3s linear forwards;
+        }
+
+        @keyframes progress {
+            from { width: 100%; }
+            to { width: 0%; }
         }
 
         /* Empty State */
         .empty-state {
             text-align: center;
             padding: 60px 20px;
-            color: #9ca3af;
+            color: var(--text-muted);
         }
 
         .empty-state i {
-            font-size: 80px;
+            font-size: 60px;
             margin-bottom: 20px;
-            color: #d1d5db;
+            color: var(--border);
         }
 
         .empty-state h3 {
-            font-size: 20px;
+            font-size: 18px;
+            font-weight: 600;
             margin-bottom: 10px;
-            color: #6b7280;
+            color: var(--text);
         }
 
         .empty-state p {
-            font-size: 14px;
+            max-width: 400px;
+            margin: 0 auto;
         }
 
         /* Loading Spinner */
         .loading-spinner {
             text-align: center;
             padding: 40px;
+            color: var(--text-muted);
         }
 
         .loading-spinner i {
-            font-size: 40px;
-            color: #667eea;
-            animation: spin 1s linear infinite;
-        }
-
-        @keyframes spin {
-            0% { transform: rotate(0deg); }
-            100% { transform: rotate(360deg); }
-        }
-
-        /* Modal */
-        .modal {
-            display: none;
-            position: fixed;
-            top: 0;
-            left: 0;
-            right: 0;
-            bottom: 0;
-            background: rgba(0,0,0,0.5);
-            z-index: 1000;
-            align-items: center;
-            justify-content: center;
-        }
-
-        .modal.show {
-            display: flex;
-        }
-
-        .modal-content {
-            background: white;
-            border-radius: 15px;
-            padding: 30px;
-            width: 90%;
-            max-width: 600px;
-            max-height: 80vh;
-            overflow-y: auto;
-        }
-
-        .modal-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 20px;
-            padding-bottom: 15px;
-            border-bottom: 2px solid #f3f4f6;
-        }
-
-        .modal-header h2 {
-            font-size: 24px;
-            color: #1f2937;
-        }
-
-        .close-btn {
-            width: 35px;
-            height: 35px;
-            border: none;
-            background: #f3f4f6;
-            border-radius: 50%;
-            cursor: pointer;
-            font-size: 20px;
-            color: #6b7280;
-            transition: all 0.3s;
-        }
-
-        .close-btn:hover {
-            background: #e5e7eb;
-        }
-
-        .message-bubble {
-            padding: 15px;
-            border-radius: 12px;
+            font-size: 30px;
             margin-bottom: 15px;
+            color: var(--primary);
         }
 
-        .message-bubble.incoming {
-            background: #f3f4f6;
-            margin-right: 50px;
-        }
-
-        .message-bubble.outgoing {
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            color: white;
-            margin-left: 50px;
-        }
-
-        .message-sender {
-            font-weight: 600;
-            font-size: 13px;
-            margin-bottom: 5px;
-            opacity: 0.8;
-        }
-
-        .message-text {
-            font-size: 14px;
-            line-height: 1.5;
-            word-break: break-word;
-        }
-
-        .message-time {
-            font-size: 11px;
-            margin-top: 8px;
-            opacity: 0.7;
-        }
-
-        .reply-box {
-            margin-top: 20px;
-        }
-
-        .reply-box textarea {
-            width: 100%;
-            padding: 15px;
-            border: 2px solid #e5e7eb;
-            border-radius: 12px;
-            font-size: 14px;
-            resize: vertical;
-            min-height: 100px;
-            font-family: inherit;
-        }
-
-        .reply-box textarea:focus {
-            outline: none;
-            border-color: #667eea;
-        }
-
-        .reply-actions {
-            display: flex;
-            gap: 10px;
-            margin-top: 15px;
-            justify-content: flex-end;
-        }
-
-        .btn {
-            padding: 12px 24px;
-            border: none;
-            border-radius: 8px;
-            font-size: 14px;
-            font-weight: 600;
-            cursor: pointer;
-            transition: all 0.3s;
-        }
-
-        .btn:hover {
-            transform: translateY(-2px);
-        }
-
-        .btn-primary {
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            color: white;
-        }
-
-        .btn-secondary {
-            background: #f3f4f6;
-            color: #6b7280;
-        }
-
-        /* Toast */
-        .toast {
-            position: fixed;
-            bottom: 20px;
-            right: 20px;
-            background: white;
-            padding: 15px 25px;
-            border-radius: 8px;
-            box-shadow: 0 5px 20px rgba(0,0,0,0.2);
-            display: none;
-            align-items: center;
-            gap: 10px;
-            z-index: 1100;
-            animation: slideIn 0.3s ease;
-        }
-
-        .toast.show {
-            display: flex;
-        }
-
-        .toast.success {
-            border-left: 4px solid #10b981;
-        }
-
-        .toast.error {
-            border-left: 4px solid #ef4444;
-        }
-
-        .toast i {
-            font-size: 20px;
-        }
-
-        .toast.success i {
-            color: #10b981;
-        }
-
-        .toast.error i {
-            color: #ef4444;
-        }
-
-        @keyframes slideIn {
-            from {
-                transform: translateX(100%);
-                opacity: 0;
-            }
-            to {
-                transform: translateX(0);
-                opacity: 1;
-            }
+        /* Quick Actions */
+        .quick-actions {
+            margin-bottom: 20px;
         }
 
         /* Responsive */
         @media (max-width: 768px) {
-            .stats-row {
-                grid-template-columns: 1fr;
+            .stats-grid {
+                grid-template-columns: repeat(2, 1fr);
             }
 
             .filters-bar {
                 flex-direction: column;
-                align-items: stretch;
             }
 
-            .filter-btn {
+            .filter-group {
+                width: 100%;
+                justify-content: center;
+            }
+
+            .search-box {
                 width: 100%;
             }
 
-            .notification-item {
-                flex-direction: column;
+            .btn-primary {
+                width: 100%;
+                justify-content: center;
             }
 
-            .page-header {
+            .notification-header {
                 flex-direction: column;
-                text-align: center;
-                gap: 15px;
+                align-items: flex-start;
+                gap: 5px;
+            }
+
+            .notification-actions {
+                flex-wrap: wrap;
+            }
+
+            .action-btn {
+                flex: 1;
+                justify-content: center;
             }
         }
     </style>
 </head>
 <body>
-    <div class="notifications-container">
-        <!-- Page Header -->
-        <div class="page-header">
-            <div>
-                <h1>
-                    <i class="fas fa-shield-alt"></i>
-                    SuperAdmin Notifications
-                </h1>
-                <p>Manage messages from Educators</p>
-            </div>
-            <div class="user-info">
-                <i class="fas fa-user-circle"></i>
-                <span><%= user.name || 'Super Admin' %> (superadmin)</span>
-            </div>
-        </div>
+    <!-- Theme Initialization -->
+    <script>
+        (function() {
+            const savedTheme = localStorage.getItem('theme') || 'light';
+            const savedBorder = localStorage.getItem('border') || 'round-border';
+            document.body.classList.add(savedTheme);
+            document.body.classList.add(savedBorder);
+        })();
+    </script>
 
-        <!-- Action Buttons -->
-        <div class="action-buttons">
-            <button class="primary-btn" onclick="openNewMessageModal()">
-                <i class="fas fa-plus-circle"></i>
-                New Message to Educator
-            </button>
-        </div>
-
-        <!-- Stats Row -->
-        <div class="stats-row">
-            <div class="stat-card active" onclick="setFilter('all')" id="stat-all">
-                <div class="stat-icon all">
-                    <i class="fas fa-envelope"></i>
-                </div>
-                <div class="stat-info">
-                    <h3>Total Messages</h3>
-                    <p id="totalCount">0</p>
-                </div>
+    <!-- Toast Notification -->
+    <div class="toast-notification" id="toastNotification">
+        <div class="toast-content">
+            <div class="toast-icon" id="toastIcon">
+                <i class="fas fa-info-circle"></i>
             </div>
-
-            <div class="stat-card" onclick="setFilter('unread')" id="stat-unread">
-                <div class="stat-icon unread">
-                    <i class="fas fa-envelope-open"></i>
-                </div>
-                <div class="stat-info">
-                    <h3>Unread Messages</h3>
-                    <p id="unreadCount">0</p>
-                </div>
-            </div>
-
-            <div class="stat-card" onclick="setFilter('educator')" id="stat-educator">
-                <div class="stat-icon educator">
-                    <i class="fas fa-chalkboard-teacher"></i>
-                </div>
-                <div class="stat-info">
-                    <h3>From Educators</h3>
-                    <p id="educatorCount">0</p>
-                </div>
-            </div>
-
-            <div class="stat-card" onclick="setFilter('sent')" id="stat-sent">
-                <div class="stat-icon sent">
-                    <i class="fas fa-paper-plane"></i>
-                </div>
-                <div class="stat-info">
-                    <h3>Sent Messages</h3>
-                    <p id="sentCount">0</p>
-                </div>
+            <div class="toast-text">
+                <div class="toast-title" id="toastTitle">Notification</div>
+                <div class="toast-message" id="toastMessage">Message here</div>
             </div>
         </div>
+        <div class="toast-progress" id="toastProgress"></div>
+    </div>
 
-        <!-- Filters Bar -->
-        <div class="filters-bar">
-            <button class="filter-btn active" data-filter="all" onclick="setFilter('all')">
-                <i class="fas fa-list"></i> All Messages
-            </button>
-            <button class="filter-btn" data-filter="unread" onclick="setFilter('unread')">
-                <i class="fas fa-envelope"></i> Unread
-            </button>
-            <button class="filter-btn" data-filter="educator" onclick="setFilter('educator')">
-                <i class="fas fa-chalkboard-teacher"></i> From Educators
-            </button>
-            <button class="filter-btn" data-filter="sent" onclick="setFilter('sent')">
-                <i class="fas fa-paper-plane"></i> Sent Messages
-            </button>
+    <!-- HEADER -->
+    <div class="header-wrapper">
+        <%- include('../../partials/ram/header') %>
+    </div>
 
-            <div class="search-box">
-                <i class="fas fa-search"></i>
-                <input type="text" id="searchInput" placeholder="Search messages..." onkeyup="handleSearch()">
-            </div>
-
-            <button class="filter-btn" onclick="markAllAsRead()">
-                <i class="fas fa-check-double"></i> Mark All Read
-            </button>
+    <!-- MAIN LAYOUT -->
+    <div class="main-wrapper">
+        <!-- SIDEBAR -->
+        <div class="sidebar-wrapper" id="sidebarWrapper">
+            <%- include('../../partials/ram/sidebaar') %>
         </div>
 
-        <!-- Notifications List -->
-        <div class="notifications-list" id="notificationsList">
-            <div class="loading-spinner" id="loadingSpinner">
-                <i class="fas fa-circle-notch"></i>
-                <p>Loading notifications...</p>
+        <!-- CONTENT -->
+        <div class="content-wrapper" id="contentWrapper">
+            <div class="mid-content">
+                <!-- Page Header -->
+                <div class="d-flex justify-content-between align-items-center mb-4">
+                    <h4 class="mb-0">
+                        <i class="fas fa-bell me-2" style="color: var(--primary);"></i>
+                        Notifications Center
+                    </h4>
+                    <div class="quick-actions">
+                        <button class="btn-primary" onclick="openNewMessageModal()">
+                            <i class="fas fa-plus"></i> New Message
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Stats Cards -->
+                <div class="stats-grid">
+                    <div class="stat-card active" onclick="setFilter('all')">
+                        <div class="stat-icon all">
+                            <i class="fas fa-envelope"></i>
+                        </div>
+                        <div class="stat-info">
+                            <small>Total Messages</small>
+                            <h3 id="totalCount">0</h3>
+                        </div>
+                    </div>
+                    <div class="stat-card" onclick="setFilter('unread')">
+                        <div class="stat-icon unread">
+                            <i class="fas fa-envelope-open"></i>
+                        </div>
+                        <div class="stat-info">
+                            <small>Unread</small>
+                            <h3 id="unreadCount">0</h3>
+                        </div>
+                    </div>
+                    <div class="stat-card" onclick="setFilter('educator')">
+                        <div class="stat-icon educator">
+                            <i class="fas fa-user-graduate"></i>
+                        </div>
+                        <div class="stat-info">
+                            <small>From Educators</small>
+                            <h3 id="educatorCount">0</h3>
+                        </div>
+                    </div>
+                    <div class="stat-card" onclick="setFilter('sent')">
+                        <div class="stat-icon sent">
+                            <i class="fas fa-paper-plane"></i>
+                        </div>
+                        <div class="stat-info">
+                            <small>Sent</small>
+                            <h3 id="sentCount">0</h3>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Filters Bar -->
+                <div class="filters-bar">
+                    <div class="filter-group">
+                        <button class="filter-btn active" onclick="setFilter('all')">All</button>
+                        <button class="filter-btn" onclick="setFilter('unread')">Unread</button>
+                        <button class="filter-btn" onclick="setFilter('educator')">From Educators</button>
+                        <button class="filter-btn" onclick="setFilter('sent')">Sent</button>
+                    </div>
+                    
+                    <div class="search-box">
+                        <i class="fas fa-search"></i>
+                        <input type="text" id="searchInput" placeholder="Search notifications..." onkeyup="handleSearch()">
+                    </div>
+
+                    <button class="btn-outline" onclick="markAllAsRead()">
+                        <i class="fas fa-check-double"></i> Mark All Read
+                    </button>
+                </div>
+
+                <!-- Notifications List -->
+                <div class="notifications-container" id="notificationsList">
+                    <div class="loading-spinner" id="loadingSpinner">
+                        <i class="fas fa-spinner fa-spin"></i>
+                        <p>Loading notifications...</p>
+                    </div>
+                </div>
             </div>
         </div>
     </div>
 
     <!-- Reply Modal -->
-    <div class="modal" id="replyModal">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h2><i class="fas fa-reply"></i> Reply to Educator</h2>
-                <button class="close-btn" onclick="closeModal('replyModal')">
-                    <i class="fas fa-times"></i>
-                </button>
-            </div>
-
-            <div class="conversation-thread" id="conversationThread">
-                <!-- Dynamic content -->
-            </div>
-
-            <div class="reply-box">
-                <textarea id="replyMessage" placeholder="Type your reply to educator here..." rows="4"></textarea>
-                <div class="reply-actions">
-                    <button class="btn btn-secondary" onclick="closeModal('replyModal')">
-                        <i class="fas fa-times"></i> Cancel
+    <div class="modal fade" id="replyModal" tabindex="-1" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">
+                        <i class="fas fa-reply me-2" style="color: var(--primary);"></i>
+                        Reply to Conversation
+                    </h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="conversation-thread" id="conversationThread"></div>
+                    <textarea id="replyMessage" placeholder="Type your reply here..." rows="4"></textarea>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn-outline" data-bs-dismiss="modal">
+                        <i class="fas fa-times me-1"></i> Cancel
                     </button>
-                    <button class="btn btn-primary" onclick="sendReply()">
-                        <i class="fas fa-paper-plane"></i> Send Reply
+                    <button type="button" class="btn-primary" onclick="sendReply()">
+                        <i class="fas fa-paper-plane me-1"></i> Send Reply
                     </button>
                 </div>
             </div>
@@ -786,404 +1070,450 @@
     </div>
 
     <!-- New Message Modal -->
-    <div class="modal" id="newMessageModal">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h2><i class="fas fa-plus-circle"></i> New Message to Educator</h2>
-                <button class="close-btn" onclick="closeModal('newMessageModal')">
-                    <i class="fas fa-times"></i>
-                </button>
-            </div>
-
-            <div class="reply-box">
-                <textarea id="newMessage" placeholder="Type your message to educator here..." rows="6"></textarea>
-                <div class="reply-actions">
-                    <button class="btn btn-secondary" onclick="closeModal('newMessageModal')">
-                        <i class="fas fa-times"></i> Cancel
+    <div class="modal fade" id="newMessageModal" tabindex="-1" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">
+                        <i class="fas fa-plus-circle me-2" style="color: var(--primary);"></i>
+                        New Message
+                    </h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <textarea id="newMessage" placeholder="Type your message to educators..." rows="5"></textarea>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn-outline" data-bs-dismiss="modal">
+                        <i class="fas fa-times me-1"></i> Cancel
                     </button>
-                    <button class="btn btn-primary" onclick="sendNewMessage()">
-                        <i class="fas fa-paper-plane"></i> Send to Educator
+                    <button type="button" class="btn-primary" onclick="sendNewMessage()">
+                        <i class="fas fa-paper-plane me-1"></i> Send Message
                     </button>
                 </div>
             </div>
         </div>
     </div>
 
-    <!-- Toast Notification -->
-    <div class="toast" id="toast">
-        <i class="fas" id="toastIcon"></i>
-        <span id="toastMessage"></span>
-    </div>
+    <!-- Bootstrap JS -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
 
     <script>
-        // State
-        let currentFilter = 'all';
+        // Global Variables
         let notifications = [];
-        let selectedNotification = null;
-        let searchTimeout = null;
-        const userId = '<%= user._id || "67b8f8c8f8c8f8c8f8c8f8c8" %>';
+        let currentFilter = 'all';
+        let selectedId = null;
+        let replyModal, newMessageModal;
 
-        // Initialize
+        // ======================
+        // INITIALIZATION
+        // ======================
         document.addEventListener('DOMContentLoaded', function() {
+            // Initialize Bootstrap modals
+            replyModal = new bootstrap.Modal(document.getElementById('replyModal'));
+            newMessageModal = new bootstrap.Modal(document.getElementById('newMessageModal'));
+            
+            // Load notifications
             fetchNotifications();
-            // Auto refresh every 10 seconds (faster refresh)
+            
+            // Auto refresh every 10 seconds
             setInterval(fetchNotifications, 10000);
+            
+            // Sidebar sync with your existing sidebar
+            const sidebarWrapper = document.getElementById('sidebarWrapper');
+            const mainSidebar = document.getElementById('mainSidebar');
+            
+            if (mainSidebar && sidebarWrapper) {
+                if (mainSidebar.classList.contains('collapsed')) {
+                    sidebarWrapper.classList.add('collapsed');
+                }
+            }
         });
 
-        // Show toast
-        function showToast(message, type = 'success') {
-            const toast = document.getElementById('toast');
-            const toastIcon = document.getElementById('toastIcon');
+        // ======================
+        // THEME FUNCTIONS (these will be called from header buttons)
+        // ======================
+        window.toggleTheme = function() {
+            if (document.body.classList.contains('dark')) {
+                document.body.classList.remove('dark');
+                document.body.classList.add('light');
+                localStorage.setItem('theme', 'light');
+                showToast('Theme Updated', 'Light mode activated', 'info');
+            } else {
+                document.body.classList.remove('light');
+                document.body.classList.add('dark');
+                localStorage.setItem('theme', 'dark');
+                showToast('Theme Updated', 'Dark mode activated', 'info');
+            }
+        };
+
+        window.toggleBorder = function() {
+            if (document.body.classList.contains('round-border')) {
+                document.body.classList.remove('round-border');
+                document.body.classList.add('no-radius');
+                localStorage.setItem('border', 'no-radius');
+                showToast('Border Style', 'Square corners activated', 'info');
+            } else {
+                document.body.classList.remove('no-radius');
+                document.body.classList.add('round-border');
+                localStorage.setItem('border', 'round-border');
+                showToast('Border Style', 'Rounded corners activated', 'info');
+            }
+        };
+
+        // ======================
+        // TOAST FUNCTION
+        // ======================
+        function showToast(title, message, type = 'info') {
+            const toast = document.getElementById('toastNotification');
+            const icon = document.getElementById('toastIcon');
+            const toastTitle = document.getElementById('toastTitle');
             const toastMessage = document.getElementById('toastMessage');
             
-            toast.className = 'toast ' + type;
-            toastIcon.className = 'fas ' + (type === 'success' ? 'fa-check-circle' : 'fa-exclamation-circle');
+            // Clear any existing timeout
+            if (window.toastTimeout) {
+                clearTimeout(window.toastTimeout);
+            }
+            
+            // Set icon based on type
+            icon.innerHTML = `<i class="fas fa-${type === 'success' ? 'check-circle' : type === 'error' ? 'exclamation-circle' : type === 'warning' ? 'exclamation-triangle' : 'info-circle'}"></i>`;
+            
+            // Set colors
+            toast.className = 'toast-notification show ' + type;
+            toastTitle.textContent = title;
             toastMessage.textContent = message;
-            toast.classList.add('show');
             
-            setTimeout(() => toast.classList.remove('show'), 3000);
+            // Auto hide after 3 seconds
+            window.toastTimeout = setTimeout(() => {
+                toast.classList.remove('show');
+            }, 3000);
         }
 
-        // Set filter
-        function setFilter(filter) {
-            currentFilter = filter;
-            
-            document.querySelectorAll('.filter-btn[data-filter]').forEach(btn => {
-                btn.classList.toggle('active', btn.dataset.filter === filter);
-            });
-            
-            document.querySelectorAll('.stat-card').forEach(card => {
-                card.classList.remove('active');
-            });
-            document.getElementById('stat-' + filter)?.classList.add('active');
-            
-            fetchNotifications();
-        }
-
-        // Handle search
-        function handleSearch() {
-            clearTimeout(searchTimeout);
-            searchTimeout = setTimeout(fetchNotifications, 500);
-        }
-
-        // Fetch notifications
+        // ======================
+        // NOTIFICATION FUNCTIONS
+        // ======================
         async function fetchNotifications() {
             try {
                 const search = document.getElementById('searchInput').value;
-                const url = `/api/notifications?filter=${currentFilter}&search=${encodeURIComponent(search)}`;
-                
-                const response = await fetch(url);
-                const data = await response.json();
+                const res = await fetch(`/api/notifications?filter=${currentFilter}&search=${search}`);
+                const data = await res.json();
                 
                 if (data.success) {
                     notifications = data.notifications;
-                    updateStats(data.stats);
-                    renderNotifications();
+                    
+                    // Update stats
+                    document.getElementById('totalCount').innerText = data.stats.total || 0;
+                    document.getElementById('unreadCount').innerText = data.stats.unread || 0;
+                    document.getElementById('educatorCount').innerText = data.stats.educator || 0;
+                    document.getElementById('sentCount').innerText = data.stats.sent || 0;
+                    
+                    renderList();
                 }
-                
-                // Hide spinner after data loads
-                document.getElementById('loadingSpinner').style.display = 'none';
-                
             } catch (error) {
-                console.error('Fetch error:', error);
-                showToast('Failed to load notifications', 'error');
-                document.getElementById('loadingSpinner').style.display = 'none';
+                console.error('Error fetching notifications:', error);
+                showToast('Error', 'Failed to load notifications', 'error');
             }
         }
 
-        // Update stats
-        function updateStats(stats) {
-            document.getElementById('totalCount').textContent = stats.total || 0;
-            document.getElementById('unreadCount').textContent = stats.unread || 0;
-            document.getElementById('educatorCount').textContent = stats.educator || 0;
-            document.getElementById('sentCount').textContent = stats.sent || 0;
-        }
-
-        // Format time
-        function formatTime(dateString) {
-            const date = new Date(dateString);
-            const now = new Date();
-            const diff = (now - date) / 1000;
-
-            if (diff < 60) return 'just now';
-            if (diff < 3600) return Math.floor(diff / 60) + ' minutes ago';
-            if (diff < 86400) return Math.floor(diff / 3600) + ' hours ago';
-            if (diff < 604800) return Math.floor(diff / 86400) + ' days ago';
-            return date.toLocaleDateString();
-        }
-
-        // Render notifications
-        function renderNotifications() {
+        function renderList() {
             const container = document.getElementById('notificationsList');
-
-            if (notifications.length === 0) {
+            const spinner = document.getElementById('loadingSpinner');
+            
+            if (!notifications.length) {
                 container.innerHTML = `
                     <div class="empty-state">
                         <i class="fas fa-bell-slash"></i>
-                        <h3>No Messages Found</h3>
-                        <p>No messages to display at the moment.</p>
+                        <h3>No notifications</h3>
+                        <p>You don't have any notifications yet. New messages will appear here.</p>
+                        <button class="btn-primary mt-3" onclick="openNewMessageModal()">
+                            <i class="fas fa-plus"></i> Send First Message
+                        </button>
                     </div>
                 `;
                 return;
             }
 
-            container.innerHTML = notifications.map(notif => {
-                if (notif.type === 'sent') {
-                    return `
-                    <div class="notification-item sent" onclick="openSentMessage('${notif._id}')">
-                        <div class="notif-avatar sent">A</div>
-                        <div class="notif-content">
-                            <div class="notif-header">
-                                <div>
-                                    <span class="notif-name">
-                                        You
-                                        <span class="notif-role sent">sent to educator</span>
-                                    </span>
+            let html = '';
+            
+            notifications.forEach(n => {
+                if (n.type === 'sent') {
+                    html += `
+                        <div class="notification-item sent">
+                            <div class="notification-avatar avatar sent">
+                                <i class="fas fa-user-shield"></i>
+                            </div>
+                            <div class="notification-content">
+                                <div class="notification-header">
+                                    <div class="sender-info">
+                                        <span class="sender-name">You</span>
+                                        <span class="role-badge sent">Sent</span>
+                                    </div>
+                                    <span class="time">${formatTime(n.createdAt)}</span>
                                 </div>
-                                <span class="notif-time">
-                                    <i class="far fa-clock"></i> ${formatTime(notif.createdAt)}
-                                </span>
-                            </div>
-                            <div class="notif-message">${notif.message}</div>
-                            
-                            <div class="notif-meta">
-                                <span><i class="fas fa-check-circle" style="color: #667eea;"></i> Sent</span>
-                            </div>
-                            
-                            <div class="notif-actions" onclick="event.stopPropagation()">
-                                <button class="action-btn delete" onclick="deleteNotification('${notif._id}')">
-                                    <i class="fas fa-trash"></i> Delete
-                                </button>
-                            </div>
-                        </div>
-                    </div>
-                `;
-                } else {
-                    const hasReply = notif.reply && notif.reply.message;
-                    
-                    return `
-                    <div class="notification-item ${notif.isRead ? '' : 'unread'}" onclick="openNotification('${notif._id}')">
-                        <div class="notif-avatar educator">
-                            ${notif.senderName ? notif.senderName.charAt(0).toUpperCase() : 'E'}
-                        </div>
-                        <div class="notif-content">
-                            <div class="notif-header">
-                                <div>
-                                    <span class="notif-name">
-                                        ${notif.senderName || 'Educator'}
-                                        <span class="notif-role educator">educator</span>
-                                    </span>
-                                </div>
-                                <span class="notif-time">
-                                    <i class="far fa-clock"></i> ${formatTime(notif.createdAt)}
-                                </span>
-                            </div>
-                            <div class="notif-message">${notif.message}</div>
-                            
-                            ${hasReply ? `
-                                <div class="reply-message">
-                                    <i class="fas fa-reply"></i>
-                                    <strong>Your reply:</strong> ${notif.reply.message}
-                                    <br><small>${formatTime(notif.reply.repliedAt)}</small>
-                                </div>
-                            ` : ''}
-                            
-                            <div class="notif-meta">
-                                <span><i class="fas fa-phone"></i> ${notif.senderPhone || 'N/A'}</span>
-                            </div>
-                            
-                            <div class="notif-actions" onclick="event.stopPropagation()">
-                                <button class="action-btn reply" onclick="openReplyModal('${notif._id}')" ${hasReply ? 'disabled' : ''}>
-                                    <i class="fas fa-reply"></i> ${hasReply ? 'Replied' : 'Reply'}
-                                </button>
-                                
-                                ${!notif.isRead ? `
-                                    <button class="action-btn mark-read" onclick="markAsRead('${notif._id}')">
-                                        <i class="fas fa-check"></i> Mark Read
+                                <div class="message-text">${n.message}</div>
+                                <div class="notification-actions">
+                                    <button class="action-btn delete" onclick="deleteNotif('${n._id}')">
+                                        <i class="fas fa-trash"></i> Delete
                                     </button>
-                                ` : ''}
-                                
-                                <button class="action-btn delete" onclick="deleteNotification('${notif._id}')">
-                                    <i class="fas fa-trash"></i> Delete
-                                </button>
+                                </div>
                             </div>
                         </div>
-                    </div>
-                `;
+                    `;
+                } else {
+                    html += `
+                        <div class="notification-item ${n.isRead ? '' : 'unread'}" onclick="openNotif('${n._id}')">
+                            <div class="notification-avatar avatar educator">
+                                ${n.senderName?.charAt(0) || 'E'}
+                            </div>
+                            <div class="notification-content">
+                                <div class="notification-header">
+                                    <div class="sender-info">
+                                        <span class="sender-name">${n.senderName || 'Educator'}</span>
+                                        <span class="role-badge educator">Educator</span>
+                                    </div>
+                                    <span class="time">${formatTime(n.createdAt)}</span>
+                                </div>
+                                <div class="message-text">${n.message}</div>
+                                ${n.reply ? `
+                                    <div class="reply-indicator">
+                                        <i class="fas fa-reply"></i> 
+                                        Replied: ${n.reply.message}
+                                    </div>
+                                ` : ''}
+                                <div class="notification-meta">
+                                    <span><i class="fas fa-phone-alt"></i> ${n.senderPhone || 'N/A'}</span>
+                                </div>
+                                <div class="notification-actions" onclick="event.stopPropagation()">
+                                    <button class="action-btn reply" onclick="openReply('${n._id}')" ${n.reply ? 'disabled' : ''}>
+                                        <i class="fas fa-reply"></i> ${n.reply ? 'Replied' : 'Reply'}
+                                    </button>
+                                    ${!n.isRead ? `
+                                        <button class="action-btn mark-read" onclick="markRead('${n._id}')">
+                                            <i class="fas fa-check"></i> Mark Read
+                                        </button>
+                                    ` : ''}
+                                    <button class="action-btn delete" onclick="deleteNotif('${n._id}')">
+                                        <i class="fas fa-trash"></i> Delete
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    `;
                 }
-            }).join('');
+            });
+            
+            container.innerHTML = html;
+            spinner.style.display = 'none';
         }
 
-        // Open new message modal
+        function formatTime(timestamp) {
+            const date = new Date(timestamp);
+            const now = new Date();
+            const diff = now - date;
+            
+            // Today
+            if (diff < 24 * 60 * 60 * 1000) {
+                return date.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+            }
+            // This week
+            if (diff < 7 * 24 * 60 * 60 * 1000) {
+                return date.toLocaleDateString([], { weekday: 'short' });
+            }
+            // Older
+            return date.toLocaleDateString([], { month: 'short', day: 'numeric' });
+        }
+
+        // ======================
+        // FILTER FUNCTIONS
+        // ======================
+        function setFilter(filter) {
+            currentFilter = filter;
+            
+            // Update active state
+            document.querySelectorAll('.filter-btn').forEach(btn => {
+                btn.classList.remove('active');
+            });
+            event.target.classList.add('active');
+            
+            // Update stat cards
+            document.querySelectorAll('.stat-card').forEach((card, index) => {
+                card.classList.remove('active');
+            });
+            
+            // Find and activate corresponding stat card
+            const statCards = document.querySelectorAll('.stat-card');
+            if (filter === 'all') statCards[0].classList.add('active');
+            else if (filter === 'unread') statCards[1].classList.add('active');
+            else if (filter === 'educator') statCards[2].classList.add('active');
+            else if (filter === 'sent') statCards[3].classList.add('active');
+            
+            fetchNotifications();
+            showToast('Filter Applied', `Showing ${filter} notifications`, 'info');
+        }
+
+        function handleSearch() {
+            clearTimeout(window.searchTimeout);
+            window.searchTimeout = setTimeout(fetchNotifications, 500);
+        }
+
+        // ======================
+        // MODAL FUNCTIONS
+        // ======================
         function openNewMessageModal() {
             document.getElementById('newMessage').value = '';
-            document.getElementById('newMessageModal').classList.add('show');
+            newMessageModal.show();
         }
 
-        // Open notification
-        function openNotification(id) {
-            const notif = notifications.find(n => n._id === id);
-            if (notif && !notif.isRead) markAsRead(id);
-            openReplyModal(id);
-        }
-
-        // Open sent message
-        function openSentMessage(id) {
-            showToast('Message sent to educator', 'success');
-        }
-
-        // Open reply modal
-        function openReplyModal(id) {
-            selectedNotification = notifications.find(n => n._id === id);
-            if (!selectedNotification) return;
-
-            const conversationHTML = `
+        function openReply(id) {
+            selectedId = id;
+            const n = notifications.find(x => x._id === id);
+            
+            let threadHtml = `
                 <div class="message-bubble incoming">
-                    <div class="message-sender">
-                        <i class="fas fa-chalkboard-teacher"></i> 
-                        ${selectedNotification.senderName || 'Educator'} (Educator)
-                    </div>
-                    <div class="message-text">${selectedNotification.message}</div>
-                    <div class="message-time">${formatTime(selectedNotification.createdAt)}</div>
+                    <div class="message-sender">${n.senderName} (Educator)</div>
+                    <div>${n.message}</div>
+                    <div class="message-time">${new Date(n.createdAt).toLocaleString()}</div>
                 </div>
-                ${selectedNotification.reply ? `
-                    <div class="message-bubble outgoing">
-                        <div class="message-sender">
-                            <i class="fas fa-shield-alt"></i> You (SuperAdmin)
-                        </div>
-                        <div class="message-text">${selectedNotification.reply.message}</div>
-                        <div class="message-time">${formatTime(selectedNotification.reply.repliedAt)}</div>
-                    </div>
-                ` : ''}
             `;
-
-            document.getElementById('conversationThread').innerHTML = conversationHTML;
+            
+            if (n.reply) {
+                threadHtml += `
+                    <div class="message-bubble outgoing">
+                        <div class="message-sender">You (SuperAdmin)</div>
+                        <div>${n.reply.message}</div>
+                        <div class="message-time">${new Date(n.reply.repliedAt).toLocaleString()}</div>
+                    </div>
+                `;
+            }
+            
+            document.getElementById('conversationThread').innerHTML = threadHtml;
             document.getElementById('replyMessage').value = '';
-            document.getElementById('replyModal').classList.add('show');
+            
+            replyModal.show();
         }
 
-        // Close modal
-        function closeModal(modalId) {
-            document.getElementById(modalId).classList.remove('show');
-            if (modalId === 'replyModal') {
-                document.getElementById('replyMessage').value = '';
-                selectedNotification = null;
-            } else if (modalId === 'newMessageModal') {
-                document.getElementById('newMessage').value = '';
-            }
+        function openNotif(id) {
+            const n = notifications.find(x => x._id === id);
+            if (!n.isRead) markRead(id);
+            openReply(id);
         }
 
-        // Send new message
+        // ======================
+        // API FUNCTIONS
+        // ======================
         async function sendNewMessage() {
-            const message = document.getElementById('newMessage').value.trim();
-            
-            if (!message) {
-                showToast('Please enter a message', 'error');
+            const msg = document.getElementById('newMessage').value.trim();
+            if (!msg) {
+                showToast('Error', 'Please enter a message', 'error');
                 return;
             }
-
+            
             try {
-                const response = await fetch('/api/notifications/new', {
+                const res = await fetch('/api/notifications/new', {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ 
-                        message,
-                        recipientRole: 'educator'
-                    })
+                    body: JSON.stringify({ message: msg })
                 });
-
-                const data = await response.json();
-
+                
+                const data = await res.json();
+                
                 if (data.success) {
-                    showToast('Message sent to educator successfully!');
-                    closeModal('newMessageModal');
+                    showToast('Success', 'Message sent successfully!', 'success');
+                    newMessageModal.hide();
                     fetchNotifications();
                 } else {
-                    showToast(data.error || 'Failed to send message', 'error');
+                    showToast('Error', data.error || 'Failed to send message', 'error');
                 }
             } catch (error) {
-                showToast('Failed to send message', 'error');
+                console.error('Error sending message:', error);
+                showToast('Error', 'Failed to send message', 'error');
             }
         }
 
-        // Send reply
         async function sendReply() {
-            const message = document.getElementById('replyMessage').value.trim();
+            const msg = document.getElementById('replyMessage').value.trim();
+            if (!msg || !selectedId) {
+                showToast('Error', 'Please enter a reply', 'error');
+                return;
+            }
             
-            if (!message) {
-                showToast('Please enter a reply message', 'error');
-                return;
-            }
-
-            if (!selectedNotification) {
-                showToast('No message selected', 'error');
-                return;
-            }
-
             try {
-                const response = await fetch('/api/notifications/reply', {
+                const res = await fetch('/api/notifications/reply', {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({
-                        notificationId: selectedNotification._id,
-                        message: message
-                    })
+                    body: JSON.stringify({ notificationId: selectedId, message: msg })
                 });
-
-                const data = await response.json();
-
+                
+                const data = await res.json();
+                
                 if (data.success) {
-                    showToast('Reply sent to educator successfully!');
-                    closeModal('replyModal');
+                    showToast('Success', 'Reply sent successfully!', 'success');
+                    replyModal.hide();
                     fetchNotifications();
                 } else {
-                    showToast(data.error || 'Failed to send reply', 'error');
+                    showToast('Error', data.error || 'Failed to send reply', 'error');
                 }
             } catch (error) {
-                showToast('Failed to send reply', 'error');
+                console.error('Error sending reply:', error);
+                showToast('Error', 'Failed to send reply', 'error');
             }
         }
 
-        // Mark as read
-        async function markAsRead(id) {
+        async function markRead(id) {
             try {
                 await fetch(`/api/notifications/${id}/read`, { method: 'PUT' });
-                const notif = notifications.find(n => n._id === id);
-                if (notif) notif.isRead = true;
-                renderNotifications();
-                showToast('Marked as read');
+                showToast('Success', 'Marked as read', 'success');
+                fetchNotifications();
             } catch (error) {
-                showToast('Failed to mark as read', 'error');
+                console.error('Error marking as read:', error);
+                showToast('Error', 'Failed to mark as read', 'error');
             }
         }
 
-        // Mark all as read
         async function markAllAsRead() {
-            if (!confirm('Mark all messages as read?')) return;
-
+            if (!confirm('Mark all notifications as read?')) return;
+            
             try {
                 await fetch('/api/notifications/read-all', { method: 'PUT' });
-                notifications.forEach(n => n.isRead = true);
-                renderNotifications();
-                showToast('All messages marked as read');
+                showToast('Success', 'All notifications marked as read', 'success');
+                fetchNotifications();
             } catch (error) {
-                showToast('Failed to mark all as read', 'error');
+                console.error('Error marking all as read:', error);
+                showToast('Error', 'Failed to mark all as read', 'error');
             }
         }
 
-        // Delete notification
-        async function deleteNotification(id) {
-            if (!confirm('Are you sure you want to delete this message?')) return;
-
+        async function deleteNotif(id) {
+            if (!confirm('Are you sure you want to delete this notification?')) return;
+            
             try {
                 await fetch(`/api/notifications/${id}`, { method: 'DELETE' });
                 notifications = notifications.filter(n => n._id !== id);
-                renderNotifications();
-                showToast('Message deleted');
+                renderList();
+                showToast('Success', 'Notification deleted', 'success');
             } catch (error) {
-                showToast('Failed to delete message', 'error');
+                console.error('Error deleting notification:', error);
+                showToast('Error', 'Failed to delete notification', 'error');
             }
         }
+
+        // ======================
+        // SIDEBAR FUNCTIONS (these will be called from your header)
+        // ======================
+        window.toggleCollapse = function() {
+            const sidebarWrapper = document.getElementById('sidebarWrapper');
+            sidebarWrapper.classList.toggle('collapsed');
+        };
+
+        window.toggleMobileSidebar = function() {
+            const sidebarWrapper = document.getElementById('sidebarWrapper');
+            sidebarWrapper.classList.toggle('mobile-open');
+        };
+
+        window.closeMobileSidebar = function() {
+            const sidebarWrapper = document.getElementById('sidebarWrapper');
+            sidebarWrapper.classList.remove('mobile-open');
+        };
     </script>
 </body>
 </html>

@@ -1,0 +1,313 @@
+<!-- views/partials/second/header.ejs -->
+<style>
+    /* ===== HEADER STYLES - ONLY HEADER ===== */
+    .header {
+        position: fixed;
+        top: 0;
+        left: 0;
+        right: 0;
+        height: var(--header-height, 70px);
+        background: var(--bg-white);
+        backdrop-filter: blur(10px);
+        border-bottom: 1px solid var(--border);
+        padding: 0 2rem;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        z-index: 1000;
+        box-shadow: var(--shadow);
+    }
+
+    .header-left {
+        display: flex;
+        align-items: center;
+        gap: 1.5rem;
+    }
+
+    .menu-toggle {
+        width: 40px;
+        height: 40px;
+        border-radius: 8px;
+        border: 1px solid var(--border);
+        background: var(--bg-white);
+        color: var(--text);
+        cursor: pointer;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 1.1rem;
+        transition: all 0.2s;
+    }
+
+    .menu-toggle:hover {
+        background: var(--primary);
+        color: white;
+        border-color: var(--primary);
+    }
+
+    .page-title {
+        font-size: 1.3rem;
+        font-weight: 600;
+        color: var(--dark);
+        margin: 0;
+        line-height: 1.2;
+    }
+
+    .header-right {
+        display: flex;
+        align-items: center;
+        gap: 1.5rem;
+    }
+
+    .header-search {
+        position: relative;
+        width: 300px;
+    }
+
+    .header-search i {
+        position: absolute;
+        left: 1rem;
+        top: 50%;
+        transform: translateY(-50%);
+        color: var(--text-muted);
+        font-size: 0.9rem;
+        z-index: 1;
+    }
+
+    .header-search input {
+        width: 100%;
+        height: 42px;
+        padding: 0 1rem 0 2.5rem;
+        border: 1px solid var(--border);
+        border-radius: 8px;
+        background: var(--bg-white);
+        color: var(--text);
+        font-size: 0.9rem;
+        transition: all 0.2s;
+    }
+
+    .header-search input:focus {
+        outline: none;
+        border-color: var(--primary);
+        box-shadow: 0 0 0 3px var(--primary-pale);
+    }
+
+    .header-search input::placeholder {
+        color: var(--text-muted);
+        opacity: 0.7;
+    }
+
+    .header-actions {
+        display: flex;
+        align-items: center;
+        gap: 0.75rem;
+    }
+
+    .header-btn {
+        width: 42px;
+        height: 42px;
+        border-radius: 8px;
+        border: 1px solid var(--border);
+        background: var(--bg-white);
+        color: var(--text);
+        cursor: pointer;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        position: relative;
+        transition: all 0.2s;
+        font-size: 1rem;
+    }
+
+    .header-btn:hover {
+        background: var(--primary);
+        color: white;
+        border-color: var(--primary);
+    }
+
+    .notification-badge {
+        position: absolute;
+        top: -4px;
+        right: -4px;
+        width: 18px;
+        height: 18px;
+        background: var(--danger);
+        color: white;
+        border-radius: 50%;
+        font-size: 0.65rem;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        border: 2px solid var(--bg-white);
+        font-weight: 600;
+    }
+
+    .user-profile {
+        display: flex;
+        align-items: center;
+        gap: 0.75rem;
+        padding: 0.5rem 1rem;
+        border-radius: 8px;
+        cursor: pointer;
+        transition: all 0.2s;
+        border: 1px solid transparent;
+        background: transparent;
+    }
+
+    .user-profile:hover {
+        background: var(--bg-offwhite);
+        border-color: var(--border);
+    }
+
+    .profile-avatar {
+        width: 42px;
+        height: 42px;
+        border-radius: 8px;
+        background: linear-gradient(135deg, var(--primary-dark), var(--primary));
+        color: white;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-weight: 600;
+        font-size: 1rem;
+        flex-shrink: 0;
+    }
+
+    .profile-info {
+        line-height: 1.3;
+        text-align: left;
+    }
+
+    .profile-name {
+        font-weight: 600;
+        font-size: 0.9rem;
+        color: var(--dark);
+        margin-bottom: 2px;
+        white-space: nowrap;
+    }
+
+    .profile-role {
+        font-size: 0.7rem;
+        color: var(--text-muted);
+        white-space: nowrap;
+    }
+
+    .profile-chevron {
+        font-size: 0.7rem;
+        color: var(--text-muted);
+        margin-left: 0.25rem;
+    }
+
+    /* Border Mode Classes for Header */
+    body.round-border .header {
+        border-radius: 0 0 20px 20px !important;
+    }
+
+    body.round-border .menu-toggle,
+    body.round-border .header-btn,
+    body.round-border .profile-avatar,
+    body.round-border .header-search input {
+        border-radius: 12px !important;
+    }
+
+    body.round-border .user-profile {
+        border-radius: 30px !important;
+    }
+
+    body.no-radius .header,
+    body.no-radius .menu-toggle,
+    body.no-radius .header-btn,
+    body.no-radius .profile-avatar,
+    body.no-radius .header-search input,
+    body.no-radius .user-profile {
+        border-radius: 0 !important;
+    }
+
+    /* Header Responsive */
+    @media (max-width: 1200px) {
+        .header-search {
+            width: 250px;
+        }
+    }
+
+    @media (max-width: 992px) {
+        .header-search {
+            width: 200px;
+        }
+    }
+
+    @media (max-width: 768px) {
+        .header {
+            padding: 0 1rem;
+        }
+        
+        .header-search {
+            display: none;
+        }
+        
+        .profile-info {
+            display: none;
+        }
+        
+        .page-title {
+            font-size: 1.1rem;
+        }
+        
+        .header-actions {
+            gap: 0.5rem;
+        }
+        
+        .profile-chevron {
+            display: none;
+        }
+    }
+
+    @media (max-width: 480px) {
+        .header-btn,
+        .profile-avatar {
+            width: 38px;
+            height: 38px;
+        }
+        
+        .user-profile {
+            padding: 0.25rem 0.5rem;
+        }
+    }
+</style>
+
+<!-- Header HTML -->
+<header class="header">
+    <div class="header-left">
+        <button class="menu-toggle" onclick="if(window.toggleSidebar) window.toggleSidebar();" id="menuToggleBtn">
+            <i class="fas fa-bars"></i>
+        </button>
+        <h1 class="page-title"><%= typeof pageTitle !== 'undefined' ? pageTitle : 'Dashboard Overview' %></h1>
+    </div>
+
+    <div class="header-right">
+        <div class="header-search">
+            <i class="fas fa-search"></i>
+            <input type="text" placeholder="Search...">
+        </div>
+
+        <div class="header-actions">
+            <button class="header-btn">
+                <i class="fas fa-envelope"></i>
+                <span class="notification-badge">3</span>
+            </button>
+            <button class="header-btn">
+                <i class="fas fa-bell"></i>
+                <span class="notification-badge">5</span>
+            </button>
+        </div>
+
+        <div class="user-profile">
+            <div class="profile-avatar"><%= typeof userAvatar !== 'undefined' ? userAvatar : 'JD' %></div>
+            <div class="profile-info">
+                <div class="profile-name"><%= typeof userName !== 'undefined' ? userName : 'John Doe' %></div>
+                <div class="profile-role"><%= typeof userRole !== 'undefined' ? userRole : 'Super Admin' %></div>
+            </div>
+            <i class="fas fa-chevron-down profile-chevron"></i>
+        </div>
+    </div>
+</header>

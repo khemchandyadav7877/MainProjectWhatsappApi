@@ -1,96 +1,27 @@
-// models/NotificationReply.js - Reply/Conversation Schema
 const mongoose = require('mongoose');
 
 const notificationReplySchema = new mongoose.Schema({
-    // Link to parent notification
-    notificationId: {
-        type: String,
-        required: true,
-        index: true
-    },
+    notificationId: { type: mongoose.Schema.Types.ObjectId, ref: 'Notification', required: true },
     
-    // From (sender of this reply)
     from: {
-        userId: {
-            type: mongoose.Schema.Types.ObjectId,
-            ref: 'User',
-            required: true
-        },
-        name: {
-            type: String,
-            required: true
-        },
-        role: {
-            type: String,
-            enum: ['user', 'Student', 'Educator', 'Trainer', 'SuperAdmin'],
-            required: true
-        }
+        userId: { type: mongoose.Schema.Types.ObjectId, required: true },
+        model: { type: String, required: true },
+        name: String,
+        role: String
     },
     
-    // To (recipient of this reply)
     to: {
-        userId: {
-            type: mongoose.Schema.Types.ObjectId,
-            ref: 'User',
-            required: true
-        },
-        name: {
-            type: String,
-            required: true
-        },
-        role: {
-            type: String,
-            enum: ['user', 'Student', 'Educator', 'Trainer', 'SuperAdmin'],
-            required: true
-        }
+        userId: { type: mongoose.Schema.Types.ObjectId, required: true },
+        model: { type: String, required: true },
+        name: String,
+        role: String
     },
     
-    // Reply message
-    message: {
-        type: String,
-        required: true
-    },
+    message: { type: String, required: true },
+    sentVia: { type: String, default: 'dashboard' },
+    status: { type: String, default: 'sent' },
     
-    messageType: {
-        type: String,
-        enum: ['text', 'image', 'video', 'audio', 'document'],
-        default: 'text'
-    },
-    
-    mediaUrl: {
-        type: String,
-        default: null
-    },
-    
-    // WhatsApp details (if sent via WhatsApp)
-    whatsappMessageId: {
-        type: String,
-        default: null
-    },
-    
-    sentVia: {
-        type: String,
-        enum: ['whatsapp', 'dashboard'],
-        default: 'dashboard'
-    },
-    
-    // Status
-    status: {
-        type: String,
-        enum: ['sent', 'delivered', 'read', 'failed'],
-        default: 'sent'
-    },
-    
-    // Timestamps
-    createdAt: {
-        type: Date,
-        default: Date.now
-    }
-}, {
-    timestamps: true
+    createdAt: { type: Date, default: Date.now }
 });
-
-// Index for faster queries
-notificationReplySchema.index({ notificationId: 1, createdAt: 1 });
 
 module.exports = mongoose.model('NotificationReply', notificationReplySchema);
