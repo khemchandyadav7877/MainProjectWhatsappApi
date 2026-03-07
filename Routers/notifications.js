@@ -39,192 +39,334 @@ router.get('/educator/notifications', isAuthenticated, hasRole('educator', 'Educ
 });
 
 // ========== API ROUTES (Protected) ==========
-// GET Notifications (SuperAdmin)
+// GET Notifications (SuperAdmin) - UPDATED with countOnly
 router.get('/api/notifications', isAuthenticated, hasRole('superadmin', 'SuperAdmin'), async (req, res) => {
     try {
         const userId = req.userId;
-        const { filter = 'all', search = '' } = req.query;
+        const { filter = 'all', search = '', countOnly = 'false' } = req.query;
         
-        // Build base query
-        let query = {
-            $or: [
-                { recipientId: new mongoose.Types.ObjectId(userId) },
-                { senderId: new mongoose.Types.ObjectId(userId) }
-            ]
-        };
-
-        // Apply filters
-        if (filter === 'unread') {
-            query.isRead = false;
-            // For unread, we only want messages where current user is recipient
-            query = {
-                recipientId: new mongoose.Types.ObjectId(userId),
-                isRead: false
-            };
-        } else if (filter === 'educator') {
-            // Messages FROM educators (sent to superadmin)
-            query = {
-                senderRole: { $in: ['educator', 'Educator'] },
-                recipientId: new mongoose.Types.ObjectId(userId)
-            };
-        } else if (filter === 'sent') {
-            // Messages FROM superadmin (sent to educators)
-            query = {
-                senderId: new mongoose.Types.ObjectId(userId),
-                senderRole: { $in: ['superadmin', 'SuperAdmin'] }
-            };
-        }
+        // Convert countOnly to boolean
+        const isCountOnly = countOnly === 'true' || countOnly === true;
         
-        // Add search if provided
-        if (search) {
-            query.$and = [
-                query,
-                {
+        // IF COUNT ONLY - Just return the unread count for header badge
+        if (isCountOnly) {
+            try {
+                // Get unread count where current user is recipient
+                const unreadCount = await Notification.countDocuments({
+                    recipientId: new mongoose.Types.ObjectId(userId),
+                    isRead: false
+                });
+                
+                // Also get other stats for header if needed
+                const totalCount = await Notification.countDocuments({
                     $or: [
-                        { message: { $regex: search, $options: 'i' } },
-                        { senderName: { $regex: search, $options: 'i' } }
+                        { recipientId: new mongoose.Types.ObjectId(userId) },
+                        { senderId: new mongoose.Types.ObjectId(userId) }
                     ]
-                }
-            ];
+                });
+                
+                const educatorCount = await Notification.countDocuments({
+                    senderRole: { $in: ['educator', 'Educator'] },
+                    recipientId: new mongoose.Types.ObjectId(userId)
+                });
+                
+                const sentCount = await Notification.countDocuments({
+                    senderId: new mongoose.Types.ObjectId(userId),
+                    senderRole: { $in: ['superadmin', 'SuperAdmin'] }
+                });
+                
+                return res.json({ 
+                    success: true, 
+                    unreadCount,
+                    stats: {
+                        total: totalCount,
+                        unread: unreadCount,
+                        educator: educatorCount,
+                        sent: sentCount
+                    }
+                });
+            } catch (countError) {
+                console.error('Error counting notifications:', countError);
+                return res.status(500).json({ 
+                    success: false, 
+                    error: 'Failed to count notifications' 
+                });
+            }
         }
-
-        // Get notifications
-        const notifications = await Notification.find(query)
-            .sort({ createdAt: -1 })
-            .limit(100)
-            .lean();
-
-        // Format notifications for frontend
-        const formattedNotifications = notifications.map(n => ({
-            ...n,
-            _id: n._id.toString(),
-            createdAt: n.createdAt,
-            type: n.senderId.toString() === userId ? 'sent' : 'received'
-        }));
-
-        // Get stats
-        const stats = {
-            total: await Notification.countDocuments({
+        
+        // FULL DATA - Return complete notifications list
+        try {
+            // Build base query
+            let query = {
                 $or: [
                     { recipientId: new mongoose.Types.ObjectId(userId) },
                     { senderId: new mongoose.Types.ObjectId(userId) }
                 ]
-            }),
-            unread: await Notification.countDocuments({
-                recipientId: new mongoose.Types.ObjectId(userId),
-                isRead: false
-            }),
-            educator: await Notification.countDocuments({
-                senderRole: { $in: ['educator', 'Educator'] },
-                recipientId: new mongoose.Types.ObjectId(userId)
-            }),
-            sent: await Notification.countDocuments({
-                senderId: new mongoose.Types.ObjectId(userId),
-                senderRole: { $in: ['superadmin', 'SuperAdmin'] }
-            })
-        };
+            };
 
-        res.json({ 
-            success: true, 
-            notifications: formattedNotifications, 
-            stats 
-        });
+            // Apply filters
+            if (filter === 'unread') {
+                query.isRead = false;
+                // For unread, we only want messages where current user is recipient
+                query = {
+                    recipientId: new mongoose.Types.ObjectId(userId),
+                    isRead: false
+                };
+            } else if (filter === 'educator') {
+                // Messages FROM educators (sent to superadmin)
+                query = {
+                    senderRole: { $in: ['educator', 'Educator'] },
+                    recipientId: new mongoose.Types.ObjectId(userId)
+                };
+            } else if (filter === 'sent') {
+                // Messages FROM superadmin (sent to educators)
+                query = {
+                    senderId: new mongoose.Types.ObjectId(userId),
+                    senderRole: { $in: ['superadmin', 'SuperAdmin'] }
+                };
+            }
+            
+            // Add search if provided
+            if (search && search.trim() !== '') {
+                // If query already has $and, use it, otherwise create new $and
+                if (query.$and) {
+                    query.$and.push({
+                        $or: [
+                            { message: { $regex: search.trim(), $options: 'i' } },
+                            { senderName: { $regex: search.trim(), $options: 'i' } }
+                        ]
+                    });
+                } else {
+                    const originalQuery = { ...query };
+                    query = {
+                        $and: [
+                            originalQuery,
+                            {
+                                $or: [
+                                    { message: { $regex: search.trim(), $options: 'i' } },
+                                    { senderName: { $regex: search.trim(), $options: 'i' } }
+                                ]
+                            }
+                        ]
+                    };
+                }
+            }
+
+            // Get notifications
+            const notifications = await Notification.find(query)
+                .sort({ createdAt: -1 })
+                .limit(100)
+                .lean();
+
+            // Format notifications for frontend
+            const formattedNotifications = notifications.map(n => ({
+                ...n,
+                _id: n._id.toString(),
+                createdAt: n.createdAt,
+                type: n.senderId.toString() === userId ? 'sent' : 'received'
+            }));
+
+            // Get stats for sidebar/filters
+            const stats = {
+                total: await Notification.countDocuments({
+                    $or: [
+                        { recipientId: new mongoose.Types.ObjectId(userId) },
+                        { senderId: new mongoose.Types.ObjectId(userId) }
+                    ]
+                }),
+                unread: await Notification.countDocuments({
+                    recipientId: new mongoose.Types.ObjectId(userId),
+                    isRead: false
+                }),
+                educator: await Notification.countDocuments({
+                    senderRole: { $in: ['educator', 'Educator'] },
+                    recipientId: new mongoose.Types.ObjectId(userId)
+                }),
+                sent: await Notification.countDocuments({
+                    senderId: new mongoose.Types.ObjectId(userId),
+                    senderRole: { $in: ['superadmin', 'SuperAdmin'] }
+                })
+            };
+
+            return res.json({ 
+                success: true, 
+                notifications: formattedNotifications, 
+                stats 
+            });
+        } catch (dataError) {
+            console.error('Error fetching notifications data:', dataError);
+            return res.status(500).json({ 
+                success: false, 
+                error: 'Failed to fetch notifications data' 
+            });
+        }
     } catch (error) {
-        console.error('Error fetching superadmin notifications:', error);
+        console.error('Error in superadmin notifications API:', error);
         res.status(500).json({ success: false, error: error.message });
     }
 });
 
-// GET Notifications (Educator)
+// GET Notifications (Educator) - UPDATED with countOnly
 router.get('/api/educator/notifications', isAuthenticated, hasRole('educator', 'Educator'), async (req, res) => {
     try {
         const userId = req.userId;
-        const { filter = 'all', search = '' } = req.query;
+        const { filter = 'all', search = '', countOnly = 'false' } = req.query;
         
-        // Build base query
-        let query = {
-            $or: [
-                { recipientId: new mongoose.Types.ObjectId(userId) },
-                { senderId: new mongoose.Types.ObjectId(userId) }
-            ]
-        };
-
-        // Apply filters
-        if (filter === 'unread') {
-            query = {
-                recipientId: new mongoose.Types.ObjectId(userId),
-                isRead: false
-            };
-        } else if (filter === 'superadmin') {
-            // Messages FROM superadmin (sent to educator)
-            query = {
-                senderRole: { $in: ['superadmin', 'SuperAdmin'] },
-                recipientId: new mongoose.Types.ObjectId(userId)
-            };
-        } else if (filter === 'sent') {
-            // Messages FROM educator (sent to superadmin)
-            query = {
-                senderId: new mongoose.Types.ObjectId(userId),
-                senderRole: { $in: ['educator', 'Educator'] }
-            };
-        }
+        // Convert countOnly to boolean
+        const isCountOnly = countOnly === 'true' || countOnly === true;
         
-        // Add search if provided
-        if (search) {
-            query.$and = [
-                query,
-                {
+        // IF COUNT ONLY - Just return the unread count for header badge
+        if (isCountOnly) {
+            try {
+                // Get unread count where current user is recipient
+                const unreadCount = await Notification.countDocuments({
+                    recipientId: new mongoose.Types.ObjectId(userId),
+                    isRead: false
+                });
+                
+                // Also get other stats for header if needed
+                const totalCount = await Notification.countDocuments({
                     $or: [
-                        { message: { $regex: search, $options: 'i' } },
-                        { senderName: { $regex: search, $options: 'i' } }
+                        { recipientId: new mongoose.Types.ObjectId(userId) },
+                        { senderId: new mongoose.Types.ObjectId(userId) }
                     ]
-                }
-            ];
+                });
+                
+                const superadminCount = await Notification.countDocuments({
+                    senderRole: { $in: ['superadmin', 'SuperAdmin'] },
+                    recipientId: new mongoose.Types.ObjectId(userId)
+                });
+                
+                const sentCount = await Notification.countDocuments({
+                    senderId: new mongoose.Types.ObjectId(userId),
+                    senderRole: { $in: ['educator', 'Educator'] }
+                });
+                
+                return res.json({ 
+                    success: true, 
+                    unreadCount,
+                    stats: {
+                        total: totalCount,
+                        unread: unreadCount,
+                        superadmin: superadminCount,
+                        sent: sentCount
+                    }
+                });
+            } catch (countError) {
+                console.error('Error counting educator notifications:', countError);
+                return res.status(500).json({ 
+                    success: false, 
+                    error: 'Failed to count notifications' 
+                });
+            }
         }
-
-        // Get notifications
-        const notifications = await Notification.find(query)
-            .sort({ createdAt: -1 })
-            .limit(100)
-            .lean();
-
-        // Format notifications for frontend
-        const formattedNotifications = notifications.map(n => ({
-            ...n,
-            _id: n._id.toString(),
-            createdAt: n.createdAt,
-            type: n.senderId.toString() === userId ? 'sent' : 'received'
-        }));
-
-        // Get stats
-        const stats = {
-            total: await Notification.countDocuments({
+        
+        // FULL DATA - Return complete notifications list
+        try {
+            // Build base query
+            let query = {
                 $or: [
                     { recipientId: new mongoose.Types.ObjectId(userId) },
                     { senderId: new mongoose.Types.ObjectId(userId) }
                 ]
-            }),
-            unread: await Notification.countDocuments({
-                recipientId: new mongoose.Types.ObjectId(userId),
-                isRead: false
-            }),
-            superadmin: await Notification.countDocuments({
-                senderRole: { $in: ['superadmin', 'SuperAdmin'] },
-                recipientId: new mongoose.Types.ObjectId(userId)
-            }),
-            sent: await Notification.countDocuments({
-                senderId: new mongoose.Types.ObjectId(userId),
-                senderRole: { $in: ['educator', 'Educator'] }
-            })
-        };
+            };
 
-        res.json({ 
-            success: true, 
-            notifications: formattedNotifications, 
-            stats 
-        });
+            // Apply filters
+            if (filter === 'unread') {
+                query = {
+                    recipientId: new mongoose.Types.ObjectId(userId),
+                    isRead: false
+                };
+            } else if (filter === 'superadmin') {
+                // Messages FROM superadmin (sent to educator)
+                query = {
+                    senderRole: { $in: ['superadmin', 'SuperAdmin'] },
+                    recipientId: new mongoose.Types.ObjectId(userId)
+                };
+            } else if (filter === 'sent') {
+                // Messages FROM educator (sent to superadmin)
+                query = {
+                    senderId: new mongoose.Types.ObjectId(userId),
+                    senderRole: { $in: ['educator', 'Educator'] }
+                };
+            }
+            
+            // Add search if provided
+            if (search && search.trim() !== '') {
+                // If query already has $and, use it, otherwise create new $and
+                if (query.$and) {
+                    query.$and.push({
+                        $or: [
+                            { message: { $regex: search.trim(), $options: 'i' } },
+                            { senderName: { $regex: search.trim(), $options: 'i' } }
+                        ]
+                    });
+                } else {
+                    const originalQuery = { ...query };
+                    query = {
+                        $and: [
+                            originalQuery,
+                            {
+                                $or: [
+                                    { message: { $regex: search.trim(), $options: 'i' } },
+                                    { senderName: { $regex: search.trim(), $options: 'i' } }
+                                ]
+                            }
+                        ]
+                    };
+                }
+            }
+
+            // Get notifications
+            const notifications = await Notification.find(query)
+                .sort({ createdAt: -1 })
+                .limit(100)
+                .lean();
+
+            // Format notifications for frontend
+            const formattedNotifications = notifications.map(n => ({
+                ...n,
+                _id: n._id.toString(),
+                createdAt: n.createdAt,
+                type: n.senderId.toString() === userId ? 'sent' : 'received'
+            }));
+
+            // Get stats
+            const stats = {
+                total: await Notification.countDocuments({
+                    $or: [
+                        { recipientId: new mongoose.Types.ObjectId(userId) },
+                        { senderId: new mongoose.Types.ObjectId(userId) }
+                    ]
+                }),
+                unread: await Notification.countDocuments({
+                    recipientId: new mongoose.Types.ObjectId(userId),
+                    isRead: false
+                }),
+                superadmin: await Notification.countDocuments({
+                    senderRole: { $in: ['superadmin', 'SuperAdmin'] },
+                    recipientId: new mongoose.Types.ObjectId(userId)
+                }),
+                sent: await Notification.countDocuments({
+                    senderId: new mongoose.Types.ObjectId(userId),
+                    senderRole: { $in: ['educator', 'Educator'] }
+                })
+            };
+
+            return res.json({ 
+                success: true, 
+                notifications: formattedNotifications, 
+                stats 
+            });
+        } catch (dataError) {
+            console.error('Error fetching educator notifications data:', dataError);
+            return res.status(500).json({ 
+                success: false, 
+                error: 'Failed to fetch notifications data' 
+            });
+        }
     } catch (error) {
-        console.error('Error fetching educator notifications:', error);
+        console.error('Error in educator notifications API:', error);
         res.status(500).json({ success: false, error: error.message });
     }
 });
@@ -269,6 +411,7 @@ router.post('/api/educator/notifications/new', isAuthenticated, hasRole('educato
 
         await notification.save();
         
+        // After sending new message, trigger notification update for header badge
         res.json({ success: true, notification });
     } catch (error) {
         console.error('Error sending educator message:', error);
@@ -489,7 +632,7 @@ router.post('/api/educator/notifications/reply', isAuthenticated, hasRole('educa
     }
 });
 
-// Mark as Read
+// Mark as Read (SuperAdmin)
 router.put('/api/notifications/:id/read', isAuthenticated, async (req, res) => {
     try {
         const userId = req.userId;
@@ -511,6 +654,7 @@ router.put('/api/notifications/:id/read', isAuthenticated, async (req, res) => {
     }
 });
 
+// Mark as Read (Educator)
 router.put('/api/educator/notifications/:id/read', isAuthenticated, async (req, res) => {
     try {
         const userId = req.userId;
@@ -531,7 +675,7 @@ router.put('/api/educator/notifications/:id/read', isAuthenticated, async (req, 
     }
 });
 
-// Mark All Read
+// Mark All Read (SuperAdmin)
 router.put('/api/notifications/read-all', isAuthenticated, async (req, res) => {
     try {
         const userId = req.userId;
@@ -550,6 +694,7 @@ router.put('/api/notifications/read-all', isAuthenticated, async (req, res) => {
     }
 });
 
+// Mark All Read (Educator)
 router.put('/api/educator/notifications/read-all', isAuthenticated, async (req, res) => {
     try {
         const userId = req.userId;
@@ -568,7 +713,7 @@ router.put('/api/educator/notifications/read-all', isAuthenticated, async (req, 
     }
 });
 
-// Delete
+// Delete (SuperAdmin)
 router.delete('/api/notifications/:id', isAuthenticated, async (req, res) => {
     try {
         const userId = req.userId;
@@ -592,6 +737,7 @@ router.delete('/api/notifications/:id', isAuthenticated, async (req, res) => {
     }
 });
 
+// Delete (Educator)
 router.delete('/api/educator/notifications/:id', isAuthenticated, async (req, res) => {
     try {
         const userId = req.userId;

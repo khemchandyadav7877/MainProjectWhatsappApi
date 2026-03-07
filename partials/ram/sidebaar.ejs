@@ -1,4 +1,3 @@
-<!-- views/partials/second/left.ejs -->
 <%
 // Get user data from locals
 const user = locals.user || { 
@@ -31,9 +30,10 @@ const userEmail = user.email;
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 
 <style>
-/* ===== SIDEBAR STYLES - PERFECT VERSION ===== */
+/* ===== SIDEBAR STYLES - WITH MINI MODE ===== */
 :root {
     --sidebar-width: 280px;
+    --sidebar-mini-width: 80px;
     --header-height: 70px;
     --primary: <%= roleColor %>;
     --primary-dark: <%= roleColor %>;
@@ -80,19 +80,96 @@ const userEmail = user.email;
     position: fixed;
     left: 0;
     top: var(--header-height, 70px);
-    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    transition: width 0.3s cubic-bezier(0.4, 0, 0.2, 1);
     z-index: 999;
     box-shadow: var(--shadow);
     display: flex;
     flex-direction: column;
     overflow-y: auto;
+    overflow-x: hidden;
 }
 
-.sidebar.closed {
-    width: 0;
-    min-width: 0;
-    opacity: 0;
-    transform: translateX(-100%);
+/* Sidebar Mini Mode - Icons Only */
+.sidebar.mini {
+    width: var(--sidebar-mini-width, 80px);
+}
+
+.sidebar.mini .logo-text,
+.sidebar.mini .profile-info,
+.sidebar.mini .user-details,
+.sidebar.mini .user-stats,
+.sidebar.mini .user-card-toggle,
+.sidebar.mini .minimized-left span,
+.sidebar.mini .count-badge,
+.sidebar.mini .section-title span:not(.section-icon),
+.sidebar.mini .feature-name,
+.sidebar.mini .warning-icon,
+.sidebar.mini .logout-link span,
+.sidebar.mini .arrow-icon {
+    display: none !important;
+}
+
+.sidebar.mini .user-card,
+.sidebar.mini .user-card-minimized {
+    padding: 0.5rem;
+    justify-content: center;
+}
+
+.sidebar.mini .user-avatar-wrapper {
+    justify-content: center;
+    margin-bottom: 0;
+}
+
+.sidebar.mini .avatar {
+    width: 40px;
+    height: 40px;
+    font-size: 1rem;
+}
+
+.sidebar.mini .section-title {
+    justify-content: center;
+    padding: 0.7rem 0;
+}
+
+.sidebar.mini .section-left {
+    justify-content: center;
+    width: 100%;
+}
+
+.sidebar.mini .section-icon {
+    width: auto;
+    font-size: 1.2rem;
+}
+
+.sidebar.mini .nav-link {
+    justify-content: center;
+    padding: 0.6rem 0;
+}
+
+.sidebar.mini .link-icon {
+    width: auto;
+    font-size: 1.1rem;
+}
+
+.sidebar.mini .logout-link {
+    justify-content: center;
+    padding: 0.6rem;
+}
+
+.sidebar.mini .logout-link i {
+    margin: 0;
+}
+
+.sidebar.mini .feature-actions {
+    display: none;
+}
+
+.sidebar.mini .minimized-left i {
+    font-size: 1.2rem;
+}
+
+.sidebar.mini .minimized-right i {
+    display: none;
 }
 
 /* Sidebar Header */
@@ -129,6 +206,7 @@ const userEmail = user.email;
     font-size: 1.2rem;
     color: var(--dark);
     white-space: nowrap;
+    transition: opacity 0.2s;
 }
 
 .logo-text span {
@@ -428,6 +506,10 @@ const userEmail = user.email;
     margin-bottom: 0.25rem;
 }
 
+.sidebar.mini .section-links {
+    display: none;
+}
+
 .feature-wrapper {
     margin-bottom: 0.15rem;
     width: 100%;
@@ -504,6 +586,10 @@ const userEmail = user.email;
 
 .feature-wrapper:hover .feature-actions {
     opacity: 1;
+}
+
+.sidebar.mini .feature-actions {
+    display: none;
 }
 
 .action-btns {
@@ -674,8 +760,7 @@ const userEmail = user.email;
     }
 }
 
-/* ===== BORDER MODE CLASSES - FIXED ===== */
-/* Round Border Mode */
+/* ===== BORDER MODE CLASSES ===== */
 body.round-border .sidebar {
     border-radius: 20px 0 0 20px !important;
     overflow: hidden !important;
@@ -706,7 +791,6 @@ body.round-border .loading-spinner .spinner {
     border-radius: 50% !important;
 }
 
-/* No Radius Mode */
 body.no-radius .sidebar,
 body.no-radius .sidebar-header,
 body.no-radius .user-card,
@@ -731,11 +815,40 @@ body.no-radius .loading-spinner .spinner {
         width: var(--sidebar-width, 280px) !important;
         opacity: 1;
         box-shadow: none;
+        transition: transform 0.3s ease;
     }
     
     .sidebar.open {
         transform: translateX(0);
         box-shadow: var(--shadow-lg);
+    }
+    
+    .sidebar.mini {
+        width: var(--sidebar-width, 280px) !important;
+        transform: translateX(-100%);
+    }
+    
+    .sidebar.mini.open {
+        transform: translateX(0);
+    }
+    
+    .sidebar.mini .logo-text,
+    .sidebar.mini .profile-info,
+    .sidebar.mini .user-details,
+    .sidebar.mini .user-stats,
+    .sidebar.mini .user-card-toggle,
+    .sidebar.mini .minimized-left span,
+    .sidebar.mini .count-badge,
+    .sidebar.mini .section-title span:not(.section-icon),
+    .sidebar.mini .feature-name,
+    .sidebar.mini .warning-icon,
+    .sidebar.mini .logout-link span,
+    .sidebar.mini .arrow-icon {
+        display: block !important;
+    }
+    
+    .sidebar.mini .section-links {
+        display: block !important;
     }
 
     body.round-border .sidebar {
@@ -746,14 +859,7 @@ body.no-radius .loading-spinner .spinner {
 
 <!-- Sidebar HTML -->
 <div class="sidebar" id="sidebar">
-    <div class="sidebar-header">
-        <div class="logo-area">
-            <div class="logo-icon">
-                <i class="fab fa-whatsapp"></i>
-            </div>
-            <div class="logo-text">WaBlast<span>Pro</span></div>
-        </div>
-    </div>
+   
 
     <div class="sidebar-content">
         <!-- Minimized User Card -->
@@ -815,9 +921,10 @@ body.no-radius .loading-spinner .spinner {
     </div>
 </div>
 
+<!-- SIDEBAR SCRIPT - WITH MINI MODE SUPPORT -->
 <script>
 // ============================================
-// SIDEBAR JAVASCRIPT - DYNAMIC FEATURES WITH AUTO-CLOSE SECTIONS
+// SIDEBAR JAVASCRIPT - WITH MINI MODE (ICONS ONLY)
 // ============================================
 
 // ✅ Apply border mode on page load
@@ -827,115 +934,76 @@ body.no-radius .loading-spinner .spinner {
     console.log('🎨 Border mode applied:', savedBorder);
 })();
 
-// ✅ COMPLETE Path Mappings for ALL features
+// ✅ COMPLETE Path Mappings for ALL features (same as before)
 const pathMappings = {
-    // Dashboard
     'Dashboard': '/dashboard',
     'Notification Center': '/notifications',
-
-    // Notifications
     'Notifications': '/notifications',
     'SuperAdmin Notifications': '/superadmin/notifications',
     'Educator Notifications': '/educator/notifications',
     'Trainer Notifications': '/trainer/notifications',
     'Student Notifications': '/student/notifications',
-
-    // Reports
     'Web Report': '/reports/web',
     'API Reports': '/reports/api',
-
-    // Chats
     'New Chat': '/chats/new',
-
-    // Virtual Numbers
     'My Numbers': '/virtual-numbers',
     'Buy Number': '/virtual-numbers/buy',
     'Call Logs': '/virtual-numbers/call-logs',
     'SMS Logs': '/virtual-numbers/sms-logs',
-
-    // CRM / Devices
     'Add Contact': '/devices/add',
     'All Contact': '/devices',
     'Campaign': '/devices/campaign',
     'Contact Group': '/contactgroup',
-
-    // RCS
     'RCS Campaign': '/rcs/campaign',
     'RCS Reports': '/rcs/reports',
     'RCS Templates': '/rcs/templates',
-
-    // Scan device
     'Scan QR Code': '/scan/whatsapp',
     'Connected Devices': '/scan/devices',
-
-    // API
     'API Keys': '/api/keys',
     'API Documentation': '/api/document',
     'Webhook Settings': '/api/webhooks',
-
-    // Subscription Management
     'All Subscriptions': '/profile',
     'Plans / Packages': '/CustomRoles',
     'Add Plan': 'secondDashbaord',
     'Transactions': '/addnewsessionyear',
-    'Payment History': '/subscriptions/payments',
+    'Payment History': '/campaign',
     'Invoice': '/subscriptions/invoice',
-
-    // Frontend Management
     'Website Settings': '/frontend/settings',
     'Landing Page': '/frontend/landing',
     'Banner / Slider': '/frontend/banner',
     'FAQs': '/frontend/faqs',
     'Contact Page': '/frontend/contact',
     'Footer Settings': '/frontend/footer',
-
-    // Bulk Messaging
     'Send Bulk Message': '/bulk/send',
     'Templates': '/bulk/templates',
     'Reports': '/bulk/reports',
-
-    // Campaign Management
     'WhatsApp Campaign': '/campaign/whatsapp',
     'Official WhatsApp API Campaign': '/campaign/official',
     'Social Media Campaign': '/campaign/social',
-
-    // AI Chatbot
     'Bot Flow Builder': '/chatbot/flow',
     'Auto Replies': '/chatbot/replies',
-
-    // Ads
     'Create Ad Campaign': '/ads/create',
     'Ad Reports': '/ads/reports',
     'Ad Budget': '/ads/budget',
-
-    // VOIP
     'Virtual Number (V Number)': '/voip/numbers',
     'Call Logs': '/voip/call-logs',
     'Call Routing': '/voip/routing',
-
-    // IVR
     'IVR Setup': '/ivr/setup',
     'Call Flow Management': '/ivr/flow',
     'Voice Greetings': '/ivr/greetings',
-
-    // Support
     'All Tickets': '/support',
     'Create Ticket': '/support/create',
     'Ticket Replies': '/support/replies',
-
-    // Settings
     'Frontend Settings': '/settings/frontend',
     'Custom Roles': '/CustomRoles',
     'Role Management': '/role-permissions',
     'Add To Dashboard': '/add-new-feature',
     'Payment Settings': '/settings/payment',
-    'Message Settings': '/settings/message',
+    'Message Settings': '/settings',
     'API Settings': '/settings/api',
     'Security Settings': '/change-password',
     'SMTP Settings': '/LogoChanger',
     'User Logs': '/settings/logs',
-
-    // Administration
     'Role Permissions': '/role-permissions',
     'Add New Feature': '/add-new-feature'
 };
@@ -965,100 +1033,63 @@ const sectionIcons = {
 
 // Feature icons mapping
 const featureIcons = {
-    // Dashboard
     'Dashboard': 'tachometer-alt',
     'Notification Center': 'bell',
-
-    // Notifications
     'SuperAdmin Notifications': 'bell',
     'Educator Notifications': 'bell',
     'Trainer Notifications': 'bell',
     'Student Notifications': 'bell',
-
-    // Reports
     'Web Report': 'chart-line',
     'API Reports': 'chart-pie',
-
-    // Chats
     'New Chat': 'comment',
-
-    // Virtual Numbers
     'My Numbers': 'phone-alt',
     'Buy Number': 'shopping-cart',
     'Call Logs': 'phone',
     'SMS Logs': 'sms',
-
-    // CRM
     'Add Contact': 'user-plus',
     'All Contact': 'address-book',
     'Campaign': 'bullhorn',
     'Contact Group': 'users',
-
-    // RCS
     'RCS Campaign': 'envelope-open',
     'RCS Reports': 'chart-bar',
     'RCS Templates': 'file-alt',
-
-    // Scan device
     'Scan QR Code': 'qrcode',
     'Connected Devices': 'mobile-alt',
-
-    // API
     'API Keys': 'key',
     'API Documentation': 'book',
     'Webhook Settings': 'globe',
-
-    // Campaign Management
     'WhatsApp Campaign': 'whatsapp',
     'Official WhatsApp API Campaign': 'robot',
     'Social Media Campaign': 'share-alt',
-
-    // Subscription
     'All Subscriptions': 'list',
     'Plans / Packages': 'box',
     'Add Plan': 'plus',
     'Transactions': 'money-bill',
     'Payment History': 'receipt',
     'Invoice': 'file-invoice',
-
-    // Frontend
     'Website Settings': 'globe',
     'Landing Page': 'home',
     'Banner / Slider': 'images',
     'FAQs': 'question-circle',
     'Contact Page': 'envelope',
     'Footer Settings': 'window-minimize',
-
-    // Bulk Messaging
     'Send Bulk Message': 'paper-plane',
     'Templates': 'file',
     'Reports': 'chart-bar',
-
-    // AI Chatbot
     'Bot Flow Builder': 'project-diagram',
     'Auto Replies': 'reply',
-
-    // Ads
     'Create Ad Campaign': 'bullhorn',
     'Ad Reports': 'chart-line',
     'Ad Budget': 'money-bill-wave',
-
-    // VOIP
     'Virtual Number (V Number)': 'phone-alt',
     'Call Logs': 'phone',
     'Call Routing': 'random',
-
-    // IVR
     'IVR Setup': 'cog',
     'Call Flow Management': 'sitemap',
     'Voice Greetings': 'microphone',
-
-    // Support Desk
     'All Tickets': 'ticket-alt',
     'Create Ticket': 'plus-circle',
     'Ticket Replies': 'reply',
-
-    // Settings
     'Frontend Settings': 'desktop',
     'Custom Roles': 'user-tag',
     'Role Management': 'user-cog',
@@ -1069,31 +1100,34 @@ const featureIcons = {
     'Security Settings': 'shield-alt',
     'SMTP Settings': 'server',
     'User Logs': 'history',
-
-    // Administration
     'Role Permissions': 'user-shield',
     'Add New Feature': 'plus-circle'
 };
 
 // State
 let features = [];
-let currentOpenSection = null; // Only one section can be open at a time
+let currentOpenSection = null;
 let userRole = '<%= userRole %>';
-let userCardVisible = true; // Initially visible
+let userCardVisible = true;
 
 // ✅ Initialize on page load
 document.addEventListener('DOMContentLoaded', function() {
     console.log('🚀 Sidebar initializing...');
-    console.log('👤 User role:', userRole);
     
-    // Load saved section state (only one)
+    // Check sidebar mini mode state from localStorage
+    const sidebar = document.getElementById('sidebar');
+    if (sidebar) {
+        const savedState = localStorage.getItem('sidebarMini');
+        if (savedState === 'true') {
+            sidebar.classList.add('mini');
+        }
+    }
+    
+    // Load saved section state
     try {
         const saved = localStorage.getItem('currentOpenSection');
         if (saved) currentOpenSection = saved;
-    } catch(e) {
-        console.error('Error parsing saved section:', e);
-        currentOpenSection = null;
-    }
+    } catch(e) {}
     
     // Load saved user card visibility
     try {
@@ -1107,11 +1141,18 @@ document.addEventListener('DOMContentLoaded', function() {
     // Load features
     loadSidebarFeatures();
     
-    // Listen for updates from other tabs
+    // Listen for updates from header
     window.addEventListener('storage', function(e) {
-        if (e.key === 'sidebarFeatures' || e.key === 'sidebar-update-time') {
-            console.log('🔄 Update detected from another tab');
-            loadSidebarFeatures(true);
+        if (e.key === 'sidebarMini' || e.key === 'sidebar-update-time') {
+            const sidebar = document.getElementById('sidebar');
+            if (sidebar) {
+                const savedState = localStorage.getItem('sidebarMini') === 'true';
+                if (savedState) {
+                    sidebar.classList.add('mini');
+                } else {
+                    sidebar.classList.remove('mini');
+                }
+            }
         }
     });
 });
@@ -1123,11 +1164,8 @@ function toggleUserCard(event) {
     }
     userCardVisible = !userCardVisible;
     updateUserCardVisibility();
-    
-    // Save state
     try {
         localStorage.setItem('userCardVisible', userCardVisible);
-        console.log('💾 Saved user card visibility:', userCardVisible);
     } catch(e) {}
 }
 
@@ -1137,36 +1175,23 @@ function updateUserCardVisibility() {
     const minimizedCard = document.getElementById('userCardMinimized');
     const toggleIcon = document.querySelector('.user-card-toggle i');
     
-    if (!userCard || !minimizedCard) {
-        console.error('❌ User card elements not found!');
-        return;
-    }
+    if (!userCard || !minimizedCard) return;
     
     if (userCardVisible) {
         userCard.classList.remove('hidden');
         minimizedCard.classList.remove('show');
-        if (toggleIcon) {
-            toggleIcon.className = 'fas fa-chevron-up';
-        }
-        console.log('👤 User card: VISIBLE');
+        if (toggleIcon) toggleIcon.className = 'fas fa-chevron-up';
     } else {
         userCard.classList.add('hidden');
         minimizedCard.classList.add('show');
-        if (toggleIcon) {
-            toggleIcon.className = 'fas fa-chevron-down';
-        }
-        console.log('👤 User card: HIDDEN');
+        if (toggleIcon) toggleIcon.className = 'fas fa-chevron-down';
     }
 }
 
 // ✅ LOAD FEATURES FROM LOCALSTORAGE
 function loadSidebarFeatures(silent = false) {
     const container = document.getElementById('navContainer');
-    
-    if (!container) {
-        console.error('❌ Features container not found!');
-        return;
-    }
+    if (!container) return;
     
     if (!silent) {
         container.innerHTML = `
@@ -1179,31 +1204,21 @@ function loadSidebarFeatures(silent = false) {
     
     try {
         const savedFeatures = localStorage.getItem('sidebarFeatures');
-        
         if (!savedFeatures) {
-            console.log('ℹ️ No features in localStorage');
             showEmptyState(container, 'No features available', 'Contact SuperAdmin for access');
             updateStats([]);
             return;
         }
         
         const allFeatures = JSON.parse(savedFeatures);
-        console.log('✅ All features in storage:', allFeatures.length);
-        
         let userFeatures = allFeatures.filter(f => {
             if (f.isActive === false) return false;
             return f.role === userRole;
         });
         
-        console.log(`👤 ${userRole}: showing ${userFeatures.length} role-specific features`);
-        
         if (userFeatures.length === 0) {
-            showEmptyState(
-                container, 
-                `No features for ${userRole}`, 
-                userRole === 'SuperAdmin' ? 'Add features from Admin panel' : 'Contact SuperAdmin for access',
-                userRole === 'SuperAdmin' ? '/add-new-feature' : null
-            );
+            showEmptyState(container, `No features for ${userRole}`, 
+                userRole === 'SuperAdmin' ? 'Add features from Admin panel' : 'Contact SuperAdmin for access');
             updateStats([]);
             return;
         }
@@ -1211,20 +1226,13 @@ function loadSidebarFeatures(silent = false) {
         const featuresWithPaths = userFeatures.map(feature => {
             const cleanLabel = feature.label.replace(/^\d+\.\s*/, '');
             let path = feature.path || pathMappings[cleanLabel] || '#';
-            
-            return {
-                ...feature,
-                cleanLabel: cleanLabel,
-                path: path
-            };
+            return {...feature, cleanLabel, path};
         });
         
         features = featuresWithPaths;
         renderFeatures(features);
         updateStats(features);
-        
     } catch (error) {
-        console.error('❌ Error loading features:', error);
         showEmptyState(container, 'Failed to load features', error.message);
     }
 }
@@ -1246,18 +1254,11 @@ function updateStats(featuresList) {
 // ✅ RENDER FEATURES
 function renderFeatures(featuresList) {
     const container = document.getElementById('navContainer');
-    
-    if (!container) {
-        console.error('❌ Features container not found!');
+    if (!container || !featuresList || featuresList.length === 0) {
+        if (container) showEmptyState(container, 'No features available', 'Contact SuperAdmin for access');
         return;
     }
     
-    if (!featuresList || featuresList.length === 0) {
-        showEmptyState(container, 'No features available', 'Contact SuperAdmin for access');
-        return;
-    }
-    
-    // Group features by section
     const grouped = {};
     featuresList.forEach(f => {
         const cleanSection = f.section.replace('*** ', '');
@@ -1265,37 +1266,17 @@ function renderFeatures(featuresList) {
         grouped[cleanSection].push(f);
     });
     
-    // Define exact section order
     const sectionOrder = [
-        'Dashboard',
-        'Subscription Management',
-        'Frontend Management',
-        'CRM',
-        'Notifications',
-        'Chats',
-        'Bulk Messaging',
-        'RCS',
-        'Campaign Management',
-        'AI Chatbot',
-        'Ads Management',
-        'VOIP Service',
-        'IVR Service',
-        'Support Desk',
-        'API',
-        'Reports',
-        'Settings',
-        'Virtual Numbers',
-        'Administration'
+        'Dashboard', 'Subscription Management', 'Frontend Management', 'CRM',
+        'Notifications', 'Chats', 'Bulk Messaging', 'RCS', 'Campaign Management',
+        'AI Chatbot', 'Ads Management', 'VOIP Service', 'IVR Service',
+        'Support Desk', 'API', 'Reports', 'Settings', 'Virtual Numbers', 'Administration'
     ];
     
-    // Sort sections according to defined order
     const sections = Object.keys(grouped).sort((a, b) => {
         const indexA = sectionOrder.indexOf(a);
         const indexB = sectionOrder.indexOf(b);
-        
-        if (indexA !== -1 && indexB !== -1) {
-            return indexA - indexB;
-        }
+        if (indexA !== -1 && indexB !== -1) return indexA - indexB;
         if (indexA !== -1) return -1;
         if (indexB !== -1) return 1;
         return a.localeCompare(b);
@@ -1305,12 +1286,8 @@ function renderFeatures(featuresList) {
     const currentPath = window.location.pathname;
     
     sections.forEach(section => {
-        // Check if this section should be open (only one can be open)
         const isOpen = currentOpenSection === section;
-        const sectionFeatures = grouped[section].sort((a, b) => 
-            (a.order || 999) - (b.order || 999)
-        );
-        
+        const sectionFeatures = grouped[section].sort((a, b) => (a.order || 999) - (b.order || 999));
         const sectionIcon = sectionIcons[section] || 'folder';
         
         html += `
@@ -1376,55 +1353,29 @@ function renderFeature(feature, currentPath) {
 }
 
 // ✅ SHOW EMPTY STATE
-function showEmptyState(container, title, message, addLink = null) {
-    let html = `
+function showEmptyState(container, title, message) {
+    container.innerHTML = `
         <div class="empty-state">
             <i class="fas fa-cubes empty-icon"></i>
             <p class="empty-title">${title}</p>
             <p class="empty-subtitle">${message}</p>
+        </div>
     `;
-    
-    if (addLink) {
-        html += `<a href="${addLink}" class="add-feature-btn">+ Add Feature</a>`;
-    }
-    
-    html += '</div>';
-    container.innerHTML = html;
 }
 
-// ✅ TOGGLE SECTION - AUTO CLOSE PREVIOUS
+// ✅ TOGGLE SECTION
 function toggleSection(section, event) {
-    if (event) {
-        event.stopPropagation();
-    }
-    
-    // If clicking on already open section, close it
-    if (currentOpenSection === section) {
-        currentOpenSection = null;
-    } 
-    // If clicking on different section, close previous and open new one
-    else {
-        currentOpenSection = section;
-    }
-    
-    // Save state
+    if (event) event.stopPropagation();
+    currentOpenSection = currentOpenSection === section ? null : section;
     try {
         localStorage.setItem('currentOpenSection', currentOpenSection || '');
-        console.log('💾 Saved current open section:', currentOpenSection);
-    } catch(e) {
-        console.error('Error saving section state:', e);
-    }
-    
-    // Re-render with new open section
+    } catch(e) {}
     renderFeatures(features);
 }
 
 // ✅ TOGGLE FEATURE STATUS
 function toggleFeatureStatus(id, currentStatus, event) {
-    if (event) {
-        event.stopPropagation();
-    }
-    
+    if (event) event.stopPropagation();
     if (userRole !== 'SuperAdmin') {
         showToast('Permission denied', 'error');
         return;
@@ -1432,71 +1383,43 @@ function toggleFeatureStatus(id, currentStatus, event) {
     
     try {
         const savedFeatures = localStorage.getItem('sidebarFeatures');
-        if (!savedFeatures) {
-            showToast('No features found', 'error');
-            return;
-        }
+        if (!savedFeatures) return;
         
         let allFeatures = JSON.parse(savedFeatures);
-        
         const featureIndex = allFeatures.findIndex(f => f.id == id);
-        if (featureIndex === -1) {
-            showToast('Feature not found', 'error');
-            return;
-        }
+        if (featureIndex === -1) return;
         
         allFeatures[featureIndex].isActive = !allFeatures[featureIndex].isActive;
-        
         localStorage.setItem('sidebarFeatures', JSON.stringify(allFeatures));
-        
         showToast(`Feature ${allFeatures[featureIndex].isActive ? 'enabled' : 'disabled'}`, 'success');
-        
         localStorage.setItem('sidebar-update-time', Date.now().toString());
-        
         loadSidebarFeatures();
-        
     } catch (err) {
-        console.error('Error:', err);
         showToast('Failed to update feature', 'error');
     }
 }
 
 // ✅ DELETE FEATURE
 function deleteFeature(id, name, event) {
-    if (event) {
-        event.stopPropagation();
-    }
-    
+    if (event) event.stopPropagation();
     if (userRole !== 'SuperAdmin') {
         showToast('Permission denied', 'error');
         return;
     }
     
-    if (!confirm(`Are you sure you want to delete "${name}"?`)) {
-        return;
-    }
+    if (!confirm(`Delete "${name}"?`)) return;
     
     try {
         const savedFeatures = localStorage.getItem('sidebarFeatures');
-        if (!savedFeatures) {
-            showToast('No features found', 'error');
-            return;
-        }
+        if (!savedFeatures) return;
         
         let allFeatures = JSON.parse(savedFeatures);
-        
         allFeatures = allFeatures.filter(f => f.id != id);
-        
         localStorage.setItem('sidebarFeatures', JSON.stringify(allFeatures));
-        
-        showToast('Feature deleted successfully', 'success');
-        
+        showToast('Feature deleted', 'success');
         localStorage.setItem('sidebar-update-time', Date.now().toString());
-        
         loadSidebarFeatures();
-        
     } catch (err) {
-        console.error('Error:', err);
         showToast('Failed to delete feature', 'error');
     }
 }
@@ -1509,41 +1432,16 @@ function escapeString(str) {
 
 function showToast(message, type = 'success') {
     document.querySelectorAll('.toast-notification').forEach(t => t.remove());
-    
     const toast = document.createElement('div');
     toast.className = `toast-notification ${type === 'error' ? 'toast-error' : ''}`;
-    
     const icon = type === 'success' ? 'fa-check-circle' : 'fa-exclamation-circle';
-    
-    toast.innerHTML = `
-        <i class="fas ${icon}"></i>
-        <span>${message}</span>
-    `;
-    
+    toast.innerHTML = `<i class="fas ${icon}"></i><span>${message}</span>`;
     document.body.appendChild(toast);
-    
     setTimeout(() => {
         toast.style.animation = 'slideOut 0.3s ease';
         setTimeout(() => toast.remove(), 300);
     }, 3000);
 }
 
-// ✅ Manual refresh function
-window.refreshSidebar = function() {
-    console.log('🔄 Manual sidebar refresh triggered');
-    loadSidebarFeatures();
-};
-
-// ✅ Observe URL changes
-let lastUrl = location.href;
-new MutationObserver(() => {
-    const url = location.href;
-    if (url !== lastUrl) {
-        lastUrl = url;
-        console.log('📍 URL changed to:', url);
-        renderFeatures(features);
-    }
-}).observe(document, {subtree: true, childList: true});
-
-console.log('✅ Sidebar script loaded successfully with AUTO-CLOSE feature');
+console.log('✅ Sidebar loaded with MINI MODE support');
 </script>

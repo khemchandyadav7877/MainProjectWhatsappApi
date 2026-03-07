@@ -110,7 +110,19 @@ const custorRouter = require('./Routers/CustomRoles.js');
 const logochangerRouter = require('./Routers/LogoChanger.js');
 const changepasswordRouter = require('./Routers/change-password.js');
 const yearRouters = require('./Routers/yearsession.js');
+app.use('/', require('./Routers/campaignRoutes.js'));
 
+// Campaign page
+app.get('/campaign', (req, res) => {
+    res.render('meta-campaign', {
+        user: req.session.user || null,
+        process: {
+            env: {
+                STRIPE_PUBLIC_KEY: process.env.STRIPE_PUBLIC_KEY
+            }
+        }
+    });
+});
 // ✅ Use routes
 app.use('/', AuthRouter);
 app.use('/', chatsRouter);

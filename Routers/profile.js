@@ -50,6 +50,12 @@ function isLoggedIn(req, res, next) {
     if (req.session && req.session.isLoggedIn && req.session.userId) {
         next();
     } else {
+        if (req.xhr || req.headers.accept?.includes('json')) {
+            return res.status(401).json({ 
+                status: false, 
+                message: 'Please login to continue' 
+            });
+        }
         res.redirect('/login?message=' + encodeURIComponent('Please login to continue') + '&messageType=warning');
     }
 }
@@ -60,18 +66,38 @@ router.get("/profile", isLoggedIn, async (req, res) => {
         const user = await auth.findById(req.session.userId).lean();
         
         if (!user) {
+            req.session.destroy();
             return res.redirect('/login?message=' + encodeURIComponent('User not found') + '&messageType=error');
         }
         
-        // Add formatted dates and ensure avatar exists
+        // Format dates properly
         if (user.dob) {
-            user.dobFormatted = new Date(user.dob).toLocaleDateString();
+            user.dob = new Date(user.dob).toISOString().split('T')[0];
+        }
+        
+        if (user.createdAt) {
+            user.createdAt = new Date(user.createdAt);
+        }
+        
+        if (user.updatedAt) {
+            user.updatedAt = new Date(user.updatedAt);
+        }
+        
+        if (user.lastLogin) {
+            user.lastLogin = new Date(user.lastLogin);
         }
         
         // Ensure avatar field is set (use profileImage as fallback)
         if (!user.avatar && user.profileImage) {
             user.avatar = user.profileImage;
         }
+        
+        // Add avatar path if exists
+        if (user.avatar && !user.avatar.startsWith('/')) {
+            user.avatar = '/uploads/avatars/' + user.avatar;
+        }
+        
+        console.log("📤 Rendering profile for:", user.email);
         
         res.render("profile", { 
             user,
@@ -88,11 +114,70 @@ router.get("/profile", isLoggedIn, async (req, res) => {
     }
 });
 
+// ===== GET: Edit Profile Page =====
+router.get("/profile/edit", isLoggedIn, async (req, res) => {
+    try {
+        const user = await auth.findById(req.session.userId).lean();
+        
+        if (!user) {
+            return res.redirect('/login?message=' + encodeURIComponent('User not found') + '&messageType=error');
+        }
+        
+        // Prepare user data for editing
+        const userData = {
+            _id: user._id,
+            firstName: user.firstName || '',
+            lastName: user.lastName || '',
+            email: user.email || '',
+            contactNumber: user.contactNumber || '',
+            gender: user.gender || '',
+            address: user.address || '',
+            avatar: user.avatar || user.profileImage || ''
+        };
+        
+        // Format DOB properly
+        if (user.dob) {
+            userData.dob = new Date(user.dob).toISOString().split('T')[0];
+        } else {
+            userData.dob = '';
+        }
+        
+        // Add avatar path if exists
+        if (userData.avatar && !userData.avatar.startsWith('/')) {
+            userData.avatar = '/uploads/avatars/' + userData.avatar;
+        }
+        
+        console.log("📤 Rendering edit profile for:", user.email);
+        
+        res.render("Editprofile", { 
+            userData,
+            title: 'Edit Profile',
+            currentPage: 'profile'
+        });
+        
+    } catch (error) {
+        console.error("❌ Edit profile fetch error:", error);
+        res.status(500).render('error', { 
+            message: 'Failed to load edit profile',
+            error: process.env.NODE_ENV === 'development' ? error : {}
+        });
+    }
+});
+
 // ===== POST: Update Profile =====
 router.post("/profile/update", isLoggedIn, upload.single("avatar"), async (req, res) => {
     try {
-        const { firstName, lastName, contactNumber, dob, gender, address } = req.body;
-        const userId = req.session.userId;
+        const { firstName, lastName, contactNumber, dob, gender, address, userId } = req.body;
+        const sessionUserId = req.session.userId;
+        
+        // Security check: Ensure user can only update their own profile
+        if (userId && userId !== sessionUserId.toString()) {
+            console.warn("⚠️ Security alert: User trying to update another user's profile");
+            return res.json({ 
+                status: false, 
+                message: "Unauthorized: You can only update your own profile" 
+            });
+        }
         
         // Validate required fields
         if (!firstName || firstName.trim() === '') {
@@ -103,7 +188,7 @@ router.post("/profile/update", isLoggedIn, upload.single("avatar"), async (req, 
         }
         
         // Find user
-        const user = await auth.findById(userId);
+        const user = await auth.findById(sessionUserId);
         
         if (!user) {
             return res.json({ 
@@ -115,34 +200,39 @@ router.post("/profile/update", isLoggedIn, upload.single("avatar"), async (req, 
         // Track changed fields for activity log
         const changedFields = [];
         
-        // Update fields if provided
-        if (firstName && firstName !== user.firstName) {
+        // Update fields if provided and changed
+        if (firstName && firstName.trim() !== user.firstName) {
             user.firstName = firstName.trim();
             changedFields.push('firstName');
         }
         
-        if (lastName !== undefined && lastName !== user.lastName) {
+        if (lastName !== undefined && lastName.trim() !== (user.lastName || '')) {
             user.lastName = lastName.trim();
             changedFields.push('lastName');
         }
         
-        if (contactNumber !== undefined && contactNumber !== user.contactNumber) {
-            user.contactNumber = contactNumber.trim();
+        if (contactNumber !== undefined && contactNumber.trim() !== (user.contactNumber || '')) {
+            user.contactNumber = contactNumber.trim() || null;
             changedFields.push('contactNumber');
         }
         
-        if (dob !== undefined && dob !== user.dob?.toISOString().split('T')[0]) {
-            user.dob = dob ? new Date(dob) : null;
+        // Handle DOB properly
+        const newDob = dob ? new Date(dob) : null;
+        const oldDobStr = user.dob ? new Date(user.dob).toISOString().split('T')[0] : null;
+        const newDobStr = newDob ? new Date(newDob).toISOString().split('T')[0] : null;
+        
+        if (newDobStr !== oldDobStr) {
+            user.dob = newDob;
             changedFields.push('dob');
         }
         
-        if (gender !== undefined && gender !== user.gender) {
-            user.gender = gender;
+        if (gender !== undefined && gender !== (user.gender || '')) {
+            user.gender = gender || null;
             changedFields.push('gender');
         }
         
-        if (address !== undefined && address !== user.address) {
-            user.address = address.trim();
+        if (address !== undefined && address.trim() !== (user.address || '')) {
+            user.address = address.trim() || null;
             changedFields.push('address');
         }
         
@@ -157,8 +247,12 @@ router.post("/profile/update", isLoggedIn, upload.single("avatar"), async (req, 
                 const fullOldPath = path.join(uploadDir, oldFileName);
                 
                 if (fs.existsSync(fullOldPath)) {
-                    fs.unlinkSync(fullOldPath);
-                    console.log("🗑️ Old avatar deleted:", oldFileName);
+                    try {
+                        fs.unlinkSync(fullOldPath);
+                        console.log("🗑️ Old avatar deleted:", oldFileName);
+                    } catch (unlinkErr) {
+                        console.warn("⚠️ Could not delete old avatar:", unlinkErr.message);
+                    }
                 }
             }
             
@@ -168,6 +262,15 @@ router.post("/profile/update", isLoggedIn, upload.single("avatar"), async (req, 
             user.profileImage = avatarPath; // Update both fields for compatibility
             avatarChanged = true;
             changedFields.push('avatar');
+        }
+        
+        // Check if anything was changed
+        if (changedFields.length === 0 && !avatarChanged) {
+            return res.json({ 
+                status: true, 
+                message: "No changes were made to your profile",
+                noChanges: true
+            });
         }
         
         // Add to activity log
@@ -198,7 +301,9 @@ router.post("/profile/update", isLoggedIn, upload.single("avatar"), async (req, 
         // Prepare response
         res.json({
             status: true,
-            message: "Profile updated successfully!",
+            message: changedFields.length > 0 ? 
+                "Profile updated successfully!" : 
+                "Profile updated successfully!",
             user: {
                 firstName: user.firstName,
                 lastName: user.lastName,
@@ -206,7 +311,7 @@ router.post("/profile/update", isLoggedIn, upload.single("avatar"), async (req, 
                 contactNumber: user.contactNumber,
                 address: user.address,
                 avatar: user.avatar,
-                dob: user.dob,
+                dob: user.dob ? new Date(user.dob).toISOString().split('T')[0] : null,
                 gender: user.gender
             }
         });
@@ -222,6 +327,18 @@ router.post("/profile/update", isLoggedIn, upload.single("avatar"), async (req, 
                     message: "File too large. Maximum size is 5MB." 
                 });
             }
+            return res.json({ 
+                status: false, 
+                message: error.message 
+            });
+        }
+        
+        // Handle validation errors
+        if (error.name === 'ValidationError') {
+            return res.json({ 
+                status: false, 
+                message: Object.values(error.errors).map(e => e.message).join(', ')
+            });
         }
         
         res.json({ 
@@ -243,9 +360,20 @@ router.get("/profile/data", isLoggedIn, async (req, res) => {
             });
         }
         
+        // Format dates
+        const profileData = user.toObject ? user.toObject() : user;
+        
+        if (profileData.dob) {
+            profileData.dob = new Date(profileData.dob).toISOString().split('T')[0];
+        }
+        
+        if (profileData.avatar && !profileData.avatar.startsWith('/')) {
+            profileData.avatar = '/uploads/avatars/' + profileData.avatar;
+        }
+        
         res.json({
             status: true,
-            user: user.getProfile()
+            user: profileData
         });
         
     } catch (error) {
@@ -253,6 +381,63 @@ router.get("/profile/data", isLoggedIn, async (req, res) => {
         res.status(500).json({ 
             status: false, 
             message: "Failed to fetch profile data" 
+        });
+    }
+});
+
+// ===== GET: Delete Avatar =====
+router.post("/profile/delete-avatar", isLoggedIn, async (req, res) => {
+    try {
+        const user = await auth.findById(req.session.userId);
+        
+        if (!user) {
+            return res.json({ 
+                status: false, 
+                message: "User not found" 
+            });
+        }
+        
+        // Delete avatar file
+        const oldAvatarPath = user.avatar || user.profileImage;
+        if (oldAvatarPath) {
+            const oldFileName = path.basename(oldAvatarPath);
+            const fullOldPath = path.join(uploadDir, oldFileName);
+            
+            if (fs.existsSync(fullOldPath)) {
+                fs.unlinkSync(fullOldPath);
+                console.log("🗑️ Avatar deleted:", oldFileName);
+            }
+        }
+        
+        // Remove avatar from database
+        user.avatar = null;
+        user.profileImage = null;
+        
+        // Add to activity log
+        if (!user.activityLog) {
+            user.activityLog = [];
+        }
+        
+        user.activityLog.push({
+            action: 'avatar_deleted',
+            ipAddress: req.ip || req.connection.remoteAddress,
+            userAgent: req.get('User-Agent') || 'Unknown',
+            timestamp: new Date()
+        });
+        
+        user.updatedAt = new Date();
+        await user.save();
+        
+        res.json({
+            status: true,
+            message: "Avatar deleted successfully"
+        });
+        
+    } catch (error) {
+        console.error("❌ Avatar delete error:", error);
+        res.json({ 
+            status: false, 
+            message: "Failed to delete avatar" 
         });
     }
 });

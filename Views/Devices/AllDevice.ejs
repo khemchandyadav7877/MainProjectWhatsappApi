@@ -11,53 +11,48 @@
 <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" rel="stylesheet">
 
 <style>
-/* ===== THEME VARIABLES ===== */
+/* ===== THEME VARIABLES - EXACTLY LIKE FIRST TEMPLATE ===== */
 :root {
-    --primary: #4f46e5;
-    --primary-dark: #4338ca;
-    --primary-light: #6366f1;
+    --primary: #667eea;
+    --primary-dark: #5a67d8;
+    --primary-gradient: linear-gradient(135deg, #667eea, #764ba2);
     --success: #10b981;
     --warning: #f59e0b;
     --danger: #ef4444;
     --info: #3b82f6;
     
     /* Light Mode */
-    --bg-body: #f3f4f6;
+    --bg-body: #f8fafc;
     --bg-white: #ffffff;
-    --bg-offwhite: #f8fafc;
+    --bg-offwhite: #f1f5f9;
     --bg-card: #ffffff;
-    --text: #1f2937;
-    --text-light: #4b5563;
-    --text-muted: #6b7280;
-    --dark: #111827;
-    --border: #e5e7eb;
-    --shadow: 0 2px 10px rgba(0,0,0,0.05);
-    --shadow-lg: 0 10px 25px rgba(0,0,0,0.1);
+    --text: #334155;
+    --text-light: #64748b;
+    --text-muted: #94a3b8;
+    --dark: #0f172a;
+    --border: #eef2f6;
+    --shadow: 0 8px 25px rgba(0,0,0,0.03);
+    --shadow-lg: 0 15px 35px rgba(102, 126, 234, 0.1);
     
     /* Layout */
     --header-height: 70px;
     --sidebar-width: 280px;
+    --sidebar-mini-width: 80px;
 }
 
 /* Dark Mode */
 body.dark {
-    --bg-body: #111827;
-    --bg-white: #1f2937;
-    --bg-offwhite: #374151;
-    --bg-card: #1f2937;
-    --text: #f9fafb;
-    --text-light: #e5e7eb;
-    --text-muted: #9ca3af;
-    --dark: #f9fafb;
-    --border: #374151;
-    --shadow: 0 2px 10px rgba(0,0,0,0.3);
-    --shadow-lg: 0 10px 25px rgba(0,0,0,0.5);
-    
-    /* Status colors for dark mode */
-    --badge-active-bg: rgba(16, 185, 129, 0.2);
-    --badge-inactive-bg: rgba(239, 68, 68, 0.2);
-    --badge-connected-bg: rgba(59, 130, 246, 0.2);
-    --badge-disconnected-bg: rgba(107, 114, 128, 0.2);
+    --bg-body: #0f172a;
+    --bg-white: #1e293b;
+    --bg-offwhite: #334155;
+    --bg-card: #1e293b;
+    --text: #e2e8f0;
+    --text-light: #cbd5e1;
+    --text-muted: #94a3b8;
+    --dark: #f8fafc;
+    --border: #334155;
+    --shadow: 0 8px 25px rgba(0,0,0,0.2);
+    --shadow-lg: 0 15px 35px rgba(102, 126, 234, 0.2);
 }
 
 /* RESET */
@@ -70,14 +65,14 @@ body.dark {
 body {
     overflow-x: hidden;
     background: var(--bg-body);
-    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    font-family: 'Inter', 'Segoe UI', sans-serif;
     color: var(--text);
     transition: background-color 0.3s, color 0.3s;
 }
 
-/* ===== BORDER MODES ===== */
+/* ===== BORDER MODES - EXACTLY LIKE FIRST TEMPLATE ===== */
 body.round-border .header-wrapper,
-body.round-border .sidebar-wrapper,
+body.round-border .sidebar,
 body.round-border .mid-content,
 body.round-border .stat-card,
 body.round-border .filter-box,
@@ -90,21 +85,25 @@ body.round-border .action-btn,
 body.round-border .selected-counter,
 body.round-border .btn,
 body.round-border .form-control,
-body.round-border .form-select {
-    border-radius: 16px !important;
+body.round-border .form-select,
+body.round-border .stat-icon {
+    border-radius: 20px !important;
 }
 
 body.round-border .stat-icon,
 body.round-border .connection-dot {
-    border-radius: 50% !important;
+    border-radius: 16px !important;
 }
 
-body.round-border .toast-notification {
-    border-radius: 12px !important;
+body.round-border .badge-active,
+body.round-border .badge-inactive,
+body.round-border .badge-connected,
+body.round-border .badge-disconnected {
+    border-radius: 50px !important;
 }
 
 body.no-radius .header-wrapper,
-body.no-radius .sidebar-wrapper,
+body.no-radius .sidebar,
 body.no-radius .mid-content,
 body.no-radius .stat-card,
 body.no-radius .filter-box,
@@ -119,7 +118,11 @@ body.no-radius .btn,
 body.no-radius .form-control,
 body.no-radius .form-select,
 body.no-radius .stat-icon,
-body.no-radius .connection-dot {
+body.no-radius .connection-dot,
+body.no-radius .badge-active,
+body.no-radius .badge-inactive,
+body.no-radius .badge-connected,
+body.no-radius .badge-disconnected {
     border-radius: 0 !important;
 }
 
@@ -135,412 +138,197 @@ body.no-radius .connection-dot {
     border-bottom: 1px solid var(--border);
 }
 
-/* MAIN LAYOUT */
+/* MAIN LAYOUT - EXACTLY LIKE FIRST TEMPLATE */
 .main-wrapper {
     margin-top: 70px;
     display: flex;
     width: 100%;
     min-height: calc(100vh - 70px);
+    position: relative;
 }
 
-/* SIDEBAR WRAPPER */
-.sidebar-wrapper {
-    width: 280px;
-    flex-shrink: 0;
+/* SIDEBAR - EXACTLY LIKE FIRST TEMPLATE */
+.sidebar {
+    width: var(--sidebar-width, 280px);
+    background: var(--bg-white);
+    border-right: 1px solid var(--border);
+    height: calc(100vh - var(--header-height, 70px));
     position: fixed;
     left: 0;
     top: 70px;
-    bottom: 0;
+    transition: width 0.3s cubic-bezier(0.4, 0, 0.2, 1);
     z-index: 1020;
-    transition: width 0.3s ease;
-    background: var(--bg-white);
-    border-right: 1px solid var(--border);
+    box-shadow: var(--shadow);
+    display: flex;
+    flex-direction: column;
+    overflow-y: auto;
+    overflow-x: hidden;
 }
 
-.sidebar-wrapper.collapsed {
-    width: 80px;
+/* Sidebar Mini Mode */
+.sidebar.mini {
+    width: var(--sidebar-mini-width, 80px);
 }
 
-/* CONTENT WRAPPER */
+/* CONTENT WRAPPER - EXACTLY LIKE FIRST TEMPLATE */
 .content-wrapper {
     flex: 1;
-    margin-left: 280px;
-    padding: 20px;
-    transition: margin-left 0.3s ease;
+    margin-left: var(--sidebar-width, 280px);
+    padding: 25px;
+    transition: margin-left 0.3s cubic-bezier(0.4, 0, 0.2, 1);
     background: var(--bg-body);
     min-height: calc(100vh - 70px);
+    width: calc(100% - var(--sidebar-width, 280px));
 }
 
-.sidebar-wrapper.collapsed + .content-wrapper {
-    margin-left: 80px;
+/* When sidebar has mini class, adjust content wrapper */
+.sidebar.mini ~ .content-wrapper {
+    margin-left: var(--sidebar-mini-width, 80px);
+    width: calc(100% - var(--sidebar-mini-width, 80px));
 }
 
 /* MAIN CONTENT */
 .mid-content {
     background: var(--bg-card);
-    border-radius: 12px;
-    padding: 24px;
+    border-radius: 20px;
+    padding: 30px;
     box-shadow: var(--shadow);
     border: 1px solid var(--border);
     min-height: 500px;
 }
 
-/* MOBILE */
-@media (max-width: 768px) {
-    .sidebar-wrapper {
-        transform: translateX(-100%);
-        width: 280px !important;
-    }
-    
-    .sidebar-wrapper.mobile-open {
-        transform: translateX(0);
-    }
-    
-    .content-wrapper {
-        margin-left: 0 !important;
-    }
-    
-    .mid-content {
-        padding: 16px;
-    }
-}
-
-/* =========================
-   MODERN TOAST STYLES
-========================= */
-#toast {
-    position: fixed;
-    top: 24px;
-    right: 24px;
-    width: 320px;
-    padding: 14px 16px;
-    border-radius: 12px;
-    box-shadow: var(--shadow-lg);
-    opacity: 0;
-    transform: translateY(-15px);
-    transition: .3s ease;
-    color: #fff;
-    z-index: 9999;
-}
-
-#toast.show {
-    opacity: 1;
-    transform: translateY(0);
-}
-
-.toast-row {
-    display: flex;
-    gap: 12px;
-    align-items: flex-start;
-}
-
-.toast-icon {
-    width: 34px;
-    height: 34px;
-    border-radius: 50%;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-size: 16px;
-    background: rgba(0,0,0,.25);
-}
-
-.toast-text h4 {
-    margin: 0;
-    font-size: 14px;
-    font-weight: 600;
-}
-
-.toast-text p {
-    margin: 4px 0 0;
-    font-size: 13px;
-    opacity: .9;
-}
-
-/* Toast Colors */
-.toast-success {
-    background: var(--success);
-    color: #ffffff;
-}
-.toast-error {
-    background: var(--danger);
-    color: #ffffff;
-}
-.toast-info {
-    background: var(--info);
-    color: #ffffff;
-}
-.toast-warning {
-    background: var(--warning);
-    color: #1f2937;
-}
-
-/* Progress bar */
-.toast-progress {
-    height: 3px;
-    border-radius: 4px;
-    margin-top: 10px;
-    background: rgba(255,255,255,.6);
-    animation: toast-load 3s linear forwards;
-}
-
-.toast-warning .toast-progress {
-    background: rgba(0,0,0,.4);
-}
-
-@keyframes toast-load {
-    from { width: 100%; }
-    to { width: 0%; }
-}
-
-/* TITLES */
+/* PAGE HEADER */
 .page-title {
-    font-size: 26px;
-    font-weight: 600;
+    font-size: 28px;
+    font-weight: 700;
     color: var(--dark);
+    margin-bottom: 8px;
 }
+
+.page-title i {
+    color: var(--primary);
+}
+
 .sub-title {
     color: var(--text-muted);
+    font-size: 14px;
 }
 
-/* STAT CARDS */
+/* STAT CARDS - IMPROVED */
 .stat-card {
     background: var(--bg-card);
-    border-radius: 14px;
-    padding: 20px;
+    border-radius: 20px;
+    padding: 24px;
     display: flex;
     align-items: center;
     gap: 15px;
     box-shadow: var(--shadow);
     border: 1px solid var(--border);
-    transition: transform 0.3s ease, box-shadow 0.3s ease;
+    transition: all 0.3s ease;
     cursor: pointer;
+    position: relative;
+    overflow: hidden;
 }
+
+.stat-card::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 4px;
+    background: var(--primary-gradient);
+    opacity: 0;
+    transition: opacity 0.3s ease;
+}
+
 .stat-card:hover {
     transform: translateY(-5px);
     box-shadow: var(--shadow-lg);
-    border-color: var(--primary);
 }
+
+.stat-card:hover::before {
+    opacity: 1;
+}
+
 .stat-icon {
-    width: 48px;
-    height: 48px;
-    border-radius: 12px;
+    width: 56px;
+    height: 56px;
+    border-radius: 16px;
     display: flex;
     align-items: center;
     justify-content: center;
-    font-size: 20px;
+    font-size: 24px;
+    background: var(--primary-gradient);
+    color: white;
+    box-shadow: var(--shadow-lg);
 }
-.icon-blue { background: rgba(79, 70, 229, 0.1); color: var(--primary); }
-.icon-green { background: rgba(16, 185, 129, 0.1); color: var(--success); }
-.icon-red { background: rgba(239, 68, 68, 0.1); color: var(--danger); }
-.icon-yellow { background: rgba(245, 158, 11, 0.1); color: var(--warning); }
 
-/* FILTER */
+.stat-card h4 {
+    font-size: 28px;
+    font-weight: 700;
+    color: var(--dark);
+    margin: 0;
+    line-height: 1.2;
+}
+
+.stat-card small {
+    color: var(--text-muted);
+    font-size: 13px;
+    font-weight: 500;
+}
+
+/* FILTER BOX - IMPROVED */
 .filter-box {
     background: var(--bg-card);
-    border-radius: 14px;
-    padding: 20px;
+    border-radius: 20px;
+    padding: 25px;
     box-shadow: var(--shadow);
     border: 1px solid var(--border);
 }
+
 .filter-tag {
-    background: rgba(79, 70, 229, 0.1);
-    color: var(--primary);
-    padding: 4px 10px;
-    border-radius: 20px;
-    font-size: 12px;
-    font-weight: 600;
-    display: inline-flex;
-    align-items: center;
-    gap: 4px;
-    margin-right: 8px;
-    margin-bottom: 8px;
-}
-
-/* TABLE */
-.device-table {
-    background: var(--bg-card);
-    border-radius: 14px;
-    overflow-x: auto;
-    box-shadow: var(--shadow);
-    border: 1px solid var(--border);
-}
-.table th {
-    font-size: 13px;
-    color: var(--text-muted);
-    font-weight: 600;
-    border-bottom: 2px solid var(--border);
-    padding: 16px 12px;
-    background: var(--bg-card);
-}
-.table td {
-    padding: 16px 12px;
-    vertical-align: middle;
-    border-bottom: 1px solid var(--border);
-    color: var(--text);
-}
-.table tr:hover {
-    background: var(--bg-offwhite);
-}
-.badge-soft {
-    padding: 6px 12px;
-    border-radius: 20px;
-    font-weight: 600;
-    font-size: 12px;
-    display: inline-block;
-    text-decoration: none !important;
-}
-.badge-active { 
-    background: rgba(16, 185, 129, 0.1); 
-    color: var(--success); 
-}
-.badge-inactive { 
-    background: rgba(239, 68, 68, 0.1); 
-    color: var(--danger); 
-}
-.badge-connected { 
-    background: rgba(59, 130, 246, 0.1); 
-    color: var(--info); 
-}
-.badge-disconnected { 
-    background: rgba(107, 114, 128, 0.1); 
-    color: var(--text-muted); 
-}
-
-/* WhatsApp badge */
-.whatsapp-badge {
-    background: rgba(37, 211, 102, 0.15);
-    color: #25D366;
-    padding: 4px 8px;
-    border-radius: 20px;
-    font-size: 11px;
-    display: inline-flex;
-    align-items: center;
-    gap: 4px;
-    margin-left: 6px;
-}
-
-/* Email badge */
-.email-badge {
-    background: var(--bg-offwhite);
-    color: var(--text-light);
-    padding: 4px 8px;
-    border-radius: 20px;
-    font-size: 11px;
-    display: inline-flex;
-    align-items: center;
-    gap: 4px;
-}
-
-/* ACTION BUTTONS */
-.action-btn {
-    width: 34px;
-    height: 34px;
-    border-radius: 10px;
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    cursor: pointer;
-    text-decoration: none;
-    margin-right: 5px;
-    transition: all 0.2s ease;
-}
-.action-btn:hover {
-    transform: scale(1.1);
-}
-.btn-view { background: rgba(16, 185, 129, 0.1); color: var(--success); }
-.btn-edit { background: rgba(79, 70, 229, 0.1); color: var(--primary); }
-.btn-delete { background: rgba(239, 68, 68, 0.1); color: var(--danger); }
-
-/* CHECKBOX */
-.device-checkbox {
-    width: 20px;
-    height: 20px;
-    border-radius: 5px;
-    border: 2px solid var(--border);
-    cursor: pointer;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    transition: all 0.2s ease;
-    background: var(--bg-card);
-}
-.device-checkbox.checked {
-    background: var(--primary);
-    border-color: var(--primary);
-}
-.device-checkbox.checked::after {
-    content: '✓';
+    background: var(--primary-gradient);
     color: white;
-    font-size: 12px;
-    font-weight: bold;
-}
-
-/* CONNECTION STATUS */
-.connection-dot {
-    width: 8px;
-    height: 8px;
-    border-radius: 50%;
-    display: inline-block;
-    margin-right: 6px;
-}
-.dot-connected { background: var(--success); }
-.dot-disconnected { background: var(--danger); }
-
-/* LOADING */
-.loading-overlay {
-    display: none;
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    background: rgba(0,0,0,0.5);
-    backdrop-filter: blur(5px);
-    z-index: 9999;
-    justify-content: center;
-    align-items: center;
-    color: white;
-}
-
-/* SELECTED DEVICES COUNTER */
-.selected-counter {
-    position: fixed;
-    bottom: 30px;
-    right: 30px;
-    background: var(--primary);
-    color: white;
-    padding: 12px 20px;
+    padding: 6px 14px;
     border-radius: 50px;
-    box-shadow: 0 10px 25px rgba(79, 70, 229, 0.3);
+    font-size: 12px;
     font-weight: 600;
-    display: flex;
+    display: inline-flex;
     align-items: center;
     gap: 8px;
-    z-index: 100;
-    cursor: pointer;
-    transition: all 0.3s ease;
-}
-.selected-counter:hover {
-    transform: translateY(-2px);
-    box-shadow: 0 15px 30px rgba(79, 70, 229, 0.4);
+    margin-right: 10px;
+    margin-bottom: 10px;
+    box-shadow: var(--shadow);
 }
 
-/* FORM CONTROLS */
+.filter-tag a {
+    color: white;
+    opacity: 0.8;
+    transition: opacity 0.2s;
+}
+
+.filter-tag a:hover {
+    opacity: 1;
+}
+
+/* FORM CONTROLS - EXACTLY LIKE FIRST TEMPLATE */
 .form-control, .form-select {
-    background: var(--bg-white);
+    border-radius: 12px;
+    padding: 12px 20px;
     border: 1px solid var(--border);
+    background: var(--bg-white);
     color: var(--text);
-    border-radius: 25px;
-    padding: 10px 16px;
+    font-size: 14px;
+    transition: all 0.3s;
 }
 
 .form-control:focus, .form-select:focus {
     border-color: var(--primary);
-    box-shadow: 0 0 0 0.2rem rgba(79, 70, 229, 0.25);
+    box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+    outline: none;
     background: var(--bg-white);
     color: var(--text);
-    outline: none;
 }
 
 .form-control::placeholder {
@@ -548,24 +336,24 @@ body.no-radius .connection-dot {
     opacity: 0.7;
 }
 
-/* BUTTONS */
+/* BUTTONS - EXACTLY LIKE FIRST TEMPLATE */
 .btn {
-    border-radius: 25px;
-    padding: 10px 20px;
+    border-radius: 12px;
+    padding: 12px 24px;
     font-weight: 600;
+    font-size: 14px;
     transition: all 0.3s ease;
 }
 
 .btn-primary {
-    background: var(--primary);
+    background: var(--primary-gradient);
     border: none;
     color: white;
 }
 
 .btn-primary:hover {
-    background: var(--primary-dark);
     transform: translateY(-2px);
-    box-shadow: 0 5px 15px rgba(79, 70, 229, 0.3);
+    box-shadow: var(--shadow-lg);
 }
 
 .btn-outline-primary {
@@ -577,50 +365,524 @@ body.no-radius .connection-dot {
 .btn-outline-primary:hover {
     background: var(--primary);
     color: white;
+    transform: translateY(-2px);
+    box-shadow: var(--shadow-lg);
 }
 
 .btn-outline-secondary {
-    border: 2px solid var(--text-muted);
-    color: var(--text-muted);
+    border: 1px solid var(--border);
+    color: var(--text);
     background: transparent;
 }
 
 .btn-outline-secondary:hover {
-    background: var(--text-muted);
+    background: var(--bg-offwhite);
+    color: var(--dark);
+    border-color: var(--primary);
+    transform: translateY(-2px);
+}
+
+.btn-outline-danger {
+    border: 1px solid var(--danger);
+    color: var(--danger);
+    background: transparent;
+}
+
+.btn-outline-danger:hover {
+    background: var(--danger);
     color: white;
+    transform: translateY(-2px);
 }
 
-/* TEXT COLORS */
-.text-primary { color: var(--primary) !important; }
-.text-success { color: var(--success) !important; }
-.text-danger { color: var(--danger) !important; }
-.text-warning { color: var(--warning) !important; }
-.text-muted { color: var(--text-muted) !important; }
-.text-secondary { color: var(--text-light) !important; }
+/* TABLE - IMPROVED */
+.device-table {
+    background: var(--bg-card);
+    border-radius: 20px;
+    overflow: hidden;
+    box-shadow: var(--shadow);
+    border: 1px solid var(--border);
+    margin-top: 25px;
+}
 
-/* RESPONSIVE */
-@media(max-width:992px){
+.table {
+    margin: 0;
+}
+
+.table th {
+    font-size: 13px;
+    color: var(--text-muted);
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    border-bottom: 2px solid var(--border);
+    padding: 18px 16px;
+    background: var(--bg-offwhite);
+}
+
+.table td {
+    padding: 18px 16px;
+    vertical-align: middle;
+    border-bottom: 1px solid var(--border);
+    color: var(--text);
+    font-size: 14px;
+}
+
+.table tr:hover {
+    background: var(--bg-offwhite);
+}
+
+.table tr:last-child td {
+    border-bottom: none;
+}
+
+/* BADGES */
+.badge-soft {
+    padding: 6px 14px;
+    border-radius: 50px;
+    font-weight: 600;
+    font-size: 12px;
+    display: inline-block;
+    text-decoration: none !important;
+    transition: all 0.3s ease;
+}
+
+.badge-soft:hover {
+    transform: translateY(-2px);
+    box-shadow: var(--shadow);
+}
+
+.badge-active { 
+    background: rgba(16, 185, 129, 0.1); 
+    color: var(--success); 
+}
+
+.badge-inactive { 
+    background: rgba(239, 68, 68, 0.1); 
+    color: var(--danger); 
+}
+
+.badge-connected { 
+    background: rgba(59, 130, 246, 0.1); 
+    color: var(--info); 
+}
+
+.badge-disconnected { 
+    background: rgba(107, 114, 128, 0.1); 
+    color: var(--text-muted); 
+}
+
+/* WhatsApp badge */
+.whatsapp-badge {
+    background: rgba(37, 211, 102, 0.15);
+    color: #25D366;
+    padding: 6px 12px;
+    border-radius: 50px;
+    font-size: 12px;
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    font-weight: 600;
+}
+
+/* Email badge */
+.email-badge {
+    background: var(--bg-offwhite);
+    color: var(--text-light);
+    padding: 6px 12px;
+    border-radius: 50px;
+    font-size: 12px;
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    font-weight: 600;
+}
+
+/* ACTION BUTTONS - IMPROVED */
+.action-btn {
+    width: 36px;
+    height: 36px;
+    border-radius: 10px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    text-decoration: none;
+    margin-right: 6px;
+    transition: all 0.2s ease;
+    font-size: 14px;
+}
+
+.action-btn:hover {
+    transform: scale(1.1);
+}
+
+.btn-view { 
+    background: rgba(16, 185, 129, 0.1); 
+    color: var(--success); 
+}
+
+.btn-edit { 
+    background: rgba(102, 126, 234, 0.1); 
+    color: var(--primary); 
+}
+
+.btn-delete { 
+    background: rgba(239, 68, 68, 0.1); 
+    color: var(--danger); 
+}
+
+/* CHECKBOX - IMPROVED */
+.device-checkbox {
+    width: 22px;
+    height: 22px;
+    border-radius: 8px;
+    border: 2px solid var(--border);
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.2s ease;
+    background: var(--bg-card);
+}
+
+.device-checkbox.checked {
+    background: var(--primary-gradient);
+    border-color: transparent;
+}
+
+.device-checkbox.checked::after {
+    content: '✓';
+    color: white;
+    font-size: 12px;
+    font-weight: bold;
+}
+
+/* SELECTED DEVICES COUNTER - IMPROVED */
+.selected-counter {
+    position: fixed;
+    bottom: 30px;
+    right: 30px;
+    background: var(--primary-gradient);
+    color: white;
+    padding: 15px 25px;
+    border-radius: 50px;
+    box-shadow: var(--shadow-lg);
+    font-weight: 600;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    z-index: 100;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    border: none;
+    font-size: 14px;
+}
+
+.selected-counter:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 20px 40px rgba(102, 126, 234, 0.3);
+}
+
+.selected-counter i {
+    font-size: 16px;
+}
+
+/* TOAST - EXACTLY LIKE FIRST TEMPLATE */
+#toast {
+    position: fixed;
+    top: 90px;
+    right: 29px;
+    width: 320px;
+    padding: 16px 20px;
+    border-radius: 12px;
+    box-shadow: var(--shadow-lg);
+    opacity: 0;
+    transform: translateY(-15px);
+    transition: .3s ease;
+    color: #fff;
+    z-index: 1001;
+}
+
+#toast.show {
+    opacity: 1;
+    transform: translateY(0);
+}
+
+.toast-success { background: var(--success); }
+.toast-error { background: var(--danger); }
+.toast-info { background: var(--info); }
+.toast-warning { background: var(--warning); color: #1f2937; }
+
+.toast-content {
+    display: flex;
+    gap: 12px;
+    align-items: flex-start;
+}
+
+.toast-icon {
+    font-size: 20px;
+}
+
+.toast-text h4 {
+    margin: 0;
+    font-size: 14px;
+    font-weight: 600;
+}
+
+.toast-text p {
+    margin: 5px 0 0;
+    font-size: 13px;
+    opacity: 0.9;
+}
+
+.toast-progress {
+    height: 3px;
+    background: rgba(255,255,255,0.6);
+    margin-top: 12px;
+    width: 100%;
+    animation: progress 3s linear;
+}
+
+@keyframes progress {
+    from { width: 100%; }
+    to { width: 0%; }
+}
+
+/* LOADING OVERLAY - EXACTLY LIKE FIRST TEMPLATE */
+.loading-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(0,0,0,0.5);
+    display: none;
+    align-items: center;
+    justify-content: center;
+    z-index: 9999;
+    backdrop-filter: blur(5px);
+}
+
+.spinner {
+    width: 50px;
+    height: 50px;
+    border: 5px solid var(--bg-offwhite);
+    border-top: 5px solid var(--primary);
+    border-radius: 50%;
+    animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+}
+
+.loading-text {
+    color: white;
+    margin-top: 15px;
+    font-size: 18px;
+    font-weight: 600;
+}
+
+/* EMPTY STATE */
+.empty-state {
+    text-align: center;
+    padding: 60px 20px;
+}
+
+.empty-state i {
+    font-size: 64px;
+    color: var(--text-muted);
+    opacity: 0.3;
+    margin-bottom: 20px;
+}
+
+.empty-state h5 {
+    color: var(--text);
+    font-size: 20px;
+    font-weight: 600;
+    margin-bottom: 10px;
+}
+
+.empty-state p {
+    color: var(--text-muted);
+    margin-bottom: 25px;
+}
+
+/* RESPONSIVE - EXACTLY LIKE FIRST TEMPLATE */
+@media (max-width: 1200px) {
     .content-wrapper {
-        margin-left: 0;
+        padding: 20px;
     }
-    .page-content {
-        margin-left: 0;
-        padding: 15px;
+    
+    .mid-content {
+        padding: 25px;
     }
 }
-@media(max-width:768px){
+
+@media (max-width: 992px) {
     .stat-card {
+        padding: 20px;
+    }
+    
+    .stat-icon {
+        width: 48px;
+        height: 48px;
+        font-size: 20px;
+    }
+    
+    .stat-card h4 {
+        font-size: 24px;
+    }
+    
+    .page-title {
+        font-size: 24px;
+    }
+}
+
+@media (max-width: 768px) {
+    .sidebar {
+        transform: translateX(-100%);
+        width: var(--sidebar-width, 280px) !important;
+        transition: transform 0.3s ease;
+    }
+    
+    .sidebar.open {
+        transform: translateX(0);
+    }
+    
+    .sidebar.mini {
+        transform: translateX(-100%);
+        width: var(--sidebar-width, 280px) !important;
+    }
+    
+    .sidebar.mini.open {
+        transform: translateX(0);
+    }
+    
+    .content-wrapper {
+        margin-left: 0 !important;
+        width: 100% !important;
         padding: 15px;
     }
-    .action-buttons {
-        display: flex;
-        flex-wrap: nowrap;
+    
+    .sidebar.mini ~ .content-wrapper {
+        margin-left: 0 !important;
+        width: 100% !important;
     }
+    
+    .mid-content {
+        padding: 20px;
+    }
+    
+    .page-title {
+        font-size: 22px;
+    }
+    
+    .stat-card {
+        padding: 16px;
+    }
+    
+    .stat-icon {
+        width: 44px;
+        height: 44px;
+        font-size: 18px;
+    }
+    
+    .stat-card h4 {
+        font-size: 20px;
+    }
+    
+    .stat-card small {
+        font-size: 12px;
+    }
+    
+    .filter-box {
+        padding: 20px;
+    }
+    
+    .btn {
+        padding: 10px 20px;
+        font-size: 13px;
+    }
+    
+    .selected-counter {
+        bottom: 20px;
+        right: 20px;
+        padding: 12px 20px;
+        font-size: 13px;
+    }
+    
     .device-table {
         overflow-x: auto;
     }
+    
     .table {
         min-width: 900px;
+    }
+    
+    .table th,
+    .table td {
+        padding: 14px 12px;
+    }
+}
+
+@media (max-width: 576px) {
+    .content-wrapper {
+        padding: 10px;
+    }
+    
+    .mid-content {
+        padding: 15px;
+    }
+    
+    .page-title {
+        font-size: 20px;
+    }
+    
+    .sub-title {
+        font-size: 13px;
+    }
+    
+    .stat-card {
+        padding: 14px;
+    }
+    
+    .stat-icon {
+        width: 40px;
+        height: 40px;
+        font-size: 16px;
+    }
+    
+    .stat-card h4 {
+        font-size: 18px;
+    }
+    
+    .filter-box {
+        padding: 15px;
+    }
+    
+    .btn {
+        padding: 8px 16px;
+        font-size: 12px;
+    }
+    
+    .form-control, .form-select {
+        padding: 10px 16px;
+        font-size: 13px;
+    }
+    
+    .selected-counter {
+        bottom: 15px;
+        right: 15px;
+        padding: 10px 16px;
+        font-size: 12px;
+    }
+    
+    .action-btn {
+        width: 32px;
+        height: 32px;
+        font-size: 12px;
     }
 }
 </style>
@@ -647,9 +909,7 @@ body.no-radius .connection-dot {
     <!-- MAIN LAYOUT -->
     <div class="main-wrapper">
         <!-- SIDEBAR -->
-        <div class="sidebar-wrapper" id="sidebarWrapper">
-            <%- include('../../partials/ram/sidebaar') %>
-        </div>
+        <%- include('../../partials/ram/sidebaar') %>
 
         <!-- CONTENT -->
         <div class="content-wrapper" id="contentWrapper">
@@ -659,7 +919,7 @@ body.no-radius .connection-dot {
 
                 <!-- SELECTED DEVICES COUNTER (Floating) -->
                 <div class="selected-counter" id="selectedCounter" style="display:none;" onclick="useSelectedInCampaign()">
-                    <i class="fa fa-paper-plane"></i>
+                    <i class="fas fa-paper-plane"></i>
                     <span id="selectedCount">0</span> Selected - Use in Campaign
                 </div>
 
@@ -667,23 +927,23 @@ body.no-radius .connection-dot {
                 <div class="d-flex flex-column flex-md-row justify-content-between align-items-start align-items-md-center mb-4">
                     <div>
                         <div class="page-title">
-                            <i class="fa-solid fa-mobile-screen-button text-primary me-2"></i>
+                            <i class="fas fa-address-book text-primary me-2"></i>
                             All Contacts
                         </div>
                         <div class="sub-title">Manage all contacts and devices</div>
                     </div>
                     <div class="mt-3 mt-md-0 d-flex flex-wrap gap-2">
-                        <button onclick="selectAllDevices()" class="btn btn-outline-primary rounded-pill me-2">
-                            <i class="fa fa-check-square me-1"></i> Select All
+                        <button onclick="selectAllDevices()" class="btn btn-outline-primary">
+                            <i class="fas fa-check-square me-2"></i> Select All
                         </button>
-                        <button onclick="deselectAllDevices()" class="btn btn-outline-secondary rounded-pill me-2">
-                            <i class="fa fa-square me-1"></i> Deselect All
+                        <button onclick="deselectAllDevices()" class="btn btn-outline-secondary">
+                            <i class="fas fa-square me-2"></i> Deselect All
                         </button>
-                        <a href="/devices/add" class="btn btn-primary rounded-pill me-2">
-                            <i class="fa fa-plus me-1"></i> Add Contact
+                        <a href="/devices/add" class="btn btn-primary">
+                            <i class="fas fa-plus me-2"></i> Add Contact
                         </a>
-                        <button onclick="location.reload()" class="btn btn-outline-secondary rounded-pill me-2">
-                            <i class="fa fa-rotate"></i>
+                        <button onclick="location.reload()" class="btn btn-outline-secondary">
+                            <i class="fas fa-sync-alt"></i>
                         </button>
                     </div>
                 </div>
@@ -692,7 +952,7 @@ body.no-radius .connection-dot {
                 <div class="row g-4 mb-4">
                     <div class="col-sm-6 col-lg-3" onclick="filterByStatus('all')" style="cursor:pointer;">
                         <div class="stat-card">
-                            <div class="stat-icon icon-blue"><i class="fa fa-mobile"></i></div>
+                            <div class="stat-icon"><i class="fas fa-mobile-alt"></i></div>
                             <div>
                                 <h4 class="mb-0"><%= stats?.total || 0 %></h4>
                                 <small>Total Contacts</small>
@@ -701,7 +961,7 @@ body.no-radius .connection-dot {
                     </div>
                     <div class="col-sm-6 col-lg-3" onclick="filterByStatus('active')" style="cursor:pointer;">
                         <div class="stat-card">
-                            <div class="stat-icon icon-green"><i class="fa fa-check"></i></div>
+                            <div class="stat-icon"><i class="fas fa-check-circle"></i></div>
                             <div>
                                 <h4 class="mb-0"><%= stats?.active || 0 %></h4>
                                 <small>Active</small>
@@ -710,7 +970,7 @@ body.no-radius .connection-dot {
                     </div>
                     <div class="col-sm-6 col-lg-3" onclick="filterByStatus('inactive')" style="cursor:pointer;">
                         <div class="stat-card">
-                            <div class="stat-icon icon-red"><i class="fa fa-xmark"></i></div>
+                            <div class="stat-icon"><i class="fas fa-times-circle"></i></div>
                             <div>
                                 <h4 class="mb-0"><%= stats?.inactive || 0 %></h4>
                                 <small>Inactive</small>
@@ -719,7 +979,7 @@ body.no-radius .connection-dot {
                     </div>
                     <div class="col-sm-6 col-lg-3" onclick="useSelectedInCampaign()" style="cursor:pointer;">
                         <div class="stat-card">
-                            <div class="stat-icon icon-yellow"><i class="fa fa-paper-plane"></i></div>
+                            <div class="stat-icon"><i class="fas fa-paper-plane"></i></div>
                             <div>
                                 <h4 class="mb-0" id="selectedDevicesCount">0</h4>
                                 <small>Selected</small>
@@ -737,17 +997,17 @@ body.no-radius .connection-dot {
                             <small class="text-muted d-block mb-2">Active Filters:</small>
                             <% if(filters.search) { %>
                             <span class="filter-tag">
-                                Search: "<%= filters.search %>"
-                                <a href="javascript:void(0)" onclick="removeFilter('search')" class="text-danger ms-1">
-                                    <i class="fa fa-times"></i>
+                                <i class="fas fa-search"></i> "<%= filters.search %>"
+                                <a href="javascript:void(0)" onclick="removeFilter('search')">
+                                    <i class="fas fa-times"></i>
                                 </a>
                             </span>
                             <% } %>
                             <% if(filters.status && filters.status !== 'all') { %>
                             <span class="filter-tag">
-                                Status: <%= filters.status %>
-                                <a href="javascript:void(0)" onclick="removeFilter('status')" class="text-danger ms-1">
-                                    <i class="fa fa-times"></i>
+                                <i class="fas fa-filter"></i> <%= filters.status %>
+                                <a href="javascript:void(0)" onclick="removeFilter('status')">
+                                    <i class="fas fa-times"></i>
                                 </a>
                             </span>
                             <% } %>
@@ -764,29 +1024,29 @@ body.no-radius .connection-dot {
 
                         <div class="row g-3">
                             <div class="col-md-4">
-                                <select name="status" class="form-select rounded-pill" onchange="this.form.submit()">
+                                <select name="status" class="form-select" onchange="this.form.submit()">
                                     <option value="all" <%= (!filters?.status || filters.status==='all') ? 'selected' : '' %>>All Status</option>
                                     <option value="active" <%= filters?.status==='active' ? 'selected' : '' %>>Active</option>
                                     <option value="inactive" <%= filters?.status==='inactive' ? 'selected' : '' %>>Inactive</option>
                                 </select>
                             </div>
                             <div class="col-md-4">
-                                <select name="sort" class="form-select rounded-pill" onchange="this.form.submit()">
+                                <select name="sort" class="form-select" onchange="this.form.submit()">
                                     <option value="newest" <%= (!filters?.sort || filters.sort==='newest') ? 'selected' : '' %>>Newest First</option>
                                     <option value="oldest" <%= filters?.sort==='oldest' ? 'selected' : '' %>>Oldest First</option>
                                     <option value="name" <%= filters?.sort==='name' ? 'selected' : '' %>>By Name (A-Z)</option>
                                 </select>
                             </div>
                             <div class="col-md-4">
-                                <button type="submit" class="btn btn-primary rounded-pill w-100">
-                                    <i class="fa fa-filter me-1"></i> Apply Filters
+                                <button type="submit" class="btn btn-primary w-100">
+                                    <i class="fas fa-filter me-2"></i> Apply Filters
                                 </button>
                             </div>
                         </div>
                         
                         <div class="d-flex justify-content-end mt-3">
                             <div class="text-muted">
-                                <small><%= devices.length %> contact(s) found</small>
+                                <small><i class="fas fa-users me-1"></i> <%= devices.length %> contact(s) found</small>
                             </div>
                         </div>
                     </form>
@@ -797,8 +1057,8 @@ body.no-radius .connection-dot {
                     <table class="table align-middle mb-0">
                         <thead>
                             <tr>
-                                <th style="width:40px;">
-                                    <input type="checkbox" class="device-checkbox" id="selectAllCheckbox" onchange="toggleSelectAll(this)">
+                                <th style="width:50px;">
+                                    <div class="device-checkbox" id="selectAllCheckbox" onclick="toggleSelectAll(this)"></div>
                                 </th>
                                 <th>Contact</th>
                                 <th>Phone Number</th>
@@ -820,19 +1080,17 @@ body.no-radius .connection-dot {
                                 <td>
                                     <div class="d-flex align-items-center">
                                         <div class="me-3">
-                                            <i class="fa fa-user-circle text-primary fs-4"></i>
+                                            <i class="fas fa-user-circle text-primary fs-4"></i>
                                         </div>
                                         <div>
-                                            <strong><%= device.name %></strong>
-                                            <div>
-                                                <small class="text-muted">ID: <%= device._id.toString().substring(0, 8) %>...</small>
-                                            </div>
+                                            <strong class="d-block"><%= device.name %></strong>
+                                            <small class="text-muted">ID: <%= device._id.toString().substring(0, 8) %>...</small>
                                         </div>
                                     </div>
                                 </td>
                                 <td>
                                     <div class="fw-medium">
-                                        <i class="fa fa-phone-alt text-secondary me-1"></i>
+                                        <i class="fas fa-phone-alt text-muted me-1"></i>
                                         +91 <%= device.phoneNumber %>
                                     </div>
                                 </td>
@@ -843,41 +1101,39 @@ body.no-radius .connection-dot {
                                         </span>
                                     <% } else { %>
                                         <span class="email-badge">
-                                            <i class="fa fa-times"></i> Not set
+                                            <i class="fas fa-times"></i> Not set
                                         </span>
                                     <% } %>
                                 </td>
                                 <td>
                                     <% if(device.email) { %>
                                         <span class="email-badge">
-                                            <i class="fa fa-envelope"></i> <%= device.email %>
+                                            <i class="fas fa-envelope"></i> <%= device.email %>
                                         </span>
                                     <% } else { %>
                                         <span class="text-muted">—</span>
                                     <% } %>
                                 </td>
-
-                                <!-- STATUS -->
                                 <td>
                                     <a href="/devices/status/<%= device._id %>" 
                                        class="badge-soft <%= device.status === 'active' ? 'badge-active' : 'badge-inactive' %>">
+                                        <i class="fas fa-<%= device.status === 'active' ? 'check-circle' : 'times-circle' %> me-1"></i>
                                         <%= device.status === 'active' ? 'Active' : 'Inactive' %>
                                     </a>
                                 </td>
-
                                 <td>
-                                    <%= new Date(device.createdAt).toLocaleDateString() %>
-                                    <div><small class="text-muted"><%= new Date(device.createdAt).toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'}) %></small></div>
+                                    <div><%= new Date(device.createdAt).toLocaleDateString() %></div>
+                                    <small class="text-muted"><%= new Date(device.createdAt).toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'}) %></small>
                                 </td>
                                 <td>
-                                    <div class="action-buttons d-flex">
+                                    <div class="d-flex">
                                         <a href="/devices/edit/<%= device._id %>" class="action-btn btn-edit" title="Edit">
-                                            <i class="fa fa-pen"></i>
+                                            <i class="fas fa-pen"></i>
                                         </a>
                                         <a href="javascript:void(0)"
                                            onclick="deleteDevice('<%= device._id %>', '<%= device.name %>')"
                                            class="action-btn btn-delete" title="Delete">
-                                            <i class="fa fa-trash"></i>
+                                            <i class="fas fa-trash"></i>
                                         </a>
                                     </div>
                                 </td>
@@ -885,18 +1141,18 @@ body.no-radius .connection-dot {
                             <% }) %>
                         <% } else { %>
                             <tr>
-                                <td colspan="8" class="text-center py-5">
-                                    <div class="text-muted mb-3">
-                                        <i class="fa fa-address-book fa-3x opacity-25"></i>
-                                    </div>
-                                    <h5 class="text-muted">No contacts found</h5>
+                                <td colspan="8" class="empty-state">
+                                    <i class="fas fa-address-book"></i>
+                                    <h5>No contacts found</h5>
                                     <% if(filters && (filters.search || filters.status !== 'all')) { %>
                                     <p class="text-muted">Try changing your filters</p>
-                                    <a href="/devices" class="btn btn-sm btn-primary">Clear Filters</a>
+                                    <a href="/devices" class="btn btn-primary">
+                                        <i class="fas fa-times me-2"></i> Clear Filters
+                                    </a>
                                     <% } else { %>
                                     <p class="text-muted">Add your first contact to get started</p>
                                     <a href="/devices/add" class="btn btn-primary">
-                                        <i class="fa fa-plus me-1"></i> Add Contact
+                                        <i class="fas fa-plus me-2"></i> Add Contact
                                     </a>
                                     <% } %>
                                 </td>
@@ -911,13 +1167,11 @@ body.no-radius .connection-dot {
                 <% if(devices && devices.length > 0) { %>
                 <div class="d-flex justify-content-between align-items-center mt-4">
                     <div class="text-muted">
-                        Showing <%= devices.length %> of <%= stats.total %> contacts
+                        <i class="fas fa-list me-1"></i> Showing <%= devices.length %> of <%= stats.total %> contacts
                     </div>
-                    <div class="btn-group">
-                        <button class="btn btn-primary" onclick="useSelectedInCampaign()">
-                            <i class="fa fa-paper-plane me-1"></i> Use Selected in Campaign (<span id="bottomSelectedCount">0</span>)
-                        </button>
-                    </div>
+                    <button class="btn btn-primary" onclick="useSelectedInCampaign()">
+                        <i class="fas fa-paper-plane me-2"></i> Use Selected (<span id="bottomSelectedCount">0</span>)
+                    </button>
                 </div>
                 <% } %>
             </div>
@@ -927,10 +1181,8 @@ body.no-radius .connection-dot {
     <!-- LOADING OVERLAY -->
     <div class="loading-overlay" id="loadingOverlay">
         <div class="text-center">
-            <div class="spinner-border text-light mb-3" role="status">
-                <span class="visually-hidden">Loading...</span>
-            </div>
-            <p class="text-light">Loading...</p>
+            <div class="spinner"></div>
+            <div class="loading-text">Loading...</div>
         </div>
     </div>
 
@@ -939,77 +1191,27 @@ body.no-radius .connection-dot {
 
     <script>
         // ======================
-        // SIDEBAR SYNC
+        // SIDEBAR STATE SYNC - EXACTLY LIKE FIRST TEMPLATE
         // ======================
-        document.addEventListener('DOMContentLoaded', function() {
-            const sidebar = document.getElementById('mainSidebar');
-            const sidebarWrapper = document.getElementById('sidebarWrapper');
+        function syncSidebarState() {
+            const sidebar = document.getElementById('sidebar');
+            const contentWrapper = document.getElementById('contentWrapper');
             
-            if (sidebar && sidebarWrapper) {
-                if (sidebar.classList.contains('collapsed')) {
-                    sidebarWrapper.classList.add('collapsed');
-                }
-                
-                const originalToggleCollapse = window.toggleCollapse;
-                
-                window.toggleCollapse = function() {
-                    if (originalToggleCollapse) {
-                        originalToggleCollapse();
-                    }
-                    
-                    setTimeout(() => {
-                        if (sidebar.classList.contains('collapsed')) {
-                            sidebarWrapper.classList.add('collapsed');
-                        } else {
-                            sidebarWrapper.classList.remove('collapsed');
-                        }
-                    }, 10);
-                };
-                
-                const originalToggleMobile = window.toggleMobileSidebar;
-                
-                window.toggleMobileSidebar = function() {
-                    if (originalToggleMobile) {
-                        originalToggleMobile();
-                    }
-                    
-                    setTimeout(() => {
-                        if (sidebar.classList.contains('open')) {
-                            sidebarWrapper.classList.add('mobile-open');
-                        } else {
-                            sidebarWrapper.classList.remove('mobile-open');
-                        }
-                    }, 10);
-                };
-                
-                const originalCloseMobile = window.closeMobileSidebar;
-                
-                window.closeMobileSidebar = function() {
-                    if (originalCloseMobile) {
-                        originalCloseMobile();
-                    }
-                    
-                    sidebarWrapper.classList.remove('mobile-open');
-                };
+            if (!sidebar || !contentWrapper) return;
+            
+            const isMini = sidebar.classList.contains('mini');
+            
+            if (isMini) {
+                contentWrapper.style.marginLeft = 'var(--sidebar-mini-width, 80px)';
+                contentWrapper.style.width = 'calc(100% - var(--sidebar-mini-width, 80px))';
+            } else {
+                contentWrapper.style.marginLeft = 'var(--sidebar-width, 280px)';
+                contentWrapper.style.width = 'calc(100% - var(--sidebar-width, 280px))';
             }
-
-            // Initialize on page load
-            updateSelectedCount();
-            
-            // Load saved selections from localStorage
-            loadSavedSelections();
-            
-            // Add click listeners to rows
-            addRowClickListeners();
-            
-            // Show welcome toast
-            setTimeout(() => {
-                showToast('Contacts Loaded', `Found ${document.querySelectorAll('tbody tr').length} contacts`, 'info');
-            }, 1000);
-        });
+        }
 
         // ======================
-        // TOAST FUNCTION
+        // TOAST FUNCTION - EXACTLY LIKE FIRST TEMPLATE
         // ======================
         let toastTimer;
         function showToast(title, message, type = 'info') {
@@ -1026,9 +1228,8 @@ body.no-radius .connection-dot {
             
             const icon = icons[type] || 'ℹ️';
             
-            toast.className = '';
             toast.innerHTML = `
-                <div class="toast-row">
+                <div class="toast-content">
                     <div class="toast-icon">${icon}</div>
                     <div class="toast-text">
                         <h4>${title}</h4>
@@ -1038,12 +1239,50 @@ body.no-radius .connection-dot {
                 <div class="toast-progress"></div>
             `;
             
-            toast.classList.add(`toast-${type}`, 'show');
+            toast.className = `toast-${type} show`;
             
             toastTimer = setTimeout(() => {
                 toast.classList.remove('show');
             }, 3000);
         }
+
+        // ======================
+        // INITIALIZATION
+        // ======================
+        document.addEventListener('DOMContentLoaded', function() {
+            // Listen for sidebar state changes
+            window.addEventListener('storage', function(e) {
+                if (e.key === 'sidebarMini' || e.key === 'sidebar-update-time') {
+                    const sidebar = document.getElementById('sidebar');
+                    if (sidebar) {
+                        const savedState = localStorage.getItem('sidebarMini') === 'true';
+                        if (savedState) {
+                            sidebar.classList.add('mini');
+                        } else {
+                            sidebar.classList.remove('mini');
+                        }
+                        syncSidebarState();
+                    }
+                }
+            });
+
+            window.addEventListener('resize', function() {
+                syncSidebarState();
+            });
+
+            setTimeout(syncSidebarState, 100);
+
+            // Initialize selections
+            updateSelectedCount();
+            loadSavedSelections();
+            addRowClickListeners();
+
+            // Show welcome toast
+            setTimeout(() => {
+                const count = document.querySelectorAll('tbody tr').length;
+                showToast('Contacts Loaded', `Found ${count} contacts`, 'info');
+            }, 1000);
+        });
 
         // ======================
         // ROW CLICK LISTENERS
@@ -1098,6 +1337,8 @@ body.no-radius .connection-dot {
         // ======================
         // DEVICE SELECTION FUNCTIONS
         // ======================
+        let selectedDevices = new Map();
+
         function toggleDeviceSelection(checkbox, deviceId, phoneNumber, deviceName) {
             const fullPhoneNumber = '+91' + phoneNumber;
             
@@ -1116,13 +1357,14 @@ body.no-radius .connection-dot {
             
             updateSelectedCount();
             saveSelectionsToStorage();
+            updateSelectAllCheckbox();
         }
 
         function toggleSelectAll(masterCheckbox) {
             const checkboxes = document.querySelectorAll('tbody .device-checkbox');
             const rows = document.querySelectorAll('tbody tr');
             
-            if (masterCheckbox.checked) {
+            if (!masterCheckbox.classList.contains('checked')) {
                 showToast('Select All', 'Selecting all visible contacts', 'info');
                 checkboxes.forEach((checkbox, index) => {
                     checkbox.classList.add('checked');
@@ -1140,6 +1382,7 @@ body.no-radius .connection-dot {
                         });
                     }
                 });
+                masterCheckbox.classList.add('checked');
             } else {
                 showToast('Deselect All', 'Clearing all selections', 'info');
                 checkboxes.forEach((checkbox, index) => {
@@ -1148,10 +1391,23 @@ body.no-radius .connection-dot {
                     const deviceId = row.getAttribute('data-device-id');
                     selectedDevices.delete(deviceId);
                 });
+                masterCheckbox.classList.remove('checked');
             }
             
             updateSelectedCount();
             saveSelectionsToStorage();
+        }
+
+        function updateSelectAllCheckbox() {
+            const masterCheckbox = document.getElementById('selectAllCheckbox');
+            const checkboxes = document.querySelectorAll('tbody .device-checkbox');
+            const checkedCheckboxes = document.querySelectorAll('tbody .device-checkbox.checked');
+            
+            if (checkboxes.length > 0 && checkedCheckboxes.length === checkboxes.length) {
+                masterCheckbox.classList.add('checked');
+            } else {
+                masterCheckbox.classList.remove('checked');
+            }
         }
 
         function selectAllDevices() {
@@ -1175,7 +1431,7 @@ body.no-radius .connection-dot {
                 }
             });
             
-            document.getElementById('selectAllCheckbox').checked = true;
+            document.getElementById('selectAllCheckbox').classList.add('checked');
             updateSelectedCount();
             saveSelectionsToStorage();
             
@@ -1188,7 +1444,7 @@ body.no-radius .connection-dot {
                 checkbox.classList.remove('checked');
             });
             
-            document.getElementById('selectAllCheckbox').checked = false;
+            document.getElementById('selectAllCheckbox').classList.remove('checked');
             selectedDevices.clear();
             updateSelectedCount();
             saveSelectionsToStorage();
@@ -1248,14 +1504,12 @@ body.no-radius .connection-dot {
             if (confirm(`Are you sure you want to delete contact: ${deviceName}?`)) {
                 showToast('Deleting', `Removing contact: ${deviceName}`, 'warning');
                 
-                // If device is selected, remove it from selection
                 if (selectedDevices.has(deviceId)) {
                     selectedDevices.delete(deviceId);
                     updateSelectedCount();
                     saveSelectionsToStorage();
                 }
                 
-                // Redirect to delete URL
                 window.location.href = '/devices/delete/' + deviceId;
             }
         }
@@ -1286,21 +1540,13 @@ body.no-radius .connection-dot {
                         }
                     });
                     
-                    const allCheckboxes = document.querySelectorAll('tbody .device-checkbox');
-                    const checkedCount = document.querySelectorAll('tbody .device-checkbox.checked').length;
-                    document.getElementById('selectAllCheckbox').checked = checkedCount === allCheckboxes.length;
-                    
+                    updateSelectAllCheckbox();
                     updateSelectedCount();
                 }
             } catch (e) {
                 console.error('Error loading saved selections:', e);
             }
         }
-
-        // ======================
-        // GLOBAL VARIABLES
-        // ======================
-        let selectedDevices = new Map(); // Map of deviceId -> {phoneNumber, name}
 
         // ======================
         // KEYBOARD SHORTCUTS
@@ -1318,6 +1564,11 @@ body.no-radius .connection-dot {
             if ((e.ctrlKey || e.metaKey) && e.key === 'Enter') {
                 e.preventDefault();
                 useSelectedInCampaign();
+            }
+            
+            if (e.key === 'F1') {
+                e.preventDefault();
+                showToast('Help', 'Ctrl+A: Select All | Esc: Deselect | Ctrl+Enter: Use in Campaign', 'info');
             }
         });
     </script>

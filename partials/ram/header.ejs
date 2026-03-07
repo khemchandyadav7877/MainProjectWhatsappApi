@@ -1,4 +1,3 @@
-<!-- views/partials/second/header.ejs -->
 <% 
 // Get user data from locals
 const user = locals.user || { 
@@ -20,345 +19,629 @@ const getRoleColor = (role) => {
 };
 
 const roleColor = getRoleColor(user.role);
-const userInitial = (user.firstName || user.email || 'U').charAt(0).toUpperCase();
-const userAvatar = userInitial + (user.lastName ? user.lastName.charAt(0).toUpperCase() : '');
+const userInitial = (user.firstName ? user.firstName.charAt(0).toUpperCase() : 'J') + 
+                   (user.lastName ? user.lastName.charAt(0).toUpperCase() : 'D');
 const userName = user.firstName + ' ' + user.lastName;
 const userRole = user.role;
 
 // Get active session from locals
 const activeSession = locals.activeSession || { sessionna: '2026-2027' };
+
+// Determine notification page URL based on role
+const getNotificationUrl = (role) => {
+    switch(role?.toLowerCase()) {
+        case 'superadmin': return '/superadmin/notifications';
+        case 'educator': return '/educator/notifications';
+        case 'trainer': return '/trainer/notifications';
+        case 'student': return '/student/notifications';
+        default: return '/notifications';
+    }
+};
+
+const notificationUrl = getNotificationUrl(user.role);
 %>
 
 <!-- Font Awesome -->
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 
 <style>
-:root {
-    --header-height: 70px;
-    --primary: <%= roleColor %>;
-    --primary-dark: <%= roleColor %>;
-}
+    /* ===== VARIABLES ===== */
+    :root {
+        --header-height: 70px;
+        --primary: <%= roleColor %>;
+        --primary-dark: <%= roleColor %>;
+        --primary-pale: <%= roleColor %>20;
+        --danger: #ef4444;
+        --success: #10b981;
+    }
 
-/* Light mode */
-:root, .light {
-    --header-bg: #ffffff;
-    --bg-white: #ffffff;
-    --border: #e5e7eb;
-    --text: #4b5563;
-    --dark: #1f2937;
-    --text-muted: #6b7280;
-    --dropdown-bg: #ffffff;
-    --dropdown-hover: #f3f4f6;
-    --shadow: 0 10px 25px -5px rgba(0,0,0,0.1);
-}
+    /* Light mode */
+    :root, .light {
+        --bg-white: #ffffff;
+        --bg-offwhite: #f8fafc;
+        --border: #eef2f6;
+        --text: #4b5563;
+        --text-muted: #6b7280;
+        --dark: #1f2937;
+        --dropdown-bg: #ffffff;
+        --dropdown-hover: #f3f4f6;
+        --shadow: 0 2px 10px rgba(0,0,0,0.05);
+        --badge-bg: #ef4444;
+        --badge-text: #ffffff;
+    }
 
-/* Dark mode */
-.dark {
-    --header-bg: #1f2937;
-    --bg-white: #1f2937;
-    --border: #374151;
-    --text: #d1d5db;
-    --dark: #f9fafb;
-    --text-muted: #9ca3af;
-    --dropdown-bg: #1f2937;
-    --dropdown-hover: #374151;
-    --shadow: 0 10px 25px -5px rgba(0,0,0,0.3);
-}
+    /* Dark mode */
+    .dark {
+        --bg-white: #1e293b;
+        --bg-offwhite: #334155;
+        --border: #374151;
+        --text: #d1d5db;
+        --text-muted: #9ca3af;
+        --dark: #f9fafb;
+        --dropdown-bg: #1e293b;
+        --dropdown-hover: #2d3748;
+        --shadow: 0 2px 10px rgba(0,0,0,0.3);
+        --badge-bg: #ef4444;
+        --badge-text: #ffffff;
+    }
 
-.header {
-    position: fixed;
-    top: 0;
-    left: 0;
-    right: 0;
-    height: 70px;
-    background: var(--header-bg);
-    border-bottom: 1px solid var(--border);
-    padding: 0 2rem;
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    z-index: 1000;
-}
-
-.header-left {
-    display: flex;
-    align-items: center;
-    gap: 1.5rem;
-}
-
-.menu-toggle {
-    width: 40px;
-    height: 40px;
-    border-radius: 8px;
-    border: 1px solid var(--border);
-    background: var(--bg-white);
-    color: var(--text);
-    cursor: pointer;
-}
-
-.page-title {
-    font-size: 1.3rem;
-    font-weight: 600;
-    color: var(--dark);
-}
-
-.header-right {
-    display: flex;
-    align-items: center;
-    gap: 1.5rem;
-}
-
-/* ===== SESSION DROPDOWN ===== */
-.session-dropdown {
-    position: relative;
-}
-
-.session-btn {
-    height: 42px;
-    padding: 0 1.2rem;
-    background: var(--bg-white);
-    border: 1px solid var(--border);
-    border-radius: 8px;
-    color: var(--dark);
-    font-weight: 500;
-    cursor: pointer;
-    display: flex;
-    align-items: center;
-    gap: 0.75rem;
-    font-size: 0.95rem;
-}
-
-.session-btn i {
-    color: var(--primary);
-}
-
-.session-menu {
-    position: absolute;
-    top: 100%;
-    right: 0;
-    width: 240px;
-    margin-top: 0.5rem;
-    background: var(--dropdown-bg);
-    border: 1px solid var(--border);
-    border-radius: 12px;
-    box-shadow: var(--shadow);
-    display: none;
-    max-height: 350px;
-    overflow-y: auto;
-    z-index: 1001;
-}
-
-.session-menu.show {
-    display: block;
-}
-
-.session-header {
-    padding: 0.8rem 1rem;
-    border-bottom: 1px solid var(--border);
-    font-weight: 600;
-    color: var(--dark);
-    background: var(--dropdown-hover);
-}
-
-.session-list {
-    max-height: 250px;
-    overflow-y: auto;
-}
-
-.session-item {
-    padding: 0.8rem 1rem;
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    cursor: pointer;
-    color: var(--text);
-    font-size: 0.95rem;
-    border-bottom: 1px solid var(--border);
-    transition: background 0.2s;
-}
-
-.session-item:last-child {
-    border-bottom: none;
-}
-
-.session-item:hover {
-    background: var(--dropdown-hover);
-}
-
-.session-item.active {
-    color: var(--primary);
-    font-weight: 500;
-    background: var(--primary-pale);
-}
-
-.session-item.active i {
-    color: var(--primary);
-    opacity: 1;
-}
-
-.session-item i {
-    font-size: 0.9rem;
-    opacity: 0;
-}
-
-.session-item.active i {
-    opacity: 1;
-}
-
-.session-footer {
-    padding: 0.8rem 1rem;
-    border-top: 1px solid var(--border);
-    display: flex;
-    gap: 0.5rem;
-}
-
-.session-footer a {
-    flex: 1;
-    padding: 0.5rem;
-    text-align: center;
-    border-radius: 6px;
-    font-size: 0.85rem;
-    text-decoration: none;
-    transition: all 0.2s;
-}
-
-.view-all-link {
-    background: var(--dropdown-hover);
-    color: var(--text);
-    border: 1px solid var(--border);
-}
-
-.add-session-link {
-    background: var(--primary);
-    color: white !important;
-}
-
-.session-loading {
-    padding: 2rem;
-    text-align: center;
-    color: var(--text-muted);
-}
-
-.session-loading i {
-    font-size: 2rem;
-    color: var(--primary);
-    margin-bottom: 0.5rem;
-}
-
-/* Header actions */
-.header-actions {
-    display: flex;
-    align-items: center;
-    gap: 0.75rem;
-}
-
-.header-btn {
-    width: 42px;
-    height: 42px;
-    border-radius: 8px;
-    border: 1px solid var(--border);
-    background: var(--bg-white);
-    color: var(--text);
-    cursor: pointer;
-    position: relative;
-}
-
-.notification-badge {
-    position: absolute;
-    top: -4px;
-    right: -4px;
-    width: 18px;
-    height: 18px;
-    background: #ef4444;
-    color: white;
-    border-radius: 50%;
-    font-size: 0.65rem;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    border: 2px solid var(--bg-white);
-}
-
-.dm-toggle {
-    width: 42px;
-    height: 42px;
-    border-radius: 8px;
-    border: 1px solid var(--border);
-    background: var(--bg-white);
-    color: var(--text);
-    cursor: pointer;
-}
-
-.user-profile {
-    display: flex;
-    align-items: center;
-    gap: 0.75rem;
-    padding: 0.5rem 1rem;
-    border-radius: 8px;
-    background: var(--bg-white);
-    border: 1px solid var(--border);
-    cursor: pointer;
-}
-
-.profile-avatar {
-    width: 42px;
-    height: 42px;
-    border-radius: 8px;
-    background: linear-gradient(135deg, var(--primary-dark), var(--primary));
-    color: white;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-weight: 600;
-}
-
-.profile-info {
-    line-height: 1.3;
-}
-
-.profile-name {
-    font-weight: 600;
-    font-size: 0.9rem;
-    color: var(--dark);
-}
-
-.profile-role {
-    font-size: 0.7rem;
-    color: var(--text-muted);
-}
-
-/* Scrollbar */
-.session-list::-webkit-scrollbar {
-    width: 4px;
-}
-
-.session-list::-webkit-scrollbar-track {
-    background: var(--border);
-}
-
-.session-list::-webkit-scrollbar-thumb {
-    background: var(--primary);
-    border-radius: 2px;
-}
-
-/* Responsive */
-@media (max-width: 768px) {
+    /* ===== HEADER STYLES ===== */
     .header {
-        padding: 0 1rem;
+        position: fixed;
+        top: 0;
+        left: 0;
+        right: 0;
+        height: var(--header-height, 70px);
+        background: var(--bg-white);
+        backdrop-filter: blur(10px);
+        border-bottom: 1px solid var(--border);
+        padding: 0 2rem;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        z-index: 1000;
+        box-shadow: var(--shadow);
     }
-    
-    .profile-info {
-        display: none;
+
+    .header-left {
+        display: flex;
+        align-items: center;
+        gap: 1.5rem;
     }
-    
-    .session-btn span {
-        display: none;
+
+    .menu-toggle {
+        width: 40px;
+        height: 40px;
+        border-radius: 8px;
+        border: 1px solid var(--border);
+        background: var(--bg-white);
+        color: var(--text);
+        cursor: pointer;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 1.1rem;
+        transition: all 0.2s;
     }
-    
+
+    .menu-toggle:hover {
+        background: var(--primary);
+        color: white;
+        border-color: var(--primary);
+    }
+
+    .page-title {
+        font-size: 1.3rem;
+        font-weight: 600;
+        color: var(--dark);
+        margin: 0;
+        line-height: 1.2;
+    }
+
+    .header-right {
+        display: flex;
+        align-items: center;
+        gap: 1.5rem;
+    }
+
+    /* ===== SESSION DROPDOWN ===== */
+    .session-dropdown {
+        position: relative;
+    }
+
     .session-btn {
-        padding: 0 0.8rem;
+        height: 42px;
+        padding: 0 1.2rem;
+        background: var(--bg-white);
+        border: 1px solid var(--border);
+        border-radius: 8px;
+        color: var(--dark);
+        font-weight: 500;
+        cursor: pointer;
+        display: flex;
+        align-items: center;
+        gap: 0.75rem;
+        font-size: 0.95rem;
+        transition: all 0.2s;
     }
-}
+
+    .session-btn:hover {
+        border-color: var(--primary);
+        color: var(--primary);
+    }
+
+    .session-btn i {
+        color: var(--primary);
+    }
+
+    .session-menu {
+        position: absolute;
+        top: 100%;
+        right: 0;
+        width: 280px;
+        margin-top: 0.5rem;
+        background: var(--dropdown-bg);
+        border: 1px solid var(--border);
+        border-radius: 12px;
+        box-shadow: var(--shadow);
+        display: none;
+        max-height: 400px;
+        overflow-y: auto;
+        z-index: 1002;
+    }
+
+    .session-menu.show {
+        display: block;
+        animation: fadeIn 0.2s ease;
+    }
+
+    .session-header {
+        padding: 0.8rem 1rem;
+        border-bottom: 1px solid var(--border);
+        font-weight: 600;
+        color: var(--dark);
+        background: var(--dropdown-hover);
+        border-radius: 12px 12px 0 0;
+    }
+
+    .session-list {
+        max-height: 250px;
+        overflow-y: auto;
+    }
+
+    .session-item {
+        padding: 0.8rem 1rem;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        cursor: pointer;
+        color: var(--text);
+        font-size: 0.95rem;
+        border-bottom: 1px solid var(--border);
+        transition: background 0.2s;
+    }
+
+    .session-item:last-child {
+        border-bottom: none;
+    }
+
+    .session-item:hover {
+        background: var(--dropdown-hover);
+        color: var(--primary);
+    }
+
+    .session-item.active {
+        color: var(--primary);
+        font-weight: 500;
+        background: var(--primary-pale);
+    }
+
+    .session-item.active i {
+        color: var(--primary);
+        opacity: 1;
+    }
+
+    .session-item i {
+        font-size: 0.9rem;
+        opacity: 0;
+    }
+
+    .session-item.active i {
+        opacity: 1;
+    }
+
+    .session-footer {
+        padding: 0.8rem 1rem;
+        border-top: 1px solid var(--border);
+        display: flex;
+        gap: 0.5rem;
+    }
+
+    .session-footer a {
+        flex: 1;
+        padding: 0.5rem;
+        text-align: center;
+        border-radius: 6px;
+        font-size: 0.85rem;
+        text-decoration: none;
+        transition: all 0.2s;
+    }
+
+    .view-all-link {
+        background: var(--dropdown-hover);
+        color: var(--text);
+        border: 1px solid var(--border);
+    }
+
+    .view-all-link:hover {
+        background: var(--border);
+    }
+
+    .add-session-link {
+        background: var(--primary);
+        color: white !important;
+    }
+
+    .add-session-link:hover {
+        opacity: 0.9;
+    }
+
+    .session-loading {
+        padding: 2rem;
+        text-align: center;
+        color: var(--text-muted);
+    }
+
+    .session-loading i {
+        font-size: 2rem;
+        color: var(--primary);
+        margin-bottom: 0.5rem;
+    }
+
+    /* Header actions */
+    .header-actions {
+        display: flex;
+        align-items: center;
+        gap: 0.75rem;
+    }
+
+    .header-btn {
+        width: 42px;
+        height: 42px;
+        border-radius: 8px;
+        border: 1px solid var(--border);
+        background: var(--bg-white);
+        color: var(--text);
+        cursor: pointer;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        position: relative;
+        transition: all 0.2s;
+        font-size: 1rem;
+        text-decoration: none;
+    }
+
+    .header-btn:hover {
+        background: var(--primary);
+        color: white;
+        border-color: var(--primary);
+    }
+
+    /* Notification Badge - FIXED */
+    .notification-badge {
+        position: absolute;
+        top: -6px;
+        right: -6px;
+        min-width: 20px;
+        height: 20px;
+        background: var(--badge-bg);
+        color: var(--badge-text);
+        border-radius: 10px;
+        font-size: 0.7rem;
+        font-weight: 600;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        border: 2px solid var(--bg-white);
+        padding: 0 4px;
+        box-shadow: 0 2px 4px rgba(239, 68, 68, 0.3);
+        animation: pulse 2s infinite;
+    }
+
+    @keyframes pulse {
+        0% {
+            transform: scale(1);
+        }
+        50% {
+            transform: scale(1.1);
+        }
+        100% {
+            transform: scale(1);
+        }
+    }
+
+    .notification-badge.hidden {
+        display: none;
+    }
+
+    .notification-badge.zero {
+        background: var(--text-muted);
+        animation: none;
+    }
+
+    /* Dark Mode Toggle */
+    .dm-toggle {
+        width: 42px;
+        height: 42px;
+        border-radius: 8px;
+        border: 1px solid var(--border);
+        background: var(--bg-white);
+        color: var(--text);
+        cursor: pointer;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        transition: all 0.2s;
+        font-size: 1rem;
+    }
+
+    .dm-toggle:hover {
+        background: var(--primary);
+        color: white;
+        border-color: var(--primary);
+    }
+
+    /* ===== USER PROFILE WITH DROPDOWN ===== */
+    .user-profile-container {
+        position: relative;
+    }
+
+    .user-profile {
+        display: flex;
+        align-items: center;
+        gap: 0.75rem;
+        padding: 0.5rem 1rem;
+        border-radius: 8px;
+        cursor: pointer;
+        transition: all 0.2s;
+        border: 1px solid transparent;
+        background: transparent;
+    }
+
+    .user-profile:hover {
+        background: var(--bg-offwhite);
+        border-color: var(--border);
+    }
+
+    .profile-avatar {
+        width: 42px;
+        height: 42px;
+        border-radius: 8px;
+        background: linear-gradient(135deg, var(--primary-dark), var(--primary));
+        color: white;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-weight: 600;
+        font-size: 1rem;
+        flex-shrink: 0;
+        background-size: cover;
+        background-position: center;
+        background-repeat: no-repeat;
+    }
+
+    .profile-info {
+        line-height: 1.3;
+        text-align: left;
+    }
+
+    .profile-name {
+        font-weight: 600;
+        font-size: 0.9rem;
+        color: var(--dark);
+        margin-bottom: 2px;
+        white-space: nowrap;
+    }
+
+    .profile-role {
+        font-size: 0.7rem;
+        color: var(--text-muted);
+        white-space: nowrap;
+    }
+
+    .profile-chevron {
+        font-size: 0.7rem;
+        color: var(--text-muted);
+        margin-left: 0.25rem;
+        transition: transform 0.2s;
+    }
+
+    .user-profile:hover .profile-chevron {
+        color: var(--primary);
+    }
+
+    /* Profile Dropdown */
+    .profile-dropdown {
+        position: absolute;
+        top: 100%;
+        right: 0;
+        width: 220px;
+        margin-top: 0.5rem;
+        background: var(--dropdown-bg);
+        border: 1px solid var(--border);
+        border-radius: 12px;
+        box-shadow: var(--shadow);
+        display: none;
+        z-index: 1003;
+        overflow: hidden;
+        animation: fadeIn 0.2s ease;
+    }
+
+    .profile-dropdown.show {
+        display: block;
+    }
+
+    @keyframes fadeIn {
+        from {
+            opacity: 0;
+            transform: translateY(-10px);
+        }
+        to {
+            opacity: 1;
+            transform: translateY(0);
+        }
+    }
+
+    .profile-dropdown-item {
+        display: flex;
+        align-items: center;
+        gap: 0.75rem;
+        padding: 0.75rem 1rem;
+        color: var(--text);
+        text-decoration: none;
+        transition: all 0.2s;
+        border: none;
+        background: none;
+        width: 100%;
+        text-align: left;
+        font-size: 0.9rem;
+        border-bottom: 1px solid var(--border);
+        cursor: pointer;
+    }
+
+    .profile-dropdown-item:last-child {
+        border-bottom: none;
+    }
+
+    .profile-dropdown-item:hover {
+        background: var(--dropdown-hover);
+        color: var(--primary);
+        padding-left: 1.5rem;
+    }
+
+    .profile-dropdown-item i {
+        width: 20px;
+        color: var(--primary);
+        font-size: 1rem;
+    }
+
+    .profile-dropdown-item.logout {
+        color: var(--danger);
+    }
+
+    .profile-dropdown-item.logout i {
+        color: var(--danger);
+    }
+
+    .profile-dropdown-item.logout:hover {
+        background: #fee2e2;
+    }
+
+    /* Border Mode Classes */
+    body.round-border .header {
+        border-radius: 0 0 20px 20px !important;
+    }
+
+    body.round-border .menu-toggle,
+    body.round-border .header-btn,
+    body.round-border .profile-avatar,
+    body.round-border .session-btn,
+    body.round-border .dm-toggle,
+    body.round-border .profile-dropdown,
+    body.round-border .session-menu {
+        border-radius: 12px !important;
+    }
+
+    body.round-border .user-profile {
+        border-radius: 30px !important;
+    }
+
+    body.round-border .notification-badge {
+        border-radius: 10px !important;
+    }
+
+    body.no-radius .header,
+    body.no-radius .menu-toggle,
+    body.no-radius .header-btn,
+    body.no-radius .profile-avatar,
+    body.no-radius .session-btn,
+    body.no-radius .dm-toggle,
+    body.no-radius .user-profile,
+    body.no-radius .profile-dropdown,
+    body.no-radius .session-menu,
+    body.no-radius .profile-dropdown-item,
+    body.no-radius .session-item,
+    body.no-radius .notification-badge {
+        border-radius: 0 !important;
+    }
+
+    /* Header Responsive */
+    @media (max-width: 1200px) {
+        .session-btn span {
+            max-width: 100px;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+    }
+
+    @media (max-width: 992px) {
+        .header-actions {
+            gap: 0.5rem;
+        }
+    }
+
+    @media (max-width: 768px) {
+        .header {
+            padding: 0 1rem;
+        }
+        
+        .profile-info {
+            display: none;
+        }
+        
+        .session-btn span {
+            display: none;
+        }
+        
+        .session-btn {
+            padding: 0 0.8rem;
+        }
+        
+        .page-title {
+            font-size: 1.1rem;
+        }
+        
+        .header-actions {
+            gap: 0.5rem;
+        }
+        
+        .profile-chevron {
+            display: none;
+        }
+    }
+
+    @media (max-width: 480px) {
+        .header-btn,
+        .profile-avatar,
+        .session-btn,
+        .dm-toggle {
+            width: 38px;
+            height: 38px;
+        }
+        
+        .user-profile {
+            padding: 0.25rem 0.5rem;
+        }
+        
+        .notification-badge {
+            min-width: 18px;
+            height: 18px;
+            font-size: 0.6rem;
+            top: -4px;
+            right: -4px;
+        }
+    }
 </style>
 
 <!-- Header HTML -->
@@ -367,89 +650,196 @@ const activeSession = locals.activeSession || { sessionna: '2026-2027' };
         <button class="menu-toggle" id="menuToggleBtn">
             <i class="fas fa-bars"></i>
         </button>
-        <h1 class="page-title"><%= typeof pageTitle !== 'undefined' ? pageTitle : 'Dashboard' %></h1>
+        <h1 class="page-title"><%= typeof pageTitle !== 'undefined' ? pageTitle : 'Dashboard Overview' %></h1>
     </div>
 
     <div class="header-right">
-        <!-- SESSION DROPDOWN - DYNAMIC -->
-        <div class="session-dropdown" id="sessionDropdown">
+        <!-- SESSION DROPDOWN -->
+        <div class="session-dropdown">
             <button class="session-btn" id="sessionBtn">
                 <i class="fas fa-calendar-alt"></i>
                 <span id="activeSessionSpan"><%= activeSession.sessionna %></span>
-                <i class="fas fa-chevron-down" style="font-size: 0.8rem;"></i>
+                <i class="fas fa-chevron-down"></i>
             </button>
             
             <div class="session-menu" id="sessionMenu">
                 <div class="session-header">
-                    <i class="fas fa-calendar-check" style="margin-right: 8px;"></i> Academic Sessions
+                    <i class="fas fa-calendar-check"></i> Academic Sessions
                 </div>
-                
                 <div class="session-list" id="sessionList">
                     <div class="session-loading">
                         <i class="fas fa-spinner fa-pulse"></i>
                         <div>Loading sessions...</div>
                     </div>
                 </div>
-                
-                
+                <div class="session-footer">
+                    <a href="/sessions" class="view-all-link">
+                        <i class="fas fa-list"></i> View All
+                    </a>
+                    <a href="/sessions/add" class="add-session-link">
+                        <i class="fas fa-plus"></i> Add New
+                    </a>
+                </div>
             </div>
         </div>
 
+        <!-- Header Actions -->
         <div class="header-actions">
-            <button class="header-btn">
-                <i class="fas fa-envelope"></i>
-                <span class="notification-badge">3</span>
-            </button>
-            <button class="header-btn">
+            <!-- NOTIFICATION BUTTON - FIXED -->
+            <a href="<%= notificationUrl %>" class="header-btn" id="notificationBtn">
                 <i class="fas fa-bell"></i>
-                <span class="notification-badge">5</span>
-            </button>
+                <span class="notification-badge hidden" id="notificationBadge">0</span>
+            </a>
+            
             <button class="dm-toggle" id="dmToggle">
                 <i class="fas fa-moon" id="dmIcon"></i>
             </button>
         </div>
 
-        <div class="user-profile">
-            <div class="profile-avatar"><%= userAvatar %></div>
-            <div class="profile-info">
-                <div class="profile-name"><%= userName %></div>
-                <div class="profile-role"><%= userRole %></div>
+        <!-- User Profile with Dropdown -->
+        <div class="user-profile-container">
+            <div class="user-profile" id="userProfileBtn">
+                <div class="profile-avatar" id="headerAvatar"
+                    <% if (user.avatar) { %>
+                        style="background-image: url('<%= user.avatar %>');"
+                    <% } else { %>
+                        style="background: linear-gradient(135deg, <%= roleColor %>, <%= roleColor %>);"
+                    <% } %>>
+                    <% if (!user.avatar) { %>
+                        <%= userInitial %>
+                    <% } %>
+                </div>
+                <div class="profile-info">
+                    <div class="profile-name"><%= userName %></div>
+                    <div class="profile-role"><%= userRole %></div>
+                </div>
+                <i class="fas fa-chevron-down profile-chevron" id="profileChevron"></i>
             </div>
-            <i class="fas fa-chevron-down" style="font-size: 0.7rem; color: var(--text-muted);"></i>
+
+            <!-- Dropdown Menu - 3 Options -->
+            <div class="profile-dropdown" id="profileDropdown">
+                <a href="/profile" class="profile-dropdown-item">
+                    <i class="fas fa-user"></i> My Profile
+                </a>
+                <a href="/change-password" class="profile-dropdown-item">
+                    <i class="fas fa-key"></i> Change Password
+                </a>
+                <a href="/logout" class="profile-dropdown-item logout" id="logoutBtn">
+                    <i class="fas fa-sign-out-alt"></i> Sign Out
+                </a>
+            </div>
         </div>
     </div>
 </header>
 
+<!-- COMPLETE HEADER SCRIPT - WITH NOTIFICATION BADGE -->
 <script>
-document.addEventListener('DOMContentLoaded', function() {
+(function() {
+    'use strict';
+    
+    console.log('Header initializing...');
+    
+    // ===== SIDEBAR TOGGLE - MINI MODE =====
+    const menuBtn = document.getElementById('menuToggleBtn');
+    if (menuBtn) {
+        menuBtn.onclick = function(e) {
+            e.preventDefault();
+            e.stopPropagation();
+            
+            const sidebar = document.getElementById('sidebar');
+            if (sidebar) {
+                // Toggle mini class
+                sidebar.classList.toggle('mini');
+                
+                // Save state to localStorage
+                const isMini = sidebar.classList.contains('mini');
+                localStorage.setItem('sidebarMini', isMini);
+                
+                // Dispatch storage event for cross-tab sync
+                localStorage.setItem('sidebar-update-time', Date.now().toString());
+                
+                console.log('Sidebar mode:', isMini ? 'MINI' : 'FULL');
+                
+                // Force repaint to ensure smooth transition
+                setTimeout(() => {
+                    window.dispatchEvent(new Event('resize'));
+                }, 50);
+            }
+        };
+    }
+    
+    // ===== PROFILE DROPDOWN =====
+    const profileBtn = document.getElementById('userProfileBtn');
+    const profileDropdown = document.getElementById('profileDropdown');
+    const profileChevron = document.getElementById('profileChevron');
+    
+    if (profileBtn && profileDropdown) {
+        profileBtn.onclick = function(e) {
+            e.preventDefault();
+            e.stopPropagation();
+            
+            // Close session dropdown first
+            const sessionMenu = document.getElementById('sessionMenu');
+            if (sessionMenu) sessionMenu.classList.remove('show');
+            
+            // Toggle profile dropdown
+            profileDropdown.classList.toggle('show');
+            
+            // Rotate chevron
+            if (profileChevron) {
+                profileChevron.style.transform = profileDropdown.classList.contains('show') ? 'rotate(180deg)' : 'rotate(0)';
+            }
+            
+            console.log('Profile dropdown:', profileDropdown.classList.contains('show') ? 'OPEN' : 'CLOSED');
+        };
+    }
+    
     // ===== SESSION DROPDOWN =====
     const sessionBtn = document.getElementById('sessionBtn');
     const sessionMenu = document.getElementById('sessionMenu');
     const sessionList = document.getElementById('sessionList');
     const activeSessionSpan = document.getElementById('activeSessionSpan');
     
-    // Toggle dropdown
-    sessionBtn.addEventListener('click', function(e) {
-        e.stopPropagation();
-        sessionMenu.classList.toggle('show');
-        
-        // Load sessions when dropdown opens
-        if (sessionMenu.classList.contains('show')) {
-            loadSessions();
-        }
-    });
+    if (sessionBtn && sessionMenu) {
+        sessionBtn.onclick = function(e) {
+            e.preventDefault();
+            e.stopPropagation();
+            
+            // Close profile dropdown
+            if (profileDropdown) {
+                profileDropdown.classList.remove('show');
+                if (profileChevron) profileChevron.style.transform = 'rotate(0)';
+            }
+            
+            // Toggle session dropdown
+            sessionMenu.classList.toggle('show');
+            
+            // Load sessions if opening
+            if (sessionMenu.classList.contains('show')) {
+                loadSessions();
+            }
+        };
+    }
     
-    // Close dropdown when clicking outside
+    // ===== CLOSE DROPDOWNS ON OUTSIDE CLICK =====
     document.addEventListener('click', function(e) {
-        if (!sessionBtn.contains(e.target) && !sessionMenu.contains(e.target)) {
+        // Close profile dropdown
+        if (profileDropdown && !e.target.closest('.user-profile-container')) {
+            profileDropdown.classList.remove('show');
+            if (profileChevron) profileChevron.style.transform = 'rotate(0)';
+        }
+        
+        // Close session dropdown
+        if (sessionMenu && !e.target.closest('.session-dropdown')) {
             sessionMenu.classList.remove('show');
         }
     });
     
-    // ===== LOAD SESSIONS FROM DATABASE =====
+    // ===== LOAD SESSIONS =====
     async function loadSessions() {
+        if (!sessionList) return;
+        
         try {
-            // Show loading
             sessionList.innerHTML = `
                 <div class="session-loading">
                     <i class="fas fa-spinner fa-pulse"></i>
@@ -457,121 +847,157 @@ document.addEventListener('DOMContentLoaded', function() {
                 </div>
             `;
             
-            // Fetch sessions from server
             const response = await fetch('/api/sessions');
             const data = await response.json();
             
             if (data.success && data.sessions) {
-                renderSessions(data.sessions, data.activeSession);
+                let html = '';
+                data.sessions.forEach(session => {
+                    const isActive = data.activeSession && session._id === data.activeSession._id;
+                    html += `
+                        <div class="session-item ${isActive ? 'active' : ''}" 
+                             data-id="${session._id}" 
+                             data-name="${session.sessionna || 'N/A'}">
+                            ${session.sessionna || 'N/A'}
+                            ${isActive ? '<i class="fas fa-check"></i>' : ''}
+                        </div>
+                    `;
+                });
+                sessionList.innerHTML = html;
+                
+                // Add click handlers for session items
+                document.querySelectorAll('.session-item').forEach(item => {
+                    item.onclick = function() {
+                        const id = this.dataset.id;
+                        const name = this.dataset.name;
+                        if (activeSessionSpan) activeSessionSpan.textContent = name;
+                        if (sessionMenu) sessionMenu.classList.remove('show');
+                        if (confirm(`Set ${name} as active session?`)) {
+                            window.location.href = `/activesession/${id}`;
+                        }
+                    };
+                });
             } else {
-                sessionList.innerHTML = `
-                    <div class="session-loading">
-                        <i class="fas fa-exclamation-circle" style="color: #ef4444;"></i>
-                        <div>Failed to load sessions</div>
-                    </div>
-                `;
+                sessionList.innerHTML = '<div class="session-loading">No sessions found</div>';
             }
         } catch (error) {
-            console.error('Error:', error);
-            sessionList.innerHTML = `
-                <div class="session-loading">
-                    <i class="fas fa-exclamation-circle" style="color: #ef4444;"></i>
-                    <div>Error loading sessions</div>
-                </div>
-            `;
+            console.error('Error loading sessions:', error);
+            sessionList.innerHTML = '<div class="session-loading">Error loading sessions</div>';
         }
     }
     
-    // ===== RENDER SESSIONS =====
-    function renderSessions(sessions, activeSess) {
-        if (!sessions || sessions.length === 0) {
-            sessionList.innerHTML = `
-                <div class="session-loading">
-                    <i class="fas fa-folder-open"></i>
-                    <div>No sessions found</div>
-                </div>
-            `;
-            return;
-        }
-        
-        let html = '';
-        sessions.forEach(session => {
-            const isActive = activeSess && session._id === activeSess._id;
-            const sessionName = session.sessionna || 'N/A';
-            
-            html += `
-                <div class="session-item ${isActive ? 'active' : ''}" 
-                     data-session-id="${session._id}" 
-                     data-session-name="${sessionName}">
-                    ${sessionName}
-                    ${isActive ? '<i class="fas fa-check"></i>' : ''}
-                </div>
-            `;
-        });
-        
-        sessionList.innerHTML = html;
-        
-        // Add click handlers
-        document.querySelectorAll('.session-item').forEach(item => {
-            item.addEventListener('click', async function() {
-                const sessionId = this.dataset.sessionId;
-                const sessionName = this.dataset.sessionName;
-                
-                // Update button text
-                activeSessionSpan.textContent = sessionName;
-                
-                // Update active class in dropdown
-                document.querySelectorAll('.session-item').forEach(i => {
-                    i.classList.remove('active');
-                    i.innerHTML = i.dataset.sessionName;
-                });
-                this.classList.add('active');
-                this.innerHTML = `${sessionName} <i class="fas fa-check"></i>`;
-                
-                // Close dropdown
-                sessionMenu.classList.remove('show');
-                
-                // Redirect to change session
-                if (confirm(`Set ${sessionName} as active session?`)) {
-                    window.location.href = `/activesession/${sessionId}`;
-                }
-            });
-        });
-    }
-    
-    // ===== DARK MODE =====
+    // ===== DARK MODE TOGGLE =====
     const dmToggle = document.getElementById('dmToggle');
     const dmIcon = document.getElementById('dmIcon');
     
-    // Check saved theme
-    const savedTheme = localStorage.getItem('theme') || 'light';
-    if (savedTheme === 'dark') {
-        document.body.classList.add('dark');
-        dmIcon.classList.replace('fa-moon', 'fa-sun');
+    if (dmToggle && dmIcon) {
+        // Check saved theme
+        const savedTheme = localStorage.getItem('theme') || 'light';
+        if (savedTheme === 'dark') {
+            document.body.classList.add('dark');
+            dmIcon.className = 'fas fa-sun';
+        }
+        
+        dmToggle.onclick = function() {
+            document.body.classList.toggle('dark');
+            
+            if (document.body.classList.contains('dark')) {
+                localStorage.setItem('theme', 'dark');
+                dmIcon.className = 'fas fa-sun';
+            } else {
+                localStorage.setItem('theme', 'light');
+                dmIcon.className = 'fas fa-moon';
+            }
+        };
     }
     
-    dmToggle.addEventListener('click', () => {
-        const isDark = document.body.classList.toggle('dark');
+    // ===== NOTIFICATION BADGE - FIXED =====
+    const notificationBadge = document.getElementById('notificationBadge');
+    const userRole = '<%= userRole %>';
+    
+    // Function to fetch unread count
+    async function fetchUnreadCount() {
+        if (!notificationBadge) return;
         
-        if (isDark) {
-            dmIcon.classList.replace('fa-moon', 'fa-sun');
-            localStorage.setItem('theme', 'dark');
+        try {
+            let url = '';
+            // Determine API endpoint based on role
+            if (userRole.toLowerCase() === 'superadmin') {
+                url = '/api/notifications?filter=unread&countOnly=true';
+            } else if (userRole.toLowerCase() === 'educator') {
+                url = '/api/educator/notifications?filter=unread&countOnly=true';
+            } else {
+                // For other roles, you might have different endpoints
+                console.log('No notification API for role:', userRole);
+                return;
+            }
+            
+            const response = await fetch(url);
+            const data = await response.json();
+            
+            if (data.success) {
+                const unreadCount = data.stats?.unread || data.unreadCount || 0;
+                updateBadge(unreadCount);
+            }
+        } catch (error) {
+            console.error('Error fetching notification count:', error);
+        }
+    }
+    
+    // Function to update badge
+    function updateBadge(count) {
+        if (!notificationBadge) return;
+        
+        if (count > 0) {
+            notificationBadge.textContent = count > 99 ? '99+' : count;
+            notificationBadge.classList.remove('hidden');
+            notificationBadge.classList.remove('zero');
+            
+            // Add pulse animation for new notifications
+            if (count > 0) {
+                notificationBadge.style.animation = 'pulse 2s infinite';
+            }
         } else {
-            dmIcon.classList.replace('fa-sun', 'fa-moon');
-            localStorage.setItem('theme', 'light');
+            notificationBadge.textContent = '0';
+            notificationBadge.classList.add('hidden');
+            notificationBadge.classList.add('zero');
+        }
+    }
+    
+    // Initial fetch
+    setTimeout(fetchUnreadCount, 1000);
+    
+    // Auto refresh every 30 seconds
+    setInterval(fetchUnreadCount, 30000);
+    
+    // Listen for storage events (for cross-tab sync)
+    window.addEventListener('storage', function(e) {
+        if (e.key === 'notification-update') {
+            fetchUnreadCount();
         }
     });
     
-    // ===== MENU TOGGLE =====
-    document.getElementById('menuToggleBtn').addEventListener('click', function() {
-        if (window.toggleSidebar) {
-            window.toggleSidebar();
-        }
-    });
+    // ===== MARK NOTIFICATIONS AS READ WHEN CLICKED =====
+    const notificationBtn = document.getElementById('notificationBtn');
+    if (notificationBtn) {
+        notificationBtn.onclick = function(e) {
+            // Optional: You can mark all as read when clicked
+            // But better to let the notifications page handle it
+            console.log('Notification button clicked');
+        };
+    }
     
-    // ===== USER PROFILE CLICK =====
-    document.querySelector('.user-profile').addEventListener('click', function() {
-        window.location.href = '/profile';
-    });
-});
+    // ===== LOGOUT HANDLER =====
+    const logoutBtn = document.getElementById('logoutBtn');
+    if (logoutBtn) {
+        logoutBtn.onclick = function(e) {
+            e.preventDefault();
+            if (confirm('Are you sure you want to logout?')) {
+                window.location.href = '/logout';
+            }
+        };
+    }
+    
+    console.log('Header ready - Notification badge working!');
+})();
 </script>

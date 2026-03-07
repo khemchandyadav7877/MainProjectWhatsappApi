@@ -11,67 +11,67 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 
     <style>
-        /* ===== THEME VARIABLES ===== */
-        :root {
-            --primary: #3b82f6;
-            --primary-dark: #2563eb;
-            --primary-light: #60a5fa;
-            --success: #10b981;
-            --warning: #f59e0b;
-            --danger: #ef4444;
-            --info: #3b82f6;
-            
-            /* Light Mode */
-            --bg-body: #f3f4f6;
-            --bg-white: #ffffff;
-            --bg-offwhite: #f8fafc;
-            --bg-card: #ffffff;
-            --text: #1f2937;
-            --text-light: #4b5563;
-            --text-muted: #6b7280;
-            --dark: #111827;
-            --border: #e5e7eb;
-            --shadow: 0 2px 10px rgba(0,0,0,0.05);
-            --shadow-lg: 0 10px 25px rgba(0,0,0,0.1);
-            
-            /* Layout */
-            --header-height: 70px;
-            --sidebar-width: 280px;
-        }
-
-        /* Dark Mode */
-        body.dark {
-            --bg-body: #111827;
-            --bg-white: #1f2937;
-            --bg-offwhite: #374151;
-            --bg-card: #1f2937;
-            --text: #f9fafb;
-            --text-light: #e5e7eb;
-            --text-muted: #9ca3af;
-            --dark: #f9fafb;
-            --border: #374151;
-            --shadow: 0 2px 10px rgba(0,0,0,0.3);
-            --shadow-lg: 0 10px 25px rgba(0,0,0,0.5);
-        }
-
-        /* RESET */
         * {
             margin: 0;
             padding: 0;
             box-sizing: border-box;
         }
 
+        /* ===== THEME VARIABLES - EXACTLY LIKE DASHBOARD ===== */
+        :root {
+            --primary: #667eea;
+            --primary-dark: #5a67d8;
+            --primary-gradient: linear-gradient(135deg, #667eea, #764ba2);
+            --success: #10b981;
+            --warning: #f59e0b;
+            --danger: #ef4444;
+            --info: #3b82f6;
+            
+            /* Light Mode */
+            --bg-body: #f8fafc;
+            --bg-white: #ffffff;
+            --bg-offwhite: #f1f5f9;
+            --bg-card: #ffffff;
+            --text: #334155;
+            --text-light: #64748b;
+            --text-muted: #94a3b8;
+            --dark: #0f172a;
+            --border: #eef2f6;
+            --shadow: 0 8px 25px rgba(0,0,0,0.03);
+            --shadow-lg: 0 15px 35px rgba(102, 126, 234, 0.1);
+            
+            /* Layout */
+            --header-height: 70px;
+            --sidebar-width: 280px;
+            --sidebar-mini-width: 80px;
+        }
+
+        /* Dark Mode - EXACTLY LIKE DASHBOARD */
+        body.dark {
+            --bg-body: #0f172a;
+            --bg-white: #1e293b;
+            --bg-offwhite: #334155;
+            --bg-card: #1e293b;
+            --text: #e2e8f0;
+            --text-light: #cbd5e1;
+            --text-muted: #94a3b8;
+            --dark: #f8fafc;
+            --border: #334155;
+            --shadow: 0 8px 25px rgba(0,0,0,0.2);
+            --shadow-lg: 0 15px 35px rgba(102, 126, 234, 0.2);
+        }
+
         body {
             overflow-x: hidden;
             background: var(--bg-body);
-            font-family: system-ui;
+            font-family: 'Inter', 'Segoe UI', sans-serif;
             color: var(--text);
             transition: background-color 0.3s, color 0.3s;
         }
 
-        /* ===== BORDER MODES ===== */
+        /* ===== BORDER MODES - EXACTLY LIKE DASHBOARD ===== */
         body.round-border .header-wrapper,
-        body.round-border .sidebar-wrapper,
+        body.round-border .sidebar,
         body.round-border .main-content-card,
         body.round-border .status-option,
         body.round-border .btn,
@@ -80,23 +80,24 @@
         body.round-border .country-code,
         body.round-border .quick-add-btn,
         body.round-border .modal-content,
-        body.round-border .toast-notification,
-        body.round-border .device-icon {
-            border-radius: 16px !important;
+        body.round-border #toast,
+        body.round-border .device-icon,
+        body.round-border .icon {
+            border-radius: 20px !important;
         }
 
         body.round-border .icon {
-            border-radius: 50% !important;
+            border-radius: 16px !important;
         }
 
         body.round-border .badge-success,
         body.round-border .badge-secondary,
         body.round-border .validation-icon i {
-            border-radius: 20px !important;
+            border-radius: 50px !important;
         }
 
         body.no-radius .header-wrapper,
-        body.no-radius .sidebar-wrapper,
+        body.no-radius .sidebar,
         body.no-radius .main-content-card,
         body.no-radius .status-option,
         body.no-radius .btn,
@@ -105,7 +106,7 @@
         body.no-radius .country-code,
         body.no-radius .quick-add-btn,
         body.no-radius .modal-content,
-        body.no-radius .toast-notification,
+        body.no-radius #toast,
         body.no-radius .device-icon,
         body.no-radius .icon,
         body.no-radius .badge-success,
@@ -114,7 +115,7 @@
             border-radius: 0 !important;
         }
 
-        /* HEADER FIXED */
+        /* HEADER FIXED - EXACTLY LIKE DASHBOARD */
         .header-wrapper {
             position: fixed;
             top: 0;
@@ -124,53 +125,63 @@
             background: var(--bg-white);
             box-shadow: var(--shadow);
             border-bottom: 1px solid var(--border);
+            transition: all 0.3s;
         }
 
-        /* MAIN LAYOUT */
+        /* MAIN LAYOUT - EXACTLY LIKE DASHBOARD */
         .main-wrapper {
             margin-top: 70px;
             display: flex;
             width: 100%;
             min-height: calc(100vh - 70px);
+            position: relative;
         }
 
-        /* SIDEBAR WRAPPER */
-        .sidebar-wrapper {
-            width: 280px;
-            flex-shrink: 0;
+        /* SIDEBAR - EXACTLY LIKE DASHBOARD */
+        .sidebar {
+            width: var(--sidebar-width, 280px);
+            background: var(--bg-white);
+            border-right: 1px solid var(--border);
+            height: calc(100vh - var(--header-height, 70px));
             position: fixed;
             left: 0;
             top: 70px;
-            bottom: 0;
+            transition: width 0.3s cubic-bezier(0.4, 0, 0.2, 1);
             z-index: 1020;
-            transition: width 0.3s ease;
-            background: var(--bg-white);
-            border-right: 1px solid var(--border);
+            box-shadow: var(--shadow);
+            display: flex;
+            flex-direction: column;
+            overflow-y: auto;
+            overflow-x: hidden;
         }
 
-        .sidebar-wrapper.collapsed {
-            width: 80px;
+        /* Sidebar Mini Mode */
+        .sidebar.mini {
+            width: var(--sidebar-mini-width, 80px);
         }
 
-        /* CONTENT WRAPPER */
+        /* CONTENT WRAPPER - EXACTLY LIKE DASHBOARD */
         .content-wrapper {
             flex: 1;
-            margin-left: 280px;
-            padding: 20px;
-            transition: margin-left 0.3s ease;
+            margin-left: var(--sidebar-width, 280px);
+            padding: 25px;
+            transition: margin-left 0.3s cubic-bezier(0.4, 0, 0.2, 1);
             background: var(--bg-body);
             min-height: calc(100vh - 70px);
+            width: calc(100% - var(--sidebar-width, 280px));
         }
 
-        .sidebar-wrapper.collapsed + .content-wrapper {
-            margin-left: 80px;
+        /* When sidebar has mini class, adjust content wrapper */
+        .sidebar.mini ~ .content-wrapper {
+            margin-left: var(--sidebar-mini-width, 80px);
+            width: calc(100% - var(--sidebar-mini-width, 80px));
         }
 
         /* MAIN CONTENT CARD */
         .main-content-card {
             background: var(--bg-card);
-            border-radius: 12px;
-            padding: 24px;
+            border-radius: 20px;
+            padding: 30px;
             box-shadow: var(--shadow);
             border: 1px solid var(--border);
             min-height: 500px;
@@ -183,35 +194,39 @@
         }
 
         .device-header .icon {
-            width: 60px;
-            height: 60px;
-            background: var(--primary);
+            width: 80px;
+            height: 80px;
+            background: var(--primary-gradient);
             color: #fff;
-            border-radius: 50%;
+            border-radius: 20px;
             display: flex;
             align-items: center;
             justify-content: center;
-            font-size: 26px;
-            margin: 0 auto 10px;
+            font-size: 32px;
+            margin: 0 auto 15px;
+            box-shadow: var(--shadow-lg);
         }
 
         .device-header h5 {
             margin: 0;
             font-weight: 700;
             color: var(--dark);
+            font-size: 28px;
         }
 
         .device-sub {
             text-align: center;
             color: var(--text-muted);
-            margin-bottom: 10px;
+            margin-bottom: 15px;
+            font-size: 14px;
         }
 
         .device-line {
             height: 3px;
-            background: var(--primary);
-            width: 100%;
-            margin-bottom: 25px;
+            background: var(--primary-gradient);
+            width: 100px;
+            margin: 0 auto 30px;
+            border-radius: 2px;
         }
 
         .form-label {
@@ -220,6 +235,12 @@
             display: flex;
             align-items: center;
             gap: 6px;
+            margin-bottom: 8px;
+            font-size: 14px;
+        }
+
+        .form-label i {
+            color: var(--primary);
         }
 
         .form-label .required {
@@ -228,16 +249,18 @@
         }
 
         .form-control, .form-select {
-            border-radius: 25px;
-            padding: 12px 18px;
+            border-radius: 12px;
+            padding: 12px 16px;
             border: 1px solid var(--border);
             background: var(--bg-white);
             color: var(--text);
+            font-size: 14px;
+            transition: all 0.3s;
         }
 
         .form-control:focus, .form-select:focus {
             border-color: var(--primary);
-            box-shadow: 0 0 0 0.2rem rgba(59, 130, 246, 0.25);
+            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
             outline: none;
             background: var(--bg-white);
             color: var(--text);
@@ -255,27 +278,26 @@
 
         .country-code {
             position: absolute;
-            left: 12px;
+            left: 16px;
             top: 50%;
             transform: translateY(-50%);
-            background: var(--bg-offwhite);
-            padding: 6px 12px;
-            border-radius: 20px;
+            background: var(--primary);
+            color: white;
+            padding: 6px 14px;
+            border-radius: 8px;
             font-weight: 600;
             font-size: 14px;
-            color: var(--text);
-            border: 1px solid var(--border);
             z-index: 2;
         }
 
         .phone-input {
-            padding-left: 80px !important;
+            padding-left: 85px !important;
         }
 
         /* VALIDATION ICON */
         .validation-icon {
             position: absolute;
-            right: 12px;
+            right: 16px;
             top: 50%;
             transform: translateY(-50%);
             z-index: 3;
@@ -292,8 +314,8 @@
         /* STATUS RADIO */
         .status-option {
             background: var(--bg-offwhite);
-            border-radius: 12px;
-            padding: 12px;
+            border-radius: 16px;
+            padding: 16px;
             border: 2px solid transparent;
             transition: all 0.3s ease;
             cursor: pointer;
@@ -301,11 +323,12 @@
 
         .status-option:hover {
             border-color: var(--primary);
-            background: var(--bg-white);
+            background: var(--bg-card);
         }
 
         .status-option input[type="radio"] {
-            margin-right: 8px;
+            margin-right: 10px;
+            accent-color: var(--primary);
         }
 
         .badge-success {
@@ -314,6 +337,7 @@
             padding: 4px 12px;
             border-radius: 20px;
             font-weight: 600;
+            font-size: 12px;
         }
 
         .badge-secondary {
@@ -323,43 +347,44 @@
             border-radius: 20px;
             font-weight: 600;
             border: 1px solid var(--border);
+            font-size: 12px;
         }
 
-        /* BUTTONS */
+        /* BUTTONS - LIKE DASHBOARD */
         .btn {
-            border-radius: 25px;
-            padding: 10px 30px;
+            border-radius: 12px;
+            padding: 12px 30px;
             font-weight: 600;
+            font-size: 14px;
             transition: all 0.3s ease;
         }
 
         .btn-primary {
-            background: var(--primary);
+            background: var(--primary-gradient);
             border: none;
             color: white;
         }
 
         .btn-primary:hover {
-            background: var(--primary-dark);
             transform: translateY(-2px);
-            box-shadow: 0 5px 15px rgba(59, 130, 246, 0.3);
+            box-shadow: var(--shadow-lg);
         }
 
         .btn-outline-secondary {
-            border: 2px solid var(--text-muted);
-            color: var(--text-muted);
+            border: 1px solid var(--border);
+            color: var(--text);
             background: transparent;
         }
 
         .btn-outline-secondary:hover {
-            background: var(--text-muted);
-            color: white;
+            background: var(--bg-offwhite);
+            color: var(--dark);
+            border-color: var(--primary);
             transform: translateY(-2px);
-            box-shadow: 0 5px 15px rgba(108, 117, 125, 0.3);
         }
 
         .btn-outline-info {
-            border: 2px solid var(--info);
+            border: 1px solid var(--info);
             color: var(--info);
             background: transparent;
         }
@@ -367,10 +392,11 @@
         .btn-outline-info:hover {
             background: var(--info);
             color: white;
+            transform: translateY(-2px);
         }
 
         .btn-outline-success {
-            border: 2px solid var(--success);
+            border: 1px solid var(--success);
             color: var(--success);
             background: transparent;
         }
@@ -378,6 +404,7 @@
         .btn-outline-success:hover {
             background: var(--success);
             color: white;
+            transform: translateY(-2px);
         }
 
         .action-buttons {
@@ -393,8 +420,8 @@
         /* API STATUS */
         .api-status {
             display: none;
-            padding: 12px;
-            border-radius: 8px;
+            padding: 15px;
+            border-radius: 12px;
             margin-bottom: 20px;
             font-size: 14px;
         }
@@ -413,7 +440,15 @@
         .tooltip-info {
             color: var(--text-muted);
             font-size: 12px;
-            margin-top: 4px;
+            margin-top: 5px;
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+
+        .tooltip-info i {
+            color: var(--primary);
+            font-size: 10px;
         }
 
         /* QUICK ADD FAB */
@@ -421,56 +456,71 @@
             position: fixed;
             bottom: 30px;
             right: 30px;
-            width: 60px;
-            height: 60px;
-            border-radius: 50%;
-            background: var(--primary);
+            width: 56px;
+            height: 56px;
+            border-radius: 16px;
+            background: var(--primary-gradient);
             color: white;
             border: none;
             display: flex;
             align-items: center;
             justify-content: center;
-            font-size: 20px;
-            box-shadow: 0 10px 25px rgba(59, 130, 246, 0.3);
+            font-size: 22px;
+            box-shadow: var(--shadow-lg);
             cursor: pointer;
             z-index: 100;
             transition: all 0.3s ease;
         }
         .quick-add-btn:hover {
-            transform: scale(1.1);
-            box-shadow: 0 15px 30px rgba(59, 130, 246, 0.4);
+            transform: scale(1.1) translateY(-5px);
         }
 
-        /* LOADING OVERLAY */
+        /* LOADING OVERLAY - EXACTLY LIKE DASHBOARD */
         .loading-overlay {
-            display: none;
             position: fixed;
             top: 0;
             left: 0;
-            width: 100%;
-            height: 100%;
+            right: 0;
+            bottom: 0;
             background: rgba(0,0,0,0.5);
-            backdrop-filter: blur(5px);
-            z-index: 9999;
-            justify-content: center;
+            display: none;
             align-items: center;
-            flex-direction: column;
+            justify-content: center;
+            z-index: 9999;
+            backdrop-filter: blur(5px);
         }
 
-        .loading-overlay h5 {
+        .spinner {
+            width: 50px;
+            height: 50px;
+            border: 5px solid var(--bg-offwhite);
+            border-top: 5px solid var(--primary);
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        .loading-text {
             color: white;
             margin-top: 15px;
+            font-size: 18px;
+            font-weight: 600;
         }
 
-        .loading-overlay p {
+        .loading-subtext {
             color: rgba(255,255,255,0.8);
+            font-size: 14px;
         }
 
-        /* TOAST STYLES */
+        /* TOAST - EXACTLY LIKE DASHBOARD */
         #toast {
             position: fixed;
-            top: 24px;
-            right: 24px;
+            top: 90px;
+            right: 29px;
             width: 320px;
             padding: 14px 16px;
             border-radius: 12px;
@@ -479,7 +529,7 @@
             transform: translateY(-15px);
             transition: .3s ease;
             color: #fff;
-            z-index: 9999;
+            z-index: 1001;
         }
 
         #toast.show {
@@ -487,21 +537,19 @@
             transform: translateY(0);
         }
 
-        .toast-row {
+        .toast-success { background: var(--success); }
+        .toast-error { background: var(--danger); }
+        .toast-info { background: var(--info); }
+        .toast-warning { background: var(--warning); color: #1f2937; }
+
+        .toast-content {
             display: flex;
             gap: 12px;
             align-items: flex-start;
         }
 
         .toast-icon {
-            width: 34px;
-            height: 34px;
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 16px;
-            background: rgba(0,0,0,.25);
+            font-size: 20px;
         }
 
         .toast-text h4 {
@@ -511,25 +559,20 @@
         }
 
         .toast-text p {
-            margin: 4px 0 0;
+            margin: 5px 0 0;
             font-size: 13px;
-            opacity: .9;
+            opacity: 0.9;
         }
-
-        .toast-success { background: var(--success); }
-        .toast-error { background: var(--danger); }
-        .toast-info { background: var(--info); }
-        .toast-warning { background: var(--warning); color: #1f2937; }
 
         .toast-progress {
             height: 3px;
-            border-radius: 4px;
+            background: rgba(255,255,255,0.6);
             margin-top: 10px;
-            background: rgba(255,255,255,.6);
-            animation: toast-load 3s linear forwards;
+            width: 100%;
+            animation: progress 3s linear;
         }
 
-        @keyframes toast-load {
+        @keyframes progress {
             from { width: 100%; }
             to { width: 0%; }
         }
@@ -539,38 +582,99 @@
             background: var(--bg-card);
             color: var(--text);
             border: 1px solid var(--border);
+            border-radius: 20px;
         }
 
         .modal-header {
             border-bottom: 1px solid var(--border);
+            padding: 20px;
+        }
+
+        .modal-header .modal-title {
+            color: var(--dark);
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .modal-body {
+            padding: 20px;
         }
 
         .modal-footer {
             border-top: 1px solid var(--border);
+            padding: 20px;
         }
 
         .btn-close {
-            filter: var(--text) === '#f9fafb' ? 'invert(1)' : 'none';
+            filter: var(--text) === '#e2e8f0' ? 'invert(1)' : 'none';
         }
 
-        /* MOBILE */
-        @media (max-width: 768px) {
-            .sidebar-wrapper {
-                transform: translateX(-100%);
-                width: 280px !important;
+        body.dark .btn-close {
+            filter: invert(1);
+        }
+
+        /* MOBILE RESPONSIVE - EXACTLY LIKE DASHBOARD */
+        @media (max-width: 1200px) {
+            .action-buttons {
+                flex-direction: row;
+            }
+        }
+
+        @media (max-width: 992px) {
+            .action-buttons {
+                flex-direction: column;
             }
             
-            .sidebar-wrapper.mobile-open {
+            .main-content-card {
+                padding: 25px;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .sidebar {
+                transform: translateX(-100%);
+                width: var(--sidebar-width, 280px) !important;
+                transition: transform 0.3s ease;
+            }
+            
+            .sidebar.open {
+                transform: translateX(0);
+            }
+            
+            .sidebar.mini {
+                transform: translateX(-100%);
+                width: var(--sidebar-width, 280px) !important;
+            }
+            
+            .sidebar.mini.open {
                 transform: translateX(0);
             }
             
             .content-wrapper {
                 margin-left: 0 !important;
+                width: 100% !important;
                 padding: 15px;
+            }
+            
+            .sidebar.mini ~ .content-wrapper {
+                margin-left: 0 !important;
+                width: 100% !important;
             }
             
             .main-content-card {
                 padding: 20px;
+            }
+            
+            .device-header h5 {
+                font-size: 24px;
+            }
+            
+            .device-header .icon {
+                width: 60px;
+                height: 60px;
+                font-size: 24px;
             }
             
             .action-buttons {
@@ -580,9 +684,41 @@
             .quick-add-btn {
                 bottom: 20px;
                 right: 20px;
-                width: 50px;
-                height: 50px;
+                width: 48px;
+                height: 48px;
                 font-size: 18px;
+            }
+        }
+
+        @media (max-width: 576px) {
+            .content-wrapper {
+                padding: 10px;
+            }
+            
+            .main-content-card {
+                padding: 15px;
+            }
+            
+            .device-header h5 {
+                font-size: 20px;
+            }
+            
+            .form-label {
+                font-size: 13px;
+            }
+            
+            .btn {
+                padding: 10px 20px;
+                font-size: 13px;
+            }
+            
+            .country-code {
+                padding: 4px 10px;
+                font-size: 12px;
+            }
+            
+            .phone-input {
+                padding-left: 75px !important;
             }
         }
     </style>
@@ -608,9 +744,7 @@
     <!-- MAIN LAYOUT -->
     <div class="main-wrapper">
         <!-- SIDEBAR -->
-        <div class="sidebar-wrapper" id="sidebarWrapper">
-            <%- include('../../partials/ram/sidebaar') %>
-        </div>
+        <%- include('../../partials/ram/sidebaar') %>
 
         <!-- CONTENT -->
         <div class="content-wrapper" id="contentWrapper">
@@ -618,8 +752,8 @@
             <div id="toast"></div>
 
             <!-- QUICK ADD FAB BUTTON -->
-            <button class="quick-add-btn" onclick="openQuickAdd()" title="Quick Add">
-                <i class="fa fa-plus"></i>
+            <button class="quick-add-btn" onclick="openQuickAdd()" title="Quick Add Contact">
+                <i class="fas fa-plus"></i>
             </button>
 
             <!-- MAIN CONTENT CARD -->
@@ -627,13 +761,12 @@
                 <!-- DEVICE HEADER -->
                 <div class="device-header">
                     <div class="icon">
-                        <i class="fa-solid fa-mobile-screen-button"></i>
+                        <i class="fas fa-user-plus"></i>
                     </div>
                     <h5>Add New Contact</h5>
+                    <div class="device-sub">Register a new contact to your WhatsApp campaigns</div>
+                    <div class="device-line"></div>
                 </div>
-
-                <div class="device-sub">Register a new contact or device</div>
-                <div class="device-line"></div>
 
                 <!-- API STATUS MESSAGE -->
                 <div id="apiStatus" class="api-status"></div>
@@ -641,27 +774,32 @@
                 <!-- FORM -->
                 <form method="POST" action="/devices/add" id="deviceForm">
                     <div class="row g-4">
-                        <!-- Device Name (Required) -->
-                        <div class="col-md-6">
+                        <!-- Contact Name (Required) -->
+                        <div class="col-lg-6 col-md-12">
                             <label class="form-label">
-                                <i class="fa fa-tag fa-xs"></i>
+                                <i class="fas fa-tag"></i>
                                 Contact Name <span class="required">*</span>
                             </label>
-                            <input type="text"
-                                   name="name"
-                                   id="deviceName"
-                                   class="form-control"
-                                   placeholder="e.g., John Doe, Office Phone"
-                                   required
-                                   oninput="validateName()">
-                            <div class="validation-icon" id="nameValidation"></div>
-                            <div class="tooltip-info">Give a descriptive name for easy identification</div>
+                            <div class="position-relative">
+                                <input type="text"
+                                       name="name"
+                                       id="deviceName"
+                                       class="form-control"
+                                       placeholder="e.g., John Doe, Office Phone"
+                                       required
+                                       oninput="validateName()">
+                                <div class="validation-icon" id="nameValidation"></div>
+                            </div>
+                            <div class="tooltip-info">
+                                <i class="fas fa-info-circle"></i>
+                                Give a descriptive name for easy identification
+                            </div>
                         </div>
 
                         <!-- Phone Number (Required) -->
-                        <div class="col-md-6">
+                        <div class="col-lg-6 col-md-12">
                             <label class="form-label">
-                                <i class="fa fa-phone fa-xs"></i>
+                                <i class="fas fa-phone"></i>
                                 Phone Number <span class="required">*</span>
                             </label>
                             <div class="phone-wrapper">
@@ -676,13 +814,16 @@
                                        oninput="validatePhone()">
                                 <div class="validation-icon" id="phoneValidation"></div>
                             </div>
-                            <div class="tooltip-info">Enter 10-digit Indian mobile number without country code</div>
+                            <div class="tooltip-info">
+                                <i class="fas fa-info-circle"></i>
+                                Enter 10-digit Indian mobile number
+                            </div>
                         </div>
 
-                        <!-- WhatsApp Number (NEW - Optional) -->
-                        <div class="col-md-6">
+                        <!-- WhatsApp Number (Optional) -->
+                        <div class="col-lg-6 col-md-12">
                             <label class="form-label">
-                                <i class="fab fa-whatsapp fa-xs text-success"></i>
+                                <i class="fab fa-whatsapp" style="color: #25D366;"></i>
                                 WhatsApp Number
                             </label>
                             <div class="phone-wrapper">
@@ -696,47 +837,55 @@
                                        oninput="validateWhatsApp()">
                                 <div class="validation-icon" id="whatsappValidation"></div>
                             </div>
-                            <div class="tooltip-info">If different from phone number (leave blank if same)</div>
+                            <div class="tooltip-info">
+                                <i class="fas fa-info-circle"></i>
+                                If different from phone number (leave blank if same)
+                            </div>
                         </div>
 
-                        <!-- Email ID (NEW - Optional) -->
-                        <div class="col-md-6">
+                        <!-- Email ID (Optional) -->
+                        <div class="col-lg-6 col-md-12">
                             <label class="form-label">
-                                <i class="fa fa-envelope fa-xs"></i>
+                                <i class="fas fa-envelope"></i>
                                 Email ID
                             </label>
-                            <input type="email"
-                                   name="email"
-                                   id="email"
-                                   class="form-control"
-                                   placeholder="john@example.com (Optional)"
-                                   oninput="validateEmail()">
-                            <div class="validation-icon" id="emailValidation"></div>
-                            <div class="tooltip-info">Enter a valid email address</div>
+                            <div class="position-relative">
+                                <input type="email"
+                                       name="email"
+                                       id="email"
+                                       class="form-control"
+                                       placeholder="john@example.com (Optional)"
+                                       oninput="validateEmail()">
+                                <div class="validation-icon" id="emailValidation"></div>
+                            </div>
+                            <div class="tooltip-info">
+                                <i class="fas fa-info-circle"></i>
+                                Enter a valid email address
+                            </div>
                         </div>
 
                         <!-- Status -->
                         <div class="col-12">
                             <label class="form-label">
-                                <i class="fa fa-power-off fa-xs"></i>
+                                <i class="fas fa-power-off"></i>
                                 Initial Status
                             </label>
                             <div class="row g-3">
                                 <div class="col-md-6">
                                     <div class="status-option">
                                         <input class="form-check-input" type="radio" name="status" id="statusActive" value="active" checked>
-                                        <label class="form-check-label" for="statusActive">
+                                        <label class="form-check-label w-100" for="statusActive">
                                             <span class="badge-success">Active</span>
-                                            <small class="d-block text-muted mt-1">Contact will be active</small>
+                                            <small class="d-block text-muted mt-2">Contact will be active and available for campaigns</small>
                                         </label>
                                     </div>
                                 </div>
                                 <div class="col-md-6">
                                     <div class="status-option">
                                         <input class="form-check-input" type="radio" name="status" id="statusInactive" value="inactive">
-                                        <label class="form-check-label" for="statusInactive">
+                                        <label class="form-check-label w-100" for="statusInactive">
                                             <span class="badge-secondary">Inactive</span>
-                                            <small class="d-block text-muted mt-1">Contact will be paused</small>
+                                            <small class="d-block text-muted mt-2">Contact will be paused and not included in campaigns</small>
                                         </label>
                                     </div>
                                 </div>
@@ -746,7 +895,7 @@
                         <!-- Notes -->
                         <div class="col-12">
                             <label class="form-label">
-                                <i class="fa fa-sticky-note fa-xs"></i>
+                                <i class="fas fa-sticky-note"></i>
                                 Notes
                             </label>
                             <textarea name="notes"
@@ -754,28 +903,31 @@
                                       class="form-control"
                                       rows="3"
                                       placeholder="Optional notes about this contact (company, department, special instructions, etc.)"></textarea>
-                            <div class="tooltip-info">Add any additional information about this contact</div>
+                            <div class="tooltip-info">
+                                <i class="fas fa-info-circle"></i>
+                                Add any additional information about this contact
+                            </div>
                         </div>
                     </div>
 
                     <!-- ACTION BUTTONS -->
                     <div class="action-buttons">
                         <a href="/devices" class="btn btn-outline-secondary">
-                            <i class="fa fa-arrow-left"></i> Back to Contacts
+                            <i class="fas fa-arrow-left me-2"></i> Back to Contacts
                         </a>
                         <button type="submit" class="btn btn-primary" id="submitBtn">
-                            <i class="fa fa-save"></i> Save Contact
+                            <i class="fas fa-save me-2"></i> Save Contact
                         </button>
                     </div>
 
                     <!-- API ALTERNATIVE -->
-                    <div class="mt-4 pt-3 border-top text-center">
-                        <p class="text-muted mb-2">Or add via API</p>
-                        <button type="button" class="btn btn-outline-info btn-sm" onclick="addViaAPI()">
-                            <i class="fa fa-code"></i> Save via API
+                    <div class="mt-5 pt-4 border-top text-center" style="border-color: var(--border) !important;">
+                        <p class="text-muted mb-3">Or add via API for advanced integration</p>
+                        <button type="button" class="btn btn-outline-info btn-sm me-2" onclick="addViaAPI()">
+                            <i class="fas fa-code me-1"></i> Save via API
                         </button>
-                        <button type="button" class="btn btn-outline-success btn-sm ms-2" onclick="testAPI()">
-                            <i class="fa fa-play"></i> Test API
+                        <button type="button" class="btn btn-outline-success btn-sm" onclick="testAPI()">
+                            <i class="fas fa-play me-1"></i> Test API
                         </button>
                     </div>
 
@@ -784,35 +936,34 @@
         </div>
     </div>
 
-    <!-- LOADING OVERLAY -->
+    <!-- LOADING OVERLAY - EXACTLY LIKE DASHBOARD -->
     <div class="loading-overlay" id="loadingOverlay">
-        <div class="spinner-border text-primary mb-3" style="width:3rem;height:3rem;" role="status">
-            <span class="visually-hidden">Loading...</span>
-        </div>
-        <h5 id="loadingText">Adding Contact...</h5>
-        <p class="text-muted" id="loadingSubtext">Please wait while we save your contact</p>
+        <div class="spinner"></div>
+        <div class="loading-text" id="loadingText">Adding Contact...</div>
+        <div class="loading-subtext" id="loadingSubtext">Please wait while we save your contact</div>
     </div>
 
     <!-- QUICK ADD MODAL -->
-    <div class="modal fade" id="quickAddModal" tabindex="-1">
-        <div class="modal-dialog">
+    <div class="modal fade" id="quickAddModal" tabindex="-1" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered">
             <div class="modal-content">
                 <div class="modal-header">
                     <h5 class="modal-title">
-                        <i class="fa fa-bolt me-2"></i>Quick Add Contact
+                        <i class="fas fa-bolt" style="color: var(--primary);"></i>
+                        Quick Add Contact
                     </h5>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
                 <div class="modal-body">
                     <div class="mb-3">
-                        <label class="form-label">Contact Name <span class="text-danger">*</span></label>
+                        <label class="form-label">Contact Name <span class="required">*</span></label>
                         <input type="text" class="form-control" id="quickName" placeholder="John Doe">
                     </div>
                     <div class="mb-3">
-                        <label class="form-label">Phone Number <span class="text-danger">*</span></label>
-                        <div class="input-group">
-                            <span class="input-group-text">+91</span>
-                            <input type="text" class="form-control" id="quickPhone" placeholder="9876543210">
+                        <label class="form-label">Phone Number <span class="required">*</span></label>
+                        <div class="phone-wrapper">
+                            <span class="country-code">+91</span>
+                            <input type="text" class="form-control phone-input" id="quickPhone" placeholder="9876543210">
                         </div>
                     </div>
                     <div class="mb-3">
@@ -821,9 +972,11 @@
                     </div>
                 </div>
                 <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                    <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">
+                        <i class="fas fa-times me-1"></i> Cancel
+                    </button>
                     <button type="button" class="btn btn-primary" onclick="quickAddViaAPI()">
-                        <i class="fa fa-plus me-1"></i> Add Contact
+                        <i class="fas fa-plus me-1"></i> Add Contact
                     </button>
                 </div>
             </div>
@@ -835,44 +988,30 @@
 
     <script>
         // ======================
-        // SIDEBAR SYNC
+        // SIDEBAR STATE SYNC - EXACTLY LIKE DASHBOARD
+        // ======================
+        function syncSidebarState() {
+            const sidebar = document.getElementById('sidebar');
+            const contentWrapper = document.getElementById('contentWrapper');
+            
+            if (!sidebar || !contentWrapper) return;
+            
+            const isMini = sidebar.classList.contains('mini');
+            
+            if (isMini) {
+                contentWrapper.style.marginLeft = 'var(--sidebar-mini-width, 80px)';
+                contentWrapper.style.width = 'calc(100% - var(--sidebar-mini-width, 80px))';
+            } else {
+                contentWrapper.style.marginLeft = 'var(--sidebar-width, 280px)';
+                contentWrapper.style.width = 'calc(100% - var(--sidebar-width, 280px))';
+            }
+        }
+
+        // ======================
+        // INITIALIZATION
         // ======================
         document.addEventListener('DOMContentLoaded', function() {
-            const sidebar = document.getElementById('mainSidebar');
-            const sidebarWrapper = document.getElementById('sidebarWrapper');
-            
-            if (sidebar && sidebarWrapper) {
-                if (sidebar.classList.contains('collapsed')) {
-                    sidebarWrapper.classList.add('collapsed');
-                }
-                
-                window.toggleCollapse = function() {
-                    if (sidebar.classList.contains('collapsed')) {
-                        sidebar.classList.remove('collapsed');
-                        sidebarWrapper.classList.remove('collapsed');
-                    } else {
-                        sidebar.classList.add('collapsed');
-                        sidebarWrapper.classList.add('collapsed');
-                    }
-                };
-                
-                window.toggleMobileSidebar = function() {
-                    if (sidebar.classList.contains('open')) {
-                        sidebar.classList.remove('open');
-                        sidebarWrapper.classList.remove('mobile-open');
-                    } else {
-                        sidebar.classList.add('open');
-                        sidebarWrapper.classList.add('mobile-open');
-                    }
-                };
-                
-                window.closeMobileSidebar = function() {
-                    sidebar.classList.remove('open');
-                    sidebarWrapper.classList.remove('mobile-open');
-                };
-            }
-
-            // Initialize page
+            // Focus on name field
             document.getElementById('deviceName').focus();
             
             // Load draft if exists
@@ -882,10 +1021,32 @@
             setTimeout(() => {
                 showToast('Add Contact', 'Fill in the details to add a new contact', 'info');
             }, 500);
+
+            // Listen for sidebar state changes
+            window.addEventListener('storage', function(e) {
+                if (e.key === 'sidebarMini' || e.key === 'sidebar-update-time') {
+                    const sidebar = document.getElementById('sidebar');
+                    if (sidebar) {
+                        const savedState = localStorage.getItem('sidebarMini') === 'true';
+                        if (savedState) {
+                            sidebar.classList.add('mini');
+                        } else {
+                            sidebar.classList.remove('mini');
+                        }
+                        syncSidebarState();
+                    }
+                }
+            });
+
+            window.addEventListener('resize', function() {
+                syncSidebarState();
+            });
+
+            setTimeout(syncSidebarState, 100);
         });
 
         // ======================
-        // TOAST FUNCTION
+        // TOAST FUNCTION - EXACTLY LIKE DASHBOARD
         // ======================
         let toastTimer;
         function showToast(title, message, type = 'info') {
@@ -902,9 +1063,8 @@
             
             const icon = icons[type] || 'ℹ️';
             
-            toast.className = '';
             toast.innerHTML = `
-                <div class="toast-row">
+                <div class="toast-content">
                     <div class="toast-icon">${icon}</div>
                     <div class="toast-text">
                         <h4>${title}</h4>
@@ -914,7 +1074,7 @@
                 <div class="toast-progress"></div>
             `;
             
-            toast.classList.add(`toast-${type}`, 'show');
+            toast.className = `toast-${type} show`;
             
             toastTimer = setTimeout(() => {
                 toast.classList.remove('show');
@@ -1016,8 +1176,8 @@
         function showValidation(iconElement, status, message) {
             iconElement.className = 'validation-icon ' + status;
             iconElement.innerHTML = status === 'valid' ? 
-                '<i class="fa fa-check-circle"></i>' : 
-                '<i class="fa fa-exclamation-circle"></i>';
+                '<i class="fas fa-check-circle"></i>' : 
+                '<i class="fas fa-exclamation-circle"></i>';
             iconElement.title = message;
         }
 
@@ -1097,10 +1257,8 @@
                     showToast('Success', 'Contact added successfully via API!', 'success');
                     showApiStatus('success', 'Contact added successfully! Redirecting...');
                     
-                    // Clear draft
                     clearDraft();
                     
-                    // Redirect after 2 seconds
                     setTimeout(() => {
                         window.location.href = '/devices';
                     }, 2000);
@@ -1201,7 +1359,6 @@
                     document.getElementById('quickPhone').value = '';
                     document.getElementById('quickEmail').value = '';
                     
-                    // Redirect to devices page after quick add
                     setTimeout(() => {
                         window.location.href = '/devices';
                     }, 1500);
@@ -1224,7 +1381,7 @@
             apiStatus.className = `api-status api-${type}`;
             apiStatus.innerHTML = `
                 <div class="d-flex align-items-center">
-                    <i class="fa fa-${type === 'success' ? 'check-circle' : 'exclamation-circle'} me-2"></i>
+                    <i class="fas fa-${type === 'success' ? 'check-circle' : 'exclamation-circle'} me-2"></i>
                     <div>${message}</div>
                 </div>
             `;

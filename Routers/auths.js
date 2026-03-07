@@ -357,22 +357,10 @@ router.get('/chats', isAuthenticated, async (req, res) => {
     }
 });
 
-// ========== ADD NEW FEATURE ROUTES ==========
-router.get('/addnewfeature', isAuthenticated, (req, res) => {
-    res.render('AddNewFeature.ejs', {
-        user: req.user,
-        isLoggedIn: true,
-        activeSession: req.activeSession
-    });
-});
 
-router.get('/add-new-feature', isAuthenticated, (req, res) => {
-    res.render('AddNewFeatureForm.ejs', {
-        user: req.user,
-        isLoggedIn: true,
-        activeSession: req.activeSession
-    });
-});
+
+router.get('/add-new-feature',(req, res) => {
+    res.render('AddNewFeatureForm.ejs')})
 
 // ========== ROLE PERMISSIONS ROUTE ==========
 router.get('/role-permissions', isAuthenticated, (req, res) => {

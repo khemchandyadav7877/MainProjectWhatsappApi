@@ -4,9 +4,63 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Theme & Border Settings</title>
+  <!-- Bootstrap CSS -->
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
   <!-- Font Awesome -->
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  
   <style>
+    /* ===== THEME VARIABLES ===== */
+    :root {
+      --primary: #667eea;
+      --primary-dark: #5a67d8;
+      --primary-gradient: linear-gradient(135deg, #667eea, #764ba2);
+      --success: #10b981;
+      --warning: #f59e0b;
+      --danger: #ef4444;
+      --info: #3b82f6;
+      
+      /* Light Mode */
+      --bg-body: #f8fafc;
+      --bg-white: #ffffff;
+      --bg-offwhite: #f1f5f9;
+      --bg-card: #ffffff;
+      --text: #334155;
+      --text-light: #64748b;
+      --text-muted: #94a3b8;
+      --dark: #0f172a;
+      --border: #eef2f6;
+      --shadow: 0 8px 25px rgba(0,0,0,0.03);
+      --shadow-lg: 0 15px 35px rgba(102, 126, 234, 0.1);
+      
+      /* Layout */
+      --header-height: 70px;
+      --sidebar-width: 280px;
+      --sidebar-mini-width: 80px;
+      
+      /* Accent Colors */
+      --accent: #667eea;
+      --accent-soft: rgba(102, 126, 234, 0.1);
+    }
+
+    /* Dark Mode */
+    body.dark {
+      --bg-body: #0f172a;
+      --bg-white: #1e293b;
+      --bg-offwhite: #334155;
+      --bg-card: #1e293b;
+      --text: #e2e8f0;
+      --text-light: #cbd5e1;
+      --text-muted: #94a3b8;
+      --dark: #f8fafc;
+      --border: #334155;
+      --shadow: 0 8px 25px rgba(0,0,0,0.2);
+      --shadow-lg: 0 15px 35px rgba(102, 126, 234, 0.2);
+      
+      --accent: #818cf8;
+      --accent-soft: rgba(129, 140, 248, 0.2);
+    }
+
     * {
       margin: 0;
       padding: 0;
@@ -14,222 +68,568 @@
     }
 
     body {
-      font-family: 'Inter', system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-      background: #f5f7fb;
-      min-height: 100vh;
-      display: flex;
-      flex-direction: column;
-      transition: background-color 0.2s ease, color 0.2s ease;
+      overflow-x: hidden;
+      background: var(--bg-body);
+      font-family: 'Inter', 'Segoe UI', sans-serif;
+      color: var(--text);
+      transition: background-color 0.3s, color 0.3s;
     }
 
-    /* ----- THEMES (light / dark) ----- */
-    body.light {
-      --bg-page: #f0f2f5;
-      --bg-surface: #ffffff;
-      --text-primary: #1e293b;
-      --text-secondary: #475569;
-      --border-subtle: #e2e8f0;
-      --card-bg: #ffffff;
-      --accent: #2563eb;
-      --accent-soft: #dbeafe;
-      --shadow: 0 8px 20px rgba(0,0,0,0.02), 0 2px 6px rgba(0,0,0,0.05);
-      --header-bg: #ffffff;
-      --sidebar-bg: #ffffff;
-    }
-
-    body.dark {
-      --bg-page: #0b1120;
-      --bg-surface: #1e293b;
-      --text-primary: #f1f5f9;
-      --text-secondary: #cbd5e1;
-      --border-subtle: #334155;
-      --card-bg: #1e293b;
-      --accent: #3b82f6;
-      --accent-soft: #1e3a5f;
-      --shadow: 0 8px 20px rgba(0,0,0,0.4);
-      --header-bg: #1e293b;
-      --sidebar-bg: #1e293b;
-    }
-
-    body {
-      background: var(--bg-page);
-      color: var(--text-primary);
-    }
-
-    /* ----- BORDER MODES ----- */
+    /* ===== BORDER MODES ===== */
+    body.round-border .header-wrapper,
+    body.round-border .sidebar,
+    body.round-border .mid-content,
     body.round-border .settings-section,
     body.round-border .theme-card,
-    body.round-border .save-btn {
-      border-radius: 28px !important;
+    body.round-border .save-btn,
+    body.round-border .border-preview,
+    body.round-border .check-badge,
+    body.round-border .settings-menu,
+    body.round-border .settings-menu a {
+      border-radius: 20px !important;
     }
 
+    body.round-border .settings-menu a.active {
+      border-radius: 12px 12px 0 0 !important;
+    }
+
+    body.round-border .theme-preview-img {
+      border-radius: 20px 20px 0 0 !important;
+    }
+
+    body.round-border .check-badge {
+      border-radius: 50% !important;
+    }
+
+    body.no-radius .header-wrapper,
+    body.no-radius .sidebar,
+    body.no-radius .mid-content,
     body.no-radius .settings-section,
     body.no-radius .theme-card,
-    body.no-radius .save-btn {
+    body.no-radius .save-btn,
+    body.no-radius .border-preview,
+    body.no-radius .check-badge,
+    body.no-radius .theme-preview-img,
+    body.no-radius .settings-menu,
+    body.no-radius .settings-menu a,
+    body.no-radius .settings-menu a.active {
       border-radius: 0 !important;
     }
 
-    /* ----- LAYOUT ----- */
+    /* Header */
     .header-wrapper {
       position: fixed;
       top: 0;
       left: 0;
       right: 0;
       z-index: 1030;
-      background: var(--header-bg);
+      background: var(--bg-white);
       box-shadow: var(--shadow);
-      border-bottom: 1px solid var(--border-subtle);
+      border-bottom: 1px solid var(--border);
     }
 
+    /* MAIN LAYOUT */
     .main-wrapper {
       margin-top: 70px;
       display: flex;
       width: 100%;
       min-height: calc(100vh - 70px);
+      position: relative;
     }
 
-    .sidebar-wrapper {
-      width: 280px;
-      flex-shrink: 0;
+    /* SIDEBAR */
+    .sidebar {
+      width: var(--sidebar-width, 280px);
+      background: var(--bg-white);
+      border-right: 1px solid var(--border);
+      height: calc(100vh - var(--header-height, 70px));
       position: fixed;
       left: 0;
       top: 70px;
-      bottom: 0;
+      transition: width 0.3s cubic-bezier(0.4, 0, 0.2, 1);
       z-index: 1020;
-      background: var(--sidebar-bg);
-      border-right: 1px solid var(--border-subtle);
+      box-shadow: var(--shadow);
+      display: flex;
+      flex-direction: column;
       overflow-y: auto;
+      overflow-x: hidden;
     }
 
+    .sidebar.mini {
+      width: var(--sidebar-mini-width, 80px);
+    }
+
+    /* CONTENT WRAPPER */
     .content-wrapper {
       flex: 1;
-      margin-left: 280px;
-      padding: 28px 32px;
-      background: var(--bg-page);
+      margin-left: var(--sidebar-width, 280px);
+      padding: 25px;
+      transition: margin-left 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+      background: var(--bg-body);
       min-height: calc(100vh - 70px);
+      width: calc(100% - var(--sidebar-width, 280px));
     }
 
-    @media (max-width: 768px) {
-      .sidebar-wrapper {
-        transform: translateX(-100%);
-        width: 280px !important;
-      }
-      .sidebar-wrapper.mobile-open {
-        transform: translateX(0);
-      }
-      .content-wrapper {
-        margin-left: 0 !important;
-      }
+    .sidebar.mini ~ .content-wrapper {
+      margin-left: var(--sidebar-mini-width, 80px);
+      width: calc(100% - var(--sidebar-mini-width, 80px));
     }
 
-    /* ----- SETTINGS CARDS ----- */
     .mid-content {
-      max-width: 1000px;
+      max-width: 1200px;
       margin: 0 auto;
     }
 
+    @media (max-width: 768px) {
+      .sidebar {
+        transform: translateX(-100%);
+        width: var(--sidebar-width, 280px) !important;
+        transition: transform 0.3s ease;
+      }
+      
+      .sidebar.open {
+        transform: translateX(0);
+      }
+      
+      .sidebar.mini {
+        transform: translateX(-100%);
+        width: var(--sidebar-width, 280px) !important;
+      }
+      
+      .sidebar.mini.open {
+        transform: translateX(0);
+      }
+      
+      .content-wrapper {
+        margin-left: 0 !important;
+        width: 100% !important;
+        padding: 15px;
+      }
+      
+      .sidebar.mini ~ .content-wrapper {
+        margin-left: 0 !important;
+        width: 100% !important;
+      }
+    }
+
+    /* Toast */
+    #toast {
+      position: fixed;
+      top: 90px;
+      right: 29px;
+      width: 320px;
+      padding: 16px 20px;
+      border-radius: 12px;
+      box-shadow: var(--shadow-lg);
+      opacity: 0;
+      transform: translateY(-15px);
+      transition: .3s ease;
+      color: #fff;
+      z-index: 1001;
+    }
+
+    #toast.show {
+      opacity: 1;
+      transform: translateY(0);
+    }
+
+    .toast-success { background: var(--success); }
+    .toast-error { background: var(--danger); }
+    .toast-info { background: var(--info); }
+    .toast-warning { background: var(--warning); color: #1f2937; }
+
+    .toast-content {
+      display: flex;
+      gap: 12px;
+      align-items: flex-start;
+    }
+
+    .toast-icon {
+      font-size: 20px;
+    }
+
+    .toast-text h4 {
+      margin: 0;
+      font-size: 14px;
+      font-weight: 600;
+    }
+
+    .toast-text p {
+      margin: 5px 0 0;
+      font-size: 13px;
+      opacity: 0.9;
+    }
+
+    .toast-progress {
+      height: 3px;
+      background: rgba(255,255,255,0.6);
+      margin-top: 12px;
+      width: 100%;
+      animation: progress 3s linear;
+    }
+
+    @keyframes progress {
+      from { width: 100%; }
+      to { width: 0%; }
+    }
+
+    /* Loading Overlay */
+    .loading-overlay {
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background: rgba(0,0,0,0.5);
+      display: none;
+      align-items: center;
+      justify-content: center;
+      z-index: 9999;
+      backdrop-filter: blur(5px);
+    }
+
+    .spinner {
+      width: 50px;
+      height: 50px;
+      border: 5px solid var(--bg-offwhite);
+      border-top: 5px solid var(--primary);
+      border-radius: 50%;
+      animation: spin 1s linear infinite;
+    }
+
+    @keyframes spin {
+      0% { transform: rotate(0deg); }
+      100% { transform: rotate(360deg); }
+    }
+
+    .loading-text {
+      color: white;
+      margin-top: 15px;
+      font-size: 18px;
+      font-weight: 600;
+    }
+
+    /* Page Header */
+    .page-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 25px;
+      flex-wrap: wrap;
+      gap: 20px;
+    }
+
+    .page-title {
+      display: flex;
+      align-items: center;
+      gap: 15px;
+    }
+
+    .page-icon {
+      width: 56px;
+      height: 56px;
+      background: var(--primary-gradient);
+      color: white;
+      border-radius: 16px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 24px;
+      box-shadow: var(--shadow-lg);
+    }
+
+    .page-title h2 {
+      font-size: 28px;
+      font-weight: 700;
+      color: var(--dark);
+      margin: 0;
+    }
+
+    .page-title p {
+      color: var(--text-muted);
+      margin: 5px 0 0;
+      font-size: 14px;
+    }
+
+    /* Settings Navigation Menu - ADDED */
+    .settings-menu {
+      display: flex;
+      gap: 15px;
+      border-bottom: 2px solid var(--border);
+      padding-bottom: 5px;
+      margin-bottom: 30px;
+      flex-wrap: wrap;
+      background: var(--bg-card);
+      padding: 5px 5px 0 5px;
+      border-radius: 12px 12px 0 0;
+    }
+
+    .settings-menu a {
+      text-decoration: none;
+      color: var(--text-muted);
+      font-weight: 600;
+      font-size: 14px;
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 10px 16px;
+      transition: all 0.3s ease;
+      position: relative;
+      white-space: nowrap;
+      border-radius: 10px 10px 0 0;
+    }
+
+    .settings-menu a:hover {
+      color: var(--primary);
+      background: var(--bg-offwhite);
+    }
+
+    .settings-menu a.active {
+      color: var(--primary);
+      border-bottom: 3px solid var(--primary);
+      background: rgba(102, 126, 234, 0.05);
+    }
+
+    .settings-menu a i {
+      font-size: 16px;
+    }
+
+    /* Settings Cards */
     .settings-section {
-      background: var(--bg-surface);
-      border: 1px solid var(--border-subtle);
-      padding: 28px 30px;
-      margin-bottom: 40px;
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      padding: 30px;
+      margin-bottom: 30px;
       box-shadow: var(--shadow);
-      border-radius: 24px;
+      border-radius: 20px;
     }
 
     .section-head {
-      font-size: 22px;
+      font-size: 20px;
       font-weight: 600;
-      margin-bottom: 24px;
+      margin-bottom: 25px;
       display: flex;
       align-items: center;
-      gap: 8px;
+      gap: 10px;
+      color: var(--dark);
+      padding-bottom: 15px;
+      border-bottom: 2px solid var(--border);
+    }
+
+    .section-head i {
+      color: var(--primary);
+      font-size: 22px;
     }
 
     .card-row {
       display: flex;
       flex-wrap: wrap;
-      gap: 28px;
+      gap: 25px;
       margin-top: 10px;
     }
 
     .theme-card {
-      width: 260px;
-      height: 160px;
-      border: 2px solid var(--border-subtle);
-      background: var(--card-bg);
-      border-radius: 24px;
-      display: flex;
-      align-items: center;
-      justify-content: center;
+      width: 320px;
+      background: var(--bg-white);
+      border: 2px solid var(--border);
+      border-radius: 20px;
       position: relative;
       cursor: pointer;
-      font-size: 1.5rem;
-      font-weight: 600;
-      transition: border 0.15s, transform 0.2s;
-      color: var(--text-primary);
+      transition: all 0.3s ease;
+      overflow: hidden;
+      flex: 1 1 300px;
     }
 
     .theme-card:hover {
-      transform: translateY(-6px);
-      box-shadow: 0 20px 25px -8px rgba(0,0,0,0.15);
+      transform: translateY(-5px);
+      box-shadow: var(--shadow-lg);
+      border-color: var(--primary);
     }
 
     .theme-card.active {
-      border-color: var(--accent) !important;
-      box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.2);
+      border-color: var(--primary);
+      box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.2);
+    }
+
+    /* Theme Preview Images Container */
+    .theme-preview-container {
+      width: 100%;
+      height: 200px;
+      overflow: hidden;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background-color: var(--bg-offwhite);
+      border-bottom: 1px solid var(--border);
+    }
+
+    /* Theme Preview Images */
+    .theme-preview-img {
+      width: 100%;
+      height: 100%;
+      display: block;
+    }
+
+    .card-footer-info {
+      padding: 16px 20px;
+      background: var(--bg-white);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .theme-name {
+      font-size: 16px;
+      font-weight: 600;
+      color: var(--text);
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .theme-name i {
+      color: var(--primary);
+    }
+
+    .border-preview {
+      font-size: 13px;
+      padding: 4px 14px;
+      background: var(--accent-soft);
+      border-radius: 50px;
+      color: var(--text-light);
+      border: 1px solid var(--border);
     }
 
     .check-badge {
       position: absolute;
       top: 12px;
       right: 12px;
-      width: 40px;
-      height: 40px;
-      background: var(--accent);
-      border-radius: 40px;
+      width: 32px;
+      height: 32px;
+      background: var(--primary-gradient);
+      border-radius: 50%;
       display: none;
       align-items: center;
       justify-content: center;
       color: white;
-      font-size: 1.4rem;
+      font-size: 16px;
+      box-shadow: var(--shadow-lg);
+      z-index: 10;
     }
 
     .theme-card.active .check-badge {
       display: flex;
+      animation: popIn 0.3s ease;
     }
 
-    .border-preview {
-      font-size: 0.9rem;
-      margin-top: 8px;
-      padding: 4px 12px;
-      background: var(--accent-soft);
-      border-radius: 40px;
-      color: var(--text-secondary);
+    @keyframes popIn {
+      0% { transform: scale(0); }
+      70% { transform: scale(1.2); }
+      100% { transform: scale(1); }
     }
 
-    .save-btn {
-      background: var(--accent);
-      border: none;
-      color: white;
+    /* Save Button */
+    .btn {
+      padding: 14px 32px;
+      border-radius: 12px;
       font-weight: 600;
-      padding: 16px 42px;
-      font-size: 1.2rem;
-      border-radius: 40px;
+      font-size: 16px;
+      display: inline-flex;
+      align-items: center;
+      gap: 10px;
+      transition: all 0.3s ease;
+      border: none;
       cursor: pointer;
-      box-shadow: 0 10px 18px -8px var(--accent);
-      transition: 0.15s;
-      margin-top: 16px;
-      width: fit-content;
     }
 
-    .save-btn:hover {
-      background: #1d4ed8;
-      transform: scale(1.02);
+    .btn-primary {
+      background: var(--primary-gradient);
+      color: white;
+      box-shadow: var(--shadow);
     }
 
-    body.dark .save-btn:hover {
-      background: #2563eb;
+    .btn-primary:hover {
+      transform: translateY(-2px);
+      box-shadow: var(--shadow-lg);
+    }
+
+    /* Responsive - UPDATED with menu responsiveness */
+    @media (max-width: 992px) {
+      .settings-menu a {
+        white-space: normal;
+        font-size: 13px;
+        padding: 8px 12px;
+      }
+    }
+
+    @media (max-width: 768px) {
+      .content-wrapper {
+        padding: 15px;
+      }
+      
+      .settings-section {
+        padding: 20px;
+      }
+      
+      .settings-menu {
+        gap: 8px;
+      }
+      
+      .settings-menu a {
+        padding: 8px 12px;
+        font-size: 13px;
+      }
+      
+      .theme-card {
+        width: 100%;
+      }
+      
+      .theme-preview-container {
+        height: 180px;
+      }
+      
+      .btn-primary {
+        width: 100%;
+        justify-content: center;
+      }
+    }
+
+    @media (max-width: 576px) {
+      .content-wrapper {
+        padding: 10px;
+      }
+      
+      .page-title h2 {
+        font-size: 24px;
+      }
+      
+      .settings-menu {
+        flex-direction: column;
+        border-bottom: none;
+        gap: 5px;
+      }
+      
+      .settings-menu a {
+        width: 100%;
+        justify-content: center;
+        border-radius: 12px !important;
+        white-space: normal;
+        text-align: center;
+      }
+      
+      .settings-menu a.active {
+        border-bottom: none;
+        background: var(--primary-gradient);
+        color: white;
+      }
+      
+      .theme-preview-container {
+        height: 160px;
+      }
+      
+      .card-footer-info {
+        padding: 12px 16px;
+      }
     }
   </style>
 </head>
@@ -246,6 +646,17 @@
     })();
   </script>
 
+  <!-- Toast Container -->
+  <div id="toast"></div>
+
+  <!-- Loading Overlay -->
+  <div class="loading-overlay" id="loadingOverlay">
+    <div class="text-center">
+      <div class="spinner"></div>
+      <div class="loading-text">Saving Settings...</div>
+    </div>
+  </div>
+
   <!-- ===== HEADER ===== -->
   <div class="header-wrapper">
     <%- include('../partials/ram/header') %>
@@ -254,26 +665,78 @@
   <!-- ===== MAIN LAYOUT ===== -->
   <div class="main-wrapper">
     <!-- SIDEBAR -->
-    <div class="sidebar-wrapper" id="sidebarWrapper">
-      <%- include('../partials/ram/sidebaar') %>
-    </div>
+    <%- include('../partials/ram/sidebaar') %>
 
     <!-- MAIN CONTENT -->
-    <div class="content-wrapper">
+    <div class="content-wrapper" id="contentWrapper">
       <div class="mid-content">
+        <!-- Page Header -->
+        <div class="page-header">
+          <div class="page-title">
+            <div class="page-icon">
+              <i class="fas fa-paint-roller"></i>
+            </div>
+            <div>
+              <h2>Theme & Border Settings</h2>
+              <p>Customize your dashboard appearance</p>
+            </div>
+          </div>
+        </div>
+
+        <!-- Settings Navigation Menu - ADDED (exactly like other pages) -->
+        <div class="settings-menu">
+          <a href="/settings">
+            <i class="fas fa-sliders-h"></i>
+            General Settings
+          </a>
+          <a href="/themesettings" class="active">
+            <i class="fas fa-palette"></i>
+            Theme Settings
+          </a>
+          <a href="/logo">
+            <i class="fas fa-image"></i>
+            Logo
+          </a>
+          <a href="/upload-settings">
+            <i class="fas fa-upload"></i>
+            Upload file settings
+          </a>
+          <a href="/addnewsessionyear">
+            <i class="fas fa-calendar-alt"></i>
+            Session Settings
+          </a>
+        </div>
+
         <!-- THEME SECTION -->
         <div class="settings-section">
           <div class="section-head">
-            <i class="fas fa-palette" style="color: var(--accent);"></i> Theme
+            <i class="fas fa-palette"></i> Theme Settings
           </div>
           <div class="card-row">
-            <div class="theme-card" data-theme="light">
-              <i class="fas fa-sun" style="margin-right: 8px;"></i> Light
+            <!-- Light Theme Card -->
+            <div class="theme-card" data-theme="light" id="lightThemeCard">
               <div class="check-badge"><i class="fas fa-check"></i></div>
+              <div class="theme-preview-container">
+                <img src="/Theme/light.PNG" alt="Light Theme" class="theme-preview-img" onerror="this.src='https://via.placeholder.com/320x200/f8fafc/333?text=Light+Theme'">
+              </div>
+              <div class="card-footer-info">
+                <span class="theme-name">
+                  <i class="fas fa-sun"></i> Light Theme
+                </span>
+              </div>
             </div>
-            <div class="theme-card" data-theme="dark">
-              <i class="fas fa-moon" style="margin-right: 8px;"></i> Dark
+
+            <!-- Dark Theme Card -->
+            <div class="theme-card" data-theme="dark" id="darkThemeCard">
               <div class="check-badge"><i class="fas fa-check"></i></div>
+              <div class="theme-preview-container">
+                <img src="/Theme/dark.PNG" alt="Dark Theme" class="theme-preview-img" onerror="this.src='https://via.placeholder.com/320x200/1e293b/fff?text=Dark+Theme'">
+              </div>
+              <div class="card-footer-info">
+                <span class="theme-name">
+                  <i class="fas fa-moon"></i> Dark Theme
+                </span>
+              </div>
             </div>
           </div>
         </div>
@@ -281,41 +744,146 @@
         <!-- BORDER SECTION -->
         <div class="settings-section">
           <div class="section-head">
-            <i class="fas fa-border-all" style="color: var(--accent);"></i> Border style
+            <i class="fas fa-border-all"></i> Border Style
           </div>
           <div class="card-row">
-            <div class="theme-card" data-border="round-border">
-              <span style="display: flex; flex-direction: column; align-items: center;">
-                <i class="fas fa-circle" style="font-size: 1rem; margin-bottom: 6px;"></i>
-                Rounded
-                <span class="border-preview">32px radius</span>
-              </span>
+            <!-- Rounded Border Card -->
+            <div class="theme-card" data-border="round-border" id="roundedBorderCard">
               <div class="check-badge"><i class="fas fa-check"></i></div>
+              <div class="theme-preview-container">
+                <img src="/Theme/Square111.PNG" alt="Rounded Borders" class="theme-preview-img" onerror="this.src='https://via.placeholder.com/320x200/667eea/fff?text=Rounded'">
+              </div>
+              <div class="card-footer-info">  
+                <span class="theme-name">
+                  <i class="fas fa-circle"></i> Rounded
+                </span>
+                <span class="border-preview">20px radius</span>
+              </div>
             </div>
-            <div class="theme-card" data-border="no-radius">
-              <span style="display: flex; flex-direction: column; align-items: center;">
-                <i class="fas fa-square" style="font-size: 1rem; margin-bottom: 6px;"></i>
-                Square
-                <span class="border-preview">0px radius</span>
-              </span>
+
+            <!-- Square Border Card -->
+            <div class="theme-card" data-border="no-radius" id="squareBorderCard">
               <div class="check-badge"><i class="fas fa-check"></i></div>
+              <div class="theme-preview-container">
+                <img src="/Theme/Round111.PNG" alt="Square Borders" class="theme-preview-img" onerror="this.src='https://via.placeholder.com/320x200/ef4444/fff?text=Square'">
+              </div>
+              <div class="card-footer-info">
+                <span class="theme-name">
+                  <i class="fas fa-square"></i> Square
+                </span>
+                <span class="border-preview">0px radius</span>
+              </div>
             </div>
           </div>
         </div>
 
         <!-- SAVE BUTTON -->
-        <div style="display: flex; justify-content: flex-end; margin-top: 40px;">
-          <button class="save-btn" id="saveSettingsBtn">
-            <i class="fas fa-save" style="margin-right: 8px;"></i> Save settings
+        <div style="display: flex; justify-content: flex-end; margin-top: 20px;">
+          <button class="btn btn-primary" id="saveSettingsBtn">
+            <i class="fas fa-save"></i> Save Settings
           </button>
         </div>
       </div>
     </div>
   </div>
 
-  <!-- JavaScript -->
+  <!-- Bootstrap JS -->
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+  
   <script>
-    (function() {
+    // ======================
+    // SIDEBAR STATE SYNC
+    // ======================
+    function syncSidebarState() {
+      const sidebar = document.getElementById('sidebar');
+      const contentWrapper = document.getElementById('contentWrapper');
+      
+      if (!sidebar || !contentWrapper) return;
+      
+      const isMini = sidebar.classList.contains('mini');
+      
+      if (isMini) {
+        contentWrapper.style.marginLeft = 'var(--sidebar-mini-width, 80px)';
+        contentWrapper.style.width = 'calc(100% - var(--sidebar-mini-width, 80px))';
+      } else {
+        contentWrapper.style.marginLeft = 'var(--sidebar-width, 280px)';
+        contentWrapper.style.width = 'calc(100% - var(--sidebar-width, 280px))';
+      }
+    }
+
+    // ======================
+    // TOAST FUNCTION
+    // ======================
+    let toastTimer;
+    function showToast(title, message, type = 'info') {
+      const toast = document.getElementById('toast');
+      
+      clearTimeout(toastTimer);
+      
+      const icons = {
+        'success': '✅',
+        'error': '❌',
+        'warning': '⚠️',
+        'info': 'ℹ️'
+      };
+      
+      const icon = icons[type] || 'ℹ️';
+      
+      toast.innerHTML = `
+        <div class="toast-content">
+          <div class="toast-icon">${icon}</div>
+          <div class="toast-text">
+            <h4>${title}</h4>
+            <p>${message}</p>
+          </div>
+        </div>
+        <div class="toast-progress"></div>
+      `;
+      
+      toast.className = `toast-${type} show`;
+      
+      toastTimer = setTimeout(() => {
+        toast.classList.remove('show');
+      }, 3000);
+    }
+
+    // ======================
+    // LOADING OVERLAY
+    // ======================
+    function showLoading() {
+      document.getElementById('loadingOverlay').style.display = 'flex';
+    }
+
+    function hideLoading() {
+      document.getElementById('loadingOverlay').style.display = 'none';
+    }
+
+    // ======================
+    // INITIALIZATION
+    // ======================
+    document.addEventListener('DOMContentLoaded', function() {
+      // Listen for sidebar state changes
+      window.addEventListener('storage', function(e) {
+        if (e.key === 'sidebarMini' || e.key === 'sidebar-update-time') {
+          const sidebar = document.getElementById('sidebar');
+          if (sidebar) {
+            const savedState = localStorage.getItem('sidebarMini') === 'true';
+            if (savedState) {
+              sidebar.classList.add('mini');
+            } else {
+              sidebar.classList.remove('mini');
+            }
+            syncSidebarState();
+          }
+        }
+      });
+
+      window.addEventListener('resize', function() {
+        syncSidebarState();
+      });
+
+      setTimeout(syncSidebarState, 100);
+
       // Get current settings
       let selectedTheme = document.body.classList.contains('dark') ? 'dark' : 'light';
       let selectedBorder = document.body.classList.contains('no-radius') ? 'no-radius' : 'round-border';
@@ -341,6 +909,7 @@
           themeCards.forEach(c => c.classList.remove('active'));
           this.classList.add('active');
           selectedTheme = this.dataset.theme;
+          showToast('Theme Selected', `${this.dataset.theme === 'light' ? 'Light' : 'Dark'} mode preview`, 'info');
         });
       });
 
@@ -350,32 +919,95 @@
           borderCards.forEach(c => c.classList.remove('active'));
           this.classList.add('active');
           selectedBorder = this.dataset.border;
+          showToast('Border Selected', this.dataset.border === 'round-border' ? 'Rounded corners' : 'Square corners', 'info');
         });
       });
 
       // Save settings
       saveBtn.addEventListener('click', function() {
-        document.body.classList.remove('dark', 'light');
-        document.body.classList.add(selectedTheme);
-        document.body.classList.remove('round-border', 'no-radius');
-        document.body.classList.add(selectedBorder);
+        showLoading();
+        
+        setTimeout(() => {
+          // Apply theme
+          document.body.classList.remove('dark', 'light');
+          document.body.classList.add(selectedTheme);
+          
+          // Apply border
+          document.body.classList.remove('round-border', 'no-radius');
+          document.body.classList.add(selectedBorder);
 
-        try {
-          localStorage.setItem('theme', selectedTheme);
-          localStorage.setItem('border', selectedBorder);
-        } catch (e) {}
+          // Save to localStorage
+          try {
+            localStorage.setItem('theme', selectedTheme);
+            localStorage.setItem('border', selectedBorder);
+          } catch (e) {}
 
-        // Optional: Show success message
-        alert('✅ Settings saved!');
+          hideLoading();
+          showToast('Success', 'Settings saved successfully!', 'success');
+          
+          // Dispatch events for other tabs
+          window.dispatchEvent(new StorageEvent('storage', {
+            key: 'theme',
+            newValue: selectedTheme
+          }));
+          window.dispatchEvent(new StorageEvent('storage', {
+            key: 'border',
+            newValue: selectedBorder
+          }));
+        }, 500);
       });
 
-      // Load on page load
-      window.addEventListener('load', function() {
-        selectedTheme = document.body.classList.contains('dark') ? 'dark' : 'light';
-        selectedBorder = document.body.classList.contains('no-radius') ? 'no-radius' : 'round-border';
-        refreshActiveCards();
-      });
-    })();
+      // Show welcome toast
+      setTimeout(() => {
+        showToast('Welcome', 'Customize your theme and border style', 'info');
+      }, 1000);
+    });
+
+    // ======================
+    // THEME FUNCTIONS
+    // ======================
+    function toggleTheme() {
+      if (document.body.classList.contains('dark')) {
+        document.body.classList.remove('dark');
+        document.body.classList.add('light');
+        localStorage.setItem('theme', 'light');
+        showToast('Theme Updated', 'Light mode activated', 'info');
+      } else {
+        document.body.classList.remove('light');
+        document.body.classList.add('dark');
+        localStorage.setItem('theme', 'dark');
+        showToast('Theme Updated', 'Dark mode activated', 'info');
+      }
+    }
+
+    function toggleBorder() {
+      if (document.body.classList.contains('round-border')) {
+        document.body.classList.remove('round-border');
+        document.body.classList.add('no-radius');
+        localStorage.setItem('border', 'no-radius');
+        showToast('Border Style', 'Square corners activated', 'info');
+      } else {
+        document.body.classList.remove('no-radius');
+        document.body.classList.add('round-border');
+        localStorage.setItem('border', 'round-border');
+        showToast('Border Style', 'Rounded corners activated', 'info');
+      }
+    }
+
+    // ======================
+    // KEYBOARD SHORTCUTS
+    // ======================
+    document.addEventListener('keydown', function(e) {
+      if (e.key === 'F1') {
+        e.preventDefault();
+        showToast('Help', 'Click on theme cards to select, then Save', 'info');
+      }
+      
+      if ((e.ctrlKey || e.metaKey) && e.key === 's') {
+        e.preventDefault();
+        document.getElementById('saveSettingsBtn').click();
+      }
+    });
   </script>
 </body>
 </html>

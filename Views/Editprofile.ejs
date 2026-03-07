@@ -1,0 +1,1079 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Edit Profile - <%= userData?.firstName || 'User' %></title>
+    
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <style>
+        /* ===== THEME VARIABLES - EXACTLY LIKE PROFILE TEMPLATE ===== */
+        :root {
+            --primary: #667eea;
+            --primary-dark: #5a67d8;
+            --primary-gradient: linear-gradient(135deg, #667eea, #764ba2);
+            --success: #10b981;
+            --warning: #f59e0b;
+            --danger: #ef4444;
+            --info: #3b82f6;
+            
+            /* Light Mode */
+            --bg-body: #f8fafc;
+            --bg-white: #ffffff;
+            --bg-offwhite: #f1f5f9;
+            --bg-card: #ffffff;
+            --text: #334155;
+            --text-light: #64748b;
+            --text-muted: #94a3b8;
+            --dark: #0f172a;
+            --border: #eef2f6;
+            --shadow: 0 8px 25px rgba(0,0,0,0.03);
+            --shadow-lg: 0 15px 35px rgba(102, 126, 234, 0.1);
+            --shadow-xl: 0 20px 40px rgba(102, 126, 234, 0.15);
+            
+            /* Layout */
+            --header-height: 70px;
+            --sidebar-width: 280px;
+            --sidebar-mini-width: 80px;
+        }
+
+        /* Dark Mode */
+        body.dark {
+            --bg-body: #0f172a;
+            --bg-white: #1e293b;
+            --bg-offwhite: #334155;
+            --bg-card: #1e293b;
+            --text: #e2e8f0;
+            --text-light: #cbd5e1;
+            --text-muted: #94a3b8;
+            --dark: #f8fafc;
+            --border: #334155;
+            --shadow: 0 8px 25px rgba(0,0,0,0.2);
+            --shadow-lg: 0 15px 35px rgba(102, 126, 234, 0.2);
+            --shadow-xl: 0 20px 40px rgba(102, 126, 234, 0.25);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            overflow-x: hidden;
+            background: var(--bg-body);
+            font-family: 'Inter', 'Segoe UI', sans-serif;
+            color: var(--text);
+            transition: background-color 0.3s, color 0.3s;
+        }
+
+        /* ===== BORDER MODES - EXACTLY LIKE PROFILE TEMPLATE ===== */
+        body.round-border .header-wrapper,
+        body.round-border .sidebar,
+        body.round-border .edit-card,
+        body.round-border .form-control,
+        body.round-border .form-select,
+        body.round-border .btn-save,
+        body.round-border .btn-cancel,
+        body.round-border .avatar-section,
+        body.round-border .avatar-preview,
+        body.round-border .btn-upload,
+        body.round-border .toast-notification {
+            border-radius: 20px !important;
+        }
+
+        body.round-border .avatar-preview {
+            border-radius: 16px !important;
+        }
+
+        body.no-radius .header-wrapper,
+        body.no-radius .sidebar,
+        body.no-radius .edit-card,
+        body.no-radius .form-control,
+        body.no-radius .form-select,
+        body.no-radius .btn-save,
+        body.no-radius .btn-cancel,
+        body.no-radius .avatar-section,
+        body.no-radius .avatar-preview,
+        body.no-radius .btn-upload,
+        body.no-radius .toast-notification {
+            border-radius: 0 !important;
+        }
+
+        /* Header */
+        .header-wrapper {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            z-index: 1030;
+            background: var(--bg-white);
+            box-shadow: var(--shadow);
+            border-bottom: 1px solid var(--border);
+        }
+
+        /* MAIN LAYOUT */
+        .main-wrapper {
+            margin-top: 70px;
+            display: flex;
+            width: 100%;
+            min-height: calc(100vh - 70px);
+            position: relative;
+        }
+
+        /* SIDEBAR */
+        .sidebar {
+            width: var(--sidebar-width, 280px);
+            background: var(--bg-white);
+            border-right: 1px solid var(--border);
+            height: calc(100vh - var(--header-height, 70px));
+            position: fixed;
+            left: 0;
+            top: 70px;
+            transition: width 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            z-index: 1020;
+            box-shadow: var(--shadow);
+            display: flex;
+            flex-direction: column;
+            overflow-y: auto;
+            overflow-x: hidden;
+        }
+
+        .sidebar.mini {
+            width: var(--sidebar-mini-width, 80px);
+        }
+
+        /* CONTENT WRAPPER */
+        .content-wrapper {
+            flex: 1;
+            margin-left: var(--sidebar-width, 280px);
+            padding: 25px;
+            transition: margin-left 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            background: var(--bg-body);
+            min-height: calc(100vh - 70px);
+            width: calc(100% - var(--sidebar-width, 280px));
+        }
+
+        .sidebar.mini ~ .content-wrapper {
+            margin-left: var(--sidebar-mini-width, 80px);
+            width: calc(100% - var(--sidebar-mini-width, 80px));
+        }
+
+        @media (max-width: 768px) {
+            .sidebar {
+                transform: translateX(-100%);
+                width: var(--sidebar-width, 280px) !important;
+            }
+            
+            .sidebar.open {
+                transform: translateX(0);
+            }
+            
+            .content-wrapper {
+                margin-left: 0 !important;
+                width: 100% !important;
+                padding: 15px;
+            }
+        }
+
+        /* Edit Container - Same width as profile container */
+        .edit-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            width: 100%;
+        }
+
+        /* Edit Card - Same as profile card */
+        .edit-card {
+            background: var(--bg-card);
+            border-radius: 20px;
+            box-shadow: var(--shadow-lg);
+            border: 1px solid var(--border);
+            overflow: hidden;
+            animation: slideUp 0.5s ease-out;
+        }
+
+        @keyframes slideUp {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        /* Edit Header - Same gradient as profile */
+        .edit-header {
+            background: var(--primary-gradient);
+            padding: 30px 35px;
+            color: white;
+        }
+
+        .edit-header h2 {
+            margin: 0;
+            font-size: 28px;
+            font-weight: 700;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .edit-header p {
+            margin: 8px 0 0;
+            opacity: 0.95;
+            font-size: 15px;
+        }
+
+        /* Edit Body - Same padding as profile body */
+        .edit-body {
+            padding: 40px 35px;
+        }
+
+        @media (max-width: 640px) {
+            .edit-body {
+                padding: 25px 20px;
+            }
+        }
+
+        /* Avatar Section - Same as profile avatar section */
+        .avatar-section {
+            display: flex;
+            align-items: center;
+            gap: 30px;
+            margin-bottom: 30px;
+            padding: 20px;
+            background: var(--bg-offwhite);
+            border-radius: 16px;
+            border: 1px solid var(--border);
+        }
+
+        @media (max-width: 640px) {
+            .avatar-section {
+                flex-direction: column;
+                text-align: center;
+            }
+        }
+
+        .avatar-preview {
+            width: 120px;
+            height: 120px;
+            border-radius: 20px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 48px;
+            font-weight: bold;
+            color: white;
+            background: var(--primary-gradient);
+            border: 4px solid var(--bg-white);
+            box-shadow: var(--shadow-lg);
+            background-size: cover;
+            background-position: center;
+            background-repeat: no-repeat;
+            flex-shrink: 0;
+        }
+
+        .avatar-upload {
+            flex: 1;
+        }
+
+        .btn-upload {
+            display: inline-flex;
+            align-items: center;
+            gap: 10px;
+            padding: 12px 28px;
+            background: var(--bg-card);
+            color: var(--primary);
+            border: 1px solid var(--primary);
+            border-radius: 12px;
+            font-size: 14px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .btn-upload:hover {
+            background: var(--primary-gradient);
+            color: white;
+            transform: translateY(-2px);
+            box-shadow: var(--shadow);
+        }
+
+        .avatar-upload small {
+            display: block;
+            margin-top: 8px;
+            color: var(--text-muted);
+            font-size: 11px;
+        }
+
+        /* Form Styles - Matching profile info items */
+        .section-titles {
+            font-size: 20px;
+            font-weight: 600;
+            color: var(--dark);
+            margin: 30px 0 20px;
+            padding-bottom: 10px;
+            border-bottom: 2px solid var(--border);
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+      
+
+        .section-titles:first-of-type {
+            margin-top: 0;
+        }
+
+        .form-label {
+            font-weight: 600;
+            color: var(--text-light);
+            font-size: 13px;
+            margin-bottom: 8px;
+            text-transform: uppercase;
+            letter-spacing: 0.4px;
+        }
+
+        .form-control, .form-select {
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            padding: 12px 16px;
+            font-size: 14px;
+            transition: all 0.3s;
+            background: var(--bg-white);
+            color: var(--text);
+        }
+
+        .form-control:focus, .form-select:focus {
+            border-color: var(--primary);
+            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+            outline: none;
+        }
+
+        .form-control::placeholder {
+            color: var(--text-muted);
+            opacity: 0.7;
+        }
+
+        .form-control:disabled, .form-control[readonly] {
+            background: var(--bg-offwhite);
+            opacity: 0.7;
+        }
+
+        textarea.form-control {
+            resize: vertical;
+            min-height: 100px;
+        }
+
+        /* Edit Footer - Exactly like profile footer */
+        .edit-footer {
+            padding: 25px 35px;
+            background: var(--bg-offwhite);
+            border-top: 1px solid var(--border);
+            display: flex;
+            justify-content: flex-end;
+            gap: 15px;
+            flex-wrap: wrap;
+        }
+
+        @media (max-width: 640px) {
+            .edit-footer {
+                padding: 20px;
+                flex-direction: column;
+            }
+            
+            .edit-footer .btn {
+                width: 100%;
+                justify-content: center;
+            }
+        }
+
+        /* Buttons - EXACTLY like profile page buttons */
+        .btn {
+            padding: 12px 28px;
+            border-radius: 12px;
+            font-weight: 600;
+            font-size: 16px;
+            display: inline-flex;
+            align-items: center;
+            gap: 10px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            border: none;
+            text-decoration: none;
+        }
+
+        .btn-save {
+            background: var(--primary-gradient);
+            color: white;
+            box-shadow: var(--shadow);
+        }
+
+        .btn-save:hover:not(:disabled) {
+            transform: translateY(-2px);
+            box-shadow: var(--shadow-lg);
+        }
+
+        .btn-save:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+        }
+
+        .btn-cancel {
+            background: var(--bg-card);
+            color: var(--text);
+            border: 1px solid var(--border);
+        }
+
+        .btn-cancel:hover {
+            background: var(--bg-offwhite);
+            border-color: var(--primary);
+            color: var(--primary);
+            transform: translateY(-2px);
+            box-shadow: var(--shadow);
+        }
+
+        /* Toast */
+        #toast {
+            position: fixed;
+            top: 90px;
+            right: 29px;
+            width: 320px;
+            padding: 16px 20px;
+            border-radius: 12px;
+            box-shadow: var(--shadow-lg);
+            opacity: 0;
+            transform: translateY(-15px);
+            transition: .3s ease;
+            color: #fff;
+            z-index: 1001;
+        }
+
+        #toast.show {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        .toast-success { background: var(--success); }
+        .toast-error { background: var(--danger); }
+        .toast-info { background: var(--info); }
+        .toast-warning { background: var(--warning); color: #1f2937; }
+
+        .toast-content {
+            display: flex;
+            gap: 12px;
+            align-items: flex-start;
+        }
+
+        .toast-icon {
+            font-size: 20px;
+        }
+
+        .toast-text h4 {
+            margin: 0;
+            font-size: 14px;
+            font-weight: 600;
+        }
+
+        .toast-text p {
+            margin: 5px 0 0;
+            font-size: 13px;
+            opacity: 0.9;
+        }
+
+        .toast-progress {
+            height: 3px;
+            background: rgba(255,255,255,0.6);
+            margin-top: 12px;
+            width: 100%;
+            animation: progress 3s linear;
+        }
+
+        @keyframes progress {
+            from { width: 100%; }
+            to { width: 0%; }
+        }
+
+        /* Loading Overlay */
+        .loading-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0,0,0,0.5);
+            display: none;
+            align-items: center;
+            justify-content: center;
+            z-index: 9999;
+            backdrop-filter: blur(5px);
+        }
+
+        .spinner {
+            width: 50px;
+            height: 50px;
+            border: 5px solid var(--bg-offwhite);
+            border-top: 5px solid var(--primary);
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        .loading-text {
+            color: white;
+            margin-top: 15px;
+            font-size: 18px;
+            font-weight: 600;
+        }
+
+        /* Responsive - Matching profile page */
+        @media (max-width: 992px) {
+            .edit-header h2 {
+                font-size: 24px;
+            }
+            
+            .avatar-preview {
+                width: 100px;
+                height: 100px;
+                font-size: 40px;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .content-wrapper {
+                padding: 15px;
+            }
+            
+            .edit-header {
+                padding: 25px 20px;
+            }
+            
+            .edit-header h2 {
+                font-size: 22px;
+            }
+            
+            .avatar-section {
+                padding: 15px;
+            }
+            
+            .btn-upload {
+                padding: 10px 24px;
+            }
+        }
+
+        @media (max-width: 576px) {
+            .content-wrapper {
+                padding: 10px;
+            }
+            
+            .edit-header {
+                padding: 20px;
+            }
+            
+            .edit-header h2 {
+                font-size: 20px;
+            }
+            
+            .edit-header p {
+                font-size: 14px;
+            }
+            
+            .btn {
+                padding: 10px 20px;
+                font-size: 14px;
+            }
+            
+            .avatar-preview {
+                width: 80px;
+                height: 80px;
+                font-size: 32px;
+            }
+            
+            .section-titles {
+                font-size: 18px;
+                margin: 20px 0 15px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Theme Initialization Script -->
+    <script>
+        (function() {
+            const savedTheme = localStorage.getItem('theme') || 'light';
+            const savedBorder = localStorage.getItem('border') || 'round-border';
+            document.body.classList.add(savedTheme);
+            document.body.classList.add(savedBorder);
+            console.log('🎨 Theme loaded:', savedTheme);
+            console.log('📐 Border mode loaded:', savedBorder);
+        })();
+    </script>
+
+    <!-- HEADER -->
+    <div class="header-wrapper">
+        <%- include('../partials/ram/header') %>
+    </div>
+
+    <!-- MAIN LAYOUT -->
+    <div class="main-wrapper">
+        <!-- SIDEBAR -->
+        <%- include('../partials/ram/sidebaar') %>
+
+        <!-- CONTENT -->
+        <div class="content-wrapper" id="contentWrapper">
+            <!-- Toast Container -->
+            <div id="toast"></div>
+
+            <!-- Loading Overlay -->
+            <div class="loading-overlay" id="loadingOverlay">
+                <div class="text-center">
+                    <div class="spinner"></div>
+                    <div class="loading-text">Processing...</div>
+                </div>
+            </div>
+
+            <div class="edit-container">
+                <!-- Edit Profile Card -->
+                <div class="edit-card">
+                    <div class="edit-header">
+                        <h2><i class="fas fa-edit"></i> Edit Profile</h2>
+                        <p>Update your personal information and settings</p>
+                    </div>
+
+                    <form id="editProfileForm" onsubmit="saveProfileChanges(event)">
+                        <div class="edit-body">
+                            <!-- Avatar Upload Section -->
+                            <div class="avatar-section">
+                                <div class="avatar-preview" id="avatarPreview"
+                                    <% if (userData?.avatar) { %>
+                                        style="background-image: url('<%= userData.avatar %>'); background-size: cover; background-position: center; background-repeat: no-repeat;"
+                                    <% } else { %>
+                                        style="background: var(--primary-gradient);"
+                                    <% } %>>
+                                    <% if (!userData?.avatar) { %>
+                                        <%= (userData?.firstName || userData?.email || 'U').charAt(0).toUpperCase() %>
+                                    <% } %>
+                                </div>
+                                <div class="avatar-upload">
+                                    <label for="avatarUpload" class="btn-upload"><i class="fas fa-camera"></i> Change Photo</label>
+                                    <input type="file" id="avatarUpload" accept="image/jpeg,image/png,image/gif,image/webp" style="display: none;" onchange="previewAvatar(this)">
+                                    <small>JPG, PNG, GIF or WebP (Max 2MB)</small>
+                                </div>
+                            </div>
+
+                            <!-- Personal Information -->
+                            <div class="section-title">
+                                <i class="fas fa-user-circle"></i> Personal Information
+                            </div>
+                            <div class="row g-3 mb-4">
+                                <div class="col-md-6">
+                                    <label class="form-label">First Name *</label>
+                                    <input type="text" class="form-control" id="editFirstName" value="<%= userData?.firstName || '' %>" required maxlength="50">
+                                </div>
+                                <div class="col-md-6">
+                                    <label class="form-label">Last Name</label>
+                                    <input type="text" class="form-control" id="editLastName" value="<%= userData?.lastName || '' %>" maxlength="50">
+                                </div>
+                                <div class="col-md-6">
+                                    <label class="form-label">Contact Number</label>
+                                    <input type="tel" class="form-control" id="editPhone" value="<%= userData?.contactNumber || '' %>" pattern="[0-9+\-\s]+" title="Please enter a valid phone number">
+                                </div>
+                                <div class="col-md-6">
+                                    <label class="form-label">Date of Birth</label>
+                                    <input type="date" class="form-control" id="editDob" value="<%= userData?.dob || '' %>" max="<%= new Date().toISOString().split('T')[0] %>">
+                                </div>
+                                <div class="col-md-6">
+                                    <label class="form-label">Gender</label>
+                                    <select class="form-select" id="editGender">
+                                        <option value="">Select</option>
+                                        <option value="Male" <%= userData?.gender === 'Male' ? 'selected' : '' %>>Male</option>
+                                        <option value="Female" <%= userData?.gender === 'Female' ? 'selected' : '' %>>Female</option>
+                                        <option value="Other" <%= userData?.gender === 'Other' ? 'selected' : '' %>>Other</option>
+                                    </select>
+                                </div>
+                            </div>
+
+                            <!-- Contact Information -->
+                            <div class="section-title">
+                                <i class="fas fa-envelope"></i> Contact Information
+                            </div>
+                            <div class="row g-3">
+                                <div class="col-12">
+                                    <label class="form-label">Email Address</label>
+                                    <input type="email" class="form-control" id="editEmail" value="<%= userData?.email || '' %>" readonly disabled>
+                                    <small class="text-muted">Email cannot be changed</small>
+                                </div>
+                                <div class="col-12">
+                                    <label class="form-label">Address</label>
+                                    <textarea class="form-control" id="editAddress" rows="3" maxlength="200"><%= userData?.address || '' %></textarea>
+                                </div>
+                            </div>
+
+                            <!-- Hidden User ID -->
+                            <input type="hidden" id="userId" value="<%= userData?._id || '' %>">
+                        </div>
+
+                        <div class="edit-footer">
+                            <button type="button" class="btn btn-cancel" onclick="cancelEdit()"><i class="fas fa-times"></i> Cancel</button>
+                            <button type="submit" class="btn btn-save" id="saveBtn"><i class="fas fa-save"></i> Save Changes</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Bootstrap JS -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.min.js"></script>
+
+    <script>
+        // ======================
+        // USER DATA FROM URL
+        // ======================
+        let userData = {};
+        let selectedAvatarFile = null;
+        let isSubmitting = false;
+
+        // Parse user data from URL
+        try {
+            const urlParams = new URLSearchParams(window.location.search);
+            const dataParam = urlParams.get('data');
+            if (dataParam) {
+                userData = JSON.parse(decodeURIComponent(dataParam));
+                console.log('📦 User data loaded:', userData);
+            }
+        } catch (e) {
+            console.error('Error parsing user data:', e);
+            showToast('Error', 'Failed to load user data', 'error');
+        }
+
+        // ======================
+        // SIDEBAR STATE SYNC
+        // ======================
+        function syncSidebarState() {
+            const sidebar = document.getElementById('sidebar');
+            const contentWrapper = document.getElementById('contentWrapper');
+            
+            if (!sidebar || !contentWrapper) return;
+            
+            const isMini = sidebar.classList.contains('mini');
+            
+            if (isMini) {
+                contentWrapper.style.marginLeft = 'var(--sidebar-mini-width, 80px)';
+                contentWrapper.style.width = 'calc(100% - var(--sidebar-mini-width, 80px))';
+            } else {
+                contentWrapper.style.marginLeft = 'var(--sidebar-width, 280px)';
+                contentWrapper.style.width = 'calc(100% - var(--sidebar-width, 280px))';
+            }
+        }
+
+        // ======================
+        // INITIALIZATION
+        // ======================
+        document.addEventListener('DOMContentLoaded', function() {
+            // Listen for sidebar state changes
+            window.addEventListener('storage', function(e) {
+                if (e.key === 'sidebarMini' || e.key === 'sidebar-update-time') {
+                    const sidebar = document.getElementById('sidebar');
+                    if (sidebar) {
+                        const savedState = localStorage.getItem('sidebarMini') === 'true';
+                        if (savedState) {
+                            sidebar.classList.add('mini');
+                        } else {
+                            sidebar.classList.remove('mini');
+                        }
+                        syncSidebarState();
+                    }
+                }
+            });
+
+            window.addEventListener('resize', function() {
+                syncSidebarState();
+            });
+
+            setTimeout(syncSidebarState, 100);
+
+            // Check for message from server
+            const urlParams = new URLSearchParams(window.location.search);
+            const message = urlParams.get('message');
+            const messageType = urlParams.get('messageType');
+            
+            if (message) {
+                showToast(
+                    messageType === 'success' ? 'Success' : 'Notification', 
+                    decodeURIComponent(message), 
+                    messageType || 'info'
+                );
+                
+                // Clean URL
+                const url = new URL(window.location);
+                url.searchParams.delete('message');
+                url.searchParams.delete('messageType');
+                window.history.replaceState({}, document.title, url);
+            }
+
+            // Welcome toast
+            setTimeout(() => {
+                showToast('Edit Mode', 'You can edit your profile details', 'info');
+            }, 500);
+        });
+
+        // ======================
+        // AVATAR PREVIEW
+        // ======================
+        function previewAvatar(input) {
+            if (input.files && input.files[0]) {
+                const file = input.files[0];
+                
+                // Validate file size (2MB)
+                if (file.size > 2 * 1024 * 1024) {
+                    showToast('Error', 'File size must be less than 2MB', 'error');
+                    input.value = '';
+                    return;
+                }
+                
+                // Validate file type
+                if (!file.type.startsWith('image/')) {
+                    showToast('Error', 'Please select an image file', 'error');
+                    input.value = '';
+                    return;
+                }
+                
+                selectedAvatarFile = file;
+                
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    const avatarPreview = document.getElementById('avatarPreview');
+                    avatarPreview.style.backgroundImage = `url('${e.target.result}')`;
+                    avatarPreview.style.backgroundSize = 'cover';
+                    avatarPreview.style.backgroundPosition = 'center';
+                    avatarPreview.style.backgroundRepeat = 'no-repeat';
+                    avatarPreview.style.background = 'none';
+                    avatarPreview.textContent = '';
+                };
+                reader.readAsDataURL(file);
+            }
+        }
+
+        // ======================
+        // NAVIGATION
+        // ======================
+        function cancelEdit() {
+            if (confirm('Are you sure? Any unsaved changes will be lost.')) {
+                window.location.href = '/profile';
+            }
+        }
+
+        function goBack() {
+            window.location.href = '/profile';
+        }
+
+        // ======================
+        // KEYBOARD SHORTCUTS
+        // ======================
+        document.addEventListener('keydown', function(e) {
+            if (e.key === 'Escape') {
+                cancelEdit();
+            }
+            
+            if (e.key === 'F1') {
+                e.preventDefault();
+                showToast('Help', 'Press Esc to cancel | Fill all required fields', 'info');
+            }
+            
+            if ((e.ctrlKey || e.metaKey) && e.key === 's') {
+                e.preventDefault();
+                document.getElementById('editProfileForm').requestSubmit();
+            }
+        });
+
+        // ======================
+        // TOAST FUNCTION
+        // ======================
+        let toastTimer;
+        function showToast(title, message, type = 'info') {
+            const toast = document.getElementById('toast');
+            
+            clearTimeout(toastTimer);
+            
+            const icons = {
+                'success': '✅',
+                'error': '❌',
+                'warning': '⚠️',
+                'info': 'ℹ️'
+            };
+            
+            const icon = icons[type] || 'ℹ️';
+            
+            toast.innerHTML = `
+                <div class="toast-content">
+                    <div class="toast-icon">${icon}</div>
+                    <div class="toast-text">
+                        <h4>${title}</h4>
+                        <p>${message}</p>
+                    </div>
+                </div>
+                <div class="toast-progress"></div>
+            `;
+            
+            toast.className = `toast-${type} show`;
+            
+            toastTimer = setTimeout(() => {
+                toast.classList.remove('show');
+            }, 3000);
+        }
+
+        // ======================
+        // LOADING OVERLAY FUNCTIONS
+        // ======================
+        function showLoading(text = 'Processing...') {
+            const overlay = document.getElementById('loadingOverlay');
+            document.querySelector('.loading-text').textContent = text;
+            overlay.style.display = 'flex';
+        }
+
+        function hideLoading() {
+            document.getElementById('loadingOverlay').style.display = 'none';
+        }
+
+        // ======================
+        // SAVE PROFILE CHANGES
+        // ======================
+        function saveProfileChanges(event) {
+            event.preventDefault();
+            
+            // Prevent double submission
+            if (isSubmitting) {
+                showToast('Info', 'Already saving changes...', 'info');
+                return;
+            }
+            
+            // Get form values
+            const firstName = document.getElementById('editFirstName').value.trim();
+            const lastName = document.getElementById('editLastName').value.trim();
+            const phone = document.getElementById('editPhone').value.trim();
+            const dob = document.getElementById('editDob').value;
+            const gender = document.getElementById('editGender').value;
+            const address = document.getElementById('editAddress').value.trim();
+            const userId = document.getElementById('userId').value;
+            
+            // Validate required fields
+            if (!firstName) {
+                showToast('Error', 'First name is required', 'error');
+                document.getElementById('editFirstName').focus();
+                return;
+            }
+            
+            // Validate phone if provided
+            if (phone && !/^[0-9+\-\s]+$/.test(phone)) {
+                showToast('Error', 'Please enter a valid phone number', 'error');
+                document.getElementById('editPhone').focus();
+                return;
+            }
+            
+            // Disable save button and set submitting flag
+            isSubmitting = true;
+            const saveBtn = document.getElementById('saveBtn');
+            const originalText = saveBtn.innerHTML;
+            saveBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Saving...';
+            saveBtn.disabled = true;
+            
+            showToast('Updating', 'Saving your changes...', 'info');
+            showLoading('Saving profile...');
+            
+            // Prepare form data
+            const formData = new FormData();
+            formData.append('firstName', firstName);
+            formData.append('lastName', lastName);
+            formData.append('contactNumber', phone);
+            formData.append('dob', dob);
+            formData.append('gender', gender);
+            formData.append('address', address);
+            formData.append('userId', userId);
+            
+            if (selectedAvatarFile) {
+                formData.append('avatar', selectedAvatarFile);
+            }
+            
+            // Send request
+            fetch('/profile/update', {
+                method: 'POST',
+                body: formData
+            })
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error('Network response was not ok');
+                }
+                return response.json();
+            })
+            .then(data => {
+                hideLoading();
+                
+                if (data.status) {
+                    showToast('Success', data.message || 'Profile updated successfully!', 'success');
+                    
+                    // Redirect back to profile page after 1.5 seconds
+                    setTimeout(() => {
+                        window.location.href = '/profile?message=Profile updated successfully&messageType=success';
+                    }, 1500);
+                    
+                } else {
+                    showToast('Error', data.message || 'Failed to update profile', 'error');
+                }
+            })
+            .catch(error => {
+                hideLoading();
+                console.error('Error:', error);
+                showToast('Error', 'Failed to update profile. Please try again.', 'error');
+            })
+            .finally(() => {
+                // Re-enable save button
+                isSubmitting = false;
+                saveBtn.innerHTML = originalText;
+                saveBtn.disabled = false;
+            });
+        }
+
+        // ======================
+        // THEME FUNCTIONS
+        // ======================
+        function toggleTheme() {
+            if (document.body.classList.contains('dark')) {
+                document.body.classList.remove('dark');
+                document.body.classList.add('light');
+                localStorage.setItem('theme', 'light');
+                showToast('Theme Updated', 'Light mode activated', 'info');
+            } else {
+                document.body.classList.remove('light');
+                document.body.classList.add('dark');
+                localStorage.setItem('theme', 'dark');
+                showToast('Theme Updated', 'Dark mode activated', 'info');
+            }
+        }
+
+        function toggleBorder() {
+            if (document.body.classList.contains('round-border')) {
+                document.body.classList.remove('round-border');
+                document.body.classList.add('no-radius');
+                localStorage.setItem('border', 'no-radius');
+                showToast('Border Style', 'Square corners activated', 'info');
+            } else {
+                document.body.classList.remove('no-radius');
+                document.body.classList.add('round-border');
+                localStorage.setItem('border', 'round-border');
+                showToast('Border Style', 'Rounded corners activated', 'info');
+            }
+        }
+    </script>
+</body>
+</html>

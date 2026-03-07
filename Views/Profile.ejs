@@ -11,33 +11,34 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     
     <style>
-        /* ===== THEME VARIABLES ===== */
+        /* ===== THEME VARIABLES - EXACTLY LIKE PREVIOUS TEMPLATES ===== */
         :root {
-            --primary: #3b82f6;
-            --primary-dark: #2563eb;
-            --primary-gradient: linear-gradient(135deg, #3b82f6 0%, #2563eb 100%);
+            --primary: #667eea;
+            --primary-dark: #5a67d8;
+            --primary-gradient: linear-gradient(135deg, #667eea, #764ba2);
             --success: #10b981;
             --warning: #f59e0b;
             --danger: #ef4444;
             --info: #3b82f6;
             
             /* Light Mode */
-            --bg-body: #f3f4f6;
+            --bg-body: #f8fafc;
             --bg-white: #ffffff;
-            --bg-offwhite: #f8fafc;
+            --bg-offwhite: #f1f5f9;
             --bg-card: #ffffff;
-            --text: #1e293b;
-            --text-light: #334155;
-            --text-muted: #64748b;
+            --text: #334155;
+            --text-light: #64748b;
+            --text-muted: #94a3b8;
             --dark: #0f172a;
             --border: #eef2f6;
-            --shadow: 0 2px 10px rgba(0,0,0,0.05);
-            --shadow-lg: 0 10px 30px rgba(0,0,0,0.05);
-            --shadow-xl: 0 20px 35px rgba(0,0,0,0.15);
+            --shadow: 0 8px 25px rgba(0,0,0,0.03);
+            --shadow-lg: 0 15px 35px rgba(102, 126, 234, 0.1);
+            --shadow-xl: 0 20px 40px rgba(102, 126, 234, 0.15);
             
             /* Layout */
             --header-height: 70px;
             --sidebar-width: 280px;
+            --sidebar-mini-width: 80px;
         }
 
         /* Dark Mode */
@@ -46,14 +47,14 @@
             --bg-white: #1e293b;
             --bg-offwhite: #334155;
             --bg-card: #1e293b;
-            --text: #f1f5f9;
+            --text: #e2e8f0;
             --text-light: #cbd5e1;
             --text-muted: #94a3b8;
             --dark: #f8fafc;
             --border: #334155;
-            --shadow: 0 2px 10px rgba(0,0,0,0.3);
-            --shadow-lg: 0 10px 30px rgba(0,0,0,0.3);
-            --shadow-xl: 0 20px 35px rgba(0,0,0,0.5);
+            --shadow: 0 8px 25px rgba(0,0,0,0.2);
+            --shadow-lg: 0 15px 35px rgba(102, 126, 234, 0.2);
+            --shadow-xl: 0 20px 40px rgba(102, 126, 234, 0.25);
         }
 
         * {
@@ -65,59 +66,46 @@
         body {
             overflow-x: hidden;
             background: var(--bg-body);
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            font-family: 'Inter', 'Segoe UI', sans-serif;
             color: var(--text);
             transition: background-color 0.3s, color 0.3s;
         }
 
-        /* ===== BORDER MODES ===== */
+        /* ===== BORDER MODES - EXACTLY LIKE PREVIOUS TEMPLATES ===== */
         body.round-border .header-wrapper,
-        body.round-border .sidebar-wrapper,
+        body.round-border .sidebar,
         body.round-border .profile-card,
         body.round-border .info-item,
         body.round-border .btn-edit,
         body.round-border .btn-back,
-        body.round-border .modal-content,
-        body.round-border .form-control,
-        body.round-border .form-select,
-        body.round-border .btn-save,
-        body.round-border .btn-cancel,
-        body.round-border .modal-avatar-section,
-        body.round-border .toast-notification {
-            border-radius: 24px !important;
+        body.round-border .profile-avatars,
+        body.round-border .role-badge,
+        body.round-border .status-badge {
+            border-radius: 20px !important;
         }
 
-        body.round-border .profile-avatar,
-        body.round-border .avatar-upload-btn,
-        body.round-border .info-icon,
+        body.round-border .profile-avatars {
+            border-radius: 16px !important;
+        }
+
         body.round-border .role-badge,
-        body.round-border .status-badge,
-        body.round-border .modal-avatar-preview {
-            border-radius: 50% !important;
+        body.round-border .status-badge {
+            border-radius: 50px !important;
         }
 
         body.no-radius .header-wrapper,
-        body.no-radius .sidebar-wrapper,
+        body.no-radius .sidebar,
         body.no-radius .profile-card,
         body.no-radius .info-item,
         body.no-radius .btn-edit,
         body.no-radius .btn-back,
-        body.no-radius .modal-content,
-        body.no-radius .form-control,
-        body.no-radius .form-select,
-        body.no-radius .btn-save,
-        body.no-radius .btn-cancel,
-        body.no-radius .modal-avatar-section,
-        body.no-radius .toast-notification,
-        body.no-radius .profile-avatar,
-        body.no-radius .avatar-upload-btn,
-        body.no-radius .info-icon,
+        body.no-radius .profile-avatars,
         body.no-radius .role-badge,
-        body.no-radius .status-badge,
-        body.no-radius .modal-avatar-preview {
+        body.no-radius .status-badge {
             border-radius: 0 !important;
         }
 
+        /* Header */
         .header-wrapper {
             position: fixed;
             top: 0;
@@ -129,69 +117,98 @@
             border-bottom: 1px solid var(--border);
         }
 
+        /* MAIN LAYOUT - EXACTLY LIKE PREVIOUS TEMPLATES */
         .main-wrapper {
             margin-top: 70px;
             display: flex;
             width: 100%;
             min-height: calc(100vh - 70px);
+            position: relative;
         }
 
-        .sidebar-wrapper {
-            width: 280px;
-            flex-shrink: 0;
+        /* SIDEBAR - EXACTLY LIKE PREVIOUS TEMPLATES */
+        .sidebar {
+            width: var(--sidebar-width, 280px);
+            background: var(--bg-white);
+            border-right: 1px solid var(--border);
+            height: calc(100vh - var(--header-height, 70px));
             position: fixed;
             left: 0;
             top: 70px;
-            bottom: 0;
+            transition: width 0.3s cubic-bezier(0.4, 0, 0.2, 1);
             z-index: 1020;
-            transition: width 0.3s ease;
-            background: var(--bg-white);
-            border-right: 1px solid var(--border);
+            box-shadow: var(--shadow);
+            display: flex;
+            flex-direction: column;
+            overflow-y: auto;
+            overflow-x: hidden;
         }
 
-        .sidebar-wrapper.collapsed {
-            width: 80px;
+        /* Sidebar Mini Mode */
+        .sidebar.mini {
+            width: var(--sidebar-mini-width, 80px);
         }
 
+        /* CONTENT WRAPPER - EXACTLY LIKE PREVIOUS TEMPLATES */
         .content-wrapper {
             flex: 1;
-            margin-left: 280px;
-            padding: 25px 30px;
-            transition: margin-left 0.3s ease;
+            margin-left: var(--sidebar-width, 280px);
+            padding: 25px;
+            transition: margin-left 0.3s cubic-bezier(0.4, 0, 0.2, 1);
             background: var(--bg-body);
             min-height: calc(100vh - 70px);
+            width: calc(100% - var(--sidebar-width, 280px));
         }
 
-        .sidebar-wrapper.collapsed + .content-wrapper {
-            margin-left: 80px;
+        /* When sidebar has mini class, adjust content wrapper */
+        .sidebar.mini ~ .content-wrapper {
+            margin-left: var(--sidebar-mini-width, 80px);
+            width: calc(100% - var(--sidebar-mini-width, 80px));
         }
 
         @media (max-width: 768px) {
-            .sidebar-wrapper {
+            .sidebar {
                 transform: translateX(-100%);
-                width: 280px !important;
+                width: var(--sidebar-width, 280px) !important;
+                transition: transform 0.3s ease;
             }
             
-            .sidebar-wrapper.mobile-open {
+            .sidebar.open {
+                transform: translateX(0);
+            }
+            
+            .sidebar.mini {
+                transform: translateX(-100%);
+                width: var(--sidebar-width, 280px) !important;
+            }
+            
+            .sidebar.mini.open {
                 transform: translateX(0);
             }
             
             .content-wrapper {
                 margin-left: 0 !important;
-                padding: 20px 15px;
+                width: 100% !important;
+                padding: 15px;
+            }
+            
+            .sidebar.mini ~ .content-wrapper {
+                margin-left: 0 !important;
+                width: 100% !important;
             }
         }
 
-        /* Profile Card Styles */
+        /* Profile Container */
         .profile-container {
             max-width: 1200px;
             margin: 0 auto;
             width: 100%;
         }
 
+        /* Profile Card */
         .profile-card {
             background: var(--bg-card);
-            border-radius: 24px;
+            border-radius: 20px;
             box-shadow: var(--shadow-lg);
             border: 1px solid var(--border);
             overflow: hidden;
@@ -209,6 +226,7 @@
             }
         }
 
+        /* Profile Header - FIXED */
         .profile-header {
             background: var(--primary-gradient);
             padding: 40px 35px;
@@ -219,85 +237,46 @@
             flex-wrap: wrap;
         }
 
-        @media (max-width: 640px) {
-            .profile-header {
-                flex-direction: column;
-                text-align: center;
-                padding: 30px 25px;
-            }
-        }
-
-        .profile-avatar-wrapper {
+        /* FIXED: Avatar wrapper with proper dimensions */
+        .profile-avatars-wrappers {
             position: relative;
             display: inline-block;
+            width: 160px;
+            height: 160px;
+            flex-shrink: 0; /* Prevent shrinking */
         }
 
-        /* ===== IMPORTANT: Avatar Size Classes ===== */
-           .profile-avatar {
-            width: 130px;
-            height: 130px;
-            border-radius: 50%;
+        /* FIXED: Avatar with proper size */
+        .profile-avatars {
+            width: 160px !important;
+            height: 160px !important;
+            border-radius: 20px;
             display: flex;
             align-items: center;
             justify-content: center;
             font-weight: bold;
-            color: red;
-            border: 5px solid rgba(255,255,255,0.3);
-            box-shadow: 0 10px 20px rgba(0,0,0,0.2);
-            transition: all 0.3s ease;
-            background-size: cover;
-            background-position: center;
-            background-repeat: no-repeat;
-        }
-
-
-        .profile-avatar:hover {
-            transform: scale(1.05);
-        }
-
-        /* Modal Avatar Preview Size */
-        .modal-avatar-preview {
-            width: 70px !important;
-            height: 70px !important;
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 28px;
-            font-weight: bold;
+            font-size: 72px;
             color: white;
-            border: 3px solid white;
-            box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+            background: var(--primary-gradient);
+            border: 4px solid rgba(255,255,255,0.3);
+            box-shadow: var(--shadow-xl);
+            transition: all 0.3s ease;
             background-size: cover !important;
             background-position: center !important;
             background-repeat: no-repeat !important;
             object-fit: cover;
         }
 
-        .avatar-upload-btn {
-            position: absolute;
-            bottom: 8px;
-            right: 8px;
-            width: 36px;
-            height: 36px;
-            background: var(--bg-white);
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            color: var(--primary);
-            border: 2px solid var(--primary);
-            cursor: pointer;
-            transition: all 0.3s ease;
-            box-shadow: 0 4px 8px rgba(0,0,0,0.15);
-            font-size: 16px;
+        /* For users with avatar images */
+        .profile-avatars[style*="background-image"] {
+            background-size: cover !important;
         }
 
-        .avatar-upload-btn:hover {
-            background: var(--primary);
-            color: white;
+        .profile-avatars:hover {
+            transform: scale(1.05);
         }
 
+        /* Profile Title */
         .profile-title h1 {
             margin: 0;
             font-size: 36px;
@@ -317,7 +296,7 @@
             display: inline-block;
             padding: 8px 20px;
             background: rgba(255,255,255,0.2);
-            border-radius: 40px;
+            border-radius: 50px;
             font-size: 15px;
             font-weight: 600;
             margin-top: 15px;
@@ -326,8 +305,19 @@
             border: 1px solid rgba(255,255,255,0.3);
         }
 
+        .role-badge i {
+            margin-right: 6px;
+        }
+
+        /* Profile Body */
         .profile-body {
             padding: 40px 35px;
+        }
+
+        @media (max-width: 640px) {
+            .profile-body {
+                padding: 25px 20px;
+            }
         }
 
         .info-section {
@@ -361,16 +351,16 @@
             gap: 20px;
         }
 
-        @media (min-width: 1200px) {
+        @media (max-width: 768px) {
             .info-grid {
-                gap: 25px;
+                grid-template-columns: repeat(2, 1fr);
+                gap: 15px;
             }
         }
 
         @media (max-width: 640px) {
             .info-grid {
                 grid-template-columns: 1fr;
-                gap: 15px;
             }
         }
 
@@ -380,7 +370,7 @@
             gap: 15px;
             padding: 18px;
             background: var(--bg-offwhite);
-            border-radius: 18px;
+            border-radius: 16px;
             transition: all 0.2s ease;
             border: 1px solid var(--border);
         }
@@ -389,6 +379,7 @@
             border-color: var(--primary);
             background: var(--bg-card);
             box-shadow: var(--shadow);
+            transform: translateY(-2px);
         }
 
         .info-icon {
@@ -446,6 +437,7 @@
             color: var(--success);
         }
 
+        /* Profile Footer */
         .profile-footer {
             padding: 25px 35px;
             background: var(--bg-offwhite);
@@ -456,7 +448,20 @@
             flex-wrap: wrap;
         }
 
-        .btn-edit, .btn-back {
+        @media (max-width: 640px) {
+            .profile-footer {
+                padding: 20px;
+                flex-direction: column;
+            }
+            
+            .profile-footer .btn {
+                width: 100%;
+                justify-content: center;
+            }
+        }
+
+        /* Buttons */
+        .btn {
             padding: 12px 28px;
             border-radius: 12px;
             font-weight: 600;
@@ -465,7 +470,7 @@
             align-items: center;
             gap: 10px;
             cursor: pointer;
-            transition: all 0.3s;
+            transition: all 0.3s ease;
             border: none;
             text-decoration: none;
         }
@@ -477,10 +482,10 @@
         }
 
         .btn-edit:hover {
-            background: var(--primary);
+            background: var(--primary-gradient);
             color: white;
             transform: translateY(-2px);
-            box-shadow: 0 8px 18px rgba(59, 130, 246, 0.3);
+            box-shadow: var(--shadow-lg);
         }
 
         .btn-back {
@@ -490,161 +495,129 @@
 
         .btn-back:hover {
             transform: translateY(-2px);
-            box-shadow: 0 8px 20px rgba(59, 130, 246, 0.4);
+            box-shadow: var(--shadow-lg);
         }
 
-        /* Modal Styles */
-        .modal-content {
-            background: var(--bg-card);
-            border-radius: 18px;
-            border: none;
-            box-shadow: var(--shadow-xl);
-            color: var(--text);
+        /* Responsive sizes for avatar */
+        @media (max-width: 992px) {
+            .profile-avatars-wrappers {
+                width: 140px;
+                height: 140px;
+            }
+            
+            .profile-avatars {
+                width: 140px !important;
+                height: 140px !important;
+                font-size: 60px;
+            }
+            
+            .profile-title h1 {
+                font-size: 30px;
+            }
+            
+            .profile-title p {
+                font-size: 16px;
+            }
         }
 
-        .modal-header {
-            background: var(--primary-gradient);
-            color: white;
-            border-radius: 18px 18px 0 0;
-            padding: 18px 22px;
-            border-bottom: none;
+        @media (max-width: 768px) {
+            .profile-header {
+                padding: 25px 20px;
+                gap: 25px;
+            }
+            
+            .profile-avatars-wrappers {
+                width: 120px;
+                height: 120px;
+            }
+            
+            .profile-avatars {
+                width: 120px !important;
+                height: 120px !important;
+                font-size: 48px;
+            }
+            
+            .profile-title h1 {
+                font-size: 26px;
+            }
+            
+            .info-item {
+                padding: 15px;
+            }
+            
+            .info-value {
+                font-size: 16px;
+            }
         }
 
-        .modal-header .btn-close {
-            background: white;
-            opacity: 1;
-            box-shadow: none;
+        @media (max-width: 640px) {
+            .profile-header {
+                flex-direction: column;
+                text-align: center;
+                padding: 30px 25px;
+                gap: 20px;
+            }
         }
 
-        .modal-title {
-            font-weight: 600;
-            font-size: 18px;
-            color: white;
+        @media (max-width: 576px) {
+            .content-wrapper {
+                padding: 10px;
+            }
+            
+            .profile-header {
+                padding: 20px 15px;
+            }
+            
+            .profile-avatars-wrappers {
+                width: 100px;
+                height: 100px;
+            }
+            
+            .profile-avatars {
+                width: 100px !important;
+                height: 100px !important;
+                font-size: 40px;
+            }
+            
+            .profile-title h1 {
+                font-size: 22px;
+            }
+            
+            .role-badge {
+                padding: 6px 15px;
+                font-size: 13px;
+            }
+            
+            .info-title {
+                font-size: 18px;
+            }
+            
+            .info-icon {
+                width: 40px;
+                height: 40px;
+                font-size: 18px;
+            }
+            
+            .btn {
+                padding: 10px 20px;
+                font-size: 14px;
+            }
         }
 
-        .modal-body {
-            padding: 25px;
-            max-height: 70vh;
-            overflow-y: auto;
-        }
-
-        .modal-footer {
-            padding: 18px 22px;
-            border-top: 1px solid var(--border);
-            background: var(--bg-offwhite);
-            border-radius: 0 0 18px 18px;
-        }
-
-        .form-label {
-            font-weight: 600;
-            color: var(--text-light);
-            font-size: 12px;
-            margin-bottom: 4px;
-        }
-
-        .form-control, .form-select {
-            border: 1px solid var(--border);
-            border-radius: 8px;
-            padding: 9px 14px;
-            font-size: 14px;
-            transition: all 0.2s;
-            background: var(--bg-white);
-            color: var(--text);
-        }
-
-        .form-control:focus, .form-select:focus {
-            border-color: var(--primary);
-            box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
-            outline: none;
-        }
-
-        .btn-save {
-            background: var(--primary-gradient);
-            color: white;
-            border: none;
-            padding: 9px 22px;
-            border-radius: 8px;
-            font-weight: 600;
-            font-size: 14px;
-            display: inline-flex;
-            align-items: center;
-            gap: 8px;
-        }
-
-        .btn-save:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 5px 15px rgba(59, 130, 246, 0.3);
-        }
-
-        .btn-cancel {
-            background: var(--bg-card);
-            color: var(--text-muted);
-            border: 1px solid var(--border);
-            padding: 9px 22px;
-            border-radius: 8px;
-            font-weight: 600;
-            font-size: 14px;
-            display: inline-flex;
-            align-items: center;
-            gap: 8px;
-        }
-
-        .btn-cancel:hover {
-            background: var(--bg-offwhite);
-        }
-
-        /* Avatar upload in modal */
-        .modal-avatar-section {
-            display: flex;
-            align-items: center;
-            gap: 18px;
-            margin-bottom: 22px;
-            padding: 14px;
-            background: var(--bg-offwhite);
-            border-radius: 14px;
-            border: 1px solid var(--border);
-        }
-
-        .modal-avatar-upload .btn-upload {
-            display: inline-flex;
-            align-items: center;
-            gap: 6px;
-            padding: 7px 16px;
-            background: var(--bg-card);
-            color: var(--primary);
-            border: 1px solid var(--primary);
-            border-radius: 6px;
-            font-size: 12px;
-            font-weight: 500;
-            cursor: pointer;
-        }
-
-        .modal-avatar-upload .btn-upload:hover {
-            background: var(--primary);
-            color: white;
-        }
-
-        .modal-avatar-upload small {
-            display: block;
-            margin-top: 5px;
-            color: var(--text-muted);
-            font-size: 10px;
-        }
-
-        /* Toast */
+        /* Toast - EXACTLY LIKE PREVIOUS TEMPLATES */
         #toast {
             position: fixed;
-            top: 84px;
-            right: 20px;
-            width: 300px;
-            padding: 12px 16px;
-            border-radius: 10px;
-            box-shadow: var(--shadow-xl);
+            top: 90px;
+            right: 29px;
+            width: 320px;
+            padding: 16px 20px;
+            border-radius: 12px;
+            box-shadow: var(--shadow-lg);
             opacity: 0;
             transform: translateY(-15px);
             transition: .3s ease;
             color: #fff;
-            z-index: 9999;
+            z-index: 1001;
         }
 
         #toast.show {
@@ -652,53 +625,83 @@
             transform: translateY(0);
         }
 
-        .toast-row {
+        .toast-success { background: var(--success); }
+        .toast-error { background: var(--danger); }
+        .toast-info { background: var(--info); }
+        .toast-warning { background: var(--warning); color: #1f2937; }
+
+        .toast-content {
             display: flex;
-            gap: 10px;
+            gap: 12px;
             align-items: flex-start;
         }
 
         .toast-icon {
-            width: 30px;
-            height: 30px;
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 14px;
-            background: rgba(0,0,0,.2);
+            font-size: 20px;
         }
 
         .toast-text h4 {
             margin: 0;
-            font-size: 13px;
+            font-size: 14px;
             font-weight: 600;
         }
 
         .toast-text p {
-            margin: 3px 0 0;
-            font-size: 12px;
-            opacity: .9;
+            margin: 5px 0 0;
+            font-size: 13px;
+            opacity: 0.9;
         }
-
-        .toast-success { background: var(--success); }
-        .toast-error { background: var(--danger); }
-        .toast-info { background: var(--info); }
 
         .toast-progress {
             height: 3px;
-            border-radius: 4px;
-            margin-top: 8px;
-            background: rgba(255,255,255,.6);
-            animation: toast-load 3s linear forwards;
+            background: rgba(255,255,255,0.6);
+            margin-top: 12px;
+            width: 100%;
+            animation: progress 3s linear;
         }
 
-        @keyframes toast-load {
+        @keyframes progress {
             from { width: 100%; }
             to { width: 0%; }
         }
 
-        /* Text colors */
+        /* Loading Overlay */
+        .loading-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0,0,0,0.5);
+            display: none;
+            align-items: center;
+            justify-content: center;
+            z-index: 9999;
+            backdrop-filter: blur(5px);
+        }
+
+        .spinner {
+            width: 50px;
+            height: 50px;
+            border: 5px solid var(--bg-offwhite);
+            border-top: 5px solid var(--primary);
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        .loading-text {
+            color: white;
+            margin-top: 15px;
+            font-size: 18px;
+            font-weight: 600;
+        }
+
+        /* Text utilities */
         .text-muted {
             color: var(--text-muted) !important;
         }
@@ -716,6 +719,8 @@
             const savedBorder = localStorage.getItem('border') || 'round-border';
             document.body.classList.add(savedTheme);
             document.body.classList.add(savedBorder);
+            console.log('🎨 Theme loaded:', savedTheme);
+            console.log('📐 Border mode loaded:', savedBorder);
         })();
     </script>
 
@@ -727,33 +732,38 @@
     <!-- MAIN LAYOUT -->
     <div class="main-wrapper">
         <!-- SIDEBAR -->
-        <div class="sidebar-wrapper" id="sidebarWrapper">
-            <%- include('../partials/ram/sidebaar') %>
-        </div>
+        <%- include('../partials/ram/sidebaar') %>
 
         <!-- CONTENT -->
         <div class="content-wrapper" id="contentWrapper">
             <!-- Toast Container -->
             <div id="toast"></div>
 
+            <!-- Loading Overlay -->
+            <div class="loading-overlay" id="loadingOverlay">
+                <div class="text-center">
+                    <div class="spinner"></div>
+                    <div class="loading-text">Processing...</div>
+                </div>
+            </div>
+
             <div class="profile-container">
                 <!-- Profile Card -->
                 <div class="profile-card">
-                    <!-- Profile Header with Avatar -->
+                    <!-- Profile Header with Avatar - FIXED -->
                     <div class="profile-header">
                         <div class="profile-avatar-wrapper">
-                            <!-- Profile Avatar - Fixed size 130x130 -->
+                            <!-- Profile Avatar - Fixed size 160x160 -->
                             <div class="profile-avatar" id="profileAvatar"
                                 <% if (user.avatar) { %>
-                                    style="background-image: url('<%= user.avatar %>'); background-size: cover; background-position: center; background-repeat: no-repeat; width: 130px; height: 130px;"
+                                    style="background-image: url('<%= user.avatar %>'); background-size: cover; background-position: center; background-repeat: no-repeat; width: 160px; height: 160px;"
                                 <% } else { %>
-                                    style="background: linear-gradient(135deg, #3b82f6, #2563eb); width: 130px; height: 130px;"
+                                    style="background: var(--primary-gradient); width: 160px; height: 160px;"
                                 <% } %>>
                                 <% if (!user.avatar) { %>
                                     <%= (user?.firstName || user?.email || 'U').charAt(0).toUpperCase() %>
                                 <% } %>
                             </div>
-                            <!-- Camera button ab sirf edit mode mein dikhega -->
                         </div>
                         <div class="profile-title">
                             <h1><%= user?.firstName || '' %> <%= user?.lastName || '' %></h1>
@@ -774,28 +784,28 @@
                                     <div class="info-icon"><i class="fas fa-user"></i></div>
                                     <div class="info-content">
                                         <div class="info-label">Full Name</div>
-                                        <div class="info-value" id="displayName"><%= user?.firstName || 'Not set' %> <%= user?.lastName || '' %></div>
+                                        <div class="info-value"><%= user?.firstName || 'Not set' %> <%= user?.lastName || '' %></div>
                                     </div>
                                 </div>
                                 <div class="info-item">
                                     <div class="info-icon"><i class="fas fa-phone-alt"></i></div>
                                     <div class="info-content">
                                         <div class="info-label">Contact</div>
-                                        <div class="info-value" id="displayPhone"><%= user?.contactNumber || 'Not provided' %></div>
+                                        <div class="info-value"><%= user?.contactNumber || 'Not provided' %></div>
                                     </div>
                                 </div>
                                 <div class="info-item">
                                     <div class="info-icon"><i class="fas fa-birthday-cake"></i></div>
                                     <div class="info-content">
                                         <div class="info-label">Date of Birth</div>
-                                        <div class="info-value" id="displayDob"><%= user?.dob ? new Date(user.dob).toLocaleDateString() : 'Not provided' %></div>
+                                        <div class="info-value"><%= user?.dob ? new Date(user.dob).toLocaleDateString() : 'Not provided' %></div>
                                     </div>
                                 </div>
                                 <div class="info-item">
                                     <div class="info-icon"><i class="fas fa-venus-mars"></i></div>
                                     <div class="info-content">
                                         <div class="info-label">Gender</div>
-                                        <div class="info-value" id="displayGender"><%= user?.gender || 'Not specified' %></div>
+                                        <div class="info-value"><%= user?.gender || 'Not specified' %></div>
                                     </div>
                                 </div>
                             </div>
@@ -809,7 +819,7 @@
                                     <div class="info-icon"><i class="fas fa-envelope"></i></div>
                                     <div class="info-content">
                                         <div class="info-label">Email</div>
-                                        <div class="info-value email" id="displayEmail">
+                                        <div class="info-value email">
                                             <%= user?.email || 'Not set' %>
                                             <span class="status-badge status-active"><i class="fas fa-check-circle"></i> Verified</span>
                                         </div>
@@ -819,7 +829,7 @@
                                     <div class="info-icon"><i class="fas fa-map-marker-alt"></i></div>
                                     <div class="info-content">
                                         <div class="info-label">Address</div>
-                                        <div class="info-value" id="displayAddress"><%= user?.address || 'Not provided' %></div>
+                                        <div class="info-value"><%= user?.address || 'Not provided' %></div>
                                     </div>
                                 </div>
                             </div>
@@ -861,92 +871,12 @@
                         </div>
                     </div>
 
-                    <!-- Footer - Edit button yahan hai -->
+                    <!-- Footer - Edit button -->
                     <div class="profile-footer">
-                        <button class="btn-edit" onclick="openEditModal()"><i class="fas fa-edit"></i> Edit Profile</button>
-                        <button class="btn-back" onclick="goBack()"><i class="fas fa-arrow-left"></i> Back to Dashboard</button>
+                        <button class="btn btn-edit" onclick="openEditProfile()"><i class="fas fa-edit"></i> Edit Profile</button>
+                        <button class="btn btn-back" onclick="goBack()"><i class="fas fa-arrow-left"></i> Back to Dashboard</button>
                     </div>
                 </div>
-            </div>
-        </div>
-    </div>
-
-    <!-- Edit Profile Modal - Camera sirf yahan dikhega -->
-    <div class="modal fade" id="editProfileModal" tabindex="-1" aria-hidden="true">
-        <div class="modal-dialog modal-dialog-centered">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h5 class="modal-title"><i class="fas fa-edit me-2"></i> Edit Profile</h5>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                </div>
-                <form id="editProfileForm" onsubmit="saveProfileChanges(event)">
-                    <div class="modal-body">
-                        <!-- Avatar Upload Section - Camera yahan hai -->
-                        <div class="modal-avatar-section">
-                            <div class="modal-avatar-preview" id="modalAvatarPreview"
-                                <% if (user.avatar) { %>
-                                    style="background-image: url('<%= user.avatar %>'); background-size: cover; background-position: center; background-repeat: no-repeat; width: 70px; height: 70px;"
-                                <% } else { %>
-                                    style="background: linear-gradient(135deg, #3b82f6, #2563eb); width: 70px; height: 70px;"
-                                <% } %>>
-                                <% if (!user.avatar) { %>
-                                    <%= (user?.firstName || user?.email || 'U').charAt(0).toUpperCase() %>
-                                <% } %>
-                            </div>
-                            <div class="modal-avatar-upload">
-                                <label for="avatarUpload" class="btn-upload"><i class="fas fa-camera"></i> Change Photo</label>
-                                <input type="file" id="avatarUpload" accept="image/jpeg,image/png,image/gif,image/webp" style="display: none;" onchange="previewAvatar(this)">
-                                <small>JPG, PNG, GIF or WebP (Max 2MB)</small>
-                            </div>
-                        </div>
-
-                        <h6 class="mb-3 text-primary">Personal Information</h6>
-                        <div class="row g-3 mb-4">
-                            <div class="col-md-6">
-                                <label class="form-label">First Name *</label>
-                                <input type="text" class="form-control" id="editFirstName" value="<%= user?.firstName || '' %>" required maxlength="50">
-                            </div>
-                            <div class="col-md-6">
-                                <label class="form-label">Last Name</label>
-                                <input type="text" class="form-control" id="editLastName" value="<%= user?.lastName || '' %>" maxlength="50">
-                            </div>
-                            <div class="col-md-6">
-                                <label class="form-label">Contact Number</label>
-                                <input type="tel" class="form-control" id="editPhone" value="<%= user?.contactNumber || '' %>" pattern="[0-9+\-\s]+" title="Please enter a valid phone number">
-                            </div>
-                            <div class="col-md-6">
-                                <label class="form-label">Date of Birth</label>
-                                <input type="date" class="form-control" id="editDob" value="<%= user?.dob ? new Date(user.dob).toISOString().split('T')[0] : '' %>" max="<%= new Date().toISOString().split('T')[0] %>">
-                            </div>
-                            <div class="col-md-6">
-                                <label class="form-label">Gender</label>
-                                <select class="form-select" id="editGender">
-                                    <option value="">Select</option>
-                                    <option value="Male" <%= user?.gender === 'Male' ? 'selected' : '' %>>Male</option>
-                                    <option value="Female" <%= user?.gender === 'Female' ? 'selected' : '' %>>Female</option>
-                                    <option value="Other" <%= user?.gender === 'Other' ? 'selected' : '' %>>Other</option>
-                                </select>
-                            </div>
-                        </div>
-
-                        <h6 class="mb-3 text-primary">Contact Information</h6>
-                        <div class="row g-3">
-                            <div class="col-12">
-                                <label class="form-label">Email Address</label>
-                                <input type="email" class="form-control" value="<%= user?.email || '' %>" readonly disabled>
-                                <small class="text-muted">Email cannot be changed</small>
-                            </div>
-                            <div class="col-12">
-                                <label class="form-label">Address</label>
-                                <textarea class="form-control" id="editAddress" rows="2" maxlength="200"><%= user?.address || '' %></textarea>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="modal-footer">
-                        <button type="button" class="btn-cancel" data-bs-dismiss="modal"><i class="fas fa-times"></i> Cancel</button>
-                        <button type="submit" class="btn-save" id="saveBtn"><i class="fas fa-save"></i> Save Changes</button>
-                    </div>
-                </form>
             </div>
         </div>
     </div>
@@ -956,56 +886,50 @@
 
     <script>
         // ======================
-        // GLOBAL VARIABLES
+        // SIDEBAR STATE SYNC - EXACTLY LIKE PREVIOUS TEMPLATES
         // ======================
-        let editModal;
-        let selectedAvatarFile = null;
-        let isSubmitting = false;
+        function syncSidebarState() {
+            const sidebar = document.getElementById('sidebar');
+            const contentWrapper = document.getElementById('contentWrapper');
+            
+            if (!sidebar || !contentWrapper) return;
+            
+            const isMini = sidebar.classList.contains('mini');
+            
+            if (isMini) {
+                contentWrapper.style.marginLeft = 'var(--sidebar-mini-width, 80px)';
+                contentWrapper.style.width = 'calc(100% - var(--sidebar-mini-width, 80px))';
+            } else {
+                contentWrapper.style.marginLeft = 'var(--sidebar-width, 280px)';
+                contentWrapper.style.width = 'calc(100% - var(--sidebar-width, 280px))';
+            }
+        }
 
         // ======================
         // INITIALIZATION
         // ======================
         document.addEventListener('DOMContentLoaded', function() {
-            // Initialize modal
-            const modalElement = document.getElementById('editProfileModal');
-            if (modalElement) {
-                editModal = new bootstrap.Modal(modalElement);
-            }
-
-            // Sidebar functionality
-            const sidebar = document.getElementById('mainSidebar');
-            const sidebarWrapper = document.getElementById('sidebarWrapper');
-            
-            if (sidebar && sidebarWrapper) {
-                if (sidebar.classList.contains('collapsed')) {
-                    sidebarWrapper.classList.add('collapsed');
+            // Listen for sidebar state changes
+            window.addEventListener('storage', function(e) {
+                if (e.key === 'sidebarMini' || e.key === 'sidebar-update-time') {
+                    const sidebar = document.getElementById('sidebar');
+                    if (sidebar) {
+                        const savedState = localStorage.getItem('sidebarMini') === 'true';
+                        if (savedState) {
+                            sidebar.classList.add('mini');
+                        } else {
+                            sidebar.classList.remove('mini');
+                        }
+                        syncSidebarState();
+                    }
                 }
-                
-                window.toggleCollapse = function() {
-                    if (sidebar.classList.contains('collapsed')) {
-                        sidebar.classList.remove('collapsed');
-                        sidebarWrapper.classList.remove('collapsed');
-                    } else {
-                        sidebar.classList.add('collapsed');
-                        sidebarWrapper.classList.add('collapsed');
-                    }
-                };
-                
-                window.toggleMobileSidebar = function() {
-                    if (sidebar.classList.contains('open')) {
-                        sidebar.classList.remove('open');
-                        sidebarWrapper.classList.remove('mobile-open');
-                    } else {
-                        sidebar.classList.add('open');
-                        sidebarWrapper.classList.add('mobile-open');
-                    }
-                };
-                
-                window.closeMobileSidebar = function() {
-                    sidebar.classList.remove('open');
-                    sidebarWrapper.classList.remove('mobile-open');
-                };
-            }
+            });
+
+            window.addEventListener('resize', function() {
+                syncSidebarState();
+            });
+
+            setTimeout(syncSidebarState, 100);
 
             // Handle URL messages
             const urlParams = new URLSearchParams(window.location.search);
@@ -1030,255 +954,61 @@
             setTimeout(() => {
                 showToast('Welcome', 'Welcome to your profile, <%= user?.firstName || 'User' %>!', 'info');
             }, 500);
-
-            // Set avatar background color if no image
-            setAvatarColor();
             
-            // Log avatar size for debugging
-            console.log('Profile avatar class:', document.querySelector('.profile-avatar'));
-            console.log('Avatar width:', document.querySelector('.profile-avatar')?.offsetWidth);
-            console.log('Avatar height:', document.querySelector('.profile-avatar')?.offsetHeight);
+            // FIX: Ensure avatar has correct size
+            const avatar = document.getElementById('profileAvatar');
+            if (avatar) {
+                if (avatar.style.backgroundImage) {
+                    avatar.style.backgroundSize = 'cover';
+                    avatar.style.backgroundPosition = 'center';
+                    avatar.style.backgroundRepeat = 'no-repeat';
+                }
+            }
         });
 
         function goBack() {
             window.location.href = '/dashboard';
         }
 
+        function openEditProfile() {
+            // Open edit profile in new page
+            window.location.href = '/profile/edit';
+        }
+
+        // ======================
+        // KEYBOARD SHORTCUTS
+        // ======================
         document.addEventListener('keydown', function(e) {
             if (e.key === 'Escape') {
-                const modal = document.getElementById('editProfileModal');
-                if (!modal.classList.contains('show')) {
-                    goBack();
-                }
+                goBack();
+            }
+            
+            if (e.key === 'F1') {
+                e.preventDefault();
+                showToast('Help', 'Press Esc to go back | Click Edit Profile to modify', 'info');
             }
         });
 
-        function openEditModal() {
-            selectedAvatarFile = null;
-            isSubmitting = false;
-            
-            const modalAvatar = document.getElementById('modalAvatarPreview');
-            const profileAvatar = document.getElementById('profileAvatar');
-            
-            // Get current profile image style
-            const profileStyle = window.getComputedStyle(profileAvatar);
-            const backgroundImage = profileStyle.backgroundImage;
-            
-            // Reset modal avatar to match profile avatar with correct size
-            if (backgroundImage && backgroundImage !== 'none') {
-                // Profile has image
-                modalAvatar.style.backgroundImage = backgroundImage;
-                modalAvatar.style.backgroundSize = 'cover';
-                modalAvatar.style.backgroundPosition = 'center';
-                modalAvatar.style.backgroundRepeat = 'no-repeat';
-                modalAvatar.style.width = '70px';
-                modalAvatar.style.height = '70px';
-                modalAvatar.style.background = 'none';
-                modalAvatar.textContent = '';
-            } else {
-                // Profile has initials
-                <% if (user.avatar) { %>
-                    // User has avatar in database but maybe not loaded? Use database value
-                    modalAvatar.style.backgroundImage = `url('<%= user.avatar %>')`;
-                    modalAvatar.style.backgroundSize = 'cover';
-                    modalAvatar.style.backgroundPosition = 'center';
-                    modalAvatar.style.backgroundRepeat = 'no-repeat';
-                    modalAvatar.style.width = '70px';
-                    modalAvatar.style.height = '70px';
-                    modalAvatar.style.background = 'none';
-                    modalAvatar.textContent = '';
-                <% } else { %>
-                    // No avatar - use initials
-                    modalAvatar.style.backgroundImage = '';
-                    modalAvatar.style.background = 'linear-gradient(135deg, #3b82f6, #2563eb)';
-                    modalAvatar.style.width = '70px';
-                    modalAvatar.style.height = '70px';
-                    modalAvatar.textContent = '<%= (user?.firstName || user?.email || 'U').charAt(0).toUpperCase() %>';
-                <% } %>
-            }
-            
-            editModal.show();
-        }
-
-        function previewAvatar(input) {
-            if (input.files && input.files[0]) {
-                const file = input.files[0];
-                
-                // Validate file size (2MB)
-                if (file.size > 2 * 1024 * 1024) {
-                    showToast('Error', 'File size must be less than 2MB', 'error');
-                    input.value = '';
-                    return;
-                }
-                
-                // Validate file type
-                if (!file.type.startsWith('image/')) {
-                    showToast('Error', 'Please select an image file', 'error');
-                    input.value = '';
-                    return;
-                }
-                
-                selectedAvatarFile = file;
-                
-                const reader = new FileReader();
-                reader.onload = function(e) {
-                    const modalAvatar = document.getElementById('modalAvatarPreview');
-                    modalAvatar.style.backgroundImage = `url('${e.target.result}')`;
-                    modalAvatar.style.backgroundSize = 'cover';
-                    modalAvatar.style.backgroundPosition = 'center';
-                    modalAvatar.style.backgroundRepeat = 'no-repeat';
-                    modalAvatar.style.width = '70px';
-                    modalAvatar.style.height = '70px';
-                    modalAvatar.style.background = 'none';
-                    modalAvatar.textContent = '';
-                };
-                reader.readAsDataURL(file);
-            }
-        }
-
-        function saveProfileChanges(event) {
-            event.preventDefault();
-            
-            // Prevent double submission
-            if (isSubmitting) {
-                showToast('Info', 'Already saving changes...', 'info');
-                return;
-            }
-            
-            // Get form values
-            const firstName = document.getElementById('editFirstName').value.trim();
-            const lastName = document.getElementById('editLastName').value.trim();
-            const phone = document.getElementById('editPhone').value.trim();
-            const dob = document.getElementById('editDob').value;
-            const gender = document.getElementById('editGender').value;
-            const address = document.getElementById('editAddress').value.trim();
-            
-            // Validate required fields
-            if (!firstName) {
-                showToast('Error', 'First name is required', 'error');
-                document.getElementById('editFirstName').focus();
-                return;
-            }
-            
-            // Validate phone if provided
-            if (phone && !/^[0-9+\-\s]+$/.test(phone)) {
-                showToast('Error', 'Please enter a valid phone number', 'error');
-                document.getElementById('editPhone').focus();
-                return;
-            }
-            
-            // Disable save button and set submitting flag
-            isSubmitting = true;
-            const saveBtn = document.getElementById('saveBtn');
-            const originalText = saveBtn.innerHTML;
-            saveBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Saving...';
-            saveBtn.disabled = true;
-            
-            showToast('Updating', 'Saving your changes...', 'info');
-            
-            // Prepare form data
-            const formData = new FormData();
-            formData.append('firstName', firstName);
-            formData.append('lastName', lastName);
-            formData.append('contactNumber', phone);
-            formData.append('dob', dob);
-            formData.append('gender', gender);
-            formData.append('address', address);
-            
-            if (selectedAvatarFile) {
-                formData.append('avatar', selectedAvatarFile);
-            }
-            
-            // Send request
-            fetch('/profile/update', {
-                method: 'POST',
-                body: formData
-            })
-            .then(response => {
-                if (!response.ok) {
-                    throw new Error('Network response was not ok');
-                }
-                return response.json();
-            })
-            .then(data => {
-                if (data.status) {
-                    // Update displayed values
-                    document.getElementById('displayName').textContent = firstName + ' ' + (lastName || '');
-                    document.querySelector('.profile-title h1').textContent = firstName + ' ' + (lastName || '');
-                    document.getElementById('displayPhone').textContent = phone || 'Not provided';
-                    document.getElementById('displayAddress').textContent = address || 'Not provided';
-                    document.getElementById('displayGender').textContent = gender || 'Not specified';
-                    
-                    if (dob) {
-                        document.getElementById('displayDob').textContent = new Date(dob).toLocaleDateString();
-                    } else {
-                        document.getElementById('displayDob').textContent = 'Not provided';
-                    }
-                    
-                    // Update profile avatar if changed with correct size
-                    if (selectedAvatarFile) {
-                        const reader = new FileReader();
-                        reader.onload = function(e) {
-                            const avatar = document.getElementById('profileAvatar');
-                            avatar.style.backgroundImage = `url('${e.target.result}')`;
-                            avatar.style.backgroundSize = 'cover';
-                            avatar.style.backgroundPosition = 'center';
-                            avatar.style.backgroundRepeat = 'no-repeat';
-                            avatar.style.width = '130px';
-                            avatar.style.height = '130px';
-                            avatar.style.background = 'none';
-                            avatar.textContent = '';
-                        };
-                        reader.readAsDataURL(selectedAvatarFile);
-                    }
-                    
-                    // Close modal and show success
-                    editModal.hide();
-                    showToast('Success', data.message || 'Profile updated successfully!', 'success');
-                    
-                    // Optional: Reload page after 1.5 seconds to ensure everything is in sync
-                    setTimeout(() => {
-                        window.location.reload();
-                    }, 1500);
-                    
-                } else {
-                    showToast('Error', data.message || 'Failed to update profile', 'error');
-                }
-            })
-            .catch(error => {
-                console.error('Error:', error);
-                showToast('Error', 'Failed to update profile. Please try again.', 'error');
-            })
-            .finally(() => {
-                // Re-enable save button
-                isSubmitting = false;
-                saveBtn.innerHTML = originalText;
-                saveBtn.disabled = false;
-            });
-        }
-
+        // ======================
+        // TOAST FUNCTION - EXACTLY LIKE PREVIOUS TEMPLATES
+        // ======================
+        let toastTimer;
         function showToast(title, message, type = 'info') {
             const toast = document.getElementById('toast');
             
-            // Clear existing timeout
-            if (window.toastTimeout) {
-                clearTimeout(window.toastTimeout);
-            }
+            clearTimeout(toastTimer);
             
-            // Icons mapping
-            const icons = { 
-                success: '✅', 
-                error: '❌', 
-                warning: '⚠️', 
-                info: 'ℹ️' 
+            const icons = {
+                'success': '✅',
+                'error': '❌',
+                'warning': '⚠️',
+                'info': 'ℹ️'
             };
             
             const icon = icons[type] || 'ℹ️';
             
-            // Set toast content
-            toast.className = '';
             toast.innerHTML = `
-                <div class="toast-row">
+                <div class="toast-content">
                     <div class="toast-icon">${icon}</div>
                     <div class="toast-text">
                         <h4>${title}</h4>
@@ -1288,28 +1018,54 @@
                 <div class="toast-progress"></div>
             `;
             
-            toast.classList.add(`toast-${type}`, 'show');
+            toast.className = `toast-${type} show`;
             
-            // Auto hide after 3 seconds
-            window.toastTimeout = setTimeout(() => {
+            toastTimer = setTimeout(() => {
                 toast.classList.remove('show');
             }, 3000);
         }
 
-        // Avatar color fallback for users without avatar
-        function setAvatarColor() {
-            const avatar = document.getElementById('profileAvatar');
-            if (avatar && avatar.textContent && !avatar.style.backgroundImage) {
-                const name = avatar.textContent.trim();
-                let hash = 0;
-                for (let i = 0; i < name.length; i++) {
-                    hash = name.charCodeAt(i) + ((hash << 5) - hash);
-                }
-                const hue = Math.abs(hash % 360);
-                avatar.style.background = `hsl(${hue}, 70%, 50%)`;
-                avatar.style.color = 'white';
-                avatar.style.width = '130px';
-                avatar.style.height = '130px';
+        // ======================
+        // LOADING OVERLAY FUNCTIONS
+        // ======================
+        function showLoading(text = 'Processing...') {
+            const overlay = document.getElementById('loadingOverlay');
+            document.querySelector('.loading-text').textContent = text;
+            overlay.style.display = 'flex';
+        }
+
+        function hideLoading() {
+            document.getElementById('loadingOverlay').style.display = 'none';
+        }
+
+        // ======================
+        // THEME FUNCTIONS
+        // ======================
+        function toggleTheme() {
+            if (document.body.classList.contains('dark')) {
+                document.body.classList.remove('dark');
+                document.body.classList.add('light');
+                localStorage.setItem('theme', 'light');
+                showToast('Theme Updated', 'Light mode activated', 'info');
+            } else {
+                document.body.classList.remove('light');
+                document.body.classList.add('dark');
+                localStorage.setItem('theme', 'dark');
+                showToast('Theme Updated', 'Dark mode activated', 'info');
+            }
+        }
+
+        function toggleBorder() {
+            if (document.body.classList.contains('round-border')) {
+                document.body.classList.remove('round-border');
+                document.body.classList.add('no-radius');
+                localStorage.setItem('border', 'no-radius');
+                showToast('Border Style', 'Square corners activated', 'info');
+            } else {
+                document.body.classList.remove('no-radius');
+                document.body.classList.add('round-border');
+                localStorage.setItem('border', 'round-border');
+                showToast('Border Style', 'Rounded corners activated', 'info');
             }
         }
     </script>

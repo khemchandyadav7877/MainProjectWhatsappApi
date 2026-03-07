@@ -1,0 +1,1599 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Meta WhatsApp Business API Campaign</title>
+    
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Stripe Elements -->
+    <script src="https://js.stripe.com/v3/"></script>
+    
+    <style>
+        :root {
+            --primary: #667eea;
+            --primary-dark: #5a67d8;
+            --primary-gradient: linear-gradient(135deg, #667eea, #764ba2);
+            --success: #10b981;
+            --warning: #f59e0b;
+            --danger: #ef4444;
+            --info: #3b82f6;
+            --whatsapp: #25D366;
+            --meta: #1877f2;
+            
+            --bg-body: #f8fafc;
+            --bg-white: #ffffff;
+            --bg-offwhite: #f1f5f9;
+            --bg-card: #ffffff;
+            --text: #334155;
+            --text-light: #64748b;
+            --text-muted: #94a3b8;
+            --dark: #0f172a;
+            --border: #eef2f6;
+            --shadow: 0 8px 25px rgba(0,0,0,0.03);
+            --shadow-lg: 0 15px 35px rgba(102, 126, 234, 0.1);
+        }
+
+        body.dark {
+            --bg-body: #0f172a;
+            --bg-white: #1e293b;
+            --bg-offwhite: #334155;
+            --bg-card: #1e293b;
+            --text: #e2e8f0;
+            --text-light: #cbd5e1;
+            --text-muted: #94a3b8;
+            --dark: #f8fafc;
+            --border: #334155;
+            --shadow: 0 8px 25px rgba(0,0,0,0.2);
+            --shadow-lg: 0 15px 35px rgba(102, 126, 234, 0.2);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            overflow-x: hidden;
+            background: var(--bg-body);
+            font-family: 'Inter', 'Segoe UI', sans-serif;
+            color: var(--text);
+            transition: all 0.3s;
+        }
+
+        /* Header */
+        .header-wrapper {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            z-index: 1030;
+            background: var(--bg-white);
+            box-shadow: var(--shadow);
+            border-bottom: 1px solid var(--border);
+        }
+
+        .main-wrapper {
+            margin-top: 70px;
+            display: flex;
+            width: 100%;
+            min-height: calc(100vh - 70px);
+        }
+
+        .sidebar {
+            width: 280px;
+            background: var(--bg-white);
+            border-right: 1px solid var(--border);
+            height: calc(100vh - 70px);
+            position: fixed;
+            left: 0;
+            top: 70px;
+            transition: width 0.3s ease;
+            z-index: 1020;
+            overflow-y: auto;
+        }
+
+        .sidebar.mini {
+            width: 80px;
+        }
+
+        .content-wrapper {
+            flex: 1;
+            margin-left: 280px;
+            padding: 25px;
+            transition: margin-left 0.3s ease;
+            min-height: calc(100vh - 70px);
+        }
+
+        .sidebar.mini ~ .content-wrapper {
+            margin-left: 80px;
+        }
+
+        .mid-content {
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+
+        /* Page Header */
+        .page-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+
+        .page-title {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .page-icon {
+            width: 60px;
+            height: 60px;
+            background: var(--meta);
+            color: white;
+            border-radius: 16px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 30px;
+            box-shadow: var(--shadow-lg);
+        }
+
+        .page-title h1 {
+            font-size: 28px;
+            font-weight: 700;
+            color: var(--dark);
+            margin: 0;
+        }
+
+        .page-title p {
+            color: var(--text-muted);
+            margin: 5px 0 0;
+            font-size: 14px;
+        }
+
+        .meta-badge {
+            background: var(--meta);
+            color: white;
+            padding: 10px 24px;
+            border-radius: 50px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            font-weight: 600;
+        }
+
+        /* Flow Container */
+        .flow-container {
+            background: var(--bg-offwhite);
+            border-radius: 30px;
+            padding: 30px;
+            border: 1px solid var(--border);
+            margin-bottom: 30px;
+        }
+
+        .flow-steps {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: space-between;
+            margin-bottom: 40px;
+            position: relative;
+        }
+
+        .flow-step-item {
+            flex: 1;
+            text-align: center;
+            position: relative;
+            min-width: 100px;
+        }
+
+        .flow-step-number {
+            width: 50px;
+            height: 50px;
+            background: var(--bg-white);
+            border: 2px solid var(--border);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 10px;
+            font-weight: 700;
+            color: var(--text-muted);
+        }
+
+        .flow-step-item.completed .flow-step-number {
+            background: var(--success);
+            border-color: var(--success);
+            color: white;
+        }
+
+        .flow-step-item.active .flow-step-number {
+            background: var(--primary-gradient);
+            border-color: transparent;
+            color: white;
+        }
+
+        .flow-step-label {
+            font-size: 12px;
+            font-weight: 600;
+            color: var(--text-muted);
+        }
+
+        .flow-step-item.active .flow-step-label {
+            color: var(--primary);
+        }
+
+        /* Flow Cards */
+        .flow-card {
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: 20px;
+            padding: 30px;
+            margin-bottom: 30px;
+            box-shadow: var(--shadow);
+        }
+
+        .flow-card-header {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            margin-bottom: 25px;
+            padding-bottom: 15px;
+            border-bottom: 2px solid var(--border);
+        }
+
+        .card-step {
+            width: 40px;
+            height: 40px;
+            background: var(--primary-gradient);
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: 700;
+        }
+
+        .card-title {
+            font-size: 20px;
+            font-weight: 600;
+            color: var(--dark);
+            margin: 0;
+        }
+
+        .card-subtitle {
+            color: var(--text-muted);
+            font-size: 14px;
+        }
+
+        /* Forms */
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        .form-label {
+            display: block;
+            font-weight: 600;
+            color: var(--text-light);
+            margin-bottom: 8px;
+        }
+
+        .form-label i {
+            color: var(--primary);
+            margin-right: 8px;
+        }
+
+        .form-control, .form-select {
+            width: 100%;
+            padding: 12px 16px;
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            font-size: 14px;
+            background: var(--bg-white);
+            color: var(--text);
+        }
+
+        .form-control:focus, .form-select:focus {
+            outline: none;
+            border-color: var(--primary);
+            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+        }
+
+        /* Campaign Types */
+        .campaign-types {
+            display: flex;
+            gap: 20px;
+            flex-wrap: wrap;
+        }
+
+        .type-card {
+            flex: 1;
+            min-width: 150px;
+            padding: 20px;
+            border: 2px solid var(--border);
+            border-radius: 16px;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .type-card:hover {
+            border-color: var(--primary);
+            transform: translateY(-2px);
+        }
+
+        .type-card.selected {
+            border-color: var(--primary);
+            background: rgba(102, 126, 234, 0.1);
+        }
+
+        .type-card i {
+            font-size: 32px;
+            color: var(--primary);
+            margin-bottom: 10px;
+        }
+
+        .type-card h4 {
+            font-size: 16px;
+            font-weight: 600;
+            color: var(--dark);
+        }
+
+        .type-card p {
+            font-size: 12px;
+            color: var(--text-muted);
+            margin: 0;
+        }
+
+        /* Templates */
+        .templates-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+            gap: 20px;
+        }
+
+        .template-card {
+            background: var(--bg-white);
+            border: 2px solid var(--border);
+            border-radius: 16px;
+            padding: 20px;
+            cursor: pointer;
+            transition: all 0.3s;
+            position: relative;
+        }
+
+        .template-card:hover {
+            border-color: var(--primary);
+            transform: translateY(-2px);
+        }
+
+        .template-card.selected {
+            border-color: var(--primary);
+            background: rgba(102, 126, 234, 0.05);
+        }
+
+        .template-badge {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            background: var(--success);
+            color: white;
+            padding: 4px 12px;
+            border-radius: 50px;
+            font-size: 11px;
+        }
+
+        .template-icon {
+            width: 50px;
+            height: 50px;
+            background: var(--whatsapp);
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 24px;
+            margin-bottom: 15px;
+        }
+
+        .template-name {
+            font-weight: 600;
+            color: var(--dark);
+            margin-bottom: 5px;
+        }
+
+        .template-preview {
+            background: var(--bg-offwhite);
+            padding: 10px;
+            border-radius: 10px;
+            font-size: 12px;
+            margin-bottom: 10px;
+        }
+
+        /* Upload Area */
+        .upload-area {
+            border: 2px dashed var(--border);
+            border-radius: 20px;
+            padding: 40px;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.3s;
+            background: var(--bg-offwhite);
+        }
+
+        .upload-area:hover {
+            border-color: var(--primary);
+        }
+
+        .upload-area i {
+            font-size: 48px;
+            color: var(--primary);
+            margin-bottom: 15px;
+        }
+
+        .upload-formats {
+            display: flex;
+            justify-content: center;
+            gap: 15px;
+            flex-wrap: wrap;
+            margin-top: 20px;
+        }
+
+        .format-badge {
+            padding: 6px 16px;
+            background: var(--bg-white);
+            border-radius: 50px;
+            font-size: 12px;
+        }
+
+        /* Numbers Tab */
+        .numbers-tabs {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 20px;
+            border-bottom: 2px solid var(--border);
+            padding-bottom: 10px;
+        }
+
+        .numbers-tab {
+            padding: 10px 24px;
+            background: transparent;
+            border: none;
+            color: var(--text-muted);
+            font-weight: 600;
+            cursor: pointer;
+            border-radius: 12px;
+        }
+
+        .numbers-tab:hover {
+            background: var(--bg-offwhite);
+            color: var(--primary);
+        }
+
+        .numbers-tab.active {
+            background: rgba(102, 126, 234, 0.1);
+            color: var(--primary);
+        }
+
+        .tab-pane {
+            display: none;
+        }
+
+        .tab-pane.active {
+            display: block;
+        }
+
+        .contacts-stats {
+            display: flex;
+            gap: 20px;
+            margin-top: 20px;
+            padding: 15px;
+            background: var(--bg-white);
+            border-radius: 12px;
+        }
+
+        .stat-item {
+            flex: 1;
+            text-align: center;
+        }
+
+        .stat-value {
+            font-size: 24px;
+            font-weight: 700;
+            color: var(--primary);
+        }
+
+        .stat-label {
+            font-size: 12px;
+            color: var(--text-muted);
+        }
+
+        /* Schedule Options */
+        .schedule-options {
+            display: flex;
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+
+        .schedule-card {
+            flex: 1;
+            padding: 30px;
+            border: 2px solid var(--border);
+            border-radius: 16px;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .schedule-card:hover {
+            border-color: var(--primary);
+            transform: translateY(-2px);
+        }
+
+        .schedule-card.selected {
+            border-color: var(--primary);
+            background: rgba(102, 126, 234, 0.1);
+        }
+
+        .schedule-card i {
+            font-size: 40px;
+            color: var(--primary);
+            margin-bottom: 15px;
+        }
+
+        .schedule-card h4 {
+            font-size: 18px;
+            font-weight: 600;
+        }
+
+        /* Payment Section */
+        .payment-section {
+            background: linear-gradient(135deg, #667eea10, #764ba210);
+            border-radius: 20px;
+            padding: 30px;
+            margin: 30px 0;
+            border: 2px solid var(--primary);
+        }
+
+        .payment-header {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            margin-bottom: 25px;
+        }
+
+        .payment-icon {
+            width: 50px;
+            height: 50px;
+            background: var(--primary-gradient);
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 24px;
+        }
+
+        .payment-title {
+            font-size: 20px;
+            font-weight: 600;
+            color: var(--dark);
+        }
+
+        .payment-details {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 20px;
+            margin-bottom: 25px;
+        }
+
+        .payment-card-element {
+            background: var(--bg-white);
+            border: 2px solid var(--border);
+            border-radius: 16px;
+            padding: 15px;
+            margin-bottom: 20px;
+        }
+
+        .payment-button {
+            background: var(--primary-gradient);
+            color: white;
+            border: none;
+            padding: 15px 30px;
+            border-radius: 50px;
+            font-weight: 600;
+            font-size: 16px;
+            width: 100%;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .payment-button:hover:not(:disabled) {
+            transform: translateY(-2px);
+            box-shadow: var(--shadow-lg);
+        }
+
+        .payment-button:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+        }
+
+        /* Summary */
+        .campaign-summary {
+            background: var(--bg-offwhite);
+            border-radius: 20px;
+            padding: 25px;
+            margin: 30px 0;
+        }
+
+        .summary-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 20px;
+        }
+
+        .summary-item {
+            padding: 15px;
+            background: var(--bg-white);
+            border-radius: 12px;
+            border: 1px solid var(--border);
+        }
+
+        .summary-label {
+            font-size: 12px;
+            color: var(--text-muted);
+            margin-bottom: 5px;
+        }
+
+        .summary-value {
+            font-size: 16px;
+            font-weight: 600;
+            color: var(--dark);
+        }
+
+        /* Action Buttons */
+        .action-buttons {
+            display: flex;
+            justify-content: flex-end;
+            gap: 15px;
+            margin-top: 30px;
+        }
+
+        .btn {
+            padding: 12px 28px;
+            border-radius: 12px;
+            font-weight: 600;
+            font-size: 14px;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            transition: all 0.3s;
+            border: none;
+            cursor: pointer;
+        }
+
+        .btn-primary {
+            background: var(--primary-gradient);
+            color: white;
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: var(--shadow-lg);
+        }
+
+        .btn-secondary {
+            background: var(--bg-white);
+            color: var(--text);
+            border: 1px solid var(--border);
+        }
+
+        .btn-secondary:hover {
+            background: var(--bg-offwhite);
+            border-color: var(--primary);
+            color: var(--primary);
+        }
+
+        .btn-success {
+            background: var(--whatsapp);
+            color: white;
+        }
+
+        .btn-warning {
+            background: var(--warning);
+            color: white;
+        }
+
+        /* Toast */
+        #toast {
+            position: fixed;
+            top: 90px;
+            right: 29px;
+            width: 320px;
+            padding: 16px 20px;
+            border-radius: 12px;
+            box-shadow: var(--shadow-lg);
+            opacity: 0;
+            transform: translateY(-15px);
+            transition: .3s ease;
+            color: #fff;
+            z-index: 1001;
+        }
+
+        #toast.show {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        .toast-success { background: var(--success); }
+        .toast-error { background: var(--danger); }
+        .toast-info { background: var(--info); }
+
+        .toast-progress {
+            height: 3px;
+            background: rgba(255,255,255,0.6);
+            margin-top: 12px;
+            animation: progress 3s linear;
+        }
+
+        @keyframes progress {
+            from { width: 100%; }
+            to { width: 0%; }
+        }
+
+        /* Loading Overlay */
+        .loading-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0,0,0,0.5);
+            display: none;
+            align-items: center;
+            justify-content: center;
+            z-index: 9999;
+            backdrop-filter: blur(5px);
+        }
+
+        .spinner {
+            width: 50px;
+            height: 50px;
+            border: 5px solid var(--bg-offwhite);
+            border-top: 5px solid var(--primary);
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        .loading-text {
+            color: white;
+            margin-top: 15px;
+            font-size: 18px;
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .page-title h1 {
+                font-size: 24px;
+            }
+            
+            .flow-steps {
+                flex-direction: column;
+            }
+            
+            .campaign-types,
+            .schedule-options {
+                flex-direction: column;
+            }
+            
+            .action-buttons {
+                flex-direction: column;
+            }
+            
+            .btn {
+                width: 100%;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Theme Initialization -->
+    <script>
+        (function() {
+            const savedTheme = localStorage.getItem('theme') || 'light';
+            const savedBorder = localStorage.getItem('border') || 'round-border';
+            document.body.classList.add(savedTheme);
+            document.body.classList.add(savedBorder);
+        })();
+    </script>
+
+    <!-- Toast -->
+    <div id="toast"></div>
+
+    <!-- Loading Overlay -->
+    <div class="loading-overlay" id="loadingOverlay">
+        <div class="spinner"></div>
+        <div class="loading-text" id="loadingText">Processing...</div>
+    </div>
+
+    <!-- HEADER -->
+    <div class="header-wrapper">
+        <%- include('../partials/ram/header') %>
+    </div>
+
+    <!-- MAIN LAYOUT -->
+    <div class="main-wrapper">
+        <!-- SIDEBAR -->
+        <%- include('../partials/ram/sidebaar') %>
+
+        <!-- CONTENT -->
+        <div class="content-wrapper">
+            <div class="mid-content">
+                
+                <!-- Page Header -->
+                <div class="page-header">
+                    <div class="page-title">
+                        <div class="page-icon">
+                            <i class="fab fa-meta"></i>
+                        </div>
+                        <div>
+                            <h1>Meta WhatsApp Business API Campaign</h1>
+                            <p>Create and send WhatsApp campaigns with Meta's official API</p>
+                        </div>
+                    </div>
+                    <div class="meta-badge">
+                        <i class="fab fa-whatsapp"></i>
+                        <span>Official API v18.0</span>
+                    </div>
+                </div>
+
+                <!-- Campaign Flow -->
+                <div class="flow-container">
+                    <!-- Flow Steps -->
+                    <div class="flow-steps" id="flowSteps">
+                        <div class="flow-step-item active" id="step1-indicator">
+                            <div class="flow-step-number">1</div>
+                            <div class="flow-step-label">Create Campaign</div>
+                        </div>
+                        <div class="flow-step-item" id="step2-indicator">
+                            <div class="flow-step-number">2</div>
+                            <div class="flow-step-label">Select Template</div>
+                        </div>
+                        <div class="flow-step-item" id="step3-indicator">
+                            <div class="flow-step-number">3</div>
+                            <div class="flow-step-label">Add Media</div>
+                        </div>
+                        <div class="flow-step-item" id="step4-indicator">
+                            <div class="flow-step-number">4</div>
+                            <div class="flow-step-label">Add Numbers</div>
+                        </div>
+                        <div class="flow-step-item" id="step5-indicator">
+                            <div class="flow-step-number">5</div>
+                            <div class="flow-step-label">Payment</div>
+                        </div>
+                        <div class="flow-step-item" id="step6-indicator">
+                            <div class="flow-step-number">6</div>
+                            <div class="flow-step-label">Send</div>
+                        </div>
+                    </div>
+
+                    <!-- Step 1: Create Campaign -->
+                    <div class="flow-card" id="step1">
+                        <div class="flow-card-header">
+                            <div class="card-step">1</div>
+                            <div>
+                                <h4 class="card-title">Create Campaign</h4>
+                                <p class="card-subtitle">Set up your WhatsApp campaign details</p>
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <label class="form-label">
+                                <i class="fas fa-tag"></i>
+                                Campaign Name
+                            </label>
+                            <input type="text" class="form-control" id="campaignName" placeholder="e.g., Summer Sale 2024">
+                        </div>
+
+                        <div class="form-group">
+                            <label class="form-label">Campaign Type</label>
+                            <div class="campaign-types">
+                                <div class="type-card" onclick="selectType('marketing', this)">
+                                    <i class="fas fa-bullhorn"></i>
+                                    <h4>Marketing</h4>
+                                    <p>Promotional messages</p>
+                                </div>
+                                <div class="type-card" onclick="selectType('utility', this)">
+                                    <i class="fas fa-cog"></i>
+                                    <h4>Utility</h4>
+                                    <p>Transactional updates</p>
+                                </div>
+                                <div class="type-card" onclick="selectType('authentication', this)">
+                                    <i class="fas fa-shield-alt"></i>
+                                    <h4>Authentication</h4>
+                                    <p>OTP & verification</p>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <label class="form-label">Description (Optional)</label>
+                            <textarea class="form-control" id="description" rows="3" placeholder="Campaign description..."></textarea>
+                        </div>
+                    </div>
+
+                    <!-- Step 2: Select Template -->
+                    <div class="flow-card" id="step2" style="display: none;">
+                        <div class="flow-card-header">
+                            <div class="card-step">2</div>
+                            <div>
+                                <h4 class="card-title">Select Template</h4>
+                                <p class="card-subtitle">Choose an approved template from Meta</p>
+                            </div>
+                        </div>
+
+                        <div class="templates-grid" id="templatesGrid">
+                            <!-- Templates will be loaded here -->
+                            <div class="text-center py-4">
+                                <div class="spinner-border text-primary" role="status"></div>
+                                <p class="mt-2">Loading templates...</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Step 3: Add Media -->
+                    <div class="flow-card" id="step3" style="display: none;">
+                        <div class="flow-card-header">
+                            <div class="card-step">3</div>
+                            <div>
+                                <h4 class="card-title">Add Media</h4>
+                                <p class="card-subtitle">Upload images, videos or documents (optional)</p>
+                            </div>
+                        </div>
+
+                        <div class="upload-area" onclick="document.getElementById('mediaInput').click()">
+                            <i class="fas fa-cloud-upload-alt"></i>
+                            <h4>Click to upload media</h4>
+                            <p>Drag and drop or click to select files</p>
+                            <input type="file" id="mediaInput" style="display: none;" onchange="handleMediaUpload(this)">
+                            <div class="upload-formats">
+                                <span class="format-badge"><i class="fas fa-image"></i> Images</span>
+                                <span class="format-badge"><i class="fas fa-video"></i> Videos</span>
+                                <span class="format-badge"><i class="fas fa-file-pdf"></i> PDFs</span>
+                            </div>
+                        </div>
+
+                        <div id="mediaPreview" class="media-preview" style="display: none; margin-top: 20px; display: flex; align-items: center; gap: 20px; padding: 20px; background: var(--bg-offwhite); border-radius: 16px;">
+                            <img src="" alt="Preview" style="width: 100px; height: 100px; object-fit: cover; border-radius: 12px;">
+                            <div style="flex: 1;">
+                                <div id="mediaName"></div>
+                                <div id="mediaSize" class="text-muted"></div>
+                            </div>
+                            <button class="btn btn-sm btn-danger" onclick="removeMedia()">
+                                <i class="fas fa-times"></i>
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- Step 4: Add Numbers -->
+                    <div class="flow-card" id="step4" style="display: none;">
+                        <div class="flow-card-header">
+                            <div class="card-step">4</div>
+                            <div>
+                                <h4 class="card-title">Add Numbers</h4>
+                                <p class="card-subtitle">Add recipient phone numbers</p>
+                            </div>
+                        </div>
+
+                        <div class="numbers-tabs">
+                            <button class="numbers-tab active" onclick="switchTab('csv', this)">CSV Upload</button>
+                            <button class="numbers-tab" onclick="switchTab('manual', this)">Manual Entry</button>
+                        </div>
+
+                        <!-- CSV Tab -->
+                        <div class="tab-pane active" id="csvTab">
+                            <div class="upload-csv-area" style="border: 2px dashed var(--border); padding: 40px; text-align: center; cursor: pointer;" onclick="document.getElementById('csvFile').click()">
+                                <i class="fas fa-file-csv" style="font-size: 40px; color: var(--primary);"></i>
+                                <h5>Upload CSV File</h5>
+                                <p>Click to select or drag and drop</p>
+                                <input type="file" id="csvFile" accept=".csv" style="display: none;" onchange="handleCSV(this)">
+                            </div>
+
+                            <div id="csvPreview" style="display: none; margin-top: 20px;">
+                                <table class="table">
+                                    <thead>
+                                        <tr>
+                                            <th>Phone Number</th>
+                                            <th>Name</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody id="csvPreviewBody"></tbody>
+                                </table>
+                            </div>
+                        </div>
+
+                        <!-- Manual Tab -->
+                        <div class="tab-pane" id="manualTab">
+                            <textarea class="form-control" id="manualNumbers" rows="5" placeholder="Enter phone numbers (one per line)&#10;Example:&#10;+919876543210&#10;+919876543211"></textarea>
+                        </div>
+
+                        <div class="contacts-stats" id="contactsStats" style="display: none;">
+                            <div class="stat-item">
+                                <div class="stat-value" id="totalCount">0</div>
+                                <div class="stat-label">Total</div>
+                            </div>
+                            <div class="stat-item">
+                                <div class="stat-value" id="validCount">0</div>
+                                <div class="stat-label">Valid</div>
+                            </div>
+                            <div class="stat-item">
+                                <div class="stat-value" id="invalidCount">0</div>
+                                <div class="stat-label">Invalid</div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Step 5: Payment -->
+                    <div class="flow-card" id="step5" style="display: none;">
+                        <div class="flow-card-header">
+                            <div class="card-step">5</div>
+                            <div>
+                                <h4 class="card-title">Payment</h4>
+                                <p class="card-subtitle">Complete payment to start campaign</p>
+                            </div>
+                        </div>
+
+                        <!-- Campaign Summary -->
+                        <div class="campaign-summary">
+                            <div class="summary-title">Campaign Summary</div>
+                            <div class="summary-grid" id="campaignSummary">
+                                <div class="summary-item">
+                                    <div class="summary-label">Campaign</div>
+                                    <div class="summary-value" id="summaryName">-</div>
+                                </div>
+                                <div class="summary-item">
+                                    <div class="summary-label">Template</div>
+                                    <div class="summary-value" id="summaryTemplate">-</div>
+                                </div>
+                                <div class="summary-item">
+                                    <div class="summary-label">Recipients</div>
+                                    <div class="summary-value" id="summaryRecipients">0</div>
+                                </div>
+                                <div class="summary-item">
+                                    <div class="summary-label">Cost per message</div>
+                                    <div class="summary-value">$0.005</div>
+                                </div>
+                                <div class="summary-item">
+                                    <div class="summary-label">Total Cost</div>
+                                    <div class="summary-value" id="summaryCost">$0.00</div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Payment Section -->
+                        <div class="payment-section">
+                            <div class="payment-header">
+                                <div class="payment-icon">
+                                    <i class="fas fa-credit-card"></i>
+                                </div>
+                                <div>
+                                    <div class="payment-title">Pay with Card</div>
+                                    <p class="text-muted">Secure payment powered by Stripe</p>
+                                </div>
+                            </div>
+
+                            <!-- Stripe Elements -->
+                            <div id="payment-element" class="payment-card-element">
+                                <!-- Stripe Elements will be mounted here -->
+                            </div>
+
+                            <button class="payment-button" id="paymentButton" onclick="processPayment()" disabled>
+                                <i class="fas fa-lock"></i> Pay $<span id="paymentAmount">0.00</span>
+                            </button>
+
+                            <p class="text-center text-muted mt-3">
+                                <i class="fas fa-shield-alt"></i> Your payment is secure and encrypted
+                            </p>
+                        </div>
+                    </div>
+
+                    <!-- Step 6: Send -->
+                    <div class="flow-card" id="step6" style="display: none;">
+                        <div class="flow-card-header">
+                            <div class="card-step">6</div>
+                            <div>
+                                <h4 class="card-title">Send Campaign</h4>
+                                <p class="card-subtitle">Choose when to send</p>
+                            </div>
+                        </div>
+
+                        <div class="schedule-options">
+                            <div class="schedule-card selected" onclick="selectSchedule('now', this)">
+                                <i class="fas fa-bolt"></i>
+                                <h4>Send Now</h4>
+                                <p>Start immediately</p>
+                            </div>
+                            <div class="schedule-card" onclick="selectSchedule('later', this)">
+                                <i class="far fa-clock"></i>
+                                <h4>Schedule Later</h4>
+                                <p>Choose date & time</p>
+                            </div>
+                        </div>
+
+                        <div id="scheduleDateTime" style="display: none;">
+                            <div class="row">
+                                <div class="col-md-6">
+                                    <input type="date" class="form-control" id="scheduleDate">
+                                </div>
+                                <div class="col-md-6">
+                                    <input type="time" class="form-control" id="scheduleTime">
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Navigation Buttons -->
+                    <div class="action-buttons">
+                        <button class="btn btn-secondary" id="prevBtn" onclick="prevStep()" style="display: none;">
+                            <i class="fas fa-arrow-left"></i> Previous
+                        </button>
+                        <button class="btn btn-primary" id="nextBtn" onclick="nextStep()">
+                            Next Step <i class="fas fa-arrow-right"></i>
+                        </button>
+                        <button class="btn btn-success" id="sendBtn" onclick="startCampaign()" style="display: none;">
+                            <i class="fab fa-whatsapp"></i> Start Campaign
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Stripe initialization
+        const stripe = Stripe('<%= process.env.STRIPE_PUBLIC_KEY %>');
+        let elements = null;
+        let campaignData = null;
+
+        // ======================
+        // CAMPAIGN TYPE SELECTION - FIXED
+        // ======================
+        let selectedType = 'marketing'; // Default value
+
+        function selectType(type, element) {
+            selectedType = type;
+            // Remove selected class from all cards
+            document.querySelectorAll('.type-card').forEach(c => c.classList.remove('selected'));
+            // Add selected class to clicked card
+            element.classList.add('selected');
+            console.log('Selected type:', type);
+        }
+
+        // ======================
+        // TEMPLATE SELECTION
+        // ======================
+        let selectedTemplate = null;
+        let templates = [];
+
+        // ======================
+        // MEDIA UPLOAD
+        // ======================
+        let mediaFile = null;
+
+        // ======================
+        // NUMBERS
+        // ======================
+        let numbers = [];
+        let validNumbers = [];
+
+        // ======================
+        // SCHEDULE
+        // ======================
+        let scheduleType = 'now';
+
+        // ======================
+        // FLOW NAVIGATION
+        // ======================
+        let currentStep = 1;
+        const totalSteps = 6;
+
+        // Set default selected on page load
+        document.addEventListener('DOMContentLoaded', function() {
+            // Set default selected type card
+            const defaultCard = document.querySelector('.type-card[onclick*="marketing"]');
+            if (defaultCard) {
+                defaultCard.classList.add('selected');
+            }
+            
+            // Set default schedule card
+            const defaultSchedule = document.querySelector('.schedule-card[onclick*="now"]');
+            if (defaultSchedule) {
+                defaultSchedule.classList.add('selected');
+            }
+            
+            // Set default date for scheduling
+            const today = new Date().toISOString().split('T')[0];
+            document.getElementById('scheduleDate').value = today;
+            
+            // Load demo templates
+            loadDemoTemplates();
+        });
+
+        function nextStep() {
+            if (currentStep < totalSteps) {
+                // Validate current step
+                if (!validateStep(currentStep)) {
+                    return;
+                }
+
+                // Hide current step
+                document.getElementById(`step${currentStep}`).style.display = 'none';
+                document.getElementById(`step${currentStep}-indicator`).classList.remove('active');
+                document.getElementById(`step${currentStep}-indicator`).classList.add('completed');
+                
+                currentStep++;
+                
+                // Show next step
+                document.getElementById(`step${currentStep}`).style.display = 'block';
+                document.getElementById(`step${currentStep}-indicator`).classList.add('active');
+                
+                updateNavButtons();
+
+                // Update summary for step 5
+                if (currentStep === 5) {
+                    updateSummary();
+                }
+            }
+        }
+
+        function prevStep() {
+            if (currentStep > 1) {
+                document.getElementById(`step${currentStep}`).style.display = 'none';
+                document.getElementById(`step${currentStep}-indicator`).classList.remove('active');
+                
+                currentStep--;
+                
+                document.getElementById(`step${currentStep}`).style.display = 'block';
+                document.getElementById(`step${currentStep}-indicator`).classList.add('active');
+                
+                updateNavButtons();
+            }
+        }
+
+        function updateNavButtons() {
+            const prevBtn = document.getElementById('prevBtn');
+            const nextBtn = document.getElementById('nextBtn');
+            const sendBtn = document.getElementById('sendBtn');
+
+            if (currentStep === 1) {
+                prevBtn.style.display = 'none';
+            } else {
+                prevBtn.style.display = 'flex';
+            }
+
+            if (currentStep === 6) {
+                nextBtn.style.display = 'none';
+                sendBtn.style.display = 'flex';
+            } else {
+                nextBtn.style.display = 'flex';
+                sendBtn.style.display = 'none';
+            }
+        }
+
+        function validateStep(step) {
+            switch(step) {
+                case 1:
+                    const campaignName = document.getElementById('campaignName').value;
+                    if (!campaignName) {
+                        showToast('Error', 'Please enter campaign name', 'error');
+                        return false;
+                    }
+                    if (!selectedType) {
+                        showToast('Error', 'Please select campaign type', 'error');
+                        return false;
+                    }
+                    return true;
+                case 2:
+                    if (!selectedTemplate) {
+                        showToast('Error', 'Please select a template', 'error');
+                        return false;
+                    }
+                    return true;
+                case 4:
+                    if (validNumbers.length === 0) {
+                        showToast('Error', 'Please add at least one valid phone number', 'error');
+                        return false;
+                    }
+                    return true;
+                default:
+                    return true;
+            }
+        }
+
+        // ======================
+        // LOAD DEMO TEMPLATES
+        // ======================
+        function loadDemoTemplates() {
+            templates = [
+                {
+                    id: '1',
+                    name: 'Summer Sale Offer',
+                    category: 'MARKETING',
+                    status: 'APPROVED',
+                    language: 'en',
+                    preview: '🎉 Summer Sale! Get 50% off on all products. Use code SUMMER50.'
+                },
+                {
+                    id: '2',
+                    name: 'Order Confirmation',
+                    category: 'UTILITY',
+                    status: 'APPROVED',
+                    language: 'en',
+                    preview: 'Your order #{{order_number}} has been confirmed. Total: ₹{{amount}}.'
+                },
+                {
+                    id: '3',
+                    name: 'OTP Verification',
+                    category: 'AUTHENTICATION',
+                    status: 'APPROVED',
+                    language: 'en',
+                    preview: 'Your verification code is {{otp}}. Valid for 5 minutes.'
+                }
+            ];
+            renderTemplates();
+        }
+
+        function renderTemplates() {
+            const grid = document.getElementById('templatesGrid');
+            
+            let html = '';
+            templates.forEach(template => {
+                html += `
+                    <div class="template-card" onclick="selectTemplate('${template.id}', this)">
+                        <span class="template-badge">${template.status}</span>
+                        <div class="template-icon">
+                            <i class="fas ${getTemplateIcon(template.category)}"></i>
+                        </div>
+                        <div class="template-name">${template.name}</div>
+                        <div class="template-preview">${template.preview}</div>
+                        <div class="template-meta">
+                            <span>${template.category}</span>
+                            <span><i class="far fa-clock"></i> ${template.language}</span>
+                        </div>
+                    </div>
+                `;
+            });
+            grid.innerHTML = html;
+        }
+
+        function getTemplateIcon(category) {
+            switch(category) {
+                case 'MARKETING': return 'fa-bullhorn';
+                case 'UTILITY': return 'fa-cog';
+                case 'AUTHENTICATION': return 'fa-shield-alt';
+                default: return 'fa-file-alt';
+            }
+        }
+
+        function selectTemplate(id, element) {
+            selectedTemplate = templates.find(t => t.id === id);
+            document.querySelectorAll('.template-card').forEach(c => c.classList.remove('selected'));
+            element.classList.add('selected');
+            
+            // Update summary
+            document.getElementById('summaryTemplate').textContent = selectedTemplate.name;
+        }
+
+        // ======================
+        // MEDIA UPLOAD
+        // ======================
+        function handleMediaUpload(input) {
+            if (input.files && input.files[0]) {
+                mediaFile = input.files[0];
+                
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    document.querySelector('#mediaPreview img').src = e.target.result;
+                };
+                reader.readAsDataURL(mediaFile);
+
+                document.getElementById('mediaName').textContent = mediaFile.name;
+                document.getElementById('mediaSize').textContent = (mediaFile.size / 1024).toFixed(2) + ' KB';
+                document.getElementById('mediaPreview').style.display = 'flex';
+            }
+        }
+
+        function removeMedia() {
+            mediaFile = null;
+            document.getElementById('mediaPreview').style.display = 'none';
+            document.getElementById('mediaInput').value = '';
+        }
+
+        // ======================
+        // NUMBERS TAB SWITCHING
+        // ======================
+        function switchTab(tab, element) {
+            document.querySelectorAll('.numbers-tab').forEach(t => t.classList.remove('active'));
+            element.classList.add('active');
+            
+            document.querySelectorAll('.tab-pane').forEach(p => p.classList.remove('active'));
+            document.getElementById(tab + 'Tab').classList.add('active');
+        }
+
+        function handleCSV(input) {
+            if (input.files && input.files[0]) {
+                const file = input.files[0];
+                const reader = new FileReader();
+                
+                reader.onload = function(e) {
+                    const text = e.target.result;
+                    const lines = text.split('\n');
+                    
+                    numbers = [];
+                    lines.forEach(line => {
+                        const parts = line.split(',');
+                        if (parts[0]) {
+                            numbers.push({
+                                phone: parts[0].trim(),
+                                name: parts[1] ? parts[1].trim() : ''
+                            });
+                        }
+                    });
+                    
+                    validateNumbers();
+                    
+                    // Show preview
+                    const previewBody = document.getElementById('csvPreviewBody');
+                    let previewHtml = '';
+                    numbers.slice(0, 5).forEach(n => {
+                        previewHtml += `<tr><td>${n.phone}</td><td>${n.name}</td></tr>`;
+                    });
+                    previewBody.innerHTML = previewHtml;
+                    document.getElementById('csvPreview').style.display = 'block';
+                };
+                
+                reader.readAsText(file);
+            }
+        }
+
+        function validateNumbers() {
+            const manualNumbers = document.getElementById('manualNumbers')?.value || '';
+            
+            if (manualNumbers) {
+                numbers = manualNumbers.split('\n')
+                    .filter(line => line.trim())
+                    .map(line => ({
+                        phone: line.trim(),
+                        name: ''
+                    }));
+            }
+
+            validNumbers = numbers.filter(n => {
+                const phone = n.phone.replace(/\D/g, '');
+                return phone.length >= 10 && phone.length <= 15;
+            });
+
+            const invalidCount = numbers.length - validNumbers.length;
+
+            document.getElementById('totalCount').textContent = numbers.length;
+            document.getElementById('validCount').textContent = validNumbers.length;
+            document.getElementById('invalidCount').textContent = invalidCount;
+            document.getElementById('contactsStats').style.display = 'flex';
+
+            // Update summary
+            document.getElementById('summaryRecipients').textContent = validNumbers.length;
+            updateCost();
+        }
+
+        // ======================
+        // UPDATE COST
+        // ======================
+        function updateCost() {
+            const cost = validNumbers.length * 0.005;
+            document.getElementById('summaryCost').textContent = '$' + cost.toFixed(2);
+            document.getElementById('paymentAmount').textContent = cost.toFixed(2);
+        }
+
+        // ======================
+        // UPDATE SUMMARY
+        // ======================
+        function updateSummary() {
+            document.getElementById('summaryName').textContent = document.getElementById('campaignName').value || '-';
+            document.getElementById('summaryRecipients').textContent = validNumbers.length;
+            updateCost();
+        }
+
+        // ======================
+        // SCHEDULE SELECTION
+        // ======================
+        function selectSchedule(type, element) {
+            scheduleType = type;
+            document.querySelectorAll('.schedule-card').forEach(c => c.classList.remove('selected'));
+            element.classList.add('selected');
+            
+            document.getElementById('scheduleDateTime').style.display = type === 'later' ? 'block' : 'none';
+        }
+
+        // ======================
+        // PAYMENT
+        // ======================
+        async function preparePayment() {
+            // This would normally create a payment intent
+            // For demo, we'll just enable the button
+            document.getElementById('paymentButton').disabled = false;
+        }
+
+        async function processPayment() {
+            showToast('Success', 'Payment successful! Campaign ready to send.', 'success');
+            nextStep();
+        }
+
+        // ======================
+        // START CAMPAIGN
+        // ======================
+        async function startCampaign() {
+            showLoading('Starting Campaign...');
+            
+            setTimeout(() => {
+                hideLoading();
+                showToast('Success', 'Campaign started successfully!', 'success');
+                setTimeout(() => {
+                    window.location.href = '/campaigns';
+                }, 2000);
+            }, 2000);
+        }
+
+        // ======================
+        // UTILITIES
+        // ======================
+        function showToast(title, message, type = 'info') {
+            const toast = document.getElementById('toast');
+            
+            const icons = {
+                'success': '✅',
+                'error': '❌',
+                'info': 'ℹ️'
+            };
+            
+            toast.innerHTML = `
+                <div style="display: flex; gap: 12px; align-items: flex-start;">
+                    <div style="font-size: 20px;">${icons[type]}</div>
+                    <div style="flex: 1;">
+                        <h4 style="margin: 0; font-size: 14px; font-weight: 600;">${title}</h4>
+                        <p style="margin: 5px 0 0; font-size: 13px; opacity: 0.9;">${message}</p>
+                    </div>
+                </div>
+                <div class="toast-progress"></div>
+            `;
+            
+            toast.className = `toast-${type} show`;
+            
+            setTimeout(() => {
+                toast.classList.remove('show');
+            }, 3000);
+        }
+
+        function showLoading(text = 'Processing...') {
+            document.getElementById('loadingText').textContent = text;
+            document.getElementById('loadingOverlay').style.display = 'flex';
+        }
+
+        function hideLoading() {
+            document.getElementById('loadingOverlay').style.display = 'none';
+        }
+    </script>
+</body>
+</html>

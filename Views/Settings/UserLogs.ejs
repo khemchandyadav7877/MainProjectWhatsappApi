@@ -3,60 +3,45 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>User Logs - Complete Activity Timeline</title>
-    
-    <!-- Bootstrap 5 CSS -->
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
-    <!-- Font Awesome Icons -->
+    <title>Logo Management - SSPAR Cloud</title>
+
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Font Awesome -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <!-- Google Fonts -->
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
-    <!-- Chart.js for graphs -->
-    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-    <!-- Moment.js for date formatting -->
-    <script src="https://cdn.jsdelivr.net/npm/moment@2.29.4/moment.min.js"></script>
-    
+
     <style>
         /* ===== THEME VARIABLES ===== */
         :root {
             --primary: #667eea;
             --primary-dark: #5a67d8;
-            --primary-gradient: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            --primary-gradient: linear-gradient(135deg, #667eea, #764ba2);
             --success: #10b981;
             --warning: #f59e0b;
             --danger: #ef4444;
             --info: #3b82f6;
             
-            /* Role Colors */
-            --role-superadmin: #4f46e5;
-            --role-educator: #3b82f6;
-            --role-trainer: #10b981;
-            --role-student: #f59e0b;
-            
-            /* Status Colors */
-            --status-login-bg: #ecfdf5;
-            --status-login-text: #10b981;
-            --status-logout-bg: #fef2f2;
-            --status-logout-text: #ef4444;
-            --status-active-bg: #e0f2fe;
-            --status-active-text: #0284c7;
-            
             /* Light Mode */
             --bg-body: #f8fafc;
             --bg-white: #ffffff;
-            --bg-offwhite: #f8fafc;
+            --bg-offwhite: #f1f5f9;
             --bg-card: #ffffff;
-            --text: #1e293b;
-            --text-light: #334155;
-            --text-muted: #64748b;
+            --text: #334155;
+            --text-light: #64748b;
+            --text-muted: #94a3b8;
             --dark: #0f172a;
-            --border: #e2e8f0;
-            --shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
-            --shadow-lg: 0 20px 25px -5px rgba(0, 0, 0, 0.1);
+            --border: #eef2f6;
+            --shadow: 0 8px 25px rgba(0,0,0,0.03);
+            --shadow-lg: 0 15px 35px rgba(102, 126, 234, 0.1);
             
             /* Layout */
             --header-height: 70px;
             --sidebar-width: 280px;
+            --sidebar-mini-width: 80px;
+            
+            /* Accent Colors */
+            --accent: #667eea;
+            --accent-soft: rgba(102, 126, 234, 0.1);
         }
 
         /* Dark Mode */
@@ -65,17 +50,16 @@
             --bg-white: #1e293b;
             --bg-offwhite: #334155;
             --bg-card: #1e293b;
-            --text: #f1f5f9;
+            --text: #e2e8f0;
             --text-light: #cbd5e1;
             --text-muted: #94a3b8;
             --dark: #f8fafc;
             --border: #334155;
-            --shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.3);
-            --shadow-lg: 0 20px 25px -5px rgba(0, 0, 0, 0.5);
+            --shadow: 0 8px 25px rgba(0,0,0,0.2);
+            --shadow-lg: 0 15px 35px rgba(102, 126, 234, 0.2);
             
-            --status-login-bg: rgba(16, 185, 129, 0.2);
-            --status-logout-bg: rgba(239, 68, 68, 0.2);
-            --status-active-bg: rgba(2, 132, 199, 0.2);
+            --accent: #818cf8;
+            --accent-soft: rgba(129, 140, 248, 0.2);
         }
 
         * {
@@ -85,611 +69,657 @@
         }
 
         body {
-            font-family: 'Inter', sans-serif;
+            overflow-x: hidden;
             background: var(--bg-body);
+            font-family: 'Inter', 'Segoe UI', sans-serif;
             color: var(--text);
             transition: background-color 0.3s, color 0.3s;
         }
 
         /* ===== BORDER MODES ===== */
-        body.round-border .logs-header,
-        body.round-border .stat-card,
-        body.round-border .role-tab,
-        body.round-border .filter-section,
-        body.round-border .filter-input,
-        body.round-border .filter-button,
-        body.round-border .chart-card,
-        body.round-border .timeline-section,
-        body.round-border .logs-table th,
-        body.round-border .logs-table td,
-        body.round-border .ip-address,
-        body.round-border .status-badge,
-        body.round-border .user-badge,
-        body.round-border .page-btn,
-        body.round-border .toast-notification {
+        body.round-border .header-wrapper,
+        body.round-border .sidebar,
+        body.round-border .mid-content,
+        body.round-border .settings-card,
+        body.round-border .settings-menu,
+        body.round-border .settings-menu a,
+        body.round-border .form-control,
+        body.round-border .btn,
+        body.round-border .logo-preview,
+        body.round-border .upload-area,
+        body.round-border .toast-notification,
+        body.round-border .page-icon {
+            border-radius: 20px !important;
+        }
+
+        body.round-border .settings-menu a.active {
+            border-radius: 12px 12px 0 0 !important;
+        }
+
+        body.round-border .logo-preview {
             border-radius: 16px !important;
         }
 
-        body.round-border .stat-icon,
-        body.round-border .user-badge {
-            border-radius: 12px !important;
-        }
-
-        body.round-border .status-dot {
-            border-radius: 50% !important;
-        }
-
-        body.no-radius .logs-header,
-        body.no-radius .stat-card,
-        body.no-radius .role-tab,
-        body.no-radius .filter-section,
-        body.no-radius .filter-input,
-        body.no-radius .filter-button,
-        body.no-radius .chart-card,
-        body.no-radius .timeline-section,
-        body.no-radius .logs-table th,
-        body.no-radius .logs-table td,
-        body.no-radius .ip-address,
-        body.no-radius .status-badge,
-        body.no-radius .user-badge,
-        body.no-radius .page-btn,
+        body.no-radius .header-wrapper,
+        body.no-radius .sidebar,
+        body.no-radius .mid-content,
+        body.no-radius .settings-card,
+        body.no-radius .settings-menu,
+        body.no-radius .settings-menu a,
+        body.no-radius .form-control,
+        body.no-radius .btn,
+        body.no-radius .logo-preview,
+        body.no-radius .upload-area,
         body.no-radius .toast-notification,
-        body.no-radius .stat-icon,
-        body.no-radius .user-badge,
-        body.no-radius .status-dot {
+        body.no-radius .page-icon,
+        body.no-radius .settings-menu a.active {
             border-radius: 0 !important;
         }
 
-        /* Main Container */
-        .logs-container {
-            min-height: 100vh;
-            padding: 2rem;
-        }
-
-        /* Header Section */
-        .logs-header {
-            background: var(--primary-gradient);
-            border-radius: 20px;
-            padding: 2rem;
-            margin-bottom: 2rem;
-            color: white;
-            box-shadow: 0 10px 30px rgba(102, 126, 234, 0.3);
-        }
-
-        .header-title {
-            font-size: 2.5rem;
-            font-weight: 700;
-            margin-bottom: 0.5rem;
-        }
-
-        .header-subtitle {
-            font-size: 1rem;
-            opacity: 0.9;
-            margin-bottom: 1.5rem;
-        }
-
-        /* Stats Cards */
-        .stats-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-            gap: 1rem;
-            margin-bottom: 2rem;
-        }
-
-        .stat-card {
-            background: var(--bg-card);
-            border-radius: 16px;
-            padding: 1.5rem;
-            box-shadow: var(--shadow);
-            transition: all 0.3s ease;
-            border: 1px solid var(--border);
-            cursor: pointer;
-        }
-
-        .stat-card:hover {
-            transform: translateY(-5px);
-            box-shadow: var(--shadow-lg);
-        }
-
-        .stat-card.active {
-            border: 2px solid var(--primary);
-            background: rgba(102, 126, 234, 0.05);
-        }
-
-        .stat-icon {
-            width: 48px;
-            height: 48px;
-            border-radius: 12px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 1.5rem;
-            margin-bottom: 1rem;
-        }
-
-        .stat-icon.blue { background: rgba(79, 70, 229, 0.1); color: var(--role-superadmin); }
-        .stat-icon.green { background: rgba(16, 185, 129, 0.1); color: var(--role-trainer); }
-        .stat-icon.purple { background: rgba(139, 92, 246, 0.1); color: #8b5cf6; }
-        .stat-icon.orange { background: rgba(249, 115, 22, 0.1); color: #f97316; }
-        .stat-icon.superadmin { background: rgba(79, 70, 229, 0.1); color: var(--role-superadmin); }
-        .stat-icon.educator { background: rgba(59, 130, 246, 0.1); color: var(--role-educator); }
-        .stat-icon.trainer { background: rgba(16, 185, 129, 0.1); color: var(--role-trainer); }
-        .stat-icon.student { background: rgba(245, 158, 11, 0.1); color: var(--role-student); }
-
-        .stat-value {
-            font-size: 2rem;
-            font-weight: 700;
-            color: var(--dark);
-            margin-bottom: 0.25rem;
-        }
-
-        .stat-label {
-            font-size: 0.875rem;
-            color: var(--text-muted);
-        }
-
-        /* Role Filter Tabs */
-        .role-tabs {
-            display: flex;
-            gap: 1rem;
-            margin-bottom: 2rem;
-            flex-wrap: wrap;
-        }
-
-        .role-tab {
-            padding: 0.75rem 1.5rem;
-            border-radius: 50px;
-            font-weight: 600;
-            font-size: 0.875rem;
-            cursor: pointer;
-            transition: all 0.3s;
-            border: 2px solid transparent;
-            display: flex;
-            align-items: center;
-            gap: 0.5rem;
-        }
-
-        .role-tab.superadmin {
-            background: rgba(79, 70, 229, 0.1);
-            color: var(--role-superadmin);
-        }
-
-        .role-tab.superadmin:hover, .role-tab.superadmin.active {
-            background: var(--role-superadmin);
-            color: white;
-        }
-
-        .role-tab.educator {
-            background: rgba(59, 130, 246, 0.1);
-            color: var(--role-educator);
-        }
-
-        .role-tab.educator:hover, .role-tab.educator.active {
-            background: var(--role-educator);
-            color: white;
-        }
-
-        .role-tab.trainer {
-            background: rgba(16, 185, 129, 0.1);
-            color: var(--role-trainer);
-        }
-
-        .role-tab.trainer:hover, .role-tab.trainer.active {
-            background: var(--role-trainer);
-            color: white;
-        }
-
-        .role-tab.student {
-            background: rgba(245, 158, 11, 0.1);
-            color: var(--role-student);
-        }
-
-        .role-tab.student:hover, .role-tab.student.active {
-            background: var(--role-student);
-            color: white;
-        }
-
-        .role-tab.all {
-            background: var(--bg-offwhite);
-            color: var(--text-muted);
-        }
-
-        .role-tab.all:hover, .role-tab.all.active {
-            background: var(--text-muted);
-            color: white;
-        }
-
-        /* Filter Section */
-        .filter-section {
-            background: var(--bg-card);
-            border-radius: 16px;
-            padding: 1.5rem;
-            margin-bottom: 2rem;
-            box-shadow: var(--shadow);
-            border: 1px solid var(--border);
-        }
-
-        .filter-title {
-            font-size: 1.125rem;
-            font-weight: 600;
-            margin-bottom: 1rem;
-            color: var(--dark);
-        }
-
-        .filter-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-            gap: 1rem;
-        }
-
-        .filter-input {
-            padding: 0.75rem 1rem;
-            border: 1px solid var(--border);
-            border-radius: 10px;
-            font-size: 0.875rem;
-            transition: all 0.2s;
+        /* Header */
+        .header-wrapper {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            z-index: 1030;
             background: var(--bg-white);
-            color: var(--text);
-        }
-
-        .filter-input:focus {
-            outline: none;
-            border-color: var(--primary);
-            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
-            background: var(--bg-white);
-        }
-
-        .filter-button {
-            padding: 0.75rem 1.5rem;
-            background: var(--primary-gradient);
-            color: white;
-            border: none;
-            border-radius: 10px;
-            font-weight: 500;
-            cursor: pointer;
-            transition: all 0.3s;
-        }
-
-        .filter-button:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 10px 20px rgba(102, 126, 234, 0.3);
-        }
-
-        /* Active Filter Badge */
-        .active-filter {
-            display: inline-flex;
-            align-items: center;
-            gap: 0.5rem;
-            padding: 0.5rem 1rem;
-            background: var(--bg-offwhite);
-            border-radius: 50px;
-            font-size: 0.875rem;
-            margin-right: 0.5rem;
-            margin-bottom: 0.5rem;
-            color: var(--text);
-        }
-
-        .active-filter .remove {
-            cursor: pointer;
-            color: var(--danger);
-        }
-
-        .active-filter .remove:hover {
-            color: #dc2626;
-        }
-
-        /* Charts Section */
-        .charts-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(400px, 1fr));
-            gap: 1.5rem;
-            margin-bottom: 2rem;
-        }
-
-        .chart-card {
-            background: var(--bg-card);
-            border-radius: 16px;
-            padding: 1.5rem;
             box-shadow: var(--shadow);
-            border: 1px solid var(--border);
-        }
-
-        .chart-title {
-            font-size: 1rem;
-            font-weight: 600;
-            color: var(--text-muted);
-            text-transform: uppercase;
-            letter-spacing: 0.5px;
-            margin-bottom: 1rem;
-        }
-
-        .chart-container {
-            position: relative;
-            height: 250px;
-            width: 100%;
-        }
-
-        /* Timeline Section */
-        .timeline-section {
-            background: var(--bg-card);
-            border-radius: 16px;
-            padding: 1.5rem;
-            box-shadow: var(--shadow);
-            border: 1px solid var(--border);
-            margin-bottom: 2rem;
-        }
-
-        .timeline-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 1.5rem;
-            flex-wrap: wrap;
-            gap: 1rem;
-        }
-
-        .timeline-title {
-            font-size: 1.25rem;
-            font-weight: 600;
-            color: var(--dark);
-        }
-
-        .timeline-export {
-            padding: 0.5rem 1rem;
-            background: var(--success);
-            color: white;
-            border: none;
-            border-radius: 8px;
-            font-size: 0.875rem;
-            cursor: pointer;
-            transition: all 0.3s;
-        }
-
-        .timeline-export:hover {
-            background: #059669;
-            transform: translateY(-2px);
-        }
-
-        /* Table Styles */
-        .table-responsive {
-            overflow-x: auto;
-        }
-
-        .logs-table {
-            width: 100%;
-            border-collapse: collapse;
-        }
-
-        .logs-table th {
-            text-align: left;
-            padding: 1rem;
-            background: var(--bg-offwhite);
-            color: var(--text-muted);
-            font-weight: 600;
-            font-size: 0.875rem;
-            border-bottom: 2px solid var(--border);
-        }
-
-        .logs-table td {
-            padding: 1rem;
             border-bottom: 1px solid var(--border);
-            color: var(--text);
-            font-size: 0.875rem;
         }
 
-        .logs-table tr:hover {
-            background: var(--bg-offwhite);
-        }
-
-        /* User Info Badge */
-        .user-badge {
-            display: inline-flex;
-            align-items: center;
-            gap: 0.5rem;
-            padding: 0.25rem 0.75rem;
-            background: rgba(79, 70, 229, 0.1);
-            border-radius: 20px;
-            color: var(--role-superadmin);
-            font-weight: 500;
-        }
-
-        .user-badge i {
-            font-size: 0.875rem;
-        }
-
-        /* Status Badges */
-        .status-badge {
-            display: inline-block;
-            padding: 0.25rem 0.75rem;
-            border-radius: 20px;
-            font-size: 0.75rem;
-            font-weight: 600;
-        }
-
-        .status-login {
-            background: var(--status-login-bg);
-            color: var(--status-login-text);
-        }
-
-        .status-logout {
-            background: var(--status-logout-bg);
-            color: var(--status-logout-text);
-        }
-
-        .status-active {
-            background: var(--status-active-bg);
-            color: var(--status-active-text);
-        }
-
-        /* Device Icon */
-        .device-icon {
-            font-size: 1.25rem;
-            color: var(--text-muted);
-        }
-
-        /* IP Address */
-        .ip-address {
-            font-family: monospace;
-            background: var(--bg-offwhite);
-            padding: 0.25rem 0.5rem;
-            border-radius: 6px;
-            font-size: 0.75rem;
-            color: var(--text);
-        }
-
-        /* Duration */
-        .duration {
-            font-weight: 600;
-            color: var(--role-superadmin);
-        }
-
-        /* Pagination */
-        .pagination {
+        /* MAIN LAYOUT */
+        .main-wrapper {
+            margin-top: 70px;
             display: flex;
-            justify-content: flex-end;
-            align-items: center;
-            gap: 0.5rem;
-            margin-top: 1.5rem;
+            width: 100%;
+            min-height: calc(100vh - 70px);
+            position: relative;
         }
 
-        .page-btn {
-            width: 36px;
-            height: 36px;
-            border: 1px solid var(--border);
+        /* SIDEBAR */
+        .sidebar {
+            width: var(--sidebar-width, 280px);
             background: var(--bg-white);
-            border-radius: 8px;
-            cursor: pointer;
-            transition: all 0.2s;
-            color: var(--text);
+            border-right: 1px solid var(--border);
+            height: calc(100vh - var(--header-height, 70px));
+            position: fixed;
+            left: 0;
+            top: 70px;
+            transition: width 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            z-index: 1020;
+            box-shadow: var(--shadow);
+            display: flex;
+            flex-direction: column;
+            overflow-y: auto;
+            overflow-x: hidden;
         }
 
-        .page-btn:hover:not(:disabled) {
-            background: var(--primary);
-            color: white;
-            border-color: var(--primary);
+        .sidebar.mini {
+            width: var(--sidebar-mini-width, 80px);
         }
 
-        .page-btn.active {
-            background: var(--primary);
-            color: white;
-            border-color: var(--primary);
+        /* CONTENT WRAPPER */
+        .content-wrapper {
+            flex: 1;
+            margin-left: var(--sidebar-width, 280px);
+            padding: 25px;
+            transition: margin-left 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            background: var(--bg-body);
+            min-height: calc(100vh - 70px);
+            width: calc(100% - var(--sidebar-width, 280px));
         }
 
-        .page-btn:disabled {
-            opacity: 0.5;
-            cursor: not-allowed;
+        .sidebar.mini ~ .content-wrapper {
+            margin-left: var(--sidebar-mini-width, 80px);
+            width: calc(100% - var(--sidebar-mini-width, 80px));
         }
 
-        /* Loading State */
+        .mid-content {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        @media (max-width: 768px) {
+            .sidebar {
+                transform: translateX(-100%);
+                width: var(--sidebar-width, 280px) !important;
+                transition: transform 0.3s ease;
+            }
+            
+            .sidebar.open {
+                transform: translateX(0);
+            }
+            
+            .sidebar.mini {
+                transform: translateX(-100%);
+                width: var(--sidebar-width, 280px) !important;
+            }
+            
+            .sidebar.mini.open {
+                transform: translateX(0);
+            }
+            
+            .content-wrapper {
+                margin-left: 0 !important;
+                width: 100% !important;
+                padding: 15px;
+            }
+            
+            .sidebar.mini ~ .content-wrapper {
+                margin-left: 0 !important;
+                width: 100% !important;
+            }
+        }
+
+        /* Toast */
+        #toast {
+            position: fixed;
+            top: 90px;
+            right: 29px;
+            width: 320px;
+            padding: 16px 20px;
+            border-radius: 12px;
+            box-shadow: var(--shadow-lg);
+            opacity: 0;
+            transform: translateY(-15px);
+            transition: .3s ease;
+            color: #fff;
+            z-index: 1001;
+        }
+
+        #toast.show {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        .toast-success { background: var(--success); }
+        .toast-error { background: var(--danger); }
+        .toast-info { background: var(--info); }
+
+        .toast-content {
+            display: flex;
+            gap: 12px;
+            align-items: flex-start;
+        }
+
+        .toast-icon {
+            font-size: 20px;
+        }
+
+        .toast-text h4 {
+            margin: 0;
+            font-size: 14px;
+            font-weight: 600;
+        }
+
+        .toast-text p {
+            margin: 5px 0 0;
+            font-size: 13px;
+            opacity: 0.9;
+        }
+
+        .toast-progress {
+            height: 3px;
+            background: rgba(255,255,255,0.6);
+            margin-top: 12px;
+            width: 100%;
+            animation: progress 3s linear;
+        }
+
+        @keyframes progress {
+            from { width: 100%; }
+            to { width: 0%; }
+        }
+
+        /* Loading Overlay */
         .loading-overlay {
-            display: none;
             position: fixed;
             top: 0;
             left: 0;
             right: 0;
             bottom: 0;
-            background: rgba(0, 0, 0, 0.5);
-            backdrop-filter: blur(5px);
-            z-index: 9999;
-            justify-content: center;
+            background: rgba(0,0,0,0.5);
+            display: none;
             align-items: center;
-            flex-direction: column;
+            justify-content: center;
+            z-index: 9999;
+            backdrop-filter: blur(5px);
         }
 
-        .loading-spinner {
+        .spinner {
             width: 50px;
             height: 50px;
-            border: 4px solid var(--border);
-            border-top-color: var(--primary);
+            border: 5px solid var(--bg-offwhite);
+            border-top: 5px solid var(--primary);
             border-radius: 50%;
             animation: spin 1s linear infinite;
-            margin-bottom: 1rem;
         }
 
         @keyframes spin {
-            to { transform: rotate(360deg); }
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
         }
 
-        /* Empty State */
-        .empty-state {
-            text-align: center;
-            padding: 3rem;
-            color: var(--text-muted);
+        .loading-text {
+            color: white;
+            margin-top: 15px;
+            font-size: 18px;
+            font-weight: 600;
         }
 
-        .empty-icon {
-            font-size: 3rem;
-            margin-bottom: 1rem;
+        /* Page Header */
+        .page-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 25px;
+            flex-wrap: wrap;
+            gap: 20px;
         }
 
-        /* Toast Notification */
-        .toast-notification {
-            position: fixed;
-            top: 20px;
-            right: 20px;
-            padding: 1rem 1.5rem;
-            background: var(--bg-white);
-            border-radius: 10px;
-            box-shadow: var(--shadow-lg);
+        .page-title {
             display: flex;
             align-items: center;
-            gap: 1rem;
-            z-index: 10000;
-            animation: slideIn 0.3s ease;
+            gap: 15px;
+        }
+
+        .page-icon {
+            width: 56px;
+            height: 56px;
+            background: var(--primary-gradient);
+            color: white;
+            border-radius: 16px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 24px;
+            box-shadow: var(--shadow-lg);
+        }
+
+        .page-title h2 {
+            font-size: 28px;
+            font-weight: 700;
+            color: var(--dark);
+            margin: 0;
+        }
+
+        .page-title p {
+            color: var(--text-muted);
+            margin: 5px 0 0;
+            font-size: 14px;
+        }
+
+        /* Settings Navigation Menu */
+        .settings-menu {
+            display: flex;
+            gap: 15px;
+            border-bottom: 2px solid var(--border);
+            padding-bottom: 5px;
+            margin-bottom: 30px;
+            flex-wrap: wrap;
+            background: var(--bg-card);
+            padding: 5px 5px 0 5px;
+            border-radius: 12px 12px 0 0;
+        }
+
+        .settings-menu a {
+            text-decoration: none;
+            color: var(--text-muted);
+            font-weight: 600;
+            font-size: 14px;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            padding: 10px 16px;
+            transition: all 0.3s ease;
+            position: relative;
+            white-space: nowrap;
+            border-radius: 10px 10px 0 0;
+        }
+
+        .settings-menu a:hover {
+            color: var(--primary);
+            background: var(--bg-offwhite);
+        }
+
+        .settings-menu a.active {
+            color: var(--primary);
+            border-bottom: 3px solid var(--primary);
+            background: rgba(102, 126, 234, 0.05);
+        }
+
+        .settings-menu a i {
+            font-size: 16px;
+        }
+
+        /* Settings Card */
+        .settings-card {
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: 20px;
+            padding: 30px;
+            box-shadow: var(--shadow);
+        }
+
+        .settings-header {
+            margin-bottom: 30px;
+        }
+
+        .settings-header h3 {
+            font-size: 20px;
+            font-weight: 600;
+            color: var(--dark);
+            margin: 0 0 5px 0;
+        }
+
+        .settings-header p {
+            color: var(--text-muted);
+            font-size: 14px;
+            margin: 0;
+        }
+
+        /* Logo Preview Section */
+        .logo-preview-section {
+            display: flex;
+            align-items: center;
+            gap: 30px;
+            margin-bottom: 30px;
+            padding: 20px;
+            background: var(--bg-offwhite);
+            border: 1px solid var(--border);
+            border-radius: 16px;
+        }
+
+        @media (max-width: 640px) {
+            .logo-preview-section {
+                flex-direction: column;
+                text-align: center;
+            }
+        }
+
+        .logo-preview {
+            width: 120px;
+            height: 120px;
+            border-radius: 16px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 48px;
+            font-weight: bold;
+            color: white;
+            background: var(--primary-gradient);
+            border: 4px solid var(--bg-white);
+            box-shadow: var(--shadow-lg);
+            background-size: cover;
+            background-position: center;
+            background-repeat: no-repeat;
+            flex-shrink: 0;
+        }
+
+        .logo-info {
+            flex: 1;
+        }
+
+        .logo-info h4 {
+            font-size: 18px;
+            font-weight: 600;
+            color: var(--dark);
+            margin-bottom: 5px;
+        }
+
+        .logo-info p {
+            color: var(--text-muted);
+            font-size: 14px;
+            margin-bottom: 15px;
+        }
+
+        .current-logo-name {
+            background: var(--bg-white);
+            padding: 8px 16px;
+            border-radius: 50px;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
             border: 1px solid var(--border);
         }
 
-        @keyframes slideIn {
-            from {
-                transform: translateX(100%);
-                opacity: 0;
-            }
-            to {
-                transform: translateX(0);
-                opacity: 1;
-            }
+        .current-logo-name i {
+            color: var(--primary);
         }
 
-        .toast-success {
-            border-left: 4px solid var(--success);
+        /* Upload Area */
+        .upload-area {
+            border: 2px dashed var(--border);
+            border-radius: 20px;
+            padding: 40px;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.3s;
+            background: var(--bg-offwhite);
+            margin-bottom: 25px;
         }
 
-        .toast-error {
-            border-left: 4px solid var(--danger);
+        .upload-area:hover {
+            border-color: var(--primary);
+            background: rgba(102, 126, 234, 0.05);
         }
 
-        .toast-icon {
-            font-size: 1.25rem;
+        .upload-area i {
+            font-size: 48px;
+            color: var(--primary);
+            margin-bottom: 15px;
         }
 
-        .toast-success .toast-icon {
-            color: var(--success);
+        .upload-area h4 {
+            font-size: 18px;
+            font-weight: 600;
+            color: var(--dark);
+            margin-bottom: 5px;
         }
 
-        .toast-error .toast-icon {
-            color: var(--danger);
+        .upload-area p {
+            color: var(--text-muted);
+            font-size: 14px;
+            margin-bottom: 15px;
+        }
+
+        .upload-formats {
+            display: flex;
+            justify-content: center;
+            gap: 15px;
+            flex-wrap: wrap;
+        }
+
+        .format-badge {
+            padding: 6px 16px;
+            background: var(--bg-white);
+            border-radius: 50px;
+            font-size: 12px;
+            color: var(--text);
+            border: 1px solid var(--border);
+        }
+
+        /* Form Groups */
+        .form-group {
+            margin-bottom: 25px;
+        }
+
+        .form-label {
+            font-weight: 600;
+            color: var(--text-light);
+            font-size: 14px;
+            margin-bottom: 8px;
+            display: block;
+        }
+
+        .form-label i {
+            color: var(--primary);
+            margin-right: 8px;
+            width: 20px;
+        }
+
+        .form-control {
+            width: 100%;
+            padding: 12px 16px;
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            font-size: 14px;
+            background: var(--bg-white);
+            color: var(--text);
+            transition: all 0.3s;
+        }
+
+        .form-control:focus {
+            outline: none;
+            border-color: var(--primary);
+            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+        }
+
+        .form-control::placeholder {
+            color: var(--text-muted);
+            opacity: 0.7;
+        }
+
+        /* Action Buttons */
+        .action-buttons {
+            display: flex;
+            justify-content: flex-end;
+            gap: 15px;
+            margin-top: 30px;
+            padding-top: 20px;
+            border-top: 1px solid var(--border);
+        }
+
+        .btn {
+            padding: 12px 28px;
+            border-radius: 12px;
+            font-weight: 600;
+            font-size: 14px;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            transition: all 0.3s ease;
+            border: none;
+            cursor: pointer;
+            text-decoration: none;
+        }
+
+        .btn-primary {
+            background: var(--primary-gradient);
+            color: white;
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: var(--shadow-lg);
+        }
+
+        .btn-outline {
+            background: transparent;
+            border: 1px solid var(--border);
+            color: var(--text);
+        }
+
+        .btn-outline:hover {
+            background: var(--bg-offwhite);
+            border-color: var(--primary);
+            color: var(--primary);
+            transform: translateY(-2px);
+            box-shadow: var(--shadow);
         }
 
         /* Responsive */
+        @media (max-width: 992px) {
+            .settings-menu a {
+                white-space: normal;
+                font-size: 13px;
+                padding: 8px 12px;
+            }
+        }
+
         @media (max-width: 768px) {
-            .logs-container {
-                padding: 1rem;
+            .content-wrapper {
+                padding: 15px;
             }
-
-            .logs-header {
-                padding: 1.5rem;
+            
+            .settings-card {
+                padding: 20px;
             }
-
-            .header-title {
-                font-size: 1.75rem;
+            
+            .settings-menu {
+                gap: 8px;
             }
-
-            .charts-grid {
-                grid-template-columns: 1fr;
+            
+            .settings-menu a {
+                padding: 8px 12px;
+                font-size: 13px;
             }
+            
+            .upload-area {
+                padding: 30px 20px;
+            }
+            
+            .upload-formats {
+                gap: 10px;
+            }
+            
+            .format-badge {
+                padding: 4px 12px;
+                font-size: 11px;
+            }
+            
+            .action-buttons {
+                flex-direction: column;
+            }
+            
+            .btn {
+                width: 100%;
+                justify-content: center;
+            }
+        }
 
-            .filter-grid {
-                grid-template-columns: 1fr;
+        @media (max-width: 576px) {
+            .content-wrapper {
+                padding: 10px;
+            }
+            
+            .page-title h2 {
+                font-size: 24px;
+            }
+            
+            .settings-menu {
+                flex-direction: column;
+                border-bottom: none;
+                gap: 5px;
+            }
+            
+            .settings-menu a {
+                width: 100%;
+                justify-content: center;
+                border-radius: 12px !important;
+                white-space: normal;
+                text-align: center;
+            }
+            
+            .settings-menu a.active {
+                border-bottom: none;
+                background: var(--primary-gradient);
+                color: white;
+            }
+            
+            .logo-preview {
+                width: 100px;
+                height: 100px;
+                font-size: 40px;
+            }
+            
+            .upload-area {
+                padding: 25px 15px;
+            }
+            
+            .upload-area i {
+                font-size: 40px;
             }
         }
     </style>
@@ -702,897 +732,412 @@
             const savedBorder = localStorage.getItem('border') || 'round-border';
             document.body.classList.add(savedTheme);
             document.body.classList.add(savedBorder);
-            console.log('🎨 Theme loaded:', savedTheme);
-            console.log('📐 Border mode loaded:', savedBorder);
         })();
     </script>
 
+    <!-- Toast Container -->
+    <div id="toast"></div>
+
     <!-- Loading Overlay -->
     <div class="loading-overlay" id="loadingOverlay">
-        <div class="loading-spinner"></div>
-        <p style="color: white; font-weight: 500;">Loading logs...</p>
+        <div class="spinner"></div>
+        <div class="loading-text">Updating Logo...</div>
     </div>
 
-    <div class="logs-container">
-        <!-- Header Section -->
-        <div class="logs-header">
-            <div class="d-flex justify-content-between align-items-start flex-wrap gap-3">
-                <div>
-                    <h1 class="header-title">
-                        <i class="fas fa-history me-3"></i>User Activity Logs
-                    </h1>
-                    <p class="header-subtitle">
-                        Track complete user activity - logins, logouts, sessions and more
-                    </p>
-                </div>
-                <div class="d-flex gap-2">
-                    <button class="btn btn-light" onclick="refreshLogs()">
-                        <i class="fas fa-sync-alt me-2"></i>Refresh
-                    </button>
-                    <button class="btn btn-light" onclick="exportLogs()">
-                        <i class="fas fa-download me-2"></i>Export
-                    </button>
-                </div>
-            </div>
-        </div>
+    <!-- HEADER -->
+    <div class="header-wrapper">
+        <%- include('../../partials/ram/header') %>
+    </div>
 
-        <!-- Stats Cards - Click to filter by role -->
-        <div class="stats-grid">
-            <div class="stat-card" onclick="filterByRole('all')" id="statAll">
-                <div class="stat-icon blue">
-                    <i class="fas fa-users"></i>
-                </div>
-                <div class="stat-value" id="totalUsers"><%= totalUsers || 0 %></div>
-                <div class="stat-label">All Users</div>
-            </div>
-            
-            <div class="stat-card" onclick="filterByRole('SuperAdmin')" id="statSuperAdmin">
-                <div class="stat-icon superadmin">
-                    <i class="fas fa-user-shield"></i>
-                </div>
-                <div class="stat-value" id="superadminCount"><%= roleCounts && roleCounts.SuperAdmin ? roleCounts.SuperAdmin : 0 %></div>
-                <div class="stat-label">SuperAdmin</div>
-            </div>
-            
-            <div class="stat-card" onclick="filterByRole('Educator')" id="statEducator">
-                <div class="stat-icon educator">
-                    <i class="fas fa-chalkboard-teacher"></i>
-                </div>
-                <div class="stat-value" id="educatorCount"><%= roleCounts && roleCounts.Educator ? roleCounts.Educator : 0 %></div>
-                <div class="stat-label">Educator</div>
-            </div>
-            
-            <div class="stat-card" onclick="filterByRole('Trainer')" id="statTrainer">
-                <div class="stat-icon trainer">
-                    <i class="fas fa-dumbbell"></i>
-                </div>
-                <div class="stat-value" id="trainerCount"><%= roleCounts && roleCounts.Trainer ? roleCounts.Trainer : 0 %></div>
-                <div class="stat-label">Trainer</div>
-            </div>
-            
-            <div class="stat-card" onclick="filterByRole('Student')" id="statStudent">
-                <div class="stat-icon student">
-                    <i class="fas fa-user-graduate"></i>
-                </div>
-                <div class="stat-value" id="studentCount"><%= roleCounts && roleCounts.Student ? roleCounts.Student : 0 %></div>
-                <div class="stat-label">Student</div>
-            </div>
-        </div>
+    <!-- MAIN LAYOUT -->
+    <div class="main-wrapper">
+        <!-- SIDEBAR -->
+        <%- include('../../partials/ram/sidebaar') %>
 
-        <!-- Role Filter Tabs -->
-        <div class="role-tabs">
-            <div class="role-tab all active" onclick="filterByRole('all')">
-                <i class="fas fa-users"></i> All Users
-            </div>
-            <div class="role-tab superadmin" onclick="filterByRole('SuperAdmin')">
-                <i class="fas fa-user-shield"></i> SuperAdmin
-            </div>
-            <div class="role-tab educator" onclick="filterByRole('Educator')">
-                <i class="fas fa-chalkboard-teacher"></i> Educator
-            </div>
-            <div class="role-tab trainer" onclick="filterByRole('Trainer')">
-                <i class="fas fa-dumbbell"></i> Trainer
-            </div>
-            <div class="role-tab student" onclick="filterByRole('Student')">
-                <i class="fas fa-user-graduate"></i> Student
-            </div>
-        </div>
-
-        <!-- Active Filters Display -->
-        <div id="activeFilters" style="margin-bottom: 1rem;"></div>
-
-        <!-- Filter Section -->
-        <div class="filter-section">
-            <div class="filter-title">
-                <i class="fas fa-filter me-2"></i>Filter Logs
-            </div>
-            
-            <div class="filter-grid">
-                <select class="filter-input" id="userSelect">
-                    <option value="">All Users</option>
-                    <% if (users && users.length > 0) { 
-                        users.forEach(user => { %>
-                            <option value="<%= user._id %>"><%= user.firstName || '' %> <%= user.lastName || '' %> (<%= user.role || 'User' %>)</option>
-                    <% }); } %>
-                </select>
-                
-                <select class="filter-input" id="actionSelect">
-                    <option value="">All Actions</option>
-                    <option value="login">Login</option>
-                    <option value="logout">Logout</option>
-                    <option value="session">Session Active</option>
-                </select>
-                
-                <input type="date" class="filter-input" id="dateFrom" value="<%= defaultDateFrom || '' %>">
-                
-                <input type="date" class="filter-input" id="dateTo" value="<%= defaultDateTo || '' %>">
-                
-                <button class="filter-button" onclick="applyFilters()">
-                    <i class="fas fa-search me-2"></i>Apply Filters
-                </button>
-                
-                <button class="btn btn-outline-secondary" onclick="resetFilters()">
-                    <i class="fas fa-undo me-2"></i>Reset
-                </button>
-            </div>
-        </div>
-
-        <!-- Charts Section -->
-        <div class="charts-grid">
-            <!-- Login Activity Chart -->
-            <div class="chart-card">
-                <div class="chart-title">
-                    <i class="fas fa-chart-line me-2"></i>Login Activity (Last 7 Days)
-                </div>
-                <div class="chart-container">
-                    <canvas id="loginChart"></canvas>
-                </div>
-            </div>
-            
-            <!-- User Activity Chart -->
-            <div class="chart-card">
-                <div class="chart-title">
-                    <i class="fas fa-chart-pie me-2"></i>User Activity Distribution
-                </div>
-                <div class="chart-container">
-                    <canvas id="activityChart"></canvas>
-                </div>
-            </div>
-        </div>
-
-        <!-- Timeline Section -->
-        <div class="timeline-section">
-            <div class="timeline-header">
-                <div class="timeline-title">
-                    <i class="fas fa-list-ul me-2 text-primary"></i>Detailed Activity Timeline
-                    <span id="activeRoleLabel" class="badge bg-primary ms-2">All Users</span>
-                    <span class="badge bg-secondary ms-2" id="totalLogsCount"><%= totalLogs || 0 %></span>
-                </div>
-                <button class="timeline-export" onclick="exportToCSV()">
-                    <i class="fas fa-file-csv me-2"></i>Export to CSV
-                </button>
-            </div>
-
-            <!-- Logs Table -->
-            <div class="table-responsive">
-                <table class="logs-table">
-                    <thead>
-                        <tr>
-                            <th>Timestamp</th>
-                            <th>User</th>
-                            <th>Role</th>
-                            <th>Action</th>
-                            <th>IP Address</th>
-                            <th>Device/Browser</th>
-                            <th>Duration</th>
-                            <th>Status</th>
-                        </tr>
-                    </thead>
-                    <tbody id="logsTableBody">
-                        <!-- Logs will be populated here by JavaScript from server data -->
-                    </tbody>
-                </table>
-            </div>
-
-            <!-- Pagination -->
-            <div class="pagination">
-                <button class="page-btn" onclick="changePage('prev')" id="prevPage" disabled>
-                    <i class="fas fa-chevron-left"></i>
-                </button>
-                
-                <div id="pageNumbers">
-                    <button class="page-btn active">1</button>
-                </div>
-                
-                <button class="page-btn" onclick="changePage('next')" id="nextPage" disabled>
-                    <i class="fas fa-chevron-right"></i>
-                </button>
-            </div>
-        </div>
-
-        <!-- Summary Card -->
-        <div class="filter-section">
-            <div class="row">
-                <div class="col-md-6">
-                    <h6 class="fw-bold mb-3">
-                        <i class="fas fa-chart-simple me-2 text-primary"></i>Session Summary
-                    </h6>
-                    <div class="d-flex gap-4 flex-wrap">
-                        <div>
-                            <small class="text-muted">Total Sessions</small>
-                            <h4 id="totalSessions"><%= summary && summary.totalSessions ? summary.totalSessions : 0 %></h4>
+        <!-- CONTENT -->
+        <div class="content-wrapper" id="contentWrapper">
+            <div class="mid-content">
+                <!-- Page Header -->
+                <div class="page-header">
+                    <div class="page-title">
+                        <div class="page-icon">
+                            <i class="fas fa-image"></i>
                         </div>
                         <div>
-                            <small class="text-muted">Active Now</small>
-                            <h4 id="activeNow"><%= summary && summary.activeNow ? summary.activeNow : 0 %></h4>
-                        </div>
-                        <div>
-                            <small class="text-muted">Avg. Session Time</small>
-                            <h4 id="avgSessionTime"><%= summary && summary.avgSessionTime ? summary.avgSessionTime : 'N/A' %></h4>
-                        </div>
-                        <div>
-                            <small class="text-muted">Peak Hour</small>
-                            <h4 id="peakHour"><%= summary && summary.peakHour ? summary.peakHour : 'N/A' %></h4>
+                            <h2>Logo Management</h2>
+                            <p>Update your header logo and site name</p>
                         </div>
                     </div>
                 </div>
-                
-                <div class="col-md-6">
-                    <h6 class="fw-bold mb-3">
-                        <i class="fas fa-globe me-2 text-primary"></i>Quick Stats
-                    </h6>
-                    <div class="d-flex flex-wrap gap-3">
-                        <span class="badge bg-light text-dark p-2">
-                            <i class="fas fa-sign-in-alt text-success me-1"></i> Logins: <%= summary && summary.totalLogins ? summary.totalLogins : 0 %>
-                        </span>
-                        <span class="badge bg-light text-dark p-2">
-                            <i class="fas fa-sign-out-alt text-danger me-1"></i> Logouts: <%= summary && summary.totalLogouts ? summary.totalLogouts : 0 %>
-                        </span>
-                        <span class="badge bg-light text-dark p-2">
-                            <i class="fas fa-clock text-info me-1"></i> Avg Duration: <%= summary && summary.avgDuration ? summary.avgDuration : 'N/A' %>
-                        </span>
+
+                <!-- Settings Navigation Menu -->
+                <div class="settings-menu">
+                    <a href="/settings">
+                        <i class="fas fa-sliders-h"></i>
+                        General Settings
+                    </a>
+                    <a href="/themesettings">
+                        <i class="fas fa-palette"></i>
+                        Theme Settings
+                    </a>
+                    <a href="/logo-changer" class="active">
+                        <i class="fas fa-image"></i>
+                        Logo
+                    </a>
+                    <a href="/upload-settings">
+                        <i class="fas fa-upload"></i>
+                        Upload file settings
+                    </a>
+                    <a href="/addnewsessionyear">
+                        <i class="fas fa-calendar-alt"></i>
+                        Session Settings
+                    </a>
+                </div>
+
+                <!-- Settings Card -->
+                <div class="settings-card">
+                    <div class="settings-header">
+                        <h3>Header Logo & Site Name</h3>
+                        <p>Update your website logo and brand name</p>
+                    </div>
+
+                    <!-- Current Logo Preview -->
+                    <div class="logo-preview-section">
+                        
+                        <div class="logo-info">
+                            <h4>Current Logo</h4>
+                            <p>This logo appears in the header of your website</p>
+                            <div class="current-logo-name">
+                                <i class="fas fa-check-circle text-success"></i>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Upload New Logo -->
+                    <div class="upload-area" onclick="document.getElementById('logoInput').click()">
+                        <i class="fas fa-cloud-upload-alt"></i>
+                        <h4>Upload New Logo</h4>
+                        <p>Click to select or drag and drop</p>
+                        <input type="file" id="logoInput" accept="image/jpeg,image/png,image/gif,image/webp,image/svg+xml" style="display: none;" onchange="previewLogo(this)">
+                        <div class="upload-formats">
+                            <span class="format-badge"><i class="fas fa-image"></i> PNG</span>
+                            <span class="format-badge"><i class="fas fa-image"></i> JPG</span>
+                            <span class="format-badge"><i class="fas fa-image"></i> GIF</span>
+                            <span class="format-badge"><i class="fas fa-image"></i> WEBP</span>
+                            <span class="format-badge"><i class="fas fa-image"></i> SVG</span>
+                        </div>
+                        <small class="d-block mt-3 text-muted">Max file size: 2MB • Recommended size: 200x50px</small>
+                    </div>
+
+                    <!-- New Logo Preview (after upload) -->
+                    <div id="newLogoPreview" class="logo-preview-section" style="display: none; margin-top: 20px;">
+                        <div class="logo-preview" id="newLogoImage" style="background: var(--primary-gradient);">
+                            <i class="fas fa-image"></i>
+                        </div>
+                        <div class="logo-info">
+                            <h4>New Logo Preview</h4>
+                            <p>This is how your new logo will look</p>
+                            <button class="btn btn-outline btn-sm" onclick="removeNewLogo()">
+                                <i class="fas fa-times"></i> Remove
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- Site Name Update -->
+                    <div class="form-group">
+                        <label class="form-label">
+                            <i class="fas fa-tag"></i>
+                            Site Name
+                        </label>
+                        <small class="text-muted mt-2 d-block">
+                            <i class="fas fa-info-circle"></i> This name appears next to the logo in the header
+                        </small>
+                    </div>
+
+                    <!-- Action Buttons -->
+                    <div class="action-buttons">
+                        <button type="button" class="btn btn-outline" onclick="cancelChanges()">
+                            <i class="fas fa-times"></i> Cancel
+                        </button>
+                        <button type="button" class="btn btn-primary" onclick="saveLogoChanges()">
+                            <i class="fas fa-save"></i> Update Logo
+                        </button>
                     </div>
                 </div>
             </div>
         </div>
     </div>
 
-    <!-- Toast Notification -->
-    <div id="toast" style="display: none;"></div>
-
-    <!-- Pass server data to JavaScript -->
-    <script>
-        // Server-side data passed to frontend - WITH NULL CHECKS
-        const serverLogs = <%- JSON.stringify(logs || []) %>;
-        const serverUsers = <%- JSON.stringify(users || []) %>;
-        const serverRoleCounts = <%- JSON.stringify(roleCounts || {}) %>;
-        const serverTotalUsers = <%- totalUsers || 0 %>;
-        const serverChartData = <%- JSON.stringify(chartData || { loginActivity: [] }) %>;
-        const serverDefaultDateFrom = '<%= defaultDateFrom || "" %>';
-        const serverDefaultDateTo = '<%= defaultDateTo || "" %>';
-    </script>
+    <!-- Bootstrap JS -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
 
     <script>
-        // ============================================
-        // USER LOGS PAGE - REAL DATA FROM DATABASE
-        // ============================================
-
-        // State
-        let currentLogs = serverLogs && serverLogs.length > 0 ? [...serverLogs] : [];
-        let currentPage = 1;
-        let currentRoleFilter = 'all';
-        const rowsPerPage = 10;
-        let charts = {};
-
-        // Initialize on page load
-        document.addEventListener('DOMContentLoaded', function() {
-            console.log('🚀 User Logs page initializing with', currentLogs.length, 'logs');
+        // ======================
+        // SIDEBAR STATE SYNC
+        // ======================
+        function syncSidebarState() {
+            const sidebar = document.getElementById('sidebar');
+            const contentWrapper = document.getElementById('contentWrapper');
             
-            if (currentLogs.length === 0) {
-                console.log('No logs found in database');
-                document.getElementById('logsTableBody').innerHTML = `
-                    <tr>
-                        <td colspan="8" class="empty-state">
-                            <i class="fas fa-history empty-icon"></i>
-                            <p>No logs found in database. Users need to login first.</p>
-                        </td>
-                    </tr>
-                `;
+            if (!sidebar || !contentWrapper) return;
+            
+            const isMini = sidebar.classList.contains('mini');
+            
+            if (isMini) {
+                contentWrapper.style.marginLeft = 'var(--sidebar-mini-width, 80px)';
+                contentWrapper.style.width = 'calc(100% - var(--sidebar-mini-width, 80px))';
             } else {
-                initializeCharts();
-                renderTable();
-                updatePagination();
-            }
-            
-            // Set active stat based on URL or default
-            const urlParams = new URLSearchParams(window.location.search);
-            const roleParam = urlParams.get('role');
-            if (roleParam) {
-                filterByRole(roleParam);
-            }
-            
-            showToast('Logs loaded successfully!', 'success');
-        });
-
-        // Initialize Charts
-        function initializeCharts() {
-            try {
-                // Login Activity Chart (Line Chart)
-                const loginCtx = document.getElementById('loginChart').getContext('2d');
-                
-                // Prepare chart data from server
-                const loginLabels = serverChartData.loginActivity.map(item => item.date);
-                const loginData = serverChartData.loginActivity.map(item => item.count);
-                
-                charts.login = new Chart(loginCtx, {
-                    type: 'line',
-                    data: {
-                        labels: loginLabels,
-                        datasets: [{
-                            label: 'Logins',
-                            data: loginData,
-                            borderColor: '#667eea',
-                            backgroundColor: 'rgba(102, 126, 234, 0.1)',
-                            tension: 0.4,
-                            fill: true
-                        }]
-                    },
-                    options: {
-                        responsive: true,
-                        maintainAspectRatio: false,
-                        plugins: {
-                            legend: {
-                                display: false
-                            }
-                        }
-                    }
-                });
-
-                // Activity Distribution Chart (Pie Chart)
-                const activityCtx = document.getElementById('activityChart').getContext('2d');
-                charts.activity = new Chart(activityCtx, {
-                    type: 'doughnut',
-                    data: {
-                        labels: ['SuperAdmin', 'Educator', 'Trainer', 'Student'],
-                        datasets: [{
-                            data: [
-                                serverRoleCounts.SuperAdmin || 0,
-                                serverRoleCounts.Educator || 0,
-                                serverRoleCounts.Trainer || 0,
-                                serverRoleCounts.Student || 0
-                            ],
-                            backgroundColor: ['#4f46e5', '#3b82f6', '#10b981', '#f59e0b'],
-                            borderWidth: 0
-                        }]
-                    },
-                    options: {
-                        responsive: true,
-                        maintainAspectRatio: false,
-                        cutout: '60%',
-                        plugins: {
-                            legend: {
-                                position: 'bottom'
-                            }
-                        }
-                    }
-                });
-            } catch (error) {
-                console.error('Error initializing charts:', error);
+                contentWrapper.style.marginLeft = 'var(--sidebar-width, 280px)';
+                contentWrapper.style.width = 'calc(100% - var(--sidebar-width, 280px))';
             }
         }
 
-        // Filter by role
-        function filterByRole(role) {
-            showLoading();
+        // ======================
+        // TOAST FUNCTION
+        // ======================
+        let toastTimer;
+        function showToast(title, message, type = 'info') {
+            const toast = document.getElementById('toast');
             
-            currentRoleFilter = role;
-            currentPage = 1;
+            clearTimeout(toastTimer);
             
-            // Update active class on stat cards
-            document.querySelectorAll('.stat-card').forEach(card => {
-                card.classList.remove('active');
-            });
-            const statElement = document.getElementById(`stat${role === 'all' ? 'All' : role}`);
-            if (statElement) {
-                statElement.classList.add('active');
-            }
+            const icons = {
+                'success': '✅',
+                'error': '❌',
+                'info': 'ℹ️'
+            };
             
-            // Update role tabs
-            document.querySelectorAll('.role-tab').forEach(tab => {
-                tab.classList.remove('active');
-            });
-            if (role === 'all') {
-                const allTab = document.querySelector('.role-tab.all');
-                if (allTab) allTab.classList.add('active');
-            } else {
-                const roleLower = role.toLowerCase();
-                const roleTab = document.querySelector(`.role-tab.${roleLower}`);
-                if (roleTab) roleTab.classList.add('active');
-            }
+            const icon = icons[type] || 'ℹ️';
             
-            // Update active role label
-            const roleLabel = document.getElementById('activeRoleLabel');
-            if (roleLabel) {
-                if (role === 'all') {
-                    roleLabel.textContent = 'All Users';
-                    roleLabel.className = 'badge bg-primary ms-2';
-                } else {
-                    roleLabel.textContent = role;
-                    roleLabel.className = `badge ms-2 bg-${getRoleColorClass(role)}`;
-                }
-            }
+            toast.innerHTML = `
+                <div class="toast-content">
+                    <div class="toast-icon">${icon}</div>
+                    <div class="toast-text">
+                        <h4>${title}</h4>
+                        <p>${message}</p>
+                    </div>
+                </div>
+                <div class="toast-progress"></div>
+            `;
             
-            // Filter logs
-            if (role === 'all') {
-                currentLogs = serverLogs && serverLogs.length > 0 ? [...serverLogs] : [];
-            } else {
-                currentLogs = serverLogs ? serverLogs.filter(log => log.role === role) : [];
-            }
+            toast.className = `toast-${type} show`;
             
-            const totalLogsCount = document.getElementById('totalLogsCount');
-            if (totalLogsCount) totalLogsCount.textContent = currentLogs.length;
-            
-            renderTable();
-            updatePagination();
-            
-            setTimeout(hideLoading, 300);
-            showToast(`Showing ${role === 'all' ? 'all users' : role} logs (${currentLogs.length} entries)`, 'success');
+            toastTimer = setTimeout(() => {
+                toast.classList.remove('show');
+            }, 3000);
         }
 
-        // Get role color class
-        function getRoleColorClass(role) {
-            switch(role) {
-                case 'SuperAdmin': return 'primary';
-                case 'Educator': return 'info';
-                case 'Trainer': return 'success';
-                case 'Student': return 'warning';
-                default: return 'secondary';
-            }
-        }
-
-        // Render Table
-        function renderTable() {
-            const tbody = document.getElementById('logsTableBody');
-            if (!tbody) return;
-            
-            const start = (currentPage - 1) * rowsPerPage;
-            const end = start + rowsPerPage;
-            const pageLogs = currentLogs.slice(start, end);
-
-            if (pageLogs.length === 0) {
-                tbody.innerHTML = `
-                    <tr>
-                        <td colspan="8" class="empty-state">
-                            <i class="fas fa-history empty-icon"></i>
-                            <p>No logs found for ${currentRoleFilter === 'all' ? 'any user' : currentRoleFilter}</p>
-                        </td>
-                    </tr>
-                `;
-                return;
-            }
-
-            let html = '';
-            pageLogs.forEach(log => {
-                // Determine action and icon
-                let actionIcon = 'fa-clock';
-                let actionText = 'Session';
-                let statusClass = 'status-active';
-                let statusText = 'Active Session';
-                
-                if (log.action === 'login') {
-                    actionIcon = 'fa-sign-in-alt';
-                    actionText = 'Login';
-                    statusClass = 'status-login';
-                    statusText = 'Logged In';
-                } else if (log.action === 'logout') {
-                    actionIcon = 'fa-sign-out-alt';
-                    actionText = 'Logout';
-                    statusClass = 'status-logout';
-                    statusText = 'Completed';
-                }
-                
-                // Format duration
-                let durationText = 'N/A';
-                if (log.duration !== null && log.duration !== undefined) {
-                    if (typeof log.duration === 'number') {
-                        if (log.duration === 0) {
-                            durationText = '0s';
-                        } else {
-                            const hours = Math.floor(log.duration / 3600);
-                            const minutes = Math.floor((log.duration % 3600) / 60);
-                            const seconds = Math.floor(log.duration % 60);
-                            
-                            if (hours > 0) {
-                                durationText = `${hours}h ${minutes}m ${seconds}s`;
-                            } else if (minutes > 0) {
-                                durationText = `${minutes}m ${seconds}s`;
-                            } else {
-                                durationText = `${seconds}s`;
-                            }
-                        }
-                    } else {
-                        durationText = log.duration; // fallback
-                    }
-                }
-                
-                // Format timestamp
-                let formattedDate = 'N/A';
-                let formattedTime = '';
-                try {
-                    formattedDate = moment(log.timestamp).format('MMM DD, YYYY');
-                    formattedTime = moment(log.timestamp).format('hh:mm:ss A');
-                } catch (e) {
-                    console.error('Date formatting error:', e);
-                }
-
-                html += `
-                    <tr>
-                        <td>
-                            <div class="fw-semibold">${formattedDate}</div>
-                            <small class="text-muted">${formattedTime}</small>
-                        </td>
-                        <td>
-                            <div class="d-flex align-items-center gap-2">
-                                <div class="user-badge">
-                                    <i class="fas fa-user-circle"></i>
-                                    ${log.userName || log.email || 'Unknown'}
-                                </div>
-                                <div>
-                                    <small class="text-muted">${log.email || ''}</small>
-                                </div>
-                            </div>
-                        </td>
-                        <td>
-                            <span class="badge" style="background: ${getRoleColor(log.role)}; color: white;">
-                                ${log.role || 'User'}
-                            </span>
-                        </td>
-                        <td>
-                            <span class="status-badge ${log.action === 'login' ? 'status-login' : log.action === 'logout' ? 'status-logout' : 'status-active'}">
-                                <i class="fas ${actionIcon} me-1"></i>
-                                ${actionText}
-                            </span>
-                        </td>
-                        <td>
-                            <span class="ip-address">
-                                <i class="fas fa-network-wired me-1"></i>${log.ipAddress || 'Unknown'}
-                            </span>
-                        </td>
-                        <td>
-                            <div class="d-flex align-items-center gap-2">
-                                <i class="fas ${getDeviceIcon(log.userAgent || '')} device-icon"></i>
-                                <span>${log.device || (log.userAgent ? log.userAgent.substring(0, 30) + '...' : 'Unknown')}</span>
-                            </div>
-                        </td>
-                        <td>
-                            <span class="duration">
-                                <i class="fas fa-hourglass-half me-1"></i>${durationText}
-                            </span>
-                        </td>
-                        <td>
-                            <span class="status-badge ${statusClass}">
-                                <i class="fas ${log.status === 'active' ? 'fa-circle' : 'fa-check-circle'} me-1"></i>
-                                ${statusText}
-                            </span>
-                        </td>
-                    </tr>
-                `;
-            });
-
-            tbody.innerHTML = html;
-        }
-
-        // Get role color
-        function getRoleColor(role) {
-            switch(role) {
-                case 'SuperAdmin': return '#4f46e5';
-                case 'Educator': return '#3b82f6';
-                case 'Trainer': return '#10b981';
-                case 'Student': return '#f59e0b';
-                default: return '#6b7280';
-            }
-        }
-
-        // Get device icon from user agent
-        function getDeviceIcon(userAgent) {
-            if (!userAgent) return 'fa-desktop';
-            
-            const ua = userAgent.toLowerCase();
-            if (ua.includes('windows')) return 'fa-windows';
-            if (ua.includes('mac')) return 'fa-apple';
-            if (ua.includes('linux')) return 'fa-linux';
-            if (ua.includes('android')) return 'fa-android';
-            if (ua.includes('iphone') || ua.includes('ipad')) return 'fa-apple';
-            if (ua.includes('mobile')) return 'fa-mobile-alt';
-            return 'fa-desktop';
-        }
-
-        // Update pagination
-        function updatePagination() {
-            const paginationElement = document.querySelector('.pagination');
-            if (!paginationElement) return;
-            
-            const totalPages = Math.ceil(currentLogs.length / rowsPerPage);
-            const pageNumbers = document.getElementById('pageNumbers');
-            
-            if (totalPages <= 1) {
-                paginationElement.style.display = 'none';
-                return;
-            }
-            
-            paginationElement.style.display = 'flex';
-            
-            let html = '';
-            
-            if (totalPages <= 5) {
-                for (let i = 1; i <= totalPages; i++) {
-                    html += `<button class="page-btn ${currentPage === i ? 'active' : ''}" onclick="goToPage(${i})">${i}</button>`;
-                }
-            } else {
-                if (currentPage <= 3) {
-                    for (let i = 1; i <= 4; i++) {
-                        html += `<button class="page-btn ${currentPage === i ? 'active' : ''}" onclick="goToPage(${i})">${i}</button>`;
-                    }
-                    html += `<span>...</span>`;
-                    html += `<button class="page-btn" onclick="goToPage(${totalPages})">${totalPages}</button>`;
-                } else if (currentPage >= totalPages - 2) {
-                    html += `<button class="page-btn" onclick="goToPage(1)">1</button>`;
-                    html += `<span>...</span>`;
-                    for (let i = totalPages - 3; i <= totalPages; i++) {
-                        html += `<button class="page-btn ${currentPage === i ? 'active' : ''}" onclick="goToPage(${i})">${i}</button>`;
-                    }
-                } else {
-                    html += `<button class="page-btn" onclick="goToPage(1)">1</button>`;
-                    html += `<span>...</span>`;
-                    for (let i = currentPage - 1; i <= currentPage + 1; i++) {
-                        html += `<button class="page-btn ${currentPage === i ? 'active' : ''}" onclick="goToPage(${i})">${i}</button>`;
-                    }
-                    html += `<span>...</span>`;
-                    html += `<button class="page-btn" onclick="goToPage(${totalPages})">${totalPages}</button>`;
-                }
-            }
-            
-            pageNumbers.innerHTML = html;
-            
-            const prevPage = document.getElementById('prevPage');
-            const nextPage = document.getElementById('nextPage');
-            
-            if (prevPage) prevPage.disabled = currentPage === 1;
-            if (nextPage) nextPage.disabled = currentPage === totalPages;
-        }
-
-        // Page navigation
-        function goToPage(page) {
-            currentPage = page;
-            renderTable();
-            updatePagination();
-        }
-
-        function changePage(direction) {
-            if (direction === 'prev' && currentPage > 1) {
-                currentPage--;
-            } else if (direction === 'next' && currentPage < Math.ceil(currentLogs.length / rowsPerPage)) {
-                currentPage++;
-            }
-            renderTable();
-            updatePagination();
-        }
-
-        // Apply filters
-        function applyFilters() {
-            showLoading();
-            
-            const userId = document.getElementById('userSelect').value;
-            const action = document.getElementById('actionSelect').value;
-            const dateFrom = document.getElementById('dateFrom').value;
-            const dateTo = document.getElementById('dateTo').value;
-            
-            // Start with role-filtered logs
-            let filtered = currentRoleFilter === 'all' ? (serverLogs ? [...serverLogs] : []) : 
-                          (serverLogs ? serverLogs.filter(log => log.role === currentRoleFilter) : []);
-            
-            // Apply additional filters
-            filtered = filtered.filter(log => {
-                if (userId && log.userId !== userId) return false;
-                if (action && log.action !== action) return false;
-                
-                try {
-                    const logDate = moment(log.timestamp).format('YYYY-MM-DD');
-                    if (dateFrom && logDate < dateFrom) return false;
-                    if (dateTo && logDate > dateTo) return false;
-                } catch (e) {
-                    console.error('Date filter error:', e);
-                }
-                
-                return true;
-            });
-            
-            currentLogs = filtered;
-            currentPage = 1;
-            renderTable();
-            updatePagination();
-            
-            const totalLogsCount = document.getElementById('totalLogsCount');
-            if (totalLogsCount) totalLogsCount.textContent = filtered.length;
-            
-            setTimeout(hideLoading, 300);
-            showToast(`Found ${filtered.length} logs matching filters`, 'success');
-            
-            // Show active filters
-            showActiveFilters(userId, action, dateFrom, dateTo);
-        }
-
-        // Show active filters
-        function showActiveFilters(userId, action, dateFrom, dateTo) {
-            const container = document.getElementById('activeFilters');
-            if (!container) return;
-            
-            let html = '';
-            
-            if (currentRoleFilter !== 'all') {
-                html += `
-                    <span class="active-filter">
-                        <i class="fas fa-user-tag"></i> Role: ${currentRoleFilter}
-                        <span class="remove" onclick="filterByRole('all')">&times;</span>
-                    </span>
-                `;
-            }
-            
-            if (userId) {
-                const userSelect = document.getElementById('userSelect');
-                let userName = userId;
-                if (userSelect && userSelect.selectedIndex > -1) {
-                    userName = userSelect.options[userSelect.selectedIndex]?.text || userId;
-                }
-                html += `
-                    <span class="active-filter">
-                        <i class="fas fa-user"></i> User: ${userName}
-                        <span class="remove" onclick="document.getElementById('userSelect').value=''; applyFilters();">&times;</span>
-                    </span>
-                `;
-            }
-            
-            if (action) {
-                html += `
-                    <span class="active-filter">
-                        <i class="fas fa-${action === 'login' ? 'sign-in-alt' : action === 'logout' ? 'sign-out-alt' : 'clock'}"></i> 
-                        Action: ${action}
-                        <span class="remove" onclick="document.getElementById('actionSelect').value=''; applyFilters();">&times;</span>
-                    </span>
-                `;
-            }
-            
-            if (dateFrom) {
-                html += `
-                    <span class="active-filter">
-                        <i class="fas fa-calendar"></i> From: ${dateFrom}
-                        <span class="remove" onclick="document.getElementById('dateFrom').value='${serverDefaultDateFrom}'; applyFilters();">&times;</span>
-                    </span>
-                `;
-            }
-            
-            if (dateTo) {
-                html += `
-                    <span class="active-filter">
-                        <i class="fas fa-calendar"></i> To: ${dateTo}
-                        <span class="remove" onclick="document.getElementById('dateTo').value='${serverDefaultDateTo}'; applyFilters();">&times;</span>
-                    </span>
-                `;
-            }
-            
-            container.innerHTML = html;
-        }
-
-        // Reset filters
-        function resetFilters() {
-            const userSelect = document.getElementById('userSelect');
-            const actionSelect = document.getElementById('actionSelect');
-            const dateFrom = document.getElementById('dateFrom');
-            const dateTo = document.getElementById('dateTo');
-            
-            if (userSelect) userSelect.value = '';
-            if (actionSelect) actionSelect.value = '';
-            if (dateFrom) dateFrom.value = serverDefaultDateFrom;
-            if (dateTo) dateTo.value = serverDefaultDateTo;
-            
-            const activeFilters = document.getElementById('activeFilters');
-            if (activeFilters) activeFilters.innerHTML = '';
-            
-            filterByRole('all');
-        }
-
-        // Refresh logs
-        function refreshLogs() {
-            showLoading();
-            
-            // Reload the page to get fresh data
-            setTimeout(() => {
-                window.location.reload();
-            }, 500);
-        }
-
-        // Export to CSV
-        function exportToCSV() {
-            if (currentLogs.length === 0) {
-                showToast('No logs to export', 'error');
-                return;
-            }
-            
-            const headers = ['Timestamp', 'User', 'Email', 'Role', 'Action', 'IP Address', 'Device', 'Duration', 'Status'];
-            
-            const rows = currentLogs.map(log => {
-                let durationText = log.duration || 'N/A';
-                if (log.duration && typeof log.duration === 'number') {
-                    const hours = Math.floor(log.duration / 3600);
-                    const minutes = Math.floor((log.duration % 3600) / 60);
-                    durationText = `${hours}h ${minutes}m`;
-                }
-                
-                return [
-                    log.timestamp || '',
-                    log.userName || log.email || '',
-                    log.email || '',
-                    log.role || '',
-                    log.action || '',
-                    log.ipAddress || '',
-                    (log.userAgent || '').substring(0, 50),
-                    durationText,
-                    log.status || ''
-                ];
-            });
-            
-            let csvContent = headers.join(',') + '\n' + 
-                rows.map(row => row.map(cell => `"${cell}"`).join(',')).join('\n');
-            
-            const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
-            const url = URL.createObjectURL(blob);
-            const link = document.createElement('a');
-            link.href = url;
-            link.setAttribute('download', `user_logs_${currentRoleFilter}_${moment().format('YYYY-MM-DD')}.csv`);
-            document.body.appendChild(link);
-            link.click();
-            document.body.removeChild(link);
-            
-            showToast('CSV exported successfully!', 'success');
-        }
-
-        // Export logs
-        function exportLogs() {
-            exportToCSV();
-        }
-
-        // Loading functions
+        // ======================
+        // LOADING OVERLAY
+        // ======================
         function showLoading() {
-            const overlay = document.getElementById('loadingOverlay');
-            if (overlay) overlay.style.display = 'flex';
+            document.getElementById('loadingOverlay').style.display = 'flex';
         }
 
         function hideLoading() {
-            const overlay = document.getElementById('loadingOverlay');
-            if (overlay) overlay.style.display = 'none';
+            document.getElementById('loadingOverlay').style.display = 'none';
         }
 
-        // Toast notification
-        function showToast(message, type = 'success') {
-            const toast = document.getElementById('toast');
-            if (!toast) return;
+        // ======================
+        // INITIALIZATION
+        // ======================
+        document.addEventListener('DOMContentLoaded', function() {
+            window.addEventListener('storage', function(e) {
+                if (e.key === 'sidebarMini' || e.key === 'sidebar-update-time') {
+                    const sidebar = document.getElementById('sidebar');
+                    if (sidebar) {
+                        const savedState = localStorage.getItem('sidebarMini') === 'true';
+                        if (savedState) {
+                            sidebar.classList.add('mini');
+                        } else {
+                            sidebar.classList.remove('mini');
+                        }
+                        syncSidebarState();
+                    }
+                }
+            });
+
+            window.addEventListener('resize', syncSidebarState);
+            setTimeout(syncSidebarState, 100);
             
-            toast.style.display = 'block';
-            toast.className = `toast-notification toast-${type}`;
-            toast.innerHTML = `
-                <div class="toast-icon">
-                    <i class="fas fa-${type === 'success' ? 'check-circle' : 'exclamation-circle'}"></i>
-                </div>
-                <div>
-                    <div class="fw-semibold">${type === 'success' ? 'Success' : 'Info'}</div>
-                    <small>${message}</small>
-                </div>
-            `;
-            
-            setTimeout(() => {
-                toast.style.display = 'none';
-            }, 3000);
+            showToast('Welcome', 'Logo Management', 'info');
+        });
+
+        // ======================
+        // LOGO PREVIEW FUNCTIONS
+        // ======================
+        let selectedLogoFile = null;
+
+        function previewLogo(input) {
+            if (input.files && input.files[0]) {
+                const file = input.files[0];
+                
+                // Validate file size (2MB)
+                if (file.size > 2 * 1024 * 1024) {
+                    showToast('Error', 'File size must be less than 2MB', 'error');
+                    input.value = '';
+                    return;
+                }
+                
+                // Validate file type
+                if (!file.type.startsWith('image/')) {
+                    showToast('Error', 'Please select an image file', 'error');
+                    input.value = '';
+                    return;
+                }
+                
+                selectedLogoFile = file;
+                
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    // Show new logo preview
+                    const newLogoPreview = document.getElementById('newLogoPreview');
+                    const newLogoImage = document.getElementById('newLogoImage');
+                    
+                    newLogoImage.style.backgroundImage = `url('${e.target.result}')`;
+                    newLogoImage.style.backgroundSize = 'cover';
+                    newLogoImage.style.backgroundPosition = 'center';
+                    newLogoImage.style.backgroundRepeat = 'no-repeat';
+                    newLogoImage.style.background = 'none';
+                    newLogoImage.innerHTML = '';
+                    
+                    newLogoPreview.style.display = 'flex';
+                    
+                    showToast('Success', 'Logo preview ready', 'success');
+                };
+                reader.readAsDataURL(file);
+            }
         }
+
+        function removeNewLogo() {
+            selectedLogoFile = null;
+            document.getElementById('newLogoPreview').style.display = 'none';
+            document.getElementById('logoInput').value = '';
+            
+            // Reset preview
+            const newLogoImage = document.getElementById('newLogoImage');
+            newLogoImage.style.backgroundImage = '';
+            newLogoImage.style.background = 'var(--primary-gradient)';
+            newLogoImage.innerHTML = '<i class="fas fa-image"></i>';
+        }
+
+        // ======================
+        // SAVE LOGO CHANGES
+        // ======================
+        function saveLogoChanges() {
+            const siteName = document.getElementById('siteName').value.trim();
+            
+            if (!siteName) {
+                showToast('Error', 'Please enter a site name', 'error');
+                return;
+            }
+            
+            showLoading();
+            
+            // Create FormData
+            const formData = new FormData();
+            formData.append('siteName', siteName);
+            
+            if (selectedLogoFile) {
+                formData.append('logo', selectedLogoFile);
+            }
+            
+            // Simulate API call (replace with actual fetch)
+            setTimeout(() => {
+                hideLoading();
+                
+                if (selectedLogoFile) {
+                    showToast('Success', 'Logo and site name updated successfully!', 'success');
+                } else {
+                    showToast('Success', 'Site name updated successfully!', 'success');
+                }
+                
+                // Reset new logo preview
+                removeNewLogo();
+                
+                // Refresh page after 1.5 seconds to show updated header
+                setTimeout(() => {
+                    window.location.reload();
+                }, 1500);
+            }, 1000);
+            
+            /* Actual fetch code (uncomment when backend is ready)
+            fetch('/api/update-logo', {
+                method: 'POST',
+                body: formData
+            })
+            .then(response => response.json())
+            .then(data => {
+                hideLoading();
+                if (data.success) {
+                    showToast('Success', data.message, 'success');
+                    setTimeout(() => window.location.reload(), 1500);
+                } else {
+                    showToast('Error', data.message, 'error');
+                }
+            })
+            .catch(error => {
+                hideLoading();
+                showToast('Error', 'Failed to update logo', 'error');
+            });
+            */
+        }
+
+        function cancelChanges() {
+            if (confirm('Discard changes?')) {
+                window.location.href = '/dashboard';
+            }
+        }
+
+        // ======================
+        // THEME FUNCTIONS
+        // ======================
+        function toggleTheme() {
+            if (document.body.classList.contains('dark')) {
+                document.body.classList.remove('dark');
+                document.body.classList.add('light');
+                localStorage.setItem('theme', 'light');
+                showToast('Theme Updated', 'Light mode activated', 'info');
+            } else {
+                document.body.classList.remove('light');
+                document.body.classList.add('dark');
+                localStorage.setItem('theme', 'dark');
+                showToast('Theme Updated', 'Dark mode activated', 'info');
+            }
+        }
+
+        function toggleBorder() {
+            if (document.body.classList.contains('round-border')) {
+                document.body.classList.remove('round-border');
+                document.body.classList.add('no-radius');
+                localStorage.setItem('border', 'no-radius');
+                showToast('Border Style', 'Square corners activated', 'info');
+            } else {
+                document.body.classList.remove('no-radius');
+                document.body.classList.add('round-border');
+                localStorage.setItem('border', 'round-border');
+                showToast('Border Style', 'Rounded corners activated', 'info');
+            }
+        }
+
+        // ======================
+        // KEYBOARD SHORTCUTS
+        // ======================
+        document.addEventListener('keydown', function(e) {
+            if (e.key === 'F1') {
+                e.preventDefault();
+                showToast('Help', 'Upload new logo and update site name', 'info');
+            }
+            
+            if ((e.ctrlKey || e.metaKey) && e.key === 's') {
+                e.preventDefault();
+                saveLogoChanges();
+            }
+            
+            if (e.key === 'Escape') {
+                cancelChanges();
+            }
+        });
     </script>
 </body>
 </html>

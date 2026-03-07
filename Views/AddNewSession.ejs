@@ -11,47 +11,48 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 
     <style>
-        /* ===== THEME VARIABLES ===== */
+        /* ===== THEME VARIABLES - EXACTLY LIKE PREVIOUS TEMPLATES ===== */
         :root {
-            --primary: #f59e0b;
-            --primary-dark: #d97706;
-            --primary-light: #fbbf24;
+            --primary: #667eea;
+            --primary-dark: #5a67d8;
+            --primary-gradient: linear-gradient(135deg, #667eea, #764ba2);
             --success: #10b981;
             --warning: #f59e0b;
             --danger: #ef4444;
             --info: #3b82f6;
             
             /* Light Mode */
-            --bg-body: #f3f4f6;
+            --bg-body: #f8fafc;
             --bg-white: #ffffff;
-            --bg-offwhite: #f8fafc;
+            --bg-offwhite: #f1f5f9;
             --bg-card: #ffffff;
-            --text: #1f2937;
-            --text-light: #4b5563;
-            --text-muted: #6b7280;
-            --dark: #111827;
-            --border: #e5e7eb;
-            --shadow: 0 2px 10px rgba(0,0,0,0.05);
-            --shadow-lg: 0 10px 25px rgba(0,0,0,0.1);
+            --text: #334155;
+            --text-light: #64748b;
+            --text-muted: #94a3b8;
+            --dark: #0f172a;
+            --border: #eef2f6;
+            --shadow: 0 8px 25px rgba(0,0,0,0.03);
+            --shadow-lg: 0 15px 35px rgba(102, 126, 234, 0.1);
             
             /* Layout */
             --header-height: 70px;
             --sidebar-width: 280px;
+            --sidebar-mini-width: 80px;
         }
 
         /* Dark Mode */
         body.dark {
-            --bg-body: #111827;
-            --bg-white: #1f2937;
-            --bg-offwhite: #374151;
-            --bg-card: #1f2937;
-            --text: #f9fafb;
-            --text-light: #e5e7eb;
-            --text-muted: #9ca3af;
-            --dark: #f9fafb;
-            --border: #374151;
-            --shadow: 0 2px 10px rgba(0,0,0,0.3);
-            --shadow-lg: 0 10px 25px rgba(0,0,0,0.5);
+            --bg-body: #0f172a;
+            --bg-white: #1e293b;
+            --bg-offwhite: #334155;
+            --bg-card: #1e293b;
+            --text: #e2e8f0;
+            --text-light: #cbd5e1;
+            --text-muted: #94a3b8;
+            --dark: #f8fafc;
+            --border: #334155;
+            --shadow: 0 8px 25px rgba(0,0,0,0.2);
+            --shadow-lg: 0 15px 35px rgba(102, 126, 234, 0.2);
         }
 
         /* RESET */
@@ -64,36 +65,43 @@
         body {
             overflow-x: hidden;
             background: var(--bg-body);
-            font-family: system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
+            font-family: 'Inter', 'Segoe UI', sans-serif;
             color: var(--text);
             transition: background-color 0.3s, color 0.3s;
         }
 
-        /* ===== BORDER MODES ===== */
+        /* ===== BORDER MODES - EXACTLY LIKE PREVIOUS TEMPLATES ===== */
         body.round-border .header-wrapper,
-        body.round-border .sidebar-wrapper,
+        body.round-border .sidebar,
+        body.round-border .mid-content,
         body.round-border .main-content-card,
         body.round-border .info-card,
         body.round-border .btn,
         body.round-border .form-control,
         body.round-border .preview-card,
-        body.round-border .toast-notification {
-            border-radius: 16px !important;
+        body.round-border .toast-notification,
+        body.round-border .page-icon,
+        body.round-border .icon-circle,
+        body.round-border .example-tag {
+            border-radius: 20px !important;
         }
 
         body.round-border .icon-circle {
-            border-radius: 50% !important;
+            border-radius: 16px !important;
         }
 
         body.no-radius .header-wrapper,
-        body.no-radius .sidebar-wrapper,
+        body.no-radius .sidebar,
+        body.no-radius .mid-content,
         body.no-radius .main-content-card,
         body.no-radius .info-card,
         body.no-radius .btn,
         body.no-radius .form-control,
         body.no-radius .preview-card,
         body.no-radius .toast-notification,
-        body.no-radius .icon-circle {
+        body.no-radius .page-icon,
+        body.no-radius .icon-circle,
+        body.no-radius .example-tag {
             border-radius: 0 !important;
         }
 
@@ -109,44 +117,194 @@
             border-bottom: 1px solid var(--border);
         }
 
-        /* MAIN LAYOUT */
+        /* MAIN LAYOUT - EXACTLY LIKE PREVIOUS TEMPLATES */
         .main-wrapper {
             margin-top: 70px;
             display: flex;
             width: 100%;
             min-height: calc(100vh - 70px);
+            position: relative;
         }
 
-        /* SIDEBAR WRAPPER */
-        .sidebar-wrapper {
-            width: 280px;
-            flex-shrink: 0;
+        /* SIDEBAR - EXACTLY LIKE PREVIOUS TEMPLATES */
+        .sidebar {
+            width: var(--sidebar-width, 280px);
+            background: var(--bg-white);
+            border-right: 1px solid var(--border);
+            height: calc(100vh - var(--header-height, 70px));
             position: fixed;
             left: 0;
             top: 70px;
-            bottom: 0;
+            transition: width 0.3s cubic-bezier(0.4, 0, 0.2, 1);
             z-index: 1020;
-            transition: width 0.3s ease;
-            background: var(--bg-white);
-            border-right: 1px solid var(--border);
+            box-shadow: var(--shadow);
+            display: flex;
+            flex-direction: column;
+            overflow-y: auto;
+            overflow-x: hidden;
         }
 
-        .sidebar-wrapper.collapsed {
-            width: 80px;
+        /* Sidebar Mini Mode */
+        .sidebar.mini {
+            width: var(--sidebar-mini-width, 80px);
         }
 
-        /* CONTENT WRAPPER */
+        /* CONTENT WRAPPER - EXACTLY LIKE PREVIOUS TEMPLATES */
         .content-wrapper {
             flex: 1;
-            margin-left: 280px;
+            margin-left: var(--sidebar-width, 280px);
             padding: 25px;
-            transition: margin-left 0.3s ease;
+            transition: margin-left 0.3s cubic-bezier(0.4, 0, 0.2, 1);
             background: var(--bg-body);
             min-height: calc(100vh - 70px);
+            width: calc(100% - var(--sidebar-width, 280px));
         }
 
-        .sidebar-wrapper.collapsed + .content-wrapper {
-            margin-left: 80px;
+        /* When sidebar has mini class, adjust content wrapper */
+        .sidebar.mini ~ .content-wrapper {
+            margin-left: var(--sidebar-mini-width, 80px);
+            width: calc(100% - var(--sidebar-mini-width, 80px));
+        }
+
+        .mid-content {
+            max-width: 900px;
+            margin: 0 auto;
+        }
+
+        @media (max-width: 768px) {
+            .sidebar {
+                transform: translateX(-100%);
+                width: var(--sidebar-width, 280px) !important;
+                transition: transform 0.3s ease;
+            }
+            
+            .sidebar.open {
+                transform: translateX(0);
+            }
+            
+            .sidebar.mini {
+                transform: translateX(-100%);
+                width: var(--sidebar-width, 280px) !important;
+            }
+            
+            .sidebar.mini.open {
+                transform: translateX(0);
+            }
+            
+            .content-wrapper {
+                margin-left: 0 !important;
+                width: 100% !important;
+                padding: 15px;
+            }
+            
+            .sidebar.mini ~ .content-wrapper {
+                margin-left: 0 !important;
+                width: 100% !important;
+            }
+        }
+
+        /* Toast - EXACTLY LIKE PREVIOUS TEMPLATES */
+        #toast {
+            position: fixed;
+            top: 90px;
+            right: 29px;
+            width: 320px;
+            padding: 16px 20px;
+            border-radius: 12px;
+            box-shadow: var(--shadow-lg);
+            opacity: 0;
+            transform: translateY(-15px);
+            transition: .3s ease;
+            color: #fff;
+            z-index: 1001;
+        }
+
+        #toast.show {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        .toast-success { background: var(--success); }
+        .toast-error { background: var(--danger); }
+        .toast-info { background: var(--info); }
+        .toast-warning { background: var(--warning); color: #1f2937; }
+
+        .toast-content {
+            display: flex;
+            gap: 12px;
+            align-items: flex-start;
+        }
+
+        .toast-icon {
+            font-size: 20px;
+        }
+
+        .toast-text h4 {
+            margin: 0;
+            font-size: 14px;
+            font-weight: 600;
+        }
+
+        .toast-text p {
+            margin: 5px 0 0;
+            font-size: 13px;
+            opacity: 0.9;
+        }
+
+        .toast-progress {
+            height: 3px;
+            background: rgba(255,255,255,0.6);
+            margin-top: 12px;
+            width: 100%;
+            animation: progress 3s linear;
+        }
+
+        @keyframes progress {
+            from { width: 100%; }
+            to { width: 0%; }
+        }
+
+        /* Loading Overlay */
+        .loading-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0,0,0,0.5);
+            display: none;
+            align-items: center;
+            justify-content: center;
+            z-index: 9999;
+            backdrop-filter: blur(5px);
+            flex-direction: column;
+        }
+
+        .spinner {
+            width: 50px;
+            height: 50px;
+            border: 5px solid var(--bg-offwhite);
+            border-top: 5px solid var(--primary);
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+            margin-bottom: 15px;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        .loading-text {
+            color: white;
+            margin-bottom: 5px;
+            font-size: 18px;
+            font-weight: 600;
+        }
+
+        .loading-subtext {
+            color: rgba(255,255,255,0.8);
+            font-size: 14px;
         }
 
         /* PAGE HEADER */
@@ -156,7 +314,7 @@
             align-items: center;
             margin-bottom: 25px;
             flex-wrap: wrap;
-            gap: 15px;
+            gap: 20px;
         }
 
         .page-title {
@@ -166,19 +324,20 @@
         }
 
         .page-icon {
-            width: 50px;
-            height: 50px;
-            background: var(--primary);
+            width: 56px;
+            height: 56px;
+            background: var(--primary-gradient);
             color: white;
-            border-radius: 12px;
+            border-radius: 16px;
             display: flex;
             align-items: center;
             justify-content: center;
             font-size: 24px;
+            box-shadow: var(--shadow-lg);
         }
 
         .page-title h2 {
-            font-size: 24px;
+            font-size: 28px;
             font-weight: 700;
             color: var(--dark);
             margin: 0;
@@ -194,7 +353,7 @@
         .main-content-card {
             background: var(--bg-card);
             border: 1px solid var(--border);
-            border-radius: 12px;
+            border-radius: 20px;
             padding: 30px;
             box-shadow: var(--shadow);
             max-width: 800px;
@@ -210,15 +369,15 @@
         .icon-circle {
             width: 80px;
             height: 80px;
-            background: linear-gradient(135deg, var(--primary), var(--primary-dark));
+            background: var(--primary-gradient);
             color: white;
-            border-radius: 50%;
+            border-radius: 16px;
             display: flex;
             align-items: center;
             justify-content: center;
             font-size: 32px;
             margin: 0 auto 15px;
-            box-shadow: 0 10px 20px rgba(245, 158, 11, 0.3);
+            box-shadow: var(--shadow-lg);
         }
 
         .form-header h3 {
@@ -237,10 +396,10 @@
 
         /* INFO CARD */
         .info-card {
-            background: rgba(245, 158, 11, 0.1);
-            border: 1px solid rgba(245, 158, 11, 0.3);
-            border-radius: 12px;
-            padding: 15px 20px;
+            background: rgba(102, 126, 234, 0.1);
+            border: 1px solid rgba(102, 126, 234, 0.2);
+            border-radius: 16px;
+            padding: 16px 20px;
             margin-bottom: 25px;
             display: flex;
             align-items: center;
@@ -292,40 +451,40 @@
 
         .input-icon {
             position: absolute;
-            left: 15px;
+            left: 16px;
             top: 50%;
             transform: translateY(-50%);
             color: var(--primary);
             font-size: 16px;
-            z-index: 2;
+            z-index: 1;
         }
 
         .form-control {
             width: 100%;
-            padding: 12px 15px 12px 45px;
-            border: 2px solid var(--border);
-            border-radius: 12px;
+            padding: 14px 16px 14px 48px;
+            border: 1px solid var(--border);
+            border-radius: 14px;
             background: var(--bg-white);
             color: var(--text);
             font-size: 15px;
-            transition: all 0.3s ease;
+            transition: all 0.3s;
         }
 
         .form-control:focus {
             outline: none;
             border-color: var(--primary);
-            box-shadow: 0 0 0 4px rgba(245, 158, 11, 0.1);
+            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
         }
 
         .form-control::placeholder {
             color: var(--text-muted);
-            opacity: 0.6;
+            opacity: 0.7;
         }
 
         /* VALIDATION ICON */
         .validation-icon {
             position: absolute;
-            right: 15px;
+            right: 16px;
             top: 50%;
             transform: translateY(-50%);
             font-size: 16px;
@@ -343,8 +502,8 @@
         .hint-text {
             display: flex;
             align-items: center;
-            gap: 6px;
-            margin-top: 6px;
+            gap: 8px;
+            margin-top: 8px;
             font-size: 12px;
             color: var(--text-muted);
         }
@@ -358,7 +517,7 @@
         .preview-card {
             background: var(--bg-offwhite);
             border: 1px dashed var(--border);
-            border-radius: 12px;
+            border-radius: 16px;
             padding: 20px;
             margin-top: 20px;
         }
@@ -387,12 +546,12 @@
 
         .preview-session {
             background: var(--bg-card);
-            padding: 10px 20px;
-            border-radius: 30px;
+            padding: 10px 24px;
+            border-radius: 50px;
             border: 1px solid var(--border);
             display: flex;
             align-items: center;
-            gap: 10px;
+            gap: 12px;
         }
 
         .preview-session i {
@@ -405,25 +564,46 @@
         }
 
         .preview-badge {
-            background: rgba(245, 158, 11, 0.1);
+            background: rgba(102, 126, 234, 0.1);
             color: var(--primary);
-            padding: 5px 15px;
-            border-radius: 20px;
+            padding: 6px 16px;
+            border-radius: 50px;
+            font-size: 13px;
+            font-weight: 600;
+        }
+
+        /* SESSION EXAMPLES */
+        .examples {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            margin-top: 10px;
+        }
+
+        .example-tag {
+            background: var(--bg-offwhite);
+            border: 1px solid var(--border);
+            border-radius: 50px;
+            padding: 8px 18px;
             font-size: 13px;
             font-weight: 500;
+            color: var(--text-muted);
+            cursor: pointer;
+            transition: all 0.3s;
         }
 
-        /* BUTTONS */
-        .button-group {
-            display: flex;
-            gap: 15px;
-            margin-top: 30px;
+        .example-tag:hover {
+            background: var(--primary-gradient);
+            color: white;
+            border-color: transparent;
+            transform: translateY(-2px);
+            box-shadow: var(--shadow);
         }
 
+        /* Buttons - EXACTLY LIKE PREVIOUS TEMPLATES */
         .btn {
-            flex: 1;
-            padding: 12px 20px;
-            border-radius: 12px;
+            padding: 14px 24px;
+            border-radius: 14px;
             font-weight: 600;
             font-size: 15px;
             display: inline-flex;
@@ -437,70 +617,78 @@
         }
 
         .btn-primary {
-            background: var(--primary);
+            background: var(--primary-gradient);
             color: white;
+            box-shadow: var(--shadow);
         }
 
-        .btn-primary:hover {
-            background: var(--primary-dark);
+        .btn-primary:hover:not(:disabled) {
             transform: translateY(-2px);
-            box-shadow: 0 5px 15px rgba(245, 158, 11, 0.4);
+            box-shadow: var(--shadow-lg);
+        }
+
+        .btn-primary:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
         }
 
         .btn-secondary {
-            background: transparent;
+            background: var(--bg-white);
             color: var(--text);
-            border: 2px solid var(--border);
+            border: 1px solid var(--border);
         }
 
         .btn-secondary:hover {
             background: var(--bg-offwhite);
             border-color: var(--primary);
+            color: var(--primary);
             transform: translateY(-2px);
+            box-shadow: var(--shadow);
         }
 
-        .btn:active {
-            transform: translateY(0);
+        .button-group {
+            display: flex;
+            gap: 15px;
+            margin-top: 30px;
         }
 
-        /* MESSAGES */
+        /* Messages */
         .message-container {
             margin-bottom: 25px;
         }
 
         .message {
-            padding: 15px 20px;
-            border-radius: 12px;
+            padding: 16px 20px;
+            border-radius: 16px;
             display: flex;
             align-items: center;
             gap: 12px;
             animation: slideDown 0.3s ease;
+            position: relative;
+            border: 1px solid transparent;
         }
 
         .message-success {
             background: rgba(16, 185, 129, 0.1);
             color: var(--success);
-            border: 1px solid rgba(16, 185, 129, 0.3);
+            border-color: rgba(16, 185, 129, 0.2);
         }
 
         .message-error {
             background: rgba(239, 68, 68, 0.1);
             color: var(--danger);
-            border: 1px solid rgba(239, 68, 68, 0.3);
-        }
-
-        .message i {
-            font-size: 18px;
+            border-color: rgba(239, 68, 68, 0.2);
         }
 
         .close-btn {
             background: none;
             border: none;
             color: currentColor;
-            font-size: 18px;
+            font-size: 20px;
             cursor: pointer;
             margin-left: auto;
             opacity: 0.7;
+            transition: opacity 0.2s;
         }
 
         .close-btn:hover {
@@ -518,123 +706,20 @@
             }
         }
 
-        /* SESSION EXAMPLES */
-        .examples {
-            display: flex;
-            flex-wrap: wrap;
-            gap: 10px;
-            margin-top: 15px;
+        /* Responsive */
+        @media (max-width: 992px) {
+            .page-title h2 {
+                font-size: 24px;
+            }
         }
 
-        .example-tag {
-            background: var(--bg-offwhite);
-            border: 1px solid var(--border);
-            border-radius: 20px;
-            padding: 5px 15px;
-            font-size: 13px;
-            color: var(--text-muted);
-            cursor: pointer;
-            transition: all 0.2s;
-        }
-
-        .example-tag:hover {
-            background: var(--primary);
-            color: white;
-            border-color: var(--primary);
-        }
-
-        /* TOAST */
-        #toast {
-            position: fixed;
-            top: 24px;
-            right: 24px;
-            width: 320px;
-            padding: 14px 16px;
-            border-radius: 12px;
-            box-shadow: var(--shadow-lg);
-            opacity: 0;
-            transform: translateY(-15px);
-            transition: .3s ease;
-            color: #fff;
-            z-index: 9999;
-        }
-
-        #toast.show {
-            opacity: 1;
-            transform: translateY(0);
-        }
-
-        .toast-success { background: var(--success); }
-        .toast-error { background: var(--danger); }
-        .toast-info { background: var(--info); }
-        .toast-warning { background: var(--warning); color: #1f2937; }
-
-        .toast-progress {
-            height: 3px;
-            border-radius: 4px;
-            margin-top: 10px;
-            background: rgba(255,255,255,.6);
-            animation: toast-load 3s linear forwards;
-        }
-
-        @keyframes toast-load {
-            from { width: 100%; }
-            to { width: 0%; }
-        }
-
-        /* LOADING OVERLAY */
-        .loading-overlay {
-            display: none;
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: rgba(0,0,0,0.5);
-            backdrop-filter: blur(5px);
-            z-index: 9999;
-            justify-content: center;
-            align-items: center;
-            flex-direction: column;
-            color: white;
-        }
-
-        .loading-spinner {
-            width: 50px;
-            height: 50px;
-            border: 3px solid rgba(255,255,255,0.3);
-            border-top-color: var(--primary);
-            border-radius: 50%;
-            animation: spin 1s linear infinite;
-            margin-bottom: 15px;
-        }
-
-        @keyframes spin {
-            to { transform: rotate(360deg); }
-        }
-
-        /* RESPONSIVE */
         @media (max-width: 768px) {
-            .sidebar-wrapper {
-                transform: translateX(-100%);
-                width: 280px !important;
-            }
-            
-            .sidebar-wrapper.mobile-open {
-                transform: translateX(0);
-            }
-            
             .content-wrapper {
-                margin-left: 0 !important;
                 padding: 15px;
             }
             
             .main-content-card {
-                padding: 20px;
-            }
-            
-            .button-group {
-                flex-direction: column;
+                padding: 25px;
             }
             
             .page-header {
@@ -642,9 +727,62 @@
                 align-items: flex-start;
             }
             
+            .button-group {
+                flex-direction: column;
+            }
+            
+            .btn {
+                width: 100%;
+            }
+            
             .preview-content {
                 flex-direction: column;
                 align-items: flex-start;
+            }
+            
+            .examples {
+                justify-content: center;
+            }
+        }
+
+        @media (max-width: 576px) {
+            .content-wrapper {
+                padding: 10px;
+            }
+            
+            .main-content-card {
+                padding: 20px;
+            }
+            
+            .form-header h3 {
+                font-size: 20px;
+            }
+            
+            .form-control {
+                padding: 12px 14px 12px 44px;
+                font-size: 14px;
+            }
+            
+            .icon-circle {
+                width: 64px;
+                height: 64px;
+                font-size: 28px;
+            }
+            
+            .info-card {
+                flex-direction: column;
+                text-align: center;
+            }
+            
+            .example-tag {
+                padding: 6px 14px;
+                font-size: 12px;
+            }
+            
+            #toast {
+                width: calc(100% - 30px);
+                left: 15px;
+                right: 15px;
             }
         }
     </style>
@@ -662,6 +800,16 @@
         })();
     </script>
 
+    <!-- Toast Container -->
+    <div id="toast"></div>
+
+    <!-- Loading Overlay -->
+    <div class="loading-overlay" id="loadingOverlay">
+        <div class="spinner"></div>
+        <div class="loading-text" id="loadingText">Processing...</div>
+        <div class="loading-subtext" id="loadingSubtext">Please wait</div>
+    </div>
+
     <!-- HEADER -->
     <div class="header-wrapper">
         <%- include('../partials/ram/header') %>
@@ -670,138 +818,129 @@
     <!-- MAIN LAYOUT -->
     <div class="main-wrapper">
         <!-- SIDEBAR -->
-        <div class="sidebar-wrapper" id="sidebarWrapper">
-            <%- include('../partials/ram/sidebaar') %>
-        </div>
+        <%- include('../partials/ram/sidebaar') %>
 
         <!-- CONTENT -->
         <div class="content-wrapper" id="contentWrapper">
-            <!-- Toast Container -->
-            <div id="toast"></div>
-
-            <!-- Loading Overlay -->
-            <div class="loading-overlay" id="loadingOverlay">
-                <div class="loading-spinner"></div>
-                <h5 id="loadingText">Processing...</h5>
-                <p id="loadingSubtext">Please wait</p>
-            </div>
-
-            <!-- Page Header -->
-            <div class="page-header">
-                <div class="page-title">
-                    <div class="page-icon">
-                        <i class="fas fa-plus-circle"></i>
-                    </div>
-                    <div>
-                        <h2>Add New Session</h2>
-                        <p>Create a new academic session</p>
+            <div class="mid-content">
+                <!-- Page Header -->
+                <div class="page-header">
+                    <div class="page-title">
+                        <div class="page-icon">
+                            <i class="fas fa-plus-circle"></i>
+                        </div>
+                        <div>
+                            <h2>Add New Session</h2>
+                            <p>Create a new academic session</p>
+                        </div>
                     </div>
                 </div>
-            </div>
 
-            <!-- Main Content Card -->
-            <div class="main-content-card">
-                <!-- Form Header -->
-                <div class="form-header">
-                    <div class="icon-circle">
-                        <i class="fas fa-calendar-plus"></i>
-                    </div>
-                    <h3>Create New Session</h3>
-                    <p>Add a new academic year session to the system</p>
-                </div>
-
-                <!-- Info Card -->
-                <div class="info-card">
-                    <i class="fas fa-info-circle"></i>
-                    <p>Session format should be like <strong>2026-2027</strong> (4 digits - 4 digits)</p>
-                </div>
-
-                <!-- Messages -->
-                <% if (typeof error !== 'undefined' && error) { %>
-                    <div class="message-container">
-                        <div class="message message-error">
-                            <i class="fas fa-exclamation-circle"></i>
-                            <span><%= error %></span>
-                            <button class="close-btn" onclick="this.parentElement.remove()">&times;</button>
+                <!-- Main Content Card -->
+                <div class="main-content-card">
+                    <!-- Form Header -->
+                    <div class="form-header">
+                        <div class="icon-circle">
+                            <i class="fas fa-calendar-plus"></i>
                         </div>
-                    </div>
-                <% } %>
-
-                <% if (typeof message !== 'undefined' && message) { %>
-                    <div class="message-container">
-                        <div class="message message-success">
-                            <i class="fas fa-check-circle"></i>
-                            <span><%= message %></span>
-                            <button class="close-btn" onclick="this.parentElement.remove()">&times;</button>
-                        </div>
-                    </div>
-                <% } %>
-
-                <!-- Form -->
-                <form action="/addnewsessionyears" method="POST" id="sessionForm">
-                    <div class="form-group">
-                        <label class="form-label">
-                            <i class="fas fa-calendar-alt"></i>
-                            Session Year
-                            <span class="required-star">*</span>
-                        </label>
-                        <div class="input-wrapper">
-                            <i class="fas fa-calendar input-icon"></i>
-                            <input type="text" 
-                                   id="session" 
-                                   name="session" 
-                                   class="form-control" 
-                                   placeholder="e.g., 2026-2027" 
-                                   value="<%= typeof sessionValue !== 'undefined' ? sessionValue : '' %>"
-                                   required
-                                   oninput="validateSession()"
-                                   maxlength="9">
-                            <div class="validation-icon" id="sessionValidation"></div>
-                        </div>
-                        <div class="hint-text">
-                            <i class="fas fa-lightbulb"></i>
-                            <span>Enter in format: YYYY-YYYY (e.g., 2026-2027)</span>
-                        </div>
+                        <h3>Create New Session</h3>
+                        <p>Add a new academic year session to the system</p>
                     </div>
 
-                    <!-- Quick Examples -->
-                    <div class="form-group">
-                        <label class="form-label">Quick Select</label>
-                        <div class="examples">
-                            <span class="example-tag" onclick="setSession('2024-2025')">2024-2025</span>
-                            <span class="example-tag" onclick="setSession('2025-2026')">2025-2026</span>
-                            <span class="example-tag" onclick="setSession('2026-2027')">2026-2027</span>
-                            <span class="example-tag" onclick="setSession('2027-2028')">2027-2028</span>
-                            <span class="example-tag" onclick="setSession('2028-2029')">2028-2029</span>
-                            <span class="example-tag" onclick="setSession('2029-2030')">2029-2030</span>
-                        </div>
+                    <!-- Info Card -->
+                    <div class="info-card">
+                        <i class="fas fa-info-circle"></i>
+                        <p>Session format should be like <strong>2026-2027</strong> (4 digits - 4 digits)</p>
                     </div>
 
-                    <!-- Preview Card -->
-                    <div class="preview-card" id="previewCard" style="display: none;">
-                        <div class="preview-title">
-                            <i class="fas fa-eye"></i>
-                            Session Preview
-                        </div>
-                        <div class="preview-content">
-                            <div class="preview-session">
-                                <i class="fas fa-calendar-check"></i>
-                                <span id="previewSession">2026-2027</span>
+                    <!-- Messages -->
+                    <% if (typeof error !== 'undefined' && error) { %>
+                        <div class="message-container">
+                            <div class="message message-error">
+                                <i class="fas fa-exclamation-circle"></i>
+                                <span><%= error %></span>
+                                <button class="close-btn" onclick="this.parentElement.remove()">&times;</button>
                             </div>
-                            <span class="preview-badge">New Session</span>
                         </div>
-                    </div>
+                    <% } %>
 
-                    <!-- Buttons -->
-                    <div class="button-group">
-                        <button type="submit" class="btn btn-primary" id="submitBtn">
-                            <i class="fas fa-save"></i> Save Session
-                        </button>
-                        <a href="/addnewsessionyear" class="btn btn-secondary">
-                            <i class="fas fa-times"></i> Cancel
-                        </a>
-                    </div>
-                </form>
+                    <% if (typeof message !== 'undefined' && message) { %>
+                        <div class="message-container">
+                            <div class="message message-success">
+                                <i class="fas fa-check-circle"></i>
+                                <span><%= message %></span>
+                                <button class="close-btn" onclick="this.parentElement.remove()">&times;</button>
+                            </div>
+                        </div>
+                    <% } %>
+
+                    <!-- Form -->
+                    <form action="/addnewsessionyears" method="POST" id="sessionForm">
+                        <div class="form-group">
+                            <label class="form-label">
+                                <i class="fas fa-calendar-alt"></i>
+                                Session Year
+                                <span class="required-star">*</span>
+                            </label>
+                            <div class="input-wrapper">
+                                <i class="fas fa-calendar input-icon"></i>
+                                <input type="text" 
+                                       id="session" 
+                                       name="session" 
+                                       class="form-control" 
+                                       placeholder="e.g., 2026-2027" 
+                                       value="<%= typeof sessionValue !== 'undefined' ? sessionValue : '' %>"
+                                       required
+                                       oninput="validateSession()"
+                                       maxlength="9"
+                                       autofocus>
+                                <div class="validation-icon" id="sessionValidation"></div>
+                            </div>
+                            <div class="hint-text">
+                                <i class="fas fa-lightbulb"></i>
+                                <span>Enter in format: YYYY-YYYY (e.g., 2026-2027)</span>
+                            </div>
+                        </div>
+
+                        <!-- Quick Examples -->
+                        <div class="form-group">
+                            <label class="form-label">Quick Select</label>
+                            <div class="examples">
+                                <span class="example-tag" onclick="setSession('2024-2025')">2024-2025</span>
+                                <span class="example-tag" onclick="setSession('2025-2026')">2025-2026</span>
+                                <span class="example-tag" onclick="setSession('2026-2027')">2026-2027</span>
+                                <span class="example-tag" onclick="setSession('2027-2028')">2027-2028</span>
+                                <span class="example-tag" onclick="setSession('2028-2029')">2028-2029</span>
+                                <span class="example-tag" onclick="setSession('2029-2030')">2029-2030</span>
+                            </div>
+                        </div>
+
+                        <!-- Preview Card -->
+                        <div class="preview-card" id="previewCard" style="display: none;">
+                            <div class="preview-title">
+                                <i class="fas fa-eye"></i>
+                                Session Preview
+                            </div>
+                            <div class="preview-content">
+                                <div class="preview-session">
+                                    <i class="fas fa-calendar-check"></i>
+                                    <span id="previewSession">2026-2027</span>
+                                </div>
+                                <span class="preview-badge">New Session</span>
+                            </div>
+                        </div>
+
+                        <!-- Buttons -->
+                        <div class="button-group">
+                            <button type="submit" class="btn btn-primary" id="submitBtn" disabled>
+                                <i class="fas fa-save"></i> Save Session
+                            </button>
+                            <a href="/sessions" class="btn btn-secondary">
+                                <i class="fas fa-times"></i> Cancel
+                            </a>
+                        </div>
+                    </form>
+                </div>
             </div>
         </div>
     </div>
@@ -811,51 +950,74 @@
 
     <script>
         // ======================
-        // SIDEBAR SYNC
+        // SIDEBAR STATE SYNC - EXACTLY LIKE PREVIOUS TEMPLATES
+        // ======================
+        function syncSidebarState() {
+            const sidebar = document.getElementById('sidebar');
+            const contentWrapper = document.getElementById('contentWrapper');
+            
+            if (!sidebar || !contentWrapper) return;
+            
+            const isMini = sidebar.classList.contains('mini');
+            
+            if (isMini) {
+                contentWrapper.style.marginLeft = 'var(--sidebar-mini-width, 80px)';
+                contentWrapper.style.width = 'calc(100% - var(--sidebar-mini-width, 80px))';
+            } else {
+                contentWrapper.style.marginLeft = 'var(--sidebar-width, 280px)';
+                contentWrapper.style.width = 'calc(100% - var(--sidebar-width, 280px))';
+            }
+        }
+
+        // ======================
+        // INITIALIZATION
         // ======================
         document.addEventListener('DOMContentLoaded', function() {
-            const sidebar = document.getElementById('mainSidebar');
-            const sidebarWrapper = document.getElementById('sidebarWrapper');
-            
-            if (sidebar && sidebarWrapper) {
-                if (sidebar.classList.contains('collapsed')) {
-                    sidebarWrapper.classList.add('collapsed');
+            // Listen for sidebar state changes
+            window.addEventListener('storage', function(e) {
+                if (e.key === 'sidebarMini' || e.key === 'sidebar-update-time') {
+                    const sidebar = document.getElementById('sidebar');
+                    if (sidebar) {
+                        const savedState = localStorage.getItem('sidebarMini') === 'true';
+                        if (savedState) {
+                            sidebar.classList.add('mini');
+                        } else {
+                            sidebar.classList.remove('mini');
+                        }
+                        syncSidebarState();
+                    }
                 }
-                
-                window.toggleCollapse = function() {
-                    if (sidebar.classList.contains('collapsed')) {
-                        sidebar.classList.remove('collapsed');
-                        sidebarWrapper.classList.remove('collapsed');
-                    } else {
-                        sidebar.classList.add('collapsed');
-                        sidebarWrapper.classList.add('collapsed');
-                    }
-                };
-                
-                window.toggleMobileSidebar = function() {
-                    if (sidebar.classList.contains('open')) {
-                        sidebar.classList.remove('open');
-                        sidebarWrapper.classList.remove('mobile-open');
-                    } else {
-                        sidebar.classList.add('open');
-                        sidebarWrapper.classList.add('mobile-open');
-                    }
-                };
-                
-                window.closeMobileSidebar = function() {
-                    sidebar.classList.remove('open');
-                    sidebarWrapper.classList.remove('mobile-open');
-                };
-            }
+            });
+
+            window.addEventListener('resize', function() {
+                syncSidebarState();
+            });
+
+            setTimeout(syncSidebarState, 100);
 
             // Show welcome toast
             setTimeout(() => {
-                showToast('Add New Session', 'Create a new academic session', 'info');
-            }, 500);
+                showToast('Welcome', 'Add a new academic session', 'info');
+            }, 1000);
+            
+            // Auto-hide messages after 5 seconds
+            setTimeout(() => {
+                document.querySelectorAll('.message-container').forEach(msg => {
+                    msg.style.opacity = '0';
+                    setTimeout(() => msg.remove(), 500);
+                });
+            }, 5000);
+
+            // Auto-generate next session suggestion
+            const sessionInput = document.getElementById('session');
+            if (!sessionInput.value) {
+                const suggested = generateNextSession();
+                sessionInput.placeholder = `e.g., ${suggested}`;
+            }
         });
 
         // ======================
-        // TOAST FUNCTION
+        // TOAST FUNCTION - EXACTLY LIKE PREVIOUS TEMPLATES
         // ======================
         let toastTimer;
         function showToast(title, message, type = 'info') {
@@ -872,21 +1034,18 @@
             
             const icon = icons[type] || 'ℹ️';
             
-            toast.className = '';
             toast.innerHTML = `
-                <div style="display: flex; gap: 12px; align-items: flex-start;">
-                    <div style="width: 34px; height: 34px; border-radius: 50%; display: flex; align-items: center; justify-content: center; background: rgba(0,0,0,.25);">
-                        ${icon}
-                    </div>
-                    <div style="flex: 1;">
-                        <h4 style="margin: 0; font-size: 14px; font-weight: 600;">${title}</h4>
-                        <p style="margin: 4px 0 0; font-size: 13px; opacity: .9;">${message}</p>
+                <div class="toast-content">
+                    <div class="toast-icon">${icon}</div>
+                    <div class="toast-text">
+                        <h4>${title}</h4>
+                        <p>${message}</p>
                     </div>
                 </div>
                 <div class="toast-progress"></div>
             `;
             
-            toast.classList.add(`toast-${type}`, 'show');
+            toast.className = `toast-${type} show`;
             
             toastTimer = setTimeout(() => {
                 toast.classList.remove('show');
@@ -894,20 +1053,17 @@
         }
 
         // ======================
-        // LOADING OVERLAY
+        // LOADING OVERLAY FUNCTIONS
         // ======================
-        const loadingOverlay = document.getElementById('loadingOverlay');
-        const loadingText = document.getElementById('loadingText');
-        const loadingSubtext = document.getElementById('loadingSubtext');
-
-        function showLoading(text, subtext) {
-            loadingText.textContent = text || 'Processing...';
-            loadingSubtext.textContent = subtext || 'Please wait';
-            loadingOverlay.style.display = 'flex';
+        function showLoading(text = 'Processing...', subtext = 'Please wait') {
+            const overlay = document.getElementById('loadingOverlay');
+            document.getElementById('loadingText').textContent = text;
+            document.getElementById('loadingSubtext').textContent = subtext;
+            overlay.style.display = 'flex';
         }
 
         function hideLoading() {
-            loadingOverlay.style.display = 'none';
+            document.getElementById('loadingOverlay').style.display = 'none';
         }
 
         // ======================
@@ -938,14 +1094,17 @@
                 validationIcon.innerHTML = '';
                 validationIcon.className = 'validation-icon';
                 previewCard.style.display = 'none';
+                submitBtn.disabled = true;
                 return false;
             }
             
             if (regex.test(value)) {
                 const [start, end] = value.split('-');
+                const startYear = parseInt(start);
+                const endYear = parseInt(end);
                 
                 // Validate years (end should be start + 1)
-                if (parseInt(end) === parseInt(start) + 1) {
+                if (endYear === startYear + 1) {
                     validationIcon.innerHTML = '<i class="fas fa-check-circle"></i>';
                     validationIcon.className = 'validation-icon valid';
                     
@@ -953,12 +1112,14 @@
                     previewSession.textContent = value;
                     previewCard.style.display = 'block';
                     
+                    submitBtn.disabled = false;
                     return true;
                 } else {
                     validationIcon.innerHTML = '<i class="fas fa-exclamation-circle"></i>';
                     validationIcon.className = 'validation-icon invalid';
                     validationIcon.title = 'End year must be start year + 1';
                     previewCard.style.display = 'none';
+                    submitBtn.disabled = true;
                     return false;
                 }
             } else {
@@ -970,6 +1131,7 @@
                     validationIcon.innerHTML = '';
                 }
                 previewCard.style.display = 'none';
+                submitBtn.disabled = true;
                 return false;
             }
         }
@@ -981,24 +1143,55 @@
             showToast('Quick Select', `Selected: ${value}`, 'info');
         }
 
+        // Generate next session suggestion
+        function generateNextSession() {
+            const currentYear = new Date().getFullYear();
+            const nextYear = currentYear + 1;
+            return `${currentYear}-${nextYear}`;
+        }
+
         // Form submission
         document.getElementById('sessionForm').addEventListener('submit', function(e) {
             if (!validateSession()) {
                 e.preventDefault();
                 showToast('Validation Error', 'Please enter a valid session format (e.g., 2026-2027)', 'error');
-                return;
+                return false;
             }
             
-            showLoading('Creating Session', 'Please wait...');
+            showLoading('Creating Session', 'Adding new session...');
+            return true;
         });
 
-        // Auto-hide messages
-        setTimeout(() => {
-            document.querySelectorAll('.message-container').forEach(msg => {
-                msg.style.opacity = '0';
-                setTimeout(() => msg.remove(), 500);
-            });
-        }, 5000);
+        // ======================
+        // THEME FUNCTIONS
+        // ======================
+        function toggleTheme() {
+            if (document.body.classList.contains('dark')) {
+                document.body.classList.remove('dark');
+                document.body.classList.add('light');
+                localStorage.setItem('theme', 'light');
+                showToast('Theme Updated', 'Light mode activated', 'info');
+            } else {
+                document.body.classList.remove('light');
+                document.body.classList.add('dark');
+                localStorage.setItem('theme', 'dark');
+                showToast('Theme Updated', 'Dark mode activated', 'info');
+            }
+        }
+
+        function toggleBorder() {
+            if (document.body.classList.contains('round-border')) {
+                document.body.classList.remove('round-border');
+                document.body.classList.add('no-radius');
+                localStorage.setItem('border', 'no-radius');
+                showToast('Border Style', 'Square corners activated', 'info');
+            } else {
+                document.body.classList.remove('no-radius');
+                document.body.classList.add('round-border');
+                localStorage.setItem('border', 'round-border');
+                showToast('Border Style', 'Rounded corners activated', 'info');
+            }
+        }
 
         // ======================
         // KEYBOARD SHORTCUTS
@@ -1007,39 +1200,24 @@
             // Ctrl+Enter to submit
             if ((e.ctrlKey || e.metaKey) && e.key === 'Enter') {
                 e.preventDefault();
-                if (validateSession()) {
-                    document.getElementById('sessionForm').submit();
+                if (!submitBtn.disabled) {
+                    document.getElementById('sessionForm').requestSubmit();
                 }
             }
             
             // Escape to cancel
             if (e.key === 'Escape') {
                 if (confirm('Cancel and go back?')) {
-                    window.location.href = '/addnewsessionyear';
+                    window.location.href = '/sessions';
                 }
             }
             
             // F1 for help
             if (e.key === 'F1') {
                 e.preventDefault();
-                showToast('Help', 'Format: YYYY-YYYY\nExample: 2026-2027', 'info');
+                showToast('Help', 'Format: YYYY-YYYY\nExample: 2026-2027\nCtrl+Enter to submit', 'info');
             }
         });
-
-        // ======================
-        // AUTO-GENERATE NEXT SESSION
-        // ======================
-        function generateNextSession() {
-            const currentYear = new Date().getFullYear();
-            const nextYear = currentYear + 1;
-            return `${currentYear}-${nextYear}`;
-        }
-
-        // If input is empty, suggest current session
-        if (!sessionInput.value) {
-            const suggested = generateNextSession();
-            sessionInput.placeholder = `e.g., ${suggested}`;
-        }
     </script>
 </body>
 </html>

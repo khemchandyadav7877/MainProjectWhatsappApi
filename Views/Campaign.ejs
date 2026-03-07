@@ -11,11 +11,11 @@
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 
 <style>
-    /* ===== THEME VARIABLES ===== */
+    /* ===== THEME VARIABLES - EXACTLY LIKE PREVIOUS TEMPLATES ===== */
     :root {
         --primary: #667eea;
         --primary-dark: #5a67d8;
-        --primary-gradient: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        --primary-gradient: linear-gradient(135deg, #667eea, #764ba2);
         --success: #10b981;
         --warning: #f59e0b;
         --danger: #ef4444;
@@ -23,21 +23,22 @@
         --whatsapp: #25D366;
         
         /* Light Mode */
-        --bg-body: #f3f4f6;
+        --bg-body: #f8fafc;
         --bg-white: #ffffff;
-        --bg-offwhite: #f8fafc;
+        --bg-offwhite: #f1f5f9;
         --bg-card: #ffffff;
-        --text: #1e293b;
-        --text-light: #334155;
-        --text-muted: #64748b;
+        --text: #334155;
+        --text-light: #64748b;
+        --text-muted: #94a3b8;
         --dark: #0f172a;
         --border: #eef2f6;
-        --shadow: 0 2px 10px rgba(0,0,0,0.05);
-        --shadow-lg: 0 10px 30px rgba(0,0,0,0.1);
+        --shadow: 0 8px 25px rgba(0,0,0,0.03);
+        --shadow-lg: 0 15px 35px rgba(102, 126, 234, 0.1);
         
         /* Layout */
         --header-height: 70px;
         --sidebar-width: 280px;
+        --sidebar-mini-width: 80px;
     }
 
     /* Dark Mode */
@@ -46,16 +47,16 @@
         --bg-white: #1e293b;
         --bg-offwhite: #334155;
         --bg-card: #1e293b;
-        --text: #f1f5f9;
+        --text: #e2e8f0;
         --text-light: #cbd5e1;
         --text-muted: #94a3b8;
         --dark: #f8fafc;
         --border: #334155;
-        --shadow: 0 2px 10px rgba(0,0,0,0.3);
-        --shadow-lg: 0 10px 30px rgba(0,0,0,0.5);
+        --shadow: 0 8px 25px rgba(0,0,0,0.2);
+        --shadow-lg: 0 15px 35px rgba(102, 126, 234, 0.2);
     }
 
-    /* RESET - Same as before */
+    /* RESET */
     * {
         margin: 0;
         padding: 0;
@@ -65,14 +66,14 @@
     body {
         overflow-x: hidden;
         background: var(--bg-body);
-        font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        font-family: 'Inter', 'Segoe UI', sans-serif;
         color: var(--text);
         transition: background-color 0.3s, color 0.3s;
     }
 
-    /* ===== BORDER MODES ===== */
+    /* ===== BORDER MODES - EXACTLY LIKE PREVIOUS TEMPLATES ===== */
     body.round-border .header-wrapper,
-    body.round-border .sidebar-wrapper,
+    body.round-border .sidebar,
     body.round-border .mid-content,
     body.round-border .header,
     body.round-border .device-info,
@@ -96,7 +97,7 @@
     body.round-border .role-badge,
     body.round-border .toast-notification,
     body.round-border .modal-content {
-        border-radius: 16px !important;
+        border-radius: 20px !important;
     }
 
     body.round-border .step-circle {
@@ -104,12 +105,12 @@
     }
 
     body.round-border .excel-preview-table {
-        border-radius: 10px !important;
+        border-radius: 12px !important;
         overflow: hidden;
     }
 
     body.no-radius .header-wrapper,
-    body.no-radius .sidebar-wrapper,
+    body.no-radius .sidebar,
     body.no-radius .mid-content,
     body.no-radius .header,
     body.no-radius .device-info,
@@ -150,51 +151,60 @@
         border-bottom: 1px solid var(--border);
     }
 
-    /* MAIN LAYOUT */
+    /* MAIN LAYOUT - EXACTLY LIKE PREVIOUS TEMPLATES */
     .main-wrapper {
         margin-top: 70px;
         display: flex;
         width: 100%;
         min-height: calc(100vh - 70px);
+        position: relative;
     }
 
-    /* SIDEBAR WRAPPER */
-    .sidebar-wrapper {
-        width: 280px;
-        flex-shrink: 0;
+    /* SIDEBAR - EXACTLY LIKE PREVIOUS TEMPLATES */
+    .sidebar {
+        width: var(--sidebar-width, 280px);
+        background: var(--bg-white);
+        border-right: 1px solid var(--border);
+        height: calc(100vh - var(--header-height, 70px));
         position: fixed;
         left: 0;
         top: 70px;
-        bottom: 0;
+        transition: width 0.3s cubic-bezier(0.4, 0, 0.2, 1);
         z-index: 1020;
-        transition: width 0.3s ease;
-        background: var(--bg-white);
-        border-right: 1px solid var(--border);
+        box-shadow: var(--shadow);
+        display: flex;
+        flex-direction: column;
+        overflow-y: auto;
+        overflow-x: hidden;
     }
 
-    .sidebar-wrapper.collapsed {
-        width: 80px;
+    /* Sidebar Mini Mode */
+    .sidebar.mini {
+        width: var(--sidebar-mini-width, 80px);
     }
 
-    /* CONTENT WRAPPER */
+    /* CONTENT WRAPPER - EXACTLY LIKE PREVIOUS TEMPLATES */
     .content-wrapper {
         flex: 1;
-        margin-left: 280px;
-        padding: 20px;
-        transition: margin-left 0.3s ease;
+        margin-left: var(--sidebar-width, 280px);
+        padding: 25px;
+        transition: margin-left 0.3s cubic-bezier(0.4, 0, 0.2, 1);
         background: var(--bg-body);
         min-height: calc(100vh - 70px);
+        width: calc(100% - var(--sidebar-width, 280px));
     }
 
-    .sidebar-wrapper.collapsed + .content-wrapper {
-        margin-left: 80px;
+    /* When sidebar has mini class, adjust content wrapper */
+    .sidebar.mini ~ .content-wrapper {
+        margin-left: var(--sidebar-mini-width, 80px);
+        width: calc(100% - var(--sidebar-mini-width, 80px));
     }
 
     /* MAIN CONTENT */
     .mid-content {
         background: var(--bg-card);
-        border-radius: 12px;
-        padding: 24px;
+        border-radius: 20px;
+        padding: 30px;
         box-shadow: var(--shadow);
         border: 1px solid var(--border);
         min-height: 500px;
@@ -202,21 +212,38 @@
 
     /* MOBILE */
     @media (max-width: 768px) {
-        .sidebar-wrapper {
+        .sidebar {
             transform: translateX(-100%);
-            width: 280px !important;
+            width: var(--sidebar-width, 280px) !important;
+            transition: transform 0.3s ease;
         }
         
-        .sidebar-wrapper.mobile-open {
+        .sidebar.open {
+            transform: translateX(0);
+        }
+        
+        .sidebar.mini {
+            transform: translateX(-100%);
+            width: var(--sidebar-width, 280px) !important;
+        }
+        
+        .sidebar.mini.open {
             transform: translateX(0);
         }
         
         .content-wrapper {
             margin-left: 0 !important;
+            width: 100% !important;
+            padding: 15px;
+        }
+        
+        .sidebar.mini ~ .content-wrapper {
+            margin-left: 0 !important;
+            width: 100% !important;
         }
         
         .mid-content {
-            padding: 16px;
+            padding: 20px;
         }
     }
 
@@ -225,17 +252,17 @@
     ========================= */
     #toast {
         position: fixed;
-        top: 24px;
-        right: 24px;
+        top: 90px;
+        right: 29px;
         width: 320px;
-        padding: 14px 16px;
+        padding: 16px 20px;
         border-radius: 12px;
         box-shadow: var(--shadow-lg);
         opacity: 0;
         transform: translateY(-15px);
         transition: .3s ease;
         color: #fff;
-        z-index: 9999;
+        z-index: 1001;
     }
 
     #toast.show {
@@ -243,21 +270,14 @@
         transform: translateY(0);
     }
 
-    .toast-row {
+    .toast-content {
         display: flex;
         gap: 12px;
         align-items: flex-start;
     }
 
     .toast-icon {
-        width: 34px;
-        height: 34px;
-        border-radius: 50%;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        font-size: 16px;
-        background: rgba(0,0,0,.25);
+        font-size: 20px;
     }
 
     .toast-text h4 {
@@ -267,34 +287,22 @@
     }
 
     .toast-text p {
-        margin: 4px 0 0;
+        margin: 5px 0 0;
         font-size: 13px;
-        opacity: .9;
+        opacity: 0.9;
     }
 
     /* Toast Colors */
-    .toast-success {
-        background: var(--success);
-        color: #ffffff;
-    }
-    .toast-error {
-        background: var(--danger);
-        color: #ffffff;
-    }
-    .toast-info {
-        background: var(--info);
-        color: #ffffff;
-    }
-    .toast-warning {
-        background: var(--warning);
-        color: #1f2937;
-    }
+    .toast-success { background: var(--success); }
+    .toast-error { background: var(--danger); }
+    .toast-info { background: var(--info); }
+    .toast-warning { background: var(--warning); color: #1f2937; }
 
     /* Progress bar */
     .toast-progress {
         height: 3px;
         border-radius: 4px;
-        margin-top: 10px;
+        margin-top: 12px;
         background: rgba(255,255,255,.6);
         animation: toast-load 3s linear forwards;
     }
@@ -308,13 +316,13 @@
         to { width: 0%; }
     }
 
-    /* Header - Modified */
+    /* Header */
     .header {
         background: var(--bg-card);
-        border-radius: 15px;
-        padding: 25px 30px;
+        border-radius: 20px;
+        padding: 30px;
         margin-bottom: 30px;
-        box-shadow: var(--shadow-lg);
+        box-shadow: var(--shadow);
         border: 1px solid var(--border);
     }
 
@@ -325,6 +333,7 @@
         display: flex;
         align-items: center;
         gap: 15px;
+        font-weight: 700;
     }
 
     .header h1 i {
@@ -370,13 +379,13 @@
         color: white;
     }
 
-    /* Device count info */
+    /* Device info */
     .device-info {
         background: rgba(102, 126, 234, 0.1);
-        padding: 8px 15px;
-        border-radius: 8px;
-        margin-bottom: 15px;
-        font-size: 13px;
+        padding: 12px 20px;
+        border-radius: 12px;
+        margin-bottom: 25px;
+        font-size: 14px;
         display: flex;
         align-items: center;
         gap: 10px;
@@ -437,7 +446,7 @@
     }
 
     .step.active .step-circle {
-        background: var(--primary);
+        background: var(--primary-gradient);
         border-color: var(--primary);
         color: white;
         box-shadow: 0 4px 15px rgba(102, 126, 234, 0.4);
@@ -460,12 +469,12 @@
         font-weight: 700;
     }
 
-    /* Process Steps Content */
+    /* Step Content */
     .step-content {
         background: var(--bg-card);
         border-radius: 20px;
         padding: 40px;
-        box-shadow: var(--shadow-lg);
+        box-shadow: var(--shadow);
         margin-bottom: 30px;
         display: none;
         border: 1px solid var(--border);
@@ -494,6 +503,7 @@
         display: flex;
         align-items: center;
         gap: 15px;
+        font-weight: 700;
     }
 
     .step-title i {
@@ -522,10 +532,10 @@
 
     .form-control {
         width: 100%;
-        padding: 15px 20px;
-        border: 2px solid var(--border);
-        border-radius: 10px;
-        font-size: 16px;
+        padding: 12px 20px;
+        border: 1px solid var(--border);
+        border-radius: 12px;
+        font-size: 14px;
         transition: all 0.3s;
         background: var(--bg-white);
         color: var(--text);
@@ -534,8 +544,13 @@
     .form-control:focus {
         outline: none;
         border-color: var(--primary);
-        background: var(--bg-white);
         box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+        background: var(--bg-white);
+    }
+
+    .form-control::placeholder {
+        color: var(--text-muted);
+        opacity: 0.7;
     }
 
     .select-wrapper {
@@ -583,13 +598,13 @@
         border-left: 3px solid var(--primary);
     }
 
-    /* Groups Section - NEW */
+    /* Groups Section */
     .groups-section {
         background: rgba(102, 126, 234, 0.05);
-        border-radius: 15px;
+        border-radius: 20px;
         padding: 25px;
         margin: 30px 0;
-        border: 2px solid rgba(102, 126, 234, 0.2);
+        border: 1px solid var(--border);
     }
 
     .groups-section h3 {
@@ -616,7 +631,7 @@
     .group-card {
         background: var(--bg-card);
         border: 2px solid var(--border);
-        border-radius: 12px;
+        border-radius: 16px;
         padding: 20px;
         cursor: pointer;
         transition: all 0.3s;
@@ -681,7 +696,7 @@
     }
 
     .group-card .badge {
-        background: var(--primary);
+        background: var(--primary-gradient);
         color: white;
         padding: 5px 10px;
         border-radius: 20px;
@@ -694,9 +709,9 @@
     /* Selected Group Info */
     .selected-group-banner {
         background: rgba(37, 211, 102, 0.1);
-        border-radius: 10px;
+        border-radius: 12px;
         padding: 15px;
-        margin-bottom: 20px;
+        margin-top: 20px;
         display: flex;
         justify-content: space-between;
         align-items: center;
@@ -746,22 +761,12 @@
         color: white;
     }
 
-    /* Load More Button */
-    .load-more-btn {
-        text-align: center;
-        margin-top: 20px;
-    }
-
-    .load-more-btn .btn {
-        padding: 10px 25px;
-    }
-
-    /* Excel Upload Specific Styles */
+    /* Excel Upload */
     .excel-upload-container {
         margin: 20px 0;
         padding: 20px;
         background: var(--bg-offwhite);
-        border-radius: 15px;
+        border-radius: 16px;
         border: 2px dashed var(--border);
     }
 
@@ -770,7 +775,7 @@
         padding: 40px 20px;
         cursor: pointer;
         transition: all 0.3s;
-        border-radius: 10px;
+        border-radius: 12px;
         background: var(--bg-white);
     }
 
@@ -805,7 +810,7 @@
     .excel-instructions {
         background: rgba(16, 185, 129, 0.1);
         padding: 15px;
-        border-radius: 10px;
+        border-radius: 12px;
         margin: 20px 0;
         border-left: 4px solid var(--success);
         color: var(--text);
@@ -838,9 +843,9 @@
         width: 100%;
         border-collapse: collapse;
         background: var(--bg-white);
-        border-radius: 10px;
+        border-radius: 12px;
         overflow: hidden;
-        box-shadow: var(--shadow-lg);
+        box-shadow: var(--shadow);
     }
 
     .excel-preview-table th {
@@ -869,15 +874,10 @@
         flex-wrap: wrap;
     }
 
-    .contact-controls .btn {
-        padding: 8px 16px;
-        font-size: 13px;
-    }
-
     /* Media Upload */
     .media-upload {
         border: 2px dashed var(--border);
-        border-radius: 10px;
+        border-radius: 12px;
         padding: 30px;
         text-align: center;
         cursor: pointer;
@@ -901,7 +901,7 @@
     .file-preview {
         background: rgba(16, 185, 129, 0.1);
         padding: 15px;
-        border-radius: 10px;
+        border-radius: 12px;
         display: flex;
         align-items: center;
         gap: 15px;
@@ -928,28 +928,13 @@
         color: var(--text-muted);
     }
 
-    /* Message Container */
-    .message-content {
-        min-height: 150px;
-        padding: 20px;
-        background: var(--bg-white);
-        border-radius: 10px;
-        white-space: pre-wrap;
-        font-size: 16px;
-        line-height: 1.6;
-        color: var(--text);
-        overflow-y: auto;
-        max-height: 300px;
-        border: 1px solid var(--border);
-    }
-
-    /* Media Options Styles */
+    /* Media Options */
     .media-options-container {
         margin: 20px 0;
         padding: 20px;
         background: var(--bg-offwhite);
-        border-radius: 15px;
-        border: 2px solid var(--border);
+        border-radius: 16px;
+        border: 1px solid var(--border);
     }
 
     .media-option {
@@ -958,7 +943,7 @@
         margin-bottom: 15px;
         padding: 15px;
         background: var(--bg-white);
-        border-radius: 10px;
+        border-radius: 12px;
         cursor: pointer;
         transition: all 0.3s;
         border: 2px solid var(--border);
@@ -1000,8 +985,8 @@
     .media-option-icon {
         width: 40px;
         height: 40px;
-        border-radius: 50%;
-        background: var(--primary);
+        border-radius: 10px;
+        background: var(--primary-gradient);
         color: white;
         display: flex;
         align-items: center;
@@ -1009,13 +994,13 @@
         margin-right: 15px;
     }
 
-    /* Message Checkbox Styles */
+    /* Message Checkbox */
     .message-checkbox-container {
         margin: 15px 0;
         padding: 15px;
         background: var(--bg-offwhite);
-        border-radius: 10px;
-        border: 2px solid var(--border);
+        border-radius: 12px;
+        border: 1px solid var(--border);
     }
 
     .message-checkbox {
@@ -1048,18 +1033,18 @@
         pointer-events: none;
     }
 
-    /* Buttons */
+    /* Buttons - EXACTLY LIKE PREVIOUS TEMPLATES */
     .btn {
         padding: 12px 24px;
         border: none;
-        border-radius: 10px;
+        border-radius: 12px;
         font-size: 14px;
         font-weight: 600;
         cursor: pointer;
         display: inline-flex;
         align-items: center;
         gap: 8px;
-        transition: all 0.3s;
+        transition: all 0.3s ease;
         text-decoration: none;
     }
 
@@ -1070,7 +1055,7 @@
 
     .btn-primary:hover:not(:disabled) {
         transform: translateY(-2px);
-        box-shadow: 0 5px 15px rgba(102, 126, 234, 0.3);
+        box-shadow: var(--shadow-lg);
     }
 
     .btn-success {
@@ -1096,14 +1081,16 @@
 
     .btn-outline {
         background: transparent;
-        border: 2px solid var(--primary);
+        border: 1px solid var(--primary);
         color: var(--primary);
         padding: 10px 22px;
     }
 
     .btn-outline:hover:not(:disabled) {
-        background: var(--primary);
+        background: var(--primary-gradient);
         color: white;
+        transform: translateY(-2px);
+        box-shadow: var(--shadow-lg);
     }
 
     .btn-warning {
@@ -1161,7 +1148,7 @@
     .summary-item {
         background: var(--bg-offwhite);
         padding: 15px;
-        border-radius: 10px;
+        border-radius: 12px;
         border-left: 4px solid var(--primary);
         border: 1px solid var(--border);
     }
@@ -1194,7 +1181,7 @@
 
     .progress-fill {
         height: 100%;
-        background: linear-gradient(90deg, var(--primary), var(--whatsapp));
+        background: var(--primary-gradient);
         width: 0%;
         transition: width 0.5s ease;
     }
@@ -1213,7 +1200,7 @@
         border-collapse: collapse;
         margin-top: 20px;
         background: var(--bg-white);
-        border-radius: 10px;
+        border-radius: 16px;
         overflow: hidden;
         box-shadow: var(--shadow);
     }
@@ -1257,13 +1244,20 @@
 
     .schedule-option {
         flex: 1;
-        padding: 15px;
+        padding: 20px;
         border: 2px solid var(--border);
-        border-radius: 8px;
+        border-radius: 12px;
         cursor: pointer;
         text-align: center;
         background: var(--bg-white);
         color: var(--text);
+        transition: all 0.3s;
+    }
+
+    .schedule-option:hover {
+        border-color: var(--primary);
+        transform: translateY(-2px);
+        box-shadow: var(--shadow-lg);
     }
 
     .schedule-option.active {
@@ -1271,9 +1265,28 @@
         background: rgba(37, 211, 102, 0.1);
     }
 
+    .schedule-option i {
+        font-size: 24px;
+        margin-bottom: 10px;
+        display: block;
+        color: var(--primary);
+    }
+
+    .schedule-option h3 {
+        margin: 0 0 5px;
+        font-size: 18px;
+        color: var(--dark);
+    }
+
+    .schedule-option p {
+        margin: 0;
+        color: var(--text-muted);
+        font-size: 13px;
+    }
+
     .schedule-datetime {
         display: none;
-        margin-top: 15px;
+        margin-top: 20px;
     }
 
     .schedule-datetime.show {
@@ -1282,7 +1295,7 @@
 
     .datetime-inputs {
         display: flex;
-        gap: 10px;
+        gap: 15px;
     }
 
     .datetime-inputs input {
@@ -1299,7 +1312,7 @@
         position: absolute;
         top: 15px;
         right: 15px;
-        background: var(--primary);
+        background: var(--primary-gradient);
         color: white;
         padding: 3px 10px;
         border-radius: 15px;
@@ -1312,12 +1325,50 @@
         margin-bottom: 15px;
     }
 
-    .refresh-groups .btn {
-        padding: 8px 15px;
-        font-size: 13px;
+    /* Loading Overlay */
+    .loading-overlay {
+        position: fixed;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background: rgba(0,0,0,0.5);
+        display: none;
+        align-items: center;
+        justify-content: center;
+        z-index: 9999;
+        backdrop-filter: blur(5px);
+    }
+
+    .spinner {
+        width: 50px;
+        height: 50px;
+        border: 5px solid var(--bg-offwhite);
+        border-top: 5px solid var(--primary);
+        border-radius: 50%;
+        animation: spin 1s linear infinite;
+    }
+
+    @keyframes spin {
+        0% { transform: rotate(0deg); }
+        100% { transform: rotate(360deg); }
     }
 
     /* Responsive */
+    @media (max-width: 992px) {
+        .header h1 {
+            font-size: 28px;
+        }
+        
+        .step-title {
+            font-size: 24px;
+        }
+        
+        .schedule-options {
+            flex-direction: column;
+        }
+    }
+
     @media (max-width: 768px) {
         .step {
             flex: none;
@@ -1328,6 +1379,10 @@
         .steps-indicator {
             flex-wrap: wrap;
             gap: 20px;
+        }
+        
+        .steps-indicator::before {
+            display: none;
         }
         
         .action-buttons {
@@ -1352,10 +1407,6 @@
             grid-template-columns: 1fr;
         }
         
-        .schedule-options {
-            flex-direction: column;
-        }
-        
         .datetime-inputs {
             flex-direction: column;
         }
@@ -1375,25 +1426,52 @@
         }
 
         .header {
-            flex-direction: column;
-            align-items: flex-start;
-            gap: 15px;
+            padding: 20px;
+        }
+        
+        .step-content {
+            padding: 25px;
         }
     }
 
-    /* Loading Spinner */
-    .spinner {
-        display: inline-block;
-        width: 20px;
-        height: 20px;
-        border: 3px solid rgba(255,255,255,.3);
-        border-radius: 50%;
-        border-top-color: white;
-        animation: spin 1s ease-in-out infinite;
-    }
-
-    @keyframes spin {
-        to { transform: rotate(360deg); }
+    @media (max-width: 576px) {
+        .content-wrapper {
+            padding: 10px;
+        }
+        
+        .mid-content {
+            padding: 15px;
+        }
+        
+        .header h1 {
+            font-size: 22px;
+        }
+        
+        .step-title {
+            font-size: 20px;
+        }
+        
+        .form-control {
+            padding: 10px 16px;
+        }
+        
+        .btn {
+            padding: 10px 20px;
+        }
+        
+        .groups-section,
+        .excel-upload-container,
+        .media-options-container {
+            padding: 15px;
+        }
+        
+        .group-card {
+            padding: 15px;
+        }
+        
+        .excel-upload-box {
+            padding: 25px 15px;
+        }
     }
 </style>
 </head>
@@ -1418,9 +1496,7 @@
     <!-- MAIN LAYOUT -->
     <div class="main-wrapper">
         <!-- SIDEBAR -->
-        <div class="sidebar-wrapper" id="sidebarWrapper">
-            <%- include('../partials/ram/sidebaar') %>
-        </div>
+        <%- include('../partials/ram/sidebaar') %>
 
         <!-- CONTENT -->
         <div class="content-wrapper" id="contentWrapper">
@@ -1428,7 +1504,7 @@
                 <!-- Toast Container -->
                 <div id="toast"></div>
 
-                <!-- Header - Modified (removed user info) -->
+                <!-- Header -->
                 <div class="header">
                     <div>
                         <h1><i class="fab fa-whatsapp"></i> WhatsApp Campaign</h1>
@@ -1451,12 +1527,12 @@
 
                 <!-- Scheduled Campaigns Section -->
                 <% if(locals.scheduledCampaigns && scheduledCampaigns && scheduledCampaigns.length > 0) { %>
-                    <div style="background: var(--bg-card); border-radius: 15px; padding: 30px; margin-bottom: 40px; box-shadow: var(--shadow-lg); border: 1px solid var(--border);">
+                    <div class="bg-card p-4 mb-4" style="border-radius: 20px; border: 1px solid var(--border);">
                         <h2 style="color: var(--dark); margin-bottom: 20px; display: flex; align-items: center; gap: 10px;">
                             <i class="fas fa-clock"></i> Scheduled Campaigns (<%= scheduledCampaigns.length %>)
                         </h2>
                         
-                        <div style="overflow-x: auto;">
+                        <div class="table-responsive">
                             <table class="campaign-table">
                                 <thead>
                                     <tr>
@@ -1486,7 +1562,7 @@
                                             <div><strong><%= new Date(campaign.scheduledAt).toLocaleString() %></strong></div>
                                         </td>
                                         <td>
-                                            <span style="color: black; padding: 3px 10px; border-radius: 15px; font-size: 12px; font-weight: 600;">
+                                            <span class="badge-soft" style="background: rgba(16, 185, 129, 0.1); color: var(--success); padding: 5px 10px;">
                                                 <%= campaign.totalContacts %> contacts
                                             </span>
                                         </td>
@@ -1505,7 +1581,7 @@
                                             </td>
                                         <% } %>
                                         <td>
-                                            <button class="btn btn-outline" style="padding: 5px 15px; font-size: 14px;" onclick="cancelCampaign('<%= campaign.campaignId %>')">
+                                            <button class="btn btn-outline" style="padding: 5px 15px;" onclick="cancelCampaign('<%= campaign.campaignId %>')">
                                                 <i class="fas fa-times"></i> Cancel
                                             </button>
                                         </td>
@@ -1589,7 +1665,7 @@
                         </div>
                     </div>
 
-                    <!-- Step 2: Contacts - REMOVED WhatsApp Toggle and WhatsApp Numbers Only button -->
+                    <!-- Step 2: Contacts -->
                     <div class="step-content" id="step2">
                         <h2 class="step-title"><i class="fas fa-address-book"></i> Select Contacts</h2>
                         <p class="step-description">Choose contacts for your WhatsApp campaign.</p>
@@ -1659,13 +1735,15 @@
                             <!-- Excel Preview -->
                             <div id="excelPreview" class="excel-preview">
                                 <h5 style="color: var(--dark); margin-bottom: 10px;">Preview (First 10 rows):</h5>
-                                <table class="excel-preview-table">
-                                    <thead id="excelPreviewHeader"></thead>
-                                    <tbody id="excelPreviewBody"></tbody>
-                                </table>
-                                <div style="margin-top: 15px; display: flex; justify-content: space-between; align-items: center;">
+                                <div class="table-responsive">
+                                    <table class="excel-preview-table">
+                                        <thead id="excelPreviewHeader"></thead>
+                                        <tbody id="excelPreviewBody"></tbody>
+                                    </table>
+                                </div>
+                                <div class="d-flex justify-content-between align-items-center mt-3">
                                     <span id="excelRowCount"></span>
-                                    <button class="btn btn-outline" onclick="useExcelNumbers()" style="padding: 8px 20px;">
+                                    <button class="btn btn-outline" onclick="useExcelNumbers()">
                                         <i class="fas fa-check"></i> Use These Numbers
                                     </button>
                                 </div>
@@ -1673,30 +1751,22 @@
                         </div>
 
                         <!-- OR Divider -->
-                        <div style="text-align: center; margin: 25px 0;">
-                            <div style="display: flex; align-items: center;">
-                                <div style="flex: 1; height: 1px; background: var(--border);"></div>
-                                <span style="margin: 0 15px; color: var(--text-muted); font-weight: 600;">OR</span>
-                                <div style="flex: 1; height: 1px; background: var(--border);"></div>
-                            </div>
+                        <div class="position-relative my-4">
+                            <hr class="bg-muted">
+                            <span class="position-absolute top-50 start-50 translate-middle px-3 bg-card" style="color: var(--text-muted);">OR</span>
                         </div>
 
-                        <div class="form-group">
+                        <div class="form-group position-relative">
                             <label><i class="fas fa-mobile-alt"></i> Phone Numbers / WhatsApp Numbers</label>
-                            <div style="position: relative;">
-                                <textarea id="numbers" class="form-control" rows="8"
-                                placeholder="Example: 9876543210, 9123456789
+                            <textarea id="numbers" class="form-control" rows="8"
+                            placeholder="Example: 9876543210, 9123456789
 Or paste numbers with any separator (comma, space, new line)" required></textarea>
-                                <div id="contactsCount" style="position: absolute; top: 15px; right: 15px; background: var(--primary); color: white; padding: 3px 10px; border-radius: 15px; font-size: 12px;">
-                                    <span id="countNumber">0</span> contacts
-                                </div>
+                            <div id="contactsCount">
+                                <span id="countNumber">0</span> contacts
                             </div>
-                            <small style="color: var(--text-muted); margin-top: 5px; display: block;">
-                                <i class="fas fa-info-circle"></i> Enter numbers separated by commas, spaces, or new lines.
-                            </small>
                         </div>
 
-                        <!-- Contact Control Buttons - REMOVED WhatsApp Numbers Only button -->
+                        <!-- Contact Control Buttons -->
                         <div class="contact-controls">
                             <button type="button" class="btn btn-outline" onclick="fetchContacts()">
                                 <i class="fas fa-database"></i> All Contacts
@@ -1725,7 +1795,7 @@ Or paste numbers with any separator (comma, space, new line)" required></textare
                         </div>
                     </div>
 
-                    <!-- Step 3: Message - REMOVED Message Preview section -->
+                    <!-- Step 3: Message -->
                     <div class="step-content" id="step3">
                         <h2 class="step-title"><i class="fas fa-edit"></i> Compose Message</h2>
                         <p class="step-description">Choose what you want to send - text message or media.</p>
@@ -1765,7 +1835,7 @@ Or paste numbers with any separator (comma, space, new line)" required></textare
                                 <label><i class="fas fa-upload"></i> Upload Media (Required)</label>
                                 <div class="media-upload" onclick="document.getElementById('mediaFile').click()">
                                     <i class="fas fa-cloud-upload-alt"></i>
-                                    <p style="margin-bottom: 5px;">Click to upload image/video/document</p>
+                                    <p class="mb-2">Click to upload image/video/document</p>
                                     <small style="color: var(--text-muted);">Supported: Images (JPG, PNG, GIF), Videos (MP4, AVI), Documents (PDF, DOC, TXT)</small>
                                     <input type="file" id="mediaFile" style="display: none;" onchange="handleMediaUpload(event)" accept="image/*,video/*,.pdf,.doc,.docx,.txt">
                                 </div>
@@ -1786,19 +1856,19 @@ Or paste numbers with any separator (comma, space, new line)" required></textare
                             <label><i class="fas fa-comment"></i> Message Content</label>
                             <textarea id="message" class="form-control" rows="8"
                             placeholder="Type your campaign message here..." required></textarea>
-                            <div style="display: flex; justify-content: space-between; margin-top: 10px;">
-                                <div style="display: flex; gap: 10px; flex-wrap: wrap;">
-                                    <button type="button" class="btn btn-outline" onclick="insertVariable('{{name}}')" style="padding: 5px 10px; font-size: 14px;">
+                            <div class="d-flex justify-content-between align-items-center mt-3">
+                                <div class="d-flex gap-2 flex-wrap">
+                                    <button type="button" class="btn btn-outline" onclick="insertVariable('{{name}}')" style="padding: 5px 10px;">
                                         <i class="fas fa-user"></i> Name
                                     </button>
-                                    <button type="button" class="btn btn-outline" onclick="insertVariable('{{phone}}')" style="padding: 5px 10px; font-size: 14px;">
+                                    <button type="button" class="btn btn-outline" onclick="insertVariable('{{phone}}')" style="padding: 5px 10px;">
                                         <i class="fas fa-phone"></i> Phone
                                     </button>
-                                    <button type="button" class="btn btn-outline" onclick="insertVariable('{{date}}')" style="padding: 5px 10px; font-size: 14px;">
+                                    <button type="button" class="btn btn-outline" onclick="insertVariable('{{date}}')" style="padding: 5px 10px;">
                                         <i class="fas fa-calendar"></i> Date
                                     </button>
                                 </div>
-                                <span id="charCount" style="color: var(--text-muted); font-size: 14px;">0/1000</span>
+                                <span id="charCount" style="color: var(--text-muted);">0/1000</span>
                             </div>
                         </div>
 
@@ -1851,7 +1921,7 @@ Or paste numbers with any separator (comma, space, new line)" required></textare
                         </div>
                         
                         <!-- Campaign Summary -->
-                        <div style="background: var(--bg-offwhite); border-radius: 15px; padding: 30px; margin: 30px 0;">
+                        <div style="background: var(--bg-offwhite); border-radius: 16px; padding: 30px; margin: 30px 0;">
                             <h3 style="color: var(--dark); margin-bottom: 20px;">Campaign Summary</h3>
                             
                             <div class="summary-grid">
@@ -1882,7 +1952,7 @@ Or paste numbers with any separator (comma, space, new line)" required></textare
                             </div>
                             
                             <!-- Media Preview in Summary -->
-                            <div id="summaryMediaPreview" style="display: none; margin-top: 20px; padding: 15px; background: var(--bg-white); border-radius: 10px; border: 1px solid var(--border);">
+                            <div id="summaryMediaPreview" style="display: none; margin-top: 20px; padding: 15px; background: var(--bg-white); border-radius: 12px; border: 1px solid var(--border);">
                                 <h4 style="color: var(--dark); margin-bottom: 10px;">Media Attachment</h4>
                                 <div id="summaryMediaContent"></div>
                             </div>
@@ -1903,7 +1973,7 @@ Or paste numbers with any separator (comma, space, new line)" required></textare
                             <button class="btn btn-outline" onclick="prevStep(3)">
                                 <i class="fas fa-arrow-left"></i> Previous
                             </button>
-                            <div style="display: flex; gap: 15px;">
+                            <div class="d-flex gap-3">
                                 <button type="button" id="testBtn" class="btn btn-secondary" onclick="testCampaign()">
                                     <i class="fas fa-vial"></i> Test
                                 </button>
@@ -1921,66 +1991,62 @@ Or paste numbers with any separator (comma, space, new line)" required></textare
         </div>
     </div>
 
-    <!-- ExcelJS Library for Excel parsing -->
+    <!-- Loading Overlay -->
+    <div class="loading-overlay" id="loadingOverlay">
+        <div class="text-center">
+            <div class="spinner"></div>
+            <div class="loading-text">Processing...</div>
+        </div>
+    </div>
+
+    <!-- ExcelJS Library -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
     <!-- Bootstrap JS -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
 
     <script>
         // ======================
-        // SIDEBAR SYNC
+        // SIDEBAR SYNC - EXACTLY LIKE PREVIOUS TEMPLATES
         // ======================
-        document.addEventListener('DOMContentLoaded', function() {
-            const sidebar = document.getElementById('mainSidebar');
-            const sidebarWrapper = document.getElementById('sidebarWrapper');
+        function syncSidebarState() {
+            const sidebar = document.getElementById('sidebar');
+            const contentWrapper = document.getElementById('contentWrapper');
             
-            if (sidebar && sidebarWrapper) {
-                if (sidebar.classList.contains('collapsed')) {
-                    sidebarWrapper.classList.add('collapsed');
-                }
-                
-                const originalToggleCollapse = window.toggleCollapse;
-                
-                window.toggleCollapse = function() {
-                    if (originalToggleCollapse) {
-                        originalToggleCollapse();
-                    }
-                    
-                    setTimeout(() => {
-                        if (sidebar.classList.contains('collapsed')) {
-                            sidebarWrapper.classList.add('collapsed');
-                        } else {
-                            sidebarWrapper.classList.remove('collapsed');
-                        }
-                    }, 10);
-                };
-                
-                const originalToggleMobile = window.toggleMobileSidebar;
-                
-                window.toggleMobileSidebar = function() {
-                    if (originalToggleMobile) {
-                        originalToggleMobile();
-                    }
-                    
-                    setTimeout(() => {
-                        if (sidebar.classList.contains('open')) {
-                            sidebarWrapper.classList.add('mobile-open');
-                        } else {
-                            sidebarWrapper.classList.remove('mobile-open');
-                        }
-                    }, 10);
-                };
-                
-                const originalCloseMobile = window.closeMobileSidebar;
-                
-                window.closeMobileSidebar = function() {
-                    if (originalCloseMobile) {
-                        originalCloseMobile();
-                    }
-                    
-                    sidebarWrapper.classList.remove('mobile-open');
-                };
+            if (!sidebar || !contentWrapper) return;
+            
+            const isMini = sidebar.classList.contains('mini');
+            
+            if (isMini) {
+                contentWrapper.style.marginLeft = 'var(--sidebar-mini-width, 80px)';
+                contentWrapper.style.width = 'calc(100% - var(--sidebar-mini-width, 80px))';
+            } else {
+                contentWrapper.style.marginLeft = 'var(--sidebar-width, 280px)';
+                contentWrapper.style.width = 'calc(100% - var(--sidebar-width, 280px))';
             }
+        }
+
+        document.addEventListener('DOMContentLoaded', function() {
+            // Listen for sidebar state changes
+            window.addEventListener('storage', function(e) {
+                if (e.key === 'sidebarMini' || e.key === 'sidebar-update-time') {
+                    const sidebar = document.getElementById('sidebar');
+                    if (sidebar) {
+                        const savedState = localStorage.getItem('sidebarMini') === 'true';
+                        if (savedState) {
+                            sidebar.classList.add('mini');
+                        } else {
+                            sidebar.classList.remove('mini');
+                        }
+                        syncSidebarState();
+                    }
+                }
+            });
+
+            window.addEventListener('resize', function() {
+                syncSidebarState();
+            });
+
+            setTimeout(syncSidebarState, 100);
             
             // Initialize campaign data
             initializeCampaign();
@@ -1995,7 +2061,7 @@ Or paste numbers with any separator (comma, space, new line)" required></textare
         });
 
         // ======================
-        // TOAST MESSAGE FUNCTION
+        // TOAST FUNCTION - EXACTLY LIKE PREVIOUS TEMPLATES
         // ======================
         let toastTimer;
         function showToast(title, message, type = 'info') {
@@ -2012,9 +2078,8 @@ Or paste numbers with any separator (comma, space, new line)" required></textare
             
             const icon = icons[type] || 'ℹ️';
             
-            toast.className = '';
             toast.innerHTML = `
-                <div class="toast-row">
+                <div class="toast-content">
                     <div class="toast-icon">${icon}</div>
                     <div class="toast-text">
                         <h4>${title}</h4>
@@ -2024,11 +2089,24 @@ Or paste numbers with any separator (comma, space, new line)" required></textare
                 <div class="toast-progress"></div>
             `;
             
-            toast.classList.add(`toast-${type}`, 'show');
+            toast.className = `toast-${type} show`;
             
             toastTimer = setTimeout(() => {
                 toast.classList.remove('show');
             }, 3000);
+        }
+
+        // ======================
+        // LOADING OVERLAY FUNCTIONS
+        // ======================
+        function showLoading(text = 'Processing...') {
+            const overlay = document.getElementById('loadingOverlay');
+            document.querySelector('.loading-text').textContent = text;
+            overlay.style.display = 'flex';
+        }
+
+        function hideLoading() {
+            document.getElementById('loadingOverlay').style.display = 'none';
         }
 
         // ======================
@@ -2104,7 +2182,209 @@ Or paste numbers with any separator (comma, space, new line)" required></textare
         }
 
         // ======================
-        // LOAD GROUPS FUNCTION
+        // STEP NAVIGATION
+        // ======================
+        function nextStep(step) {
+            if (validateCurrentStep()) {
+                document.getElementById(`step${currentStep}`).classList.remove('active');
+                document.getElementById(`step${currentStep}-indicator`).classList.remove('active');
+                
+                currentStep = step;
+                document.getElementById(`step${currentStep}`).classList.add('active');
+                document.getElementById(`step${currentStep}-indicator`).classList.add('active');
+                
+                // Update indicators for completed steps
+                for (let i = 1; i < step; i++) {
+                    const indicator = document.getElementById(`step${i}-indicator`);
+                    if (indicator) {
+                        indicator.classList.add('completed');
+                    }
+                }
+                
+                // Update summary if step 4
+                if (step === 4) {
+                    updateSummary();
+                }
+                
+                // Show toast for step change
+                const stepNames = ['', 'Device', 'Contacts', 'Message', 'Send'];
+                showToast('Step ' + step, stepNames[step], 'info');
+            }
+        }
+
+        function prevStep(step) {
+            document.getElementById(`step${currentStep}`).classList.remove('active');
+            document.getElementById(`step${currentStep}-indicator`).classList.remove('active');
+            
+            currentStep = step;
+            document.getElementById(`step${currentStep}`).classList.add('active');
+            document.getElementById(`step${currentStep}-indicator`).classList.add('active');
+            
+            // Show toast
+            const stepNames = ['', 'Device', 'Contacts', 'Message', 'Send'];
+            showToast('Step ' + step, stepNames[step], 'info');
+        }
+
+        function validateCurrentStep() {
+            if (currentStep === 1) {
+                const device = document.getElementById('channel').value;
+                if (!device) {
+                    showToast('Error', 'Please select a WhatsApp device', 'error');
+                    return false;
+                }
+                campaignData.channel = device;
+                return true;
+            } else if (currentStep === 2) {
+                const numbers = getNumbersArray();
+                if (numbers.length === 0 && excelData.numbers.length === 0) {
+                    showToast('Error', 'Please add at least one contact number', 'error');
+                    return false;
+                }
+                return true;
+            } else if (currentStep === 3) {
+                if (campaignData.sendOption === 'textOnly') {
+                    const message = document.getElementById('message').value.trim();
+                    if (!message) {
+                        showToast('Error', 'Please enter a message', 'error');
+                        return false;
+                    }
+                } else if (campaignData.sendOption === 'media') {
+                    if (!campaignData.mediaData) {
+                        showToast('Error', 'Please upload media file', 'error');
+                        return false;
+                    }
+                    if (campaignData.includeMessageWithMedia) {
+                        const message = document.getElementById('message').value.trim();
+                        if (!message) {
+                            showToast('Error', 'Please enter a message', 'error');
+                            return false;
+                        }
+                    }
+                }
+                return true;
+            }
+            return true;
+        }
+
+        // ======================
+        // CONTACT MANAGEMENT
+        // ======================
+        function getNumbersArray() {
+            const numbersText = document.getElementById('numbers').value;
+            return numbersText.split(/[,\n\s]+/)
+                .map(n => n.trim().replace(/\D/g, ''))
+                .filter(n => n.length >= 10)
+                .map(n => n.length === 10 ? n : n.slice(-10));
+        }
+
+        function updateContactCount() {
+            const numbers = getNumbersArray();
+            document.getElementById('countNumber').textContent = numbers.length;
+            return numbers.length;
+        }
+
+        function selectAllContacts() {
+            const numbers = document.getElementById('numbers');
+            numbers.select();
+            showToast('Selected', 'All numbers selected', 'info');
+        }
+
+        function clearAllContacts() {
+            document.getElementById('numbers').value = '';
+            clearSelectedGroup();
+            updateContactCount();
+            showToast('Cleared', 'All numbers removed', 'info');
+        }
+
+        function validateNumbers() {
+            const numbers = getNumbersArray();
+            const invalidNumbers = numbers.filter(n => n.length !== 10);
+            
+            if (invalidNumbers.length > 0) {
+                showToast('Warning', `Found ${invalidNumbers.length} invalid numbers`, 'warning');
+                const validNumbers = numbers.filter(n => n.length === 10);
+                document.getElementById('numbers').value = validNumbers.join(',\n');
+                updateContactCount();
+            } else {
+                showToast('Valid', 'All numbers are valid (10 digits)', 'success');
+            }
+        }
+
+        function removeDuplicates() {
+            const numbers = getNumbersArray();
+            const uniqueNumbers = [...new Set(numbers)];
+            
+            if (numbers.length !== uniqueNumbers.length) {
+                document.getElementById('numbers').value = uniqueNumbers.join(',\n');
+                updateContactCount();
+                showToast('Cleaned', `Removed ${numbers.length - uniqueNumbers.length} duplicates`, 'success');
+            } else {
+                showToast('Info', 'No duplicates found', 'info');
+            }
+        }
+
+        // ======================
+        // FETCH ALL CONTACTS
+        // ======================
+        async function fetchContacts() {
+            try {
+                showToast('Fetching', 'Loading contacts from database...', 'info');
+                
+                const response = await fetch('/api/contacts');
+                const data = await response.json();
+                
+                if (!response.ok) {
+                    throw new Error(`HTTP error! status: ${response.status}`);
+                }
+                
+                if (data.status && data.contacts && data.contacts.length > 0) {
+                    // Try to use WhatsApp numbers first, fallback to phone
+                    let phones = data.contacts.map(c => {
+                        if (c.whatsappNumber) {
+                            let whatsapp = c.whatsappNumber.replace(/\D/g, '');
+                            if (whatsapp.startsWith('91')) whatsapp = whatsapp.substring(2);
+                            return whatsapp.length === 10 ? whatsapp : null;
+                        } else if (c.phoneNumber) {
+                            let phone = c.phoneNumber.replace(/\D/g, '');
+                            if (phone.startsWith('91')) phone = phone.substring(2);
+                            return phone.length === 10 ? phone : null;
+                        }
+                        return null;
+                    }).filter(n => n && n.length === 10);
+                    
+                    const uniqueNumbers = [...new Set(phones)];
+                    if (uniqueNumbers.length > 0) {
+                        document.getElementById('numbers').value = uniqueNumbers.join(',\n');
+                        
+                        // Clear selected group if any
+                        clearSelectedGroup();
+                        
+                        updateContactCount();
+                        showToast('Success', `Loaded ${uniqueNumbers.length} contacts (using WhatsApp numbers where available)`, 'success');
+                    } else {
+                        showToast('Warning', 'No valid 10-digit numbers found in contacts', 'warning');
+                    }
+                } else if (data.contacts && data.contacts.length === 0) {
+                    showToast('Info', 'No contacts found in database', 'info');
+                } else {
+                    showToast('Error', data.msg || 'Failed to fetch contacts', 'error');
+                }
+            } catch (err) {
+                console.error('Fetch contacts error:', err);
+                showToast('Error', 'Failed to fetch contacts: ' + err.message, 'error');
+                
+                // Fallback demo data for testing
+                if (confirm('Server error. Would you like to load sample contacts for testing?')) {
+                    const sampleNumbers = ['9876543210', '8765432109', '7654321098', '6543210987', '5432109876'];
+                    document.getElementById('numbers').value = sampleNumbers.join(',\n');
+                    updateContactCount();
+                    showToast('Info', 'Sample contacts loaded for testing', 'info');
+                }
+            }
+        }
+
+        // ======================
+        // GROUPS FUNCTIONS
         // ======================
         async function loadGroups() {
             const groupsGrid = document.getElementById('groupsGrid');
@@ -2155,9 +2435,6 @@ Or paste numbers with any separator (comma, space, new line)" required></textare
             }
         }
 
-        // ======================
-        // SELECT GROUP FUNCTION - Modified to always use WhatsApp numbers
-        // ======================
         async function selectGroup(groupId, groupName, totalContacts) {
             try {
                 showToast('Loading', `Loading contacts from ${groupName}...`, 'info');
@@ -2223,9 +2500,6 @@ Or paste numbers with any separator (comma, space, new line)" required></textare
             }
         }
 
-        // ======================
-        // CLEAR SELECTED GROUP
-        // ======================
         function clearSelectedGroup() {
             campaignData.selectedGroup = null;
             selectedGroupId = null;
@@ -2243,248 +2517,7 @@ Or paste numbers with any separator (comma, space, new line)" required></textare
         }
 
         // ======================
-        // FETCH ALL CONTACTS - FIXED API ENDPOINT
-        // ======================
-        async function fetchContacts() {
-            try {
-                showToast('Fetching', 'Loading contacts from database...', 'info');
-                
-                const response = await fetch('/api/contacts');
-                const data = await response.json();
-                
-                if (!response.ok) {
-                    throw new Error(`HTTP error! status: ${response.status}`);
-                }
-                
-                if (data.status && data.contacts && data.contacts.length > 0) {
-                    // Try to use WhatsApp numbers first, fallback to phone
-                    let phones = data.contacts.map(c => {
-                        if (c.whatsappNumber) {
-                            let whatsapp = c.whatsappNumber.replace(/\D/g, '');
-                            if (whatsapp.startsWith('91')) whatsapp = whatsapp.substring(2);
-                            return whatsapp.length === 10 ? whatsapp : null;
-                        } else if (c.phoneNumber) {
-                            let phone = c.phoneNumber.replace(/\D/g, '');
-                            if (phone.startsWith('91')) phone = phone.substring(2);
-                            return phone.length === 10 ? phone : null;
-                        }
-                        return null;
-                    }).filter(n => n && n.length === 10);
-                    
-                    const uniqueNumbers = [...new Set(phones)];
-                    if (uniqueNumbers.length > 0) {
-                        document.getElementById('numbers').value = uniqueNumbers.join(',\n');
-                        
-                        // Clear selected group if any
-                        clearSelectedGroup();
-                        
-                        updateContactCount();
-                        showToast('Success', `Loaded ${uniqueNumbers.length} contacts (using WhatsApp numbers where available)`, 'success');
-                    } else {
-                        showToast('Warning', 'No valid 10-digit numbers found in contacts', 'warning');
-                    }
-                } else if (data.contacts && data.contacts.length === 0) {
-                    showToast('Info', 'No contacts found in database', 'info');
-                } else {
-                    showToast('Error', data.msg || 'Failed to fetch contacts', 'error');
-                }
-            } catch (err) {
-                console.error('Fetch contacts error:', err);
-                showToast('Error', 'Failed to fetch contacts: ' + err.message, 'error');
-                
-                // Fallback demo data for testing
-                if (confirm('Server error. Would you like to load sample contacts for testing?')) {
-                    const sampleNumbers = ['9876543210', '8765432109', '7654321098', '6543210987', '5432109876'];
-                    document.getElementById('numbers').value = sampleNumbers.join(',\n');
-                    updateContactCount();
-                    showToast('Info', 'Sample contacts loaded for testing', 'info');
-                }
-            }
-        }
-
-        // ======================
-        // STEP NAVIGATION
-        // ======================
-        function nextStep(step) {
-            if (validateCurrentStep()) {
-                document.getElementById(`step${currentStep}`).classList.remove('active');
-                document.getElementById(`step${currentStep}-indicator`).classList.remove('active');
-                
-                currentStep = step;
-                document.getElementById(`step${currentStep}`).classList.add('active');
-                document.getElementById(`step${currentStep}-indicator`).classList.add('active');
-                
-                // Update indicators for completed steps
-                for (let i = 1; i < step; i++) {
-                    const indicator = document.getElementById(`step${i}-indicator`);
-                    if (indicator) {
-                        indicator.classList.add('completed');
-                    }
-                }
-                
-                // Update summary if step 4
-                if (step === 4) {
-                    updateSummary();
-                }
-                
-                // Show toast for step change
-                const stepNames = ['', 'Device', 'Contacts', 'Message', 'Send'];
-                showToast('Step ' + step, stepNames[step], 'info');
-            }
-        }
-
-        function prevStep(step) {
-            document.getElementById(`step${currentStep}`).classList.remove('active');
-            document.getElementById(`step${currentStep}-indicator`).classList.remove('active');
-            
-            currentStep = step;
-            document.getElementById(`step${currentStep}`).classList.add('active');
-            document.getElementById(`step${currentStep}-indicator`).classList.add('active');
-            
-            // Show toast
-            const stepNames = ['', 'Device', 'Contacts', 'Message', 'Send'];
-            showToast('Step ' + step, stepNames[step], 'info');
-        }
-
-        // Function to reset to step 1 after successful send
-        function resetToStep1() {
-            // Clear form data
-            document.getElementById('numbers').value = '';
-            document.getElementById('message').value = '';
-            document.getElementById('mediaPreview').innerHTML = '';
-            document.getElementById('mediaFile').value = '';
-            document.getElementById('excelPreview').style.display = 'none';
-            document.getElementById('excelFileInput').value = '';
-            
-            // Reset campaign data
-            campaignData.numbers = [];
-            campaignData.message = '';
-            campaignData.mediaData = null;
-            campaignData.selectedGroup = null;
-            
-            // Clear selected group banner
-            clearSelectedGroup();
-            
-            // Reset to step 1
-            document.getElementById(`step${currentStep}`).classList.remove('active');
-            document.getElementById(`step${currentStep}-indicator`).classList.remove('active');
-            
-            currentStep = 1;
-            document.getElementById(`step1`).classList.add('active');
-            document.getElementById(`step1-indicator`).classList.add('active');
-            
-            // Reset completed indicators
-            for (let i = 2; i <= 4; i++) {
-                const indicator = document.getElementById(`step${i}-indicator`);
-                if (indicator) {
-                    indicator.classList.remove('completed');
-                }
-            }
-            
-            // Update contact count
-            updateContactCount();
-            
-            showToast('Success', 'Campaign completed! Ready for next campaign', 'success');
-        }
-
-        // ======================
-        // STEP VALIDATION
-        // ======================
-        function validateCurrentStep() {
-            if (currentStep === 1) {
-                const device = document.getElementById('channel').value;
-                if (!device) {
-                    showToast('Error', 'Please select a WhatsApp device', 'error');
-                    return false;
-                }
-                campaignData.channel = device;
-                return true;
-            } else if (currentStep === 2) {
-                const numbers = getNumbersArray();
-                if (numbers.length === 0 && excelData.numbers.length === 0) {
-                    showToast('Error', 'Please add at least one contact number', 'error');
-                    return false;
-                }
-                return true;
-            } else if (currentStep === 3) {
-                if (campaignData.sendOption === 'textOnly') {
-                    const message = document.getElementById('message').value.trim();
-                    if (!message) {
-                        showToast('Error', 'Please enter a message', 'error');
-                        return false;
-                    }
-                } else if (campaignData.sendOption === 'media') {
-                    if (!campaignData.mediaData) {
-                        showToast('Error', 'Please upload media file', 'error');
-                        return false;
-                    }
-                    if (campaignData.includeMessageWithMedia) {
-                        const message = document.getElementById('message').value.trim();
-                        if (!message) {
-                            showToast('Error', 'Please enter a message', 'error');
-                            return false;
-                        }
-                    }
-                }
-                return true;
-            }
-            return true;
-        }
-
-        // ======================
-        // MEDIA OPTION SELECTION
-        // ======================
-        function selectMediaOption(option) {
-            document.getElementById('textOnlyOption').classList.remove('selected');
-            document.getElementById('mediaOption').classList.remove('selected');
-            document.getElementById('textOnlyCheckbox').checked = false;
-            document.getElementById('mediaCheckbox').checked = false;
-            
-            document.getElementById(`${option}Option`).classList.add('selected');
-            document.getElementById(`${option}Checkbox`).checked = true;
-            
-            campaignData.sendOption = option;
-            
-            if (option === 'textOnly') {
-                document.getElementById('mediaUploadSection').style.display = 'none';
-                document.getElementById('messageCheckboxContainer').style.display = 'none';
-                document.getElementById('messageContainer').classList.remove('hidden');
-                document.getElementById('message').disabled = false;
-                document.getElementById('message').required = true;
-                campaignData.mediaData = null;
-                document.getElementById('mediaPreview').innerHTML = '';
-                document.getElementById('mediaFile').value = '';
-            } else {
-                document.getElementById('mediaUploadSection').style.display = 'block';
-                document.getElementById('messageCheckboxContainer').style.display = 'block';
-                updateMessageFieldState();
-            }
-            
-            updateSummary();
-            
-            showToast('Option Selected', option === 'textOnly' ? 'Text message only' : 'Media with optional message', 'info');
-        }
-
-        function updateMessageFieldState() {
-            const messageContainer = document.getElementById('messageContainer');
-            const messageTextarea = document.getElementById('message');
-            
-            if (campaignData.sendOption === 'media') {
-                if (campaignData.includeMessageWithMedia) {
-                    messageContainer.classList.remove('hidden');
-                    messageTextarea.disabled = false;
-                    messageTextarea.required = true;
-                } else {
-                    messageContainer.classList.add('hidden');
-                    messageTextarea.disabled = true;
-                    messageTextarea.required = false;
-                    campaignData.message = '';
-                }
-            }
-        }
-
-        // ======================
-        // EXCEL UPLOAD FUNCTIONS - Updated for WhatsApp numbers
+        // EXCEL FUNCTIONS
         // ======================
         async function handleExcelUpload(event) {
             const file = event.target.files[0];
@@ -2705,59 +2738,54 @@ Or paste numbers with any separator (comma, space, new line)" required></textare
         }
 
         // ======================
-        // CONTACT MANAGEMENT
+        // MEDIA OPTIONS
         // ======================
-        function getNumbersArray() {
-            const numbersText = document.getElementById('numbers').value;
-            return numbersText.split(/[,\n\s]+/)
-                .map(n => n.trim().replace(/\D/g, ''))
-                .filter(n => n.length >= 10)
-                .map(n => n.length === 10 ? n : n.slice(-10));
-        }
-
-        function updateContactCount() {
-            const numbers = getNumbersArray();
-            document.getElementById('countNumber').textContent = numbers.length;
-            return numbers.length;
-        }
-
-        function selectAllContacts() {
-            const numbers = document.getElementById('numbers');
-            numbers.select();
-            showToast('Selected', 'All numbers selected', 'info');
-        }
-
-        function clearAllContacts() {
-            document.getElementById('numbers').value = '';
-            clearSelectedGroup();
-            updateContactCount();
-            showToast('Cleared', 'All numbers removed', 'info');
-        }
-
-        function validateNumbers() {
-            const numbers = getNumbersArray();
-            const invalidNumbers = numbers.filter(n => n.length !== 10);
+        function selectMediaOption(option) {
+            document.getElementById('textOnlyOption').classList.remove('selected');
+            document.getElementById('mediaOption').classList.remove('selected');
+            document.getElementById('textOnlyCheckbox').checked = false;
+            document.getElementById('mediaCheckbox').checked = false;
             
-            if (invalidNumbers.length > 0) {
-                showToast('Warning', `Found ${invalidNumbers.length} invalid numbers`, 'warning');
-                const validNumbers = numbers.filter(n => n.length === 10);
-                document.getElementById('numbers').value = validNumbers.join(',\n');
-                updateContactCount();
+            document.getElementById(`${option}Option`).classList.add('selected');
+            document.getElementById(`${option}Checkbox`).checked = true;
+            
+            campaignData.sendOption = option;
+            
+            if (option === 'textOnly') {
+                document.getElementById('mediaUploadSection').style.display = 'none';
+                document.getElementById('messageCheckboxContainer').style.display = 'none';
+                document.getElementById('messageContainer').classList.remove('hidden');
+                document.getElementById('message').disabled = false;
+                document.getElementById('message').required = true;
+                campaignData.mediaData = null;
+                document.getElementById('mediaPreview').innerHTML = '';
+                document.getElementById('mediaFile').value = '';
             } else {
-                showToast('Valid', 'All numbers are valid (10 digits)', 'success');
+                document.getElementById('mediaUploadSection').style.display = 'block';
+                document.getElementById('messageCheckboxContainer').style.display = 'block';
+                updateMessageFieldState();
             }
+            
+            updateSummary();
+            
+            showToast('Option Selected', option === 'textOnly' ? 'Text message only' : 'Media with optional message', 'info');
         }
 
-        function removeDuplicates() {
-            const numbers = getNumbersArray();
-            const uniqueNumbers = [...new Set(numbers)];
+        function updateMessageFieldState() {
+            const messageContainer = document.getElementById('messageContainer');
+            const messageTextarea = document.getElementById('message');
             
-            if (numbers.length !== uniqueNumbers.length) {
-                document.getElementById('numbers').value = uniqueNumbers.join(',\n');
-                updateContactCount();
-                showToast('Cleaned', `Removed ${numbers.length - uniqueNumbers.length} duplicates`, 'success');
-            } else {
-                showToast('Info', 'No duplicates found', 'info');
+            if (campaignData.sendOption === 'media') {
+                if (campaignData.includeMessageWithMedia) {
+                    messageContainer.classList.remove('hidden');
+                    messageTextarea.disabled = false;
+                    messageTextarea.required = true;
+                } else {
+                    messageContainer.classList.add('hidden');
+                    messageTextarea.disabled = true;
+                    messageTextarea.required = false;
+                    campaignData.message = '';
+                }
             }
         }
 
@@ -2814,14 +2842,12 @@ Or paste numbers with any separator (comma, space, new line)" required></textare
             
             document.getElementById('mediaPreview').innerHTML = `
                 <div class="file-preview">
-                    <div class="media-preview-icon">
-                        <i class="fas ${icon}"></i>
+                    <div>
+                        <i class="fas ${icon}" style="font-size: 32px;"></i>
                     </div>
                     <div class="file-info">
                         <strong>${data.originalName || data.fileName}</strong>
-                        <div style="color: var(--text-muted); font-size: 14px;">
-                            ${typeName} • ${size} KB
-                        </div>
+                        <div>${typeName} • ${size} KB</div>
                     </div>
                     <button class="btn btn-outline" onclick="removeMedia()" style="padding: 5px 10px;">
                         <i class="fas fa-times"></i>
@@ -2954,7 +2980,7 @@ Or paste numbers with any separator (comma, space, new line)" required></textare
         }
 
         // ======================
-        // TEST FUNCTION - Updated
+        // TEST FUNCTION
         // ======================
         async function testCampaign() {
             const nums = getNumbersArray();
@@ -3001,7 +3027,7 @@ Or paste numbers with any separator (comma, space, new line)" required></textare
         }
 
         // ======================
-        // CAMPAIGN SEND FUNCTIONS - Updated with auto reset
+        // CAMPAIGN SEND FUNCTIONS
         // ======================
         async function sendCampaignNow() {
             await sendOrScheduleCampaign('now');
@@ -3106,6 +3132,46 @@ Or paste numbers with any separator (comma, space, new line)" required></textare
             }
         }
 
+        function resetToStep1() {
+            // Clear form data
+            document.getElementById('numbers').value = '';
+            document.getElementById('message').value = '';
+            document.getElementById('mediaPreview').innerHTML = '';
+            document.getElementById('mediaFile').value = '';
+            document.getElementById('excelPreview').style.display = 'none';
+            document.getElementById('excelFileInput').value = '';
+            
+            // Reset campaign data
+            campaignData.numbers = [];
+            campaignData.message = '';
+            campaignData.mediaData = null;
+            campaignData.selectedGroup = null;
+            
+            // Clear selected group banner
+            clearSelectedGroup();
+            
+            // Reset to step 1
+            document.getElementById(`step${currentStep}`).classList.remove('active');
+            document.getElementById(`step${currentStep}-indicator`).classList.remove('active');
+            
+            currentStep = 1;
+            document.getElementById(`step1`).classList.add('active');
+            document.getElementById(`step1-indicator`).classList.add('active');
+            
+            // Reset completed indicators
+            for (let i = 2; i <= 4; i++) {
+                const indicator = document.getElementById(`step${i}-indicator`);
+                if (indicator) {
+                    indicator.classList.remove('completed');
+                }
+            }
+            
+            // Update contact count
+            updateContactCount();
+            
+            showToast('Success', 'Campaign completed! Ready for next campaign', 'success');
+        }
+
         // ======================
         // CANCEL CAMPAIGN
         // ======================
@@ -3127,6 +3193,16 @@ Or paste numbers with any separator (comma, space, new line)" required></textare
                 showToast('Error', 'Cancel failed: ' + err.message, 'error');
             }
         }
+
+        // ======================
+        // KEYBOARD SHORTCUTS
+        // ======================
+        document.addEventListener('keydown', function(e) {
+            if (e.key === 'F1') {
+                e.preventDefault();
+                showToast('Help', 'Follow the steps to create your campaign', 'info');
+            }
+        });
     </script>
 </body>
 </html>
